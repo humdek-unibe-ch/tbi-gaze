@@ -6,6 +6,7 @@
  * @date    January 2018
  */
 
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -48,14 +49,36 @@ namespace gaze2mouse
                 return false;
             }
         }
-        
+
+        public class ConfigItem
+        {
+            public string outfile { get; set; }
+        }
+
         /**
          * @brief The main programm entry
          */
         static void Main(string[] args)
         {
+            StreamReader sr;
+            string json;
+            ConfigItem item = new ConfigItem
+            {
+                outfile = "tracker.txt"
+            };
+            // load configuration
+            try
+            {
+                sr = new StreamReader("config.json");
+                json = sr.ReadToEnd();
+                sr.Dispose();
+                item = JsonConvert.DeserializeObject<ConfigItem>(json);
+            }
+            catch (FileNotFoundException e) { }
+            catch (JsonReaderException e) { }
+
             // open files
-            fs = File.Open("cursor.txt", FileMode.Create);
+            fs = File.Open(item.outfile, FileMode.Create);
             sw = new StreamWriter(fs);
             ts_start = DateTime.Now.TimeOfDay;
             sw.WriteLine("Timestamp; X; Y;");
@@ -104,7 +127,7 @@ namespace gaze2mouse
          */
         static void OnApplicationExit(object sender, EventArgs e)
         {
-            sw.WriteLine("done");
+            //sw.WriteLine("done");
             sw.Close();
             fs.Close();
             sw.Dispose();
