@@ -17,6 +17,7 @@ namespace gaze2mouse
 {
     class Program
     {
+        private const string COL_DELIM = "\t";
         private static FileStream fs;
         private static StreamWriter sw;
         private static TimeSpan ts_start;
@@ -81,7 +82,7 @@ namespace gaze2mouse
             fs = File.Open(item.outfile, FileMode.Create);
             sw = new StreamWriter(fs);
             ts_start = DateTime.Now.TimeOfDay;
-            sw.WriteLine("Timestamp; X; Y;");
+            sw.WriteLine("Timestamp{0}X{0}Y", COL_DELIM);
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
@@ -118,7 +119,7 @@ namespace gaze2mouse
             Cursor.Position = new System.Drawing.Point( Convert.ToInt32(x), Convert.ToInt32(y) );
 
             // write the coordinates to the log file
-            sw.WriteLine("{0}\t{1:0.0}\t{2:0.0}", ts_rec, x, y);
+            sw.WriteLine("{0}{3}{1:0.0}{3}{2:0.0}", ts_rec, x, y, COL_DELIM);
             hasRun = true;
         }
 
