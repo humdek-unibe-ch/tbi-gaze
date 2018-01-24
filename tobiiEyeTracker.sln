@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gaze2mouse", "gaze2mouse\gaze2mouse.csproj", "{E87BBCFB-644D-48F8-8253-3377421BB7DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gaze2mouse_close", "gaze2mouse_close\gaze2mouse_close.csproj", "{9A4BC9DB-2BFE-4794-B885-FE97F4439401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
