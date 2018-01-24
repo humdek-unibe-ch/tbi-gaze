@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gaze2mouse", "gaze2mouse\gaze2mouse.csproj", "{E87BBCFB-644D-48F8-8253-3377421BB7DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gaze2mouse_wpf", "gaze2mouse_wpf\gaze2mouse_wpf.csproj", "{CA988A43-2738-431A-A76F-3EA4DA16E466}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hideMouse", "hideMouse\hideMouse.csproj", "{322D8A02-BFA2-47C5-8C87-F53A16F4C97D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA988A43-2738-431A-A76F-3EA4DA16E466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA988A43-2738-431A-A76F-3EA4DA16E466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA988A43-2738-431A-A76F-3EA4DA16E466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA988A43-2738-431A-A76F-3EA4DA16E466}.Release|Any CPU.Build.0 = Release|Any CPU
+		{322D8A02-BFA2-47C5-8C87-F53A16F4C97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{322D8A02-BFA2-47C5-8C87-F53A16F4C97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{322D8A02-BFA2-47C5-8C87-F53A16F4C97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{322D8A02-BFA2-47C5-8C87-F53A16F4C97D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BCC7AA1E-6491-4BFB-BEEB-CC8DB1D2EA0B}
+	EndGlobalSection
+EndGlobal
