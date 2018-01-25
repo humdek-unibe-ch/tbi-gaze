@@ -46,9 +46,9 @@ namespace GazeHelper
                 OutputFile = "gaze.data",
                 TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-                TobiiCalibrateArguments = "-C",
+                TobiiCalibrateArguments = "--calibrate",
                 TobiiGuestCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-                TobiiGuestCalibrateArguments = "-G",
+                TobiiGuestCalibrateArguments = "--guest-calibration",
                 TobiiTest = "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
                 GazeFilter = 0
             };

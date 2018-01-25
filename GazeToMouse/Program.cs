@@ -114,7 +114,7 @@ namespace GazeToMouse
             Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
 
             // write the coordinates to the log file
-            sw.WriteLine("{0}{3}{1:0.0}{3}{2:0.0}", ts_rec, x, y, COL_DELIM);
+            sw.WriteLine("{0:hh\\:mm\\:ss\\.fff}{3}{1:0.0}{3}{2:0.0}", ts_rec, x, y, COL_DELIM);
             hasRun = true;
         }
 
