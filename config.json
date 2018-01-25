@@ -1,9 +1,19 @@
 {
-  "LogFile": "..\\gaze.log",
+  // the path to the output file
   "OutputFile": "..\\gaze.data",
+
+  // the Tobii installation path
   "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
+
+  // Tobii EyeX command to run a calibration
   "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -C",
+
+  // Tobii EyeX command to run a guest calibration
   "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -G",
+
+  // Tobii EyeX command to run calibration test
   "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
+
+  // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
   "GazeFilter": 0
 }

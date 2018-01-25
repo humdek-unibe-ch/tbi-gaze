@@ -54,18 +54,20 @@ namespace GazeHelper
             {
                 sr = new StreamReader(ConfigFile);
                 json = sr.ReadToEnd();
-                sr.Dispose();
                 item = JsonConvert.DeserializeObject<ConfigItem>(json);
+                logger.Info(string.Format("Successfully read the configuration file {0}\\{1}", System.AppDomain.CurrentDomain.BaseDirectory, ConfigFile));
+                sr.Close();
+                sr.Dispose();
             }
             catch (FileNotFoundException e)
             {
                 logger.Warning(e.Message);
-                logger.Info("using default configuration values");
+                logger.Info("Using default configuration values");
             }
             catch (JsonReaderException e)
             {
                 logger.Warning(e.Message);
-                logger.Info("using default configuration values");
+                logger.Info("Using default configuration values");
             }
             return item;
         }
