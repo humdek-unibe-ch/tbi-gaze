@@ -25,6 +25,8 @@ namespace GazeToMouse
         private static bool hasRun = false;
         private static Host host;
         private static Logger logger;
+        private static MouseHider hider;
+        private static JsonConfigParser.ConfigItem config;
         /**
          * @brief Helper class to be added to the application's message pump to filter out a message
          */
@@ -58,12 +60,12 @@ namespace GazeToMouse
         {
             // load configuration
             JsonConfigParser parser = new JsonConfigParser();
-            JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
+            config = parser.ParseJsonConfig();
             logger = new Logger();
             logger.Info(string.Format("Starting \"{0}GazeToMouse.exe\"", System.AppDomain.CurrentDomain.BaseDirectory));
 
             // open files
-            fs = File.Open(item.OutputFile, FileMode.Create);
+            fs = File.Open(config.OutputFile, FileMode.Create);
             sw = new StreamWriter(fs);
             ts_start = DateTime.Now.TimeOfDay;
             sw.WriteLine("Timestamp{0}X{0}Y", COL_DELIM);
@@ -71,13 +73,16 @@ namespace GazeToMouse
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
+            // hide the mouse cursor
+            hider = new MouseHider();
+            if (config.HideMouse) hider.HideCursor();
+
             // initialize host. Make sure that the Tobii service is running
             host = new Host();
-            Cursor.Hide();
 
             // create stream
             GazePointDataMode filter;
-            switch (item.GazeFilter)
+            switch (config.GazeFilter)
             {
                 case 0: filter = GazePointDataMode.Unfiltered; break;
                 case 1: filter = GazePointDataMode.LightlyFiltered; break;
@@ -124,6 +129,7 @@ namespace GazeToMouse
         static void OnApplicationExit(object sender, EventArgs e)
         {
             //sw.WriteLine("done");
+            if (config.HideMouse) hider.ShowCursor();
             sw.Close();
             fs.Close();
             sw.Dispose();

@@ -17,7 +17,6 @@ namespace GazeToMouseClose
         static void Main()
         {
             Logger logger = new Logger();
-            Cursor.Show();
             logger.Info("Sending WM_CLOSE signal to process \"GazeToMouse.exe\"");
             Process.Start("taskkill", "/IM GazeToMouse.exe");
         }

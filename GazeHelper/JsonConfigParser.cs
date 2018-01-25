@@ -30,6 +30,7 @@ namespace GazeHelper
             public string TobiiGuestCalibrateArguments { get; set; }
             public string TobiiTest { get; set; }
             public int GazeFilter { get; set; }
+            public bool HideMouse { get; set; }
         }
 
         /**

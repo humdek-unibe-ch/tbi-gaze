@@ -21,5 +21,8 @@
   "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
 
   // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
-  "GazeFilter": 0
+  "GazeFilter": 0,
+
+  // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
+  "HideMouse": false
 }
