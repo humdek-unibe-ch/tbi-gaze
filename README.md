@@ -32,15 +32,15 @@ The following executables have been prepared:
 This program is a simple wrapper for the Tobii calibration tool.
 It launches the calibration GUI where the user is led through the calibration process and stores the calibration data in the current profile of the eye tracker engine.
 
-## TobiiGuestClaibrate.exe
+### TobiiGuestClaibrate.exe
 This program is a simple wrapper for the Tobii guest calibration tool.
 The same as *TobiiCalibrate.exe* it launches the calibration tool, however, the calibration data is stored in a guest profile.
 
-## TobiiTest.exe
+### TobiiTest.exe
 This program is a simple wrapper for the Tobii eye tracking testing tool.
 It launches a GUI where the result of the calibration can be verified and a new calibration process can be started if required.
 
-## GazeToMouse.exe
+### GazeToMouse.exe
 This program uses the Tobii Core SDK to get the position on the screen where the user is looking at.
 The mouse cursor position is the updated to this position.
 As a consequence, the mouse cursor is controlled by the gaze of the user.
@@ -49,14 +49,15 @@ This should not be done with a forced kill (e.g. execute the command `taskkill /
 Instead `taskkill /IM GazeToMouse.exe` should be used.
 This is done in the program `GazeToMouseClose.exe`.
 
-# GazeToMouseClose.exe
+### GazeToMouseClose.exe
 This program requests `GazeToMouseClose.exe` to close gracefully.
 
 ## Config File
 Each executable of the toolset uses a common config file.
 The config file serves to provide the executables with different information such as the location of the Tobii executables.
-The config file must be placed at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe) and must be named *config.json*.
+The config file must be placed at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe) and must be named `config.json`.
 If no config file can be found, the following default values are used:
+
     {
         // the path to the output file
         "OutputFile": "gaze.data",
