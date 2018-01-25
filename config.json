@@ -1,6 +1,6 @@
 {
   // the path to the output file
-  "OutputFile": "..\\gaze.data",
+  "OutputFile": "gaze.data",
 
   // the Tobii installation path
   "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
