@@ -6,10 +6,16 @@
   "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
 
   // Tobii EyeX command to run a calibration
-  "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -C",
+  "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+
+  // Tobii EyeX parameter to run a calibration
+  "TobiiCalibrateArguments": "--calibrate",
 
   // Tobii EyeX command to run a guest calibration
-  "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -G",
+  "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+
+  // Tobii EyeX parameter to run a guest calibration
+  "TobiiGuestCalibrateArguments": "--guest-calibration",
 
   // Tobii EyeX command to run calibration test
   "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",

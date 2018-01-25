@@ -25,7 +25,9 @@ namespace GazeHelper
             public string OutputFile { get; set; }
             public string TobiiPath { get; set; }
             public string TobiiCalibrate { get; set; }
+            public string TobiiCalibrateArguments { get; set; }
             public string TobiiGuestCalibrate { get; set; }
+            public string TobiiGuestCalibrateArguments { get; set; }
             public string TobiiTest { get; set; }
             public int GazeFilter { get; set; }
         }
@@ -43,8 +45,10 @@ namespace GazeHelper
             {
                 OutputFile = "gaze.data",
                 TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
-                TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -C",
-                TobiiGuestCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -G",
+                TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+                TobiiCalibrateArguments = "-C",
+                TobiiGuestCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+                TobiiGuestCalibrateArguments = "-G",
                 TobiiTest = "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
                 GazeFilter = 0
             };
@@ -55,7 +59,7 @@ namespace GazeHelper
                 sr = new StreamReader(ConfigFile);
                 json = sr.ReadToEnd();
                 item = JsonConvert.DeserializeObject<ConfigItem>(json);
-                logger.Info(string.Format("Successfully read the configuration file {0}\\{1}", System.AppDomain.CurrentDomain.BaseDirectory, ConfigFile));
+                logger.Info(string.Format("Successfully read the configuration file \"{0}{1}\"", System.AppDomain.CurrentDomain.BaseDirectory, ConfigFile));
                 sr.Close();
                 sr.Dispose();
             }

@@ -60,14 +60,14 @@ namespace GazeToMouse
             JsonConfigParser parser = new JsonConfigParser();
             JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
             logger = new Logger();
-            logger.Info("Starting GazeToMouse.exe");
+            logger.Info(string.Format("Starting \"{0}GazeToMouse.exe\"", System.AppDomain.CurrentDomain.BaseDirectory));
 
             // open files
             fs = File.Open(item.OutputFile, FileMode.Create);
             sw = new StreamWriter(fs);
             ts_start = DateTime.Now.TimeOfDay;
             sw.WriteLine("Timestamp{0}X{0}Y", COL_DELIM);
-            logger.Info(string.Format("Writing gaze data to {0}", fs.Name));
+            logger.Info(string.Format("Writing gaze data to \"{0}\"", fs.Name));
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
@@ -83,7 +83,7 @@ namespace GazeToMouse
                 case 1: filter = GazePointDataMode.LightlyFiltered; break;
                 default:
                     filter = GazePointDataMode.Unfiltered;
-                    logger.Warning("unkonwn filter setting, using unfiltered mode");
+                    logger.Warning("Unkonwn filter setting, using unfiltered mode");
                     break;
             }
             var gazePointDataStream = host.Streams.CreateGazePointDataStream(filter);
@@ -129,7 +129,7 @@ namespace GazeToMouse
             sw.Dispose();
             fs.Dispose();
             host.DisableConnection();
-            logger.Info("GazeToMouse.exe terminated gracefully");
+            logger.Info(string.Format("\"{0}GazeToMouse.exe\" terminated gracefully", System.AppDomain.CurrentDomain.BaseDirectory));
         }
     }
 }
