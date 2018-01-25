@@ -45,7 +45,12 @@ This program uses the Tobii Core SDK to get the position on the screen where the
 The mouse cursor position is the updated to this position.
 As a consequence, the mouse cursor is controlled by the gaze of the user.
 This program runs infinitely until it is terminated by an external command.
-This should not be done with a forced kill (e.g. execute the command `taskkill /F /IM GazeToMouse.exe` or killing the task with the taskmanager) because it prevents the program from gracefully terminating (closing open files, dispose of objects, etc).
+This should **not** be done with a forced kill (e.g. execute the command `taskkill /F /IM GazeToMouse.exe` or killing the task with the taskmanager) because it prevents the program from gracefully terminating.
+This as several consequences:
+ - open files are not closed properly and the data stream is cut off. This can lead to corrupt files.
+ - if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
+ - Memory is not freed properly.
+
 Instead `taskkill /IM GazeToMouse.exe` should be used.
 This is done in the program `GazeToMouseClose.exe`.
 
@@ -82,6 +87,9 @@ If no config file can be found, the following default values are used:
 
         // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
         "GazeFilter": 0
+
+        // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
+        "HideMouse": false
     }
 
 ## Log File
