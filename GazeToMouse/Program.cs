@@ -1,19 +1,19 @@
 ﻿/**
  * Converts the stream of gaze points, captured by a Tobii eyetracker, to mouse cursor location
  * 
- * @file    gaze2mouse.cs
+ * @file    Program.cs
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @date    January 2018
  */
 
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Windows.Forms;
 using Tobii.Interaction;
 using Tobii.Interaction.Framework;
+using GazeHelper;
 
-namespace gaze2mouse
+namespace GazeToMouse
 {
     class Program
     {
@@ -24,7 +24,7 @@ namespace gaze2mouse
         private static TimeSpan ts_delta;
         private static bool hasRun = false;
         private static Host host;
-        
+        private static Logger logger;
         /**
          * @brief Helper class to be added to the application's message pump to filter out a message
          */
@@ -51,38 +51,23 @@ namespace gaze2mouse
             }
         }
 
-        public class ConfigItem
-        {
-            public string outfile { get; set; }
-        }
-
         /**
          * @brief The main programm entry
          */
         static void Main(string[] args)
         {
-            StreamReader sr;
-            string json;
-            ConfigItem item = new ConfigItem
-            {
-                outfile = "tracker.txt"
-            };
             // load configuration
-            try
-            {
-                sr = new StreamReader("config.json");
-                json = sr.ReadToEnd();
-                sr.Dispose();
-                item = JsonConvert.DeserializeObject<ConfigItem>(json);
-            }
-            catch (FileNotFoundException e) { }
-            catch (JsonReaderException e) { }
+            JsonConfigParser parser = new JsonConfigParser();
+            JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
+            logger = new Logger();
+            logger.Info("Starting GazeToMouse.exe");
 
             // open files
-            fs = File.Open(item.outfile, FileMode.Create);
+            fs = File.Open(item.OutputFile, FileMode.Create);
             sw = new StreamWriter(fs);
             ts_start = DateTime.Now.TimeOfDay;
             sw.WriteLine("Timestamp{0}X{0}Y", COL_DELIM);
+            logger.Info(string.Format("Writing gaze data to {0}", fs.Name));
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
@@ -91,10 +76,20 @@ namespace gaze2mouse
             Cursor.Hide();
 
             // create stream
-            var gazePointDataStream = host.Streams.CreateGazePointDataStream(GazePointDataMode.Unfiltered);
+            GazePointDataMode filter;
+            switch (item.GazeFilter)
+            {
+                case 0: filter = GazePointDataMode.Unfiltered; break;
+                case 1: filter = GazePointDataMode.LightlyFiltered; break;
+                default:
+                    filter = GazePointDataMode.Unfiltered;
+                    logger.Warning("unkonwn filter setting, using unfiltered mode");
+                    break;
+            }
+            var gazePointDataStream = host.Streams.CreateGazePointDataStream(filter);
             // whenever a new gaze point is available, run gaze2mouse
-            gazePointDataStream.GazePoint((x, y, ts) => gaze2mouse( x, y, ts ));
-            
+            gazePointDataStream.GazePoint((x, y, ts) => gaze2mouse(x, y, ts));
+
             // add message filter to the application's message pump
             Application.AddMessageFilter(new TestMessageFilter());
             Application.Run();
@@ -116,7 +111,7 @@ namespace gaze2mouse
             ts_rec -= ts_delta;
 
             // set the cursor position to the gaze position
-            Cursor.Position = new System.Drawing.Point( Convert.ToInt32(x), Convert.ToInt32(y) );
+            Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
 
             // write the coordinates to the log file
             sw.WriteLine("{0}{3}{1:0.0}{3}{2:0.0}", ts_rec, x, y, COL_DELIM);
@@ -134,6 +129,7 @@ namespace gaze2mouse
             sw.Dispose();
             fs.Dispose();
             host.DisableConnection();
+            logger.Info("GazeToMouse.exe terminated gracefully");
         }
     }
 }

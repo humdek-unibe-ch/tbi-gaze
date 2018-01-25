@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace gaze2mouse_close.Properties
+namespace GazeToMouseClose.Properties
 {
 
 

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("gaze2mouse")]
+[assembly: AssemblyTitle("GazeHelper")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("gaze2mouse")]
+[assembly: AssemblyProduct("GazeHelper")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e87bbcfb-644d-48f8-8253-3377421bb7da")]
+[assembly: Guid("4dc59e95-1b96-47f4-95d6-63c51e3f3b01")]
 
 // Version information for an assembly consists of the following four values:
 //

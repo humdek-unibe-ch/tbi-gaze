@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gaze2mouse", "gaze2mouse\gaze2mouse.csproj", "{E87BBCFB-644D-48F8-8253-3377421BB7DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeHelper", "GazeHelper\GazeHelper.csproj", "{4DC59E95-1B96-47F4-95D6-63C51E3F3B01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gaze2mouse_close", "gaze2mouse_close\gaze2mouse_close.csproj", "{9A4BC9DB-2BFE-4794-B885-FE97F4439401}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeToMouse", "GazeToMouse\GazeToMouse.csproj", "{EDC1DD38-0E88-464A-9713-237E8ED2FC28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "readJson", "readJson\readJson.csproj", "{E229FCE3-CC35-4C59-9E03-F7B96A8AE79E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeToMouseClose", "GazeToMouseClose\GazeToMouseClose.csproj", "{7422FCE0-6086-4361-AF98-CF88DDE50158}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E87BBCFB-644D-48F8-8253-3377421BB7DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A4BC9DB-2BFE-4794-B885-FE97F4439401}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E229FCE3-CC35-4C59-9E03-F7B96A8AE79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E229FCE3-CC35-4C59-9E03-F7B96A8AE79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E229FCE3-CC35-4C59-9E03-F7B96A8AE79E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E229FCE3-CC35-4C59-9E03-F7B96A8AE79E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DC59E95-1B96-47F4-95D6-63C51E3F3B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DC59E95-1B96-47F4-95D6-63C51E3F3B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DC59E95-1B96-47F4-95D6-63C51E3F3B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DC59E95-1B96-47F4-95D6-63C51E3F3B01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDC1DD38-0E88-464A-9713-237E8ED2FC28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDC1DD38-0E88-464A-9713-237E8ED2FC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDC1DD38-0E88-464A-9713-237E8ED2FC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDC1DD38-0E88-464A-9713-237E8ED2FC28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7422FCE0-6086-4361-AF98-CF88DDE50158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7422FCE0-6086-4361-AF98-CF88DDE50158}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7422FCE0-6086-4361-AF98-CF88DDE50158}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7422FCE0-6086-4361-AF98-CF88DDE50158}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,3 +1,9 @@
-{ 
-  "Outfile": "..\\tracking.txt"
+{
+  "LogFile": "..\\gaze.log",
+  "OutputFile": "..\\gaze.data",
+  "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
+  "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -C",
+  "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe -G",
+  "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
+  "GazeFilter": 0
 }

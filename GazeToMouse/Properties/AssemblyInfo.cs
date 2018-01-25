@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("readJson")]
+[assembly: AssemblyTitle("GazeToMouse")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("readJson")]
+[assembly: AssemblyProduct("GazeToMouse")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e229fce3-cc35-4c59-9e03-f7b96a8ae79e")]
+[assembly: Guid("edc1dd38-0e88-464a-9713-237e8ed2fc28")]
 
 // Version information for an assembly consists of the following four values:
 //
