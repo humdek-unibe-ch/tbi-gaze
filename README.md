@@ -55,7 +55,7 @@ This program requests `GazeToMouseClose.exe` to close gracefully.
 ## Config File
 Each executable of the toolset uses a common config file.
 The config file serves to provide the executables with different information such as the location of the Tobii executables.
-The config file must be placed at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe) and must be named `config.json`.
+The config file must be placed at the root directory of the application which is making the calls to the executables (e.g. at the location of `zleaf.exe`) and must be named `config.json`.
 If no config file can be found, the following default values are used:
 
     {
@@ -87,4 +87,4 @@ If no config file can be found, the following default values are used:
 ## Log File
 All executables write continuously to the same log file.
 This allows to track the eyetracker events that happened throughout a ztree session within one log file.
-The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe).
+The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of `zleaf.exe`).
