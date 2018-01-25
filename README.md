@@ -55,7 +55,7 @@ Instead `taskkill /IM GazeToMouse.exe` should be used.
 This is done in the program `GazeToMouseClose.exe`.
 
 ### GazeToMouseClose.exe
-This program requests `GazeToMouseClose.exe` to close gracefully.
+This program requests `GazeToMouse.exe` to close gracefully.
 
 ## Config File
 Each executable of the toolset uses a common config file.
