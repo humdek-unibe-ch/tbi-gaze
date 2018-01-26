@@ -1,34 +1,35 @@
 {
-  // the path to the output file
-  "OutputFile": "gaze.data",
+    // Location to store the output file. It must be the path to a folder (not a file).
+    // If empty, the output file is produced in the directory of the caller (e.g the directory of zleaf.exed).
+    "OutputPath": "",
 
-  // the Tobii installation path
-  "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
+    // the Tobii installation path. It must be the path to a folder (not a file).
+    "TobiiPath": "C:\\Program Files (x86)\\Tobii",
 
-  // Path to a transparent mouse icon. This is used to hide the mouse pointer
-  "BlankMouseIconPath": "blank.cur",
+    // Path to a transparent mouse icon. This is used to hide the mouse pointer
+    "BlankMouseIconPath": "blank.cur",
 
-  // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
-  "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
+    // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
+    "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
-  // Tobii EyeX command to run a calibration
-  "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+    // Tobii EyeX command to run a calibration
+    "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
 
-  // Tobii EyeX parameter to run a calibration
-  "TobiiCalibrateArguments": "--calibrate",
+    // Tobii EyeX parameter to run a calibration
+    "TobiiCalibrateArguments": "--calibrate",
 
-  // Tobii EyeX command to run a guest calibration
-  "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+    // Tobii EyeX command to run a guest calibration
+    "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
 
-  // Tobii EyeX parameter to run a guest calibration
-  "TobiiGuestCalibrateArguments": "--guest-calibration",
+    // Tobii EyeX parameter to run a guest calibration
+    "TobiiGuestCalibrateArguments": "--guest-calibration",
 
-  // Tobii EyeX command to run calibration test
-  "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
+    // Tobii EyeX command to run calibration test
+    "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
 
-  // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
-  "GazeFilter": 0,
+    // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
+    "GazeFilter": 0,
 
-  // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
-  "HideMouse": false
+    // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
+    "HideMouse": false
 }

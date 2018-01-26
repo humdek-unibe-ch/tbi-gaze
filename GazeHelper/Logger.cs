@@ -7,14 +7,13 @@
  */
 
 using System;
-using System.Reflection;
 using System.IO;
 
 namespace GazeHelper
 {
     public class Logger
     {
-        private string logPath = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
+        private string logPath = AppDomain.CurrentDomain.BaseDirectory;
         private string logFile = "gaze.log";
         private string dateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
         private enum LogLevel
@@ -44,7 +43,7 @@ namespace GazeHelper
 
             try
             {
-                FileStream fs = File.Open(logPath + "\\" + logFile, FileMode.Append);
+                FileStream fs = File.Open($"{logPath}{logFile}", FileMode.Append);
                 StreamWriter sw = new StreamWriter(fs);
                 sw.WriteLine(prefix + message);
                 sw.Dispose();

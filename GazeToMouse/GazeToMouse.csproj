@@ -92,4 +92,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Tobii.Interaction.0.7.3\build\Tobii.Interaction.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Tobii.Interaction.0.7.3\build\Tobii.Interaction.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetPath)" "$(SolutionDir)..\build\"
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\build\"
+copy /Y "$(SolutionDir)assets\*" "$(SolutionDir)..\build\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

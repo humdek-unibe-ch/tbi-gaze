@@ -8,8 +8,8 @@
  * @date    Jamuary 2018
  */
 
+using System;
 using System.IO;
-using System.Reflection;
 using Newtonsoft.Json;
 
 namespace GazeHelper
@@ -24,7 +24,7 @@ namespace GazeHelper
          */
         public class ConfigItem
         {
-            public string OutputFile { get; set; }
+            public string OutputPath { get; set; }
             public string TobiiPath { get; set; }
             public string TobiiCalibrate { get; set; }
             public string TobiiCalibrateArguments { get; set; }
@@ -49,7 +49,7 @@ namespace GazeHelper
             string json;
             ConfigItem item = new ConfigItem
             {
-                OutputFile = "gaze.data",
+                OutputPath = "",
                 TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiCalibrateArguments = "--calibrate",
@@ -99,16 +99,16 @@ namespace GazeHelper
             try
             {
                 sr = new StreamReader(configFile);
-                logger.Info($"Found config file \"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\\{configFile}\"");
+                logger.Info($"Found config file \"{Directory.GetCurrentDirectory()}\\{configFile}\"");
             }
             catch (FileNotFoundException e)
             {
-                string path = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
+                string path = AppDomain.CurrentDomain.BaseDirectory;
                 logger.Info(e.Message);
                 try
                 {
-                    sr = new StreamReader(path + "\\" + configFile);
-                    logger.Info($"Found config file \"{path}\\{configFile}\"");
+                    sr = new StreamReader($"{path}\\{configFile}");
+                    logger.Info($"Found config file \"{path}{configFile}\"");
                 }
                 catch (FileNotFoundException e2)
                 {

@@ -20,7 +20,6 @@ namespace GazeToMouse
         private const string COL_DELIM = "\t";
         private static FileStream fs;
         private static StreamWriter sw;
-        private static TimeSpan ts_start;
         private static TimeSpan ts_delta;
         private static bool hasRun = false;
         private static Host host;
@@ -62,14 +61,25 @@ namespace GazeToMouse
             JsonConfigParser parser = new JsonConfigParser();
             config = parser.ParseJsonConfig();
             logger = new Logger();
-            logger.Info(string.Format("Starting \"{0}GazeToMouse.exe\"", System.AppDomain.CurrentDomain.BaseDirectory));
+            logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
 
             // open files
-            fs = File.Open(config.OutputFile, FileMode.Create);
+            DateTime now = DateTime.Now;
+            string outputFile = $"{now:yyyyMMddTHHmmss}_{Environment.MachineName}_data.txt";
+            if (config.OutputPath == "") config.OutputPath = Directory.GetCurrentDirectory();
+            try
+            {
+                fs = File.Open($"{config.OutputPath}\\{outputFile}", FileMode.Create);
+            }
+            catch(Exception e)
+            {
+                logger.Error(e.Message);
+                logger.Info($"Writing to {Directory.GetCurrentDirectory()}\\{outputFile}");
+                fs = File.Open($"{outputFile}", FileMode.Create);
+            }
             sw = new StreamWriter(fs);
-            ts_start = DateTime.Now.TimeOfDay;
-            sw.WriteLine("Timestamp{0}X{0}Y", COL_DELIM);
-            logger.Info(string.Format("Writing gaze data to \"{0}\"", fs.Name));
+            sw.WriteLine($"Timestamp{COL_DELIM}X{COL_DELIM}Y");
+            logger.Info($"Writing gaze data to \"{fs.Name}\"");
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
@@ -93,7 +103,7 @@ namespace GazeToMouse
             }
             var gazePointDataStream = host.Streams.CreateGazePointDataStream(filter);
             // whenever a new gaze point is available, run gaze2mouse
-            gazePointDataStream.GazePoint((x, y, ts) => gaze2mouse(x, y, ts));
+            gazePointDataStream.GazePoint((x, y, ts) => gaze2mouse(x, y, ts, now.TimeOfDay));
 
             // add message filter to the application's message pump
             Application.AddMessageFilter(new TestMessageFilter());
@@ -108,18 +118,18 @@ namespace GazeToMouse
          * @param ts    the timestamp of the the capture instant of the gaye point
          *              Note that the timestamp reference represents an arbitrary point in time
          */
-        static void gaze2mouse(double x, double y, double ts)
+        static void gaze2mouse(double x, double y, double ts, TimeSpan now)
         {
             // create a time reference that corresponds to the local machine
             TimeSpan ts_rec = TimeSpan.FromMilliseconds(ts);
-            if (!hasRun) ts_delta = ts_rec - ts_start;
+            if (!hasRun) ts_delta = ts_rec - now;
             ts_rec -= ts_delta;
 
             // set the cursor position to the gaze position
             Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
 
             // write the coordinates to the log file
-            sw.WriteLine("{0:hh\\:mm\\:ss\\.fff}{3}{1:0.0}{3}{2:0.0}", ts_rec, x, y, COL_DELIM);
+            sw.WriteLine($"{ts_rec:hh\\:mm\\:ss\\.fff}{COL_DELIM}{x:0.0}{COL_DELIM}{y:0.0}");
             hasRun = true;
         }
 
@@ -135,7 +145,7 @@ namespace GazeToMouse
             sw.Dispose();
             fs.Dispose();
             host.DisableConnection();
-            logger.Info(string.Format("\"{0}GazeToMouse.exe\" terminated gracefully", System.AppDomain.CurrentDomain.BaseDirectory));
+            logger.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" terminated gracefully");
         }
     }
 }
