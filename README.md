@@ -45,17 +45,17 @@ This program uses the Tobii Core SDK to get the position on the screen where the
 The mouse cursor position is the updated to this position.
 As a consequence, the mouse cursor is controlled by the gaze of the user.
 This program runs infinitely until it is terminated by an external command.
-This should **not** be done with a forced kill (e.g. execute the command `taskkill /F /IM GazeToMouse.exe` or killing the task with the taskmanager) because it prevents the program from gracefully terminating.
+This should **not** be done with a forced kill (e.g. by executing the command `taskkill /F /IM GazeToMouse.exe` or by killing the task with the task manager) because it prevents the program from gracefully terminating.
 This as several consequences:
  - open files are not closed properly and the data stream is cut off. This can lead to corrupt files.
  - if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
- - Memory is not freed properly.
+ - memory is not freed properly.
 
 Instead `taskkill /IM GazeToMouse.exe` should be used.
 This is done in the program `GazeToMouseClose.exe`.
 
 ### GazeToMouseClose.exe
-This program requests `GazeToMouse.exe` to close gracefully.
+This program requests `GazeToMouse.exe` to close gracefully and logs these events to the log file.
 
 ## Config File
 Each executable of the toolset uses a common config file.
@@ -70,10 +70,12 @@ If no config file can be found, the following default values are used:
         // the Tobii installation path
         "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
 
-        // Path to a transparent mouse icon. This is used to hide the mouse pointer
+        // Path to a transparent mouse icon. This is used to hide the mouse
+        // pointer
         "BlankMouseIconPath": "blank.cur",
 
-        // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
+        // Path to the standard mouse pointer icon. This is used to restore the
+        // mouse pointer
         "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
         // Tobii EyeX command to run a calibration
@@ -91,14 +93,17 @@ If no config file can be found, the following default values are used:
         // Tobii EyeX command to run calibration test
         "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
 
-        // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
+        // filter settings for the eye tracker
+        //   0: unfiltered
+        //   1: lightly filtered
         "GazeFilter": 0
 
-        // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
+        // if set to true the mouse curser will be hidden by GazeToMouse.exe and
+        // shown by GazeToMouseClose.exe
         "HideMouse": false
     }
 
 ## Log File
 All executables write continuously to the same log file.
-This allows to track the eyetracker events that happened throughout a ztree session within one log file.
+This allows to track the eye tracker events that happened throughout a ztree session within one log file.
 The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of `zleaf.exe`).
