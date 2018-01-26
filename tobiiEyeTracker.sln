@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2024
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeHelper", "GazeHelper\GazeHelper.csproj", "{4DC59E95-1B96-47F4-95D6-63C51E3F3B01}"
 EndProject
@@ -14,6 +14,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TobiiCalibrate", "TobiiCalibrate\TobiiCalibrate.csproj", "{87AE18EB-6595-42EA-93F3-02A80363F960}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TobiiTest", "TobiiTest\TobiiTest.csproj", "{42CFB45F-043C-4714-9476-D3D71DF59255}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{08B3EA9B-9D15-44C2-90F0-7472EC8A2903}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		assets\blank.cur = assets\blank.cur
+		assets\config.json = assets\config.json
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
