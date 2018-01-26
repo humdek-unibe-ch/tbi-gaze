@@ -31,6 +31,9 @@ namespace GazeHelper
             public string TobiiTest { get; set; }
             public int GazeFilter { get; set; }
             public bool HideMouse { get; set; }
+            public string BlankMouseIconPath { get; set; }
+            public string StandardMouseIconPath { get; set; }
+
         }
 
         /**
@@ -51,7 +54,10 @@ namespace GazeHelper
                 TobiiGuestCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiGuestCalibrateArguments = "--guest-calibration",
                 TobiiTest = "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
-                GazeFilter = 0
+                BlankMouseIconPath = "blank.cur",
+                StandardMouseIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur",
+                GazeFilter = 0,
+                HideMouse = false
             };
             Logger logger = new Logger();
             // load configuration

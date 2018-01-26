@@ -5,6 +5,12 @@
   // the Tobii installation path
   "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
 
+  // Path to a transparent mouse icon. This is used to hide the mouse pointer
+  "BlankMouseIconPath": "blank.cur",
+
+  // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
+  "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
+
   // Tobii EyeX command to run a calibration
   "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
 

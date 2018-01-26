@@ -11,6 +11,9 @@ using System.Runtime.InteropServices;
 
 namespace GazeHelper
 {
+    /**
+     * @brief hide standard mouse pointer and resore it
+     */
     public class MouseHider
     {
         [DllImport("user32.dll")]
@@ -20,14 +23,24 @@ namespace GazeHelper
 
         const uint OCR_NORMAL = 32512;
 
-        public void HideCursor()
+        /**
+         * @brief hide standard mouse pointer by replacing the current icon with a transparent icon
+         * 
+         * @param pathToCur path to the transparent mouse icon
+         */
+        public void HideCursor(string pathToCur)
         {
-            IntPtr hcur = LoadCursorFromFile("blank.cur");
+            IntPtr hcur = LoadCursorFromFile(pathToCur);
             SetSystemCursor(hcur, OCR_NORMAL);
         }
-        public void ShowCursor()
+        /**
+         * @restore the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
+         * 
+         * @param pathToCur path to the standard mouse pointer icon
+         */
+        public void ShowCursor(string pathToCur)
         {
-            IntPtr hcur = LoadCursorFromFile("C:\\Windows\\Cursors\\aero_arrow.cur");
+            IntPtr hcur = LoadCursorFromFile(pathToCur);
             SetSystemCursor(hcur, OCR_NORMAL);
         }
     }
