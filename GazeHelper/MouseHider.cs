@@ -21,7 +21,10 @@ namespace GazeHelper
         [DllImport("user32.dll")]
         static extern IntPtr LoadCursorFromFile(string lpFileName);
 
+        private Logger logger = new Logger();
+
         const uint OCR_NORMAL = 32512;
+        //const uint OCR_APPSTARTING = 32650;
 
         /**
          * @brief hide standard mouse pointer by replacing the current icon with a transparent icon
@@ -31,7 +34,12 @@ namespace GazeHelper
         public void HideCursor(string pathToCur)
         {
             IntPtr hcur = LoadCursorFromFile(pathToCur);
-            SetSystemCursor(hcur, OCR_NORMAL);
+            if (hcur != null)
+            {
+                SetSystemCursor(hcur, OCR_NORMAL);
+                logger.Info("Hiding standard mouse cursor (pointer)");
+            }
+            else logger.Error($"Cannot load curser file \"{pathToCur}\"");
         }
         /**
          * @restore the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
@@ -41,7 +49,12 @@ namespace GazeHelper
         public void ShowCursor(string pathToCur)
         {
             IntPtr hcur = LoadCursorFromFile(pathToCur);
-            SetSystemCursor(hcur, OCR_NORMAL);
+            if (hcur != null)
+            {
+                SetSystemCursor(hcur, OCR_NORMAL);
+                logger.Info("Restoring standard mouse cursor (pointer)");
+            }
+            else logger.Error($"Cannot load curser file \"{pathToCur}\"");
         }
     }
 }

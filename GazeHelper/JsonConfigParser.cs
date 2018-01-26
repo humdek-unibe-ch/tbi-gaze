@@ -9,6 +9,7 @@
  */
 
 using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace GazeHelper
@@ -16,6 +17,7 @@ namespace GazeHelper
     public class JsonConfigParser
     {
         private string ConfigFile = "config.json";
+        private static Logger logger;
         
         /**
          * @brief configuration file class
@@ -43,7 +45,7 @@ namespace GazeHelper
          */
         public ConfigItem ParseJsonConfig()
         {
-            StreamReader sr;
+            
             string json;
             ConfigItem item = new ConfigItem
             {
@@ -59,28 +61,62 @@ namespace GazeHelper
                 GazeFilter = 0,
                 HideMouse = false
             };
-            Logger logger = new Logger();
+            logger = new Logger();
             // load configuration
+            StreamReader sr = OpenConfigFile( ConfigFile );
+            if( sr != null )
+            {
+                try
+                {
+                    json = sr.ReadToEnd();
+                    item = JsonConvert.DeserializeObject<ConfigItem>(json);
+                    logger.Info("Successfully read the configuration file");
+                    sr.Close();
+                    sr.Dispose();
+                }
+                catch (JsonReaderException e)
+                {
+                    logger.Error(e.Message);
+                    logger.Warning("Using default configuration values");
+                }
+            }
+
+            return item;
+        }
+
+        /**
+         * @brief open whichever configfile is available
+         * 
+         * First, the caller path is searched.
+         * Second, the execution path is searched.
+         * Third, default values are used.
+         * 
+         * @param configFile the name of the configuarion file
+         */
+        private StreamReader OpenConfigFile( string configFile )
+        {
+            StreamReader sr = null;
             try
             {
-                sr = new StreamReader(ConfigFile);
-                json = sr.ReadToEnd();
-                item = JsonConvert.DeserializeObject<ConfigItem>(json);
-                logger.Info(string.Format("Successfully read the configuration file \"{0}{1}\"", System.AppDomain.CurrentDomain.BaseDirectory, ConfigFile));
-                sr.Close();
-                sr.Dispose();
+                sr = new StreamReader(configFile);
+                logger.Info($"Found config file \"{Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}\\{configFile}\"");
             }
             catch (FileNotFoundException e)
             {
-                logger.Warning(e.Message);
-                logger.Info("Using default configuration values");
+                string path = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
+                logger.Info(e.Message);
+                try
+                {
+                    sr = new StreamReader(path + "\\" + configFile);
+                    logger.Info($"Found config file \"{path}\\{configFile}\"");
+                }
+                catch (FileNotFoundException e2)
+                {
+                    logger.Info(e2.Message);
+                    logger.Warning("No config file found, using default configuration values");
+                }
             }
-            catch (JsonReaderException e)
-            {
-                logger.Warning(e.Message);
-                logger.Info("Using default configuration values");
-            }
-            return item;
+            return sr;
         }
     }
 }

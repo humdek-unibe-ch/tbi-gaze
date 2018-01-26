@@ -7,7 +7,7 @@
  */
 
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Reflection;
 using GazeHelper;
 
 namespace GazeToMouseClose
