@@ -85,7 +85,7 @@ namespace GazeToMouse
 
             // hide the mouse cursor
             hider = new MouseHider();
-            if (config.HideMouse) hider.HideCursor(config.BlankMouseIconPath);
+            if (config.HideMouse) hider.HideCursor();
 
             // initialize host. Make sure that the Tobii service is running
             host = new Host();

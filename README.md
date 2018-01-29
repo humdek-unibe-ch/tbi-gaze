@@ -11,6 +11,8 @@ In order to run the executables the following files need to be placed in the sam
  - Tobii.EyeX.Client.dll
  - Tobii.Interaction.Model.dll
  - Tobii.Interaction.Net.dll
+ - blank.cur
+ - config.json
 
 Further, the Tobii engine must be running and the eye tracker must be enabled.
 To install the Tobii engine for the [Tobii Eye Tracker 4c](https://tobiigaming.com/eye-tracker-4c/) download the software from [here](https://tobiigaming.com/downloadlatest/?bundle=tobii-core).
@@ -57,21 +59,27 @@ This is done in the program `GazeToMouseClose.exe`.
 ### GazeToMouseClose.exe
 This program requests `GazeToMouse.exe` to close gracefully.
 
+### ShowMouse.exe
+This program allows to restore the standard mouse pointer.
+It might be useful if the program `GazeToMouse.exe` crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
+The user might end up with a hidden mouse pointer.
+A good solution for such a case is to install a shortcut to `ShowMouse.exe` on the desktop in order to execute it with the keyboard.
+
 ## Config File
 Each executable of the toolset uses a common config file.
 The config file serves to provide the executables with different information such as the location of the Tobii executables.
-The config file must be placed at the root directory of the application which is making the calls to the executables (e.g. at the location of `zleaf.exe`) and must be named `config.json`.
+The config file must be named `config.json` and is read from the following places with the indicated priority:
+ 1. in the directory of the caller, e.g. the installation folder of `ztree`
+ 2. in the directory of the executables, i.e. the installation folder of the here described utilities
+
 If no config file can be found, the following default values are used:
 
     {
         // the path to the output file
-        "OutputFile": "gaze.data",
+        "OutputPath": "",
 
         // the Tobii installation path
-        "TobiiPath": "C:\\Program Files (x86)\\Tobii\\",
-
-        // Path to a transparent mouse icon. This is used to hide the mouse pointer
-        "BlankMouseIconPath": "blank.cur",
+        "TobiiPath": "C:\\Program Files (x86)\\Tobii",
 
         // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
         "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
@@ -98,7 +106,13 @@ If no config file can be found, the following default values are used:
         "HideMouse": false
     }
 
+## Output File
+When running the program `gazeToMouse.exe` an output file is generated which holds the gaze coordinates of the user.
+The output file is saved in the directory specified by `OutputPath` in `config.json` and named `<yyyyMMddTHHmmss>_<hostName>_gaze.txt` where
+ - `<yyyyMMddTHHmmss>` is replaced by the timestamp when the file was created (e.g. 20180129085521 stands for 2018.01.12 08:55:21).
+ - `<hostName>` is replaced by the name of the machine
+
 ## Log File
 All executables write continuously to the same log file.
 This allows to track the eyetracker events that happened throughout a ztree session within one log file.
-The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of `zleaf.exe`).
+The log file is produced at the root directory of the installation path of the here described utilities.

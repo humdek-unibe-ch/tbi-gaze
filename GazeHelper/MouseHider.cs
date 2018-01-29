@@ -22,24 +22,24 @@ namespace GazeHelper
         static extern IntPtr LoadCursorFromFile(string lpFileName);
 
         private Logger logger = new Logger();
+        private string pathToBlankCur = "blank.cur";
+        private string pathToStandardCur = "C:\\Windows\\Cursors\\aero_arrow.cur";
 
         const uint OCR_NORMAL = 32512;
         //const uint OCR_APPSTARTING = 32650;
 
         /**
          * @brief hide standard mouse pointer by replacing the current icon with a transparent icon
-         * 
-         * @param pathToCur path to the transparent mouse icon
          */
-        public void HideCursor(string pathToCur)
+        public void HideCursor()
         {
-            IntPtr hcur = LoadCursorFromFile(pathToCur);
+            IntPtr hcur = LoadCursorFromFile(pathToBlankCur);
             if (hcur != null)
             {
                 SetSystemCursor(hcur, OCR_NORMAL);
                 logger.Info("Hiding standard mouse cursor (pointer)");
             }
-            else logger.Error($"Cannot load curser file \"{pathToCur}\"");
+            else logger.Error($"Cannot load curser file \"{pathToBlankCur}\"");
         }
         /**
          * @restore the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
@@ -54,7 +54,13 @@ namespace GazeHelper
                 SetSystemCursor(hcur, OCR_NORMAL);
                 logger.Info("Restoring standard mouse cursor (pointer)");
             }
-            else logger.Error($"Cannot load curser file \"{pathToCur}\"");
+            else
+            {
+                logger.Error($"Cannot load curser file \"{pathToCur}\"");
+                logger.Info($"Load cursor fromm default cursor path \"{pathToStandardCur}\"");
+                hcur = LoadCursorFromFile(pathToStandardCur);
+                SetSystemCursor(hcur, OCR_NORMAL);
+            }
         }
     }
 }

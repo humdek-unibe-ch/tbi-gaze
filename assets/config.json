@@ -6,9 +6,6 @@
     // the Tobii installation path. It must be the path to a folder (not a file).
     "TobiiPath": "C:\\Program Files (x86)\\Tobii",
 
-    // Path to a transparent mouse icon. This is used to hide the mouse pointer
-    "BlankMouseIconPath": "blank.cur",
-
     // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
     "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 

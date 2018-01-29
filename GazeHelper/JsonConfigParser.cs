@@ -56,7 +56,6 @@ namespace GazeHelper
                 TobiiGuestCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiGuestCalibrateArguments = "--guest-calibration",
                 TobiiTest = "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
-                BlankMouseIconPath = "blank.cur",
                 StandardMouseIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur",
                 GazeFilter = 0,
                 HideMouse = false
