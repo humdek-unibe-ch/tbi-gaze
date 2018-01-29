@@ -7,12 +7,14 @@
  */
 
 using System.Diagnostics;
-using System.Reflection;
 using GazeHelper;
 
 namespace GazeToMouseClose
 {
-    static class Program
+    /**
+     * @brief Main entry point of the program GazeToMouseClose
+     */
+    static class GazeToMouseClose
     {
         static void Main()
         {

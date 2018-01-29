@@ -15,7 +15,10 @@ using GazeHelper;
 
 namespace GazeToMouse
 {
-    class Program
+    /**
+     * @brief Main entry point of the application
+     */
+    class GazeToMouse
     {
         private const string COL_DELIM = "\t";
         private static FileStream fs;

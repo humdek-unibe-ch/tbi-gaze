@@ -11,7 +11,10 @@ using GazeHelper;
 
 namespace ShowMouse
 {
-    static class Program
+    /**
+     * @brief Main entry point to the program ShowMouse
+     */
+    static class ShowMouse
     {
         [DllImport("user32.dll")]
         static extern bool ShowCursor(bool show);

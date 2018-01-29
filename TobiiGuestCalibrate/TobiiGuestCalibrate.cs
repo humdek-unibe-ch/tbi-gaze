@@ -11,7 +11,10 @@ using GazeHelper;
 
 namespace TobiiGuestCalibrate
 {
-    static class Program
+    /**
+     * @brief Main entry point to the program TobiiGuestCalibrate
+     */
+    static class TobiiGuestCalibrate
     {
         static void Main()
         {
