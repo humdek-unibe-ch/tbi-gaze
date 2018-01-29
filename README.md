@@ -14,6 +14,8 @@ In order to run the executables the following files need to be placed in the sam
  - blank.cur
  - config.json
 
+ The complete package can be downloaded from [here](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release/v0.1.0.zip).
+
 Further, the Tobii engine must be running and the eye tracker must be enabled.
 To install the Tobii engine for the [Tobii Eye Tracker 4c](https://tobiigaming.com/eye-tracker-4c/) download the software from [here](https://tobiigaming.com/downloadlatest/?bundle=tobii-core).
 
