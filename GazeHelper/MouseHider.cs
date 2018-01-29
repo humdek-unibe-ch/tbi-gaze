@@ -42,7 +42,7 @@ namespace GazeHelper
             else logger.Error($"Cannot load curser file \"{pathToBlankCur}\"");
         }
         /**
-         * @restore the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
+         * @brief the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
          * 
          * @param pathToCur path to the standard mouse pointer icon
          */
