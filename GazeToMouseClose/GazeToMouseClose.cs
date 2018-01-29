@@ -1,7 +1,7 @@
 ﻿/**
  * Simple wrapper to send WM_CLOSE signal to GazeToMouse.exe
  * 
- * @file    Program.cs
+ * @file    GazeToMouseClose.cs
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @date    January 2018
  */

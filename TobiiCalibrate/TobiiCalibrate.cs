@@ -1,7 +1,7 @@
 ﻿/**
  * Simple wrapper to run Tobii calibration
  * 
- * @file    Program.cs
+ * @file    TobiiCalibrate.cs
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @date    January 2018
  */

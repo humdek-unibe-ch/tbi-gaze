@@ -1,7 +1,7 @@
 ﻿/**
  * @brief Simple tool to restore the mousepointer
  * 
- * @file    Program.cs
+ * @file    ShowMouse.cs
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @date    January 2018
  */

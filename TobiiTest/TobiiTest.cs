@@ -1,7 +1,7 @@
 ﻿/**
  * Simple wrapper to run Tobii eye tracker test
  * 
- * @file    Program.cs
+ * @file    TobiiTest.cs
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @date    January 2018
  */

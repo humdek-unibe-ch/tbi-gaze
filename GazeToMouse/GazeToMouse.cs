@@ -1,7 +1,7 @@
 ﻿/**
  * Converts the stream of gaze points, captured by a Tobii eyetracker, to mouse cursor location
  * 
- * @file    Program.cs
+ * @file    GazeToMouse.cs
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @date    January 2018
  */
