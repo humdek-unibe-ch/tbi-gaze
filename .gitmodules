@@ -1,0 +1,3 @@
+[submodule "doc/logo"]
+	path = doc/logo
+	url = gh@tpf.fluido.as:TPF_internal/Logo.git
