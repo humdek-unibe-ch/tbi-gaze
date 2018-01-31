@@ -55,8 +55,9 @@
 \begin{center}
 \fontsize{20}{21}\selectfont
 
+\textbf{GazeToMouse}:\\
 Usage of the \textbf{Tobii Eye Tracker 4C}\\
-from a \textbf{ztree} program\\
+from within a \textbf{ztree} program\\
 \vskip 6mm
 Tutorial
 \vskip 6mm
@@ -148,7 +149,7 @@ Its address is:
 
 \url{http://phhum-g111-nns.unibe.ch:10012/}
 
-Please send \href{simon.maurer@humdek.unibe.ch}{me} a mail with a request, specifying which user name you would like to have on \texttt{GitLab}.
+Please send \href{simon.maurer@humdek.unibe.ch}{me} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
 
 
 \chapter{Use GazeToMouse Toolset in Ztree}
@@ -211,17 +212,11 @@ This can be achieved as follows:
     \label{fig.extcall}
 \end{figure}
 
-\section{Configuration of the Toolset}
+\chapter{Configuration of the \texttt{GazeToMouse} Toolset}
 \label{sec.config}
-Each executable of the toolset uses a common configuration file.
-The configuration file serves to provide the executables with different information such as the location of the Tobii executables.
-The configuration file must be named \texttt{config.json} and is read from the following places with the indicated priority:
-\begin{enumerate}
-    \item in the directory of the caller, i.e~in \texttt{<zleaf path>}
-    \item in the directory of the executables, i.e.~in \texttt{<GazeToMouse path>}
-\end{enumerate}
-If no config file can be found, the following default values are used:
-
+The \texttt{GazeToMouse} toolset can be configured to work with different installations.
+It allows to specify installation paths and gives some control over implemented features (e.g.~ mouse hiding or gaze filtering).
+The Listing~\ref{lst.config} shows the default configuration values and provides a short explanation for each value.
 \lstset{language=json}
 \begin{lstlisting}[caption={Default configuartion values},label=lst.config]
 {
@@ -253,13 +248,37 @@ If no config file can be found, the following default values are used:
     // filter settings for the eye tracker
     //   0: unfiltered
     //   1: lightly filtered
-    "GazeFilter": 0
+    "GazeFilter": 0,
 
     // if set to true the mouse curser will be hidden by GazeToMouse.exe and
     // shown by GazeToMouseClose.exe
     "HideMouse": false
 }
 \end{lstlisting}
+Note that the configuration file follows the \texttt{json} syntax which must not be violated.
+If the following points are respected, no problem should arise:
+\begin{itemize}
+    \item the configuration values are enclosed in `\texttt{\{}' and `\texttt{\}}'.
+    \item each configuration line ends with a `\texttt{,}'.
+    \item the Windows path delimiter `\texttt{\textbackslash}' must be escaped (i.e.~ write `\texttt{\textbackslash\textbackslash}' when describing a path)
+    \item \texttt{json} supports standard data types (e.g. integer, boolean, string).
+        Use the same type as the default value.
+    \item everything following a `\texttt{//}' is considered a comment.
+\end{itemize}
+
+Each executable of the toolset uses the same common configuration file.
+The configuration file must be named \texttt{config.json} and is read from the following places with the indicated priority:
+\begin{enumerate}
+    \item in the directory of the caller, i.e~in \texttt{<zleaf path>}
+    \item in the directory of the executables, i.e.~in \texttt{<GazeToMouse path>}
+\end{enumerate}
+If no configuration file can be found, the default values are used.
+
+{\fontencoding{U}\fontfamily{futs}\selectfont\char 66\relax}
+A word of warning when using the mouse hiding feature:
+This feature hides the mouse when running \texttt{GazeToMouse.exe}.
+If \texttt{GazeToMouse.exe} is forcefully closed or crashes the mouse pointer stays hidden.
+For such cases the \texttt{ShowMouse.exe} utility can be used.
 
 \section{Output File}
 When running the program \texttt{gazeToMouse.exe} an output file is generated which holds the gaze coordinates of the user.
