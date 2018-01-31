@@ -1,6 +1,6 @@
 {
     // Location to store the output file. It must be the path to a folder (not a file).
-    // If empty, the output file is produced in the directory of the caller (e.g the directory of zleaf.exed).
+    // If empty, the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     "OutputPath": "",
 
     // the Tobii installation path. It must be the path to a folder (not a file).
