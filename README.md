@@ -40,3 +40,9 @@ and the following processes
     Tobii.EyeX.Tray.exe
 
 For quick starters, a simple [``ztree`` sample program](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/sample/template.ztt) is available.
+
+## Release Notes
+Information about the releases can be found in the
+
+ - [CHANGELOG](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/CHANGELOG)
+ - [git tags](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/tags)
