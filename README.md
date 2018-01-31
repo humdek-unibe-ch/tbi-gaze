@@ -1,12 +1,11 @@
-# Toolset to control Tobii Eye Tracker 4c
+# Toolset to Control Tobii Eye Tracker 4C
 
 This repository contains the source code for multiple simple tools that allow to control a Tobii eye tracker from a 3rd party application.
 Specifically, this project aims at providing a set of executables that can be called from within [ztree](http://www.ztree.uzh.ch/en.html) to allow eye tracker support for economic experiments.
-
-The documentation can be found [here](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
+iFor more details please refer to the [documentation](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
 
 ## Installation
-The complete toolset package can be downloaded from [here](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release/v0.1.0.zip).
+The complete toolset package can be downloaded from the [release folder](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
 The package contains the following executables:
 
  - **TobiiCalibrate.exe** launches the Tobii calibration tool
