@@ -20,7 +20,6 @@ namespace GazeToMouse
      */
     class GazeToMouse
     {
-        private const string COL_DELIM = "\t";
         private static FileStream fs;
         private static StreamWriter sw;
         private static TimeSpan ts_delta;
@@ -81,7 +80,6 @@ namespace GazeToMouse
                 fs = File.Open($"{outputFile}", FileMode.Create);
             }
             sw = new StreamWriter(fs);
-            sw.WriteLine($"Timestamp{COL_DELIM}X{COL_DELIM}Y");
             logger.Info($"Writing gaze data to \"{fs.Name}\"");
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
@@ -132,7 +130,7 @@ namespace GazeToMouse
             if(config.ControlMouse) Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
 
             // write the coordinates to the log file
-            sw.WriteLine($"{ts_rec:hh\\:mm\\:ss\\.fff}{COL_DELIM}{x:0.0}{COL_DELIM}{y:0.0}");
+            sw.WriteLine(config.OutputFormat, ts_rec, x, y);
             hasRun = true;
         }
 

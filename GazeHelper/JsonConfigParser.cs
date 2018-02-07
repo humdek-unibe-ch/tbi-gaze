@@ -25,6 +25,7 @@ namespace GazeHelper
         public class ConfigItem
         {
             public string OutputPath { get; set; }
+            public string OutputFormat { get; set; }
             public string TobiiPath { get; set; }
             public string TobiiCalibrate { get; set; }
             public string TobiiCalibrateArguments { get; set; }
@@ -51,6 +52,7 @@ namespace GazeHelper
             ConfigItem item = new ConfigItem
             {
                 OutputPath = "",
+                OutputFormat = "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
                 TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiCalibrateArguments = "--calibrate",

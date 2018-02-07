@@ -3,6 +3,13 @@
     // If empty, the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     "OutputPath": "",
 
+    // Allows to define the format of how the gaze data will be logged. Use the .NET syntax to specify the format of individual values:
+    // https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+    // Three values are logged: the timestamp of the gaze point measurement, the x and y coordinates of the gaze point.
+    // The format definition is of the form {0:<format of timestamp>}<delimiter>{1:<format of x-coordinate>}<delimiter>{2:<format of y-coordinate>}
+    // where 0 is replaced by the timestamp, 1 is replaced by the x-coordinate, and 2 is replaced by the y-coordinate
+    "OutputFormat": "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
+
     // the Tobii installation path. It must be the path to a folder (not a file).
     "TobiiPath": "C:\\Program Files (x86)\\Tobii",
 
