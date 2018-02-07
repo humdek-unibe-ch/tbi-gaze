@@ -79,6 +79,10 @@
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetPath)" "$(SolutionDir)..\build\"
 copy /Y "$(TargetDir)*.dll" "$(SolutionDir)..\build\"
-copy /Y "$(SolutionDir)assets\*" "$(SolutionDir)..\build\"</PostBuildEvent>
+copy /Y "$(SolutionDir)assets\*" "$(SolutionDir)..\build\"
+if not exist "$(SolutionDir)..\build\sample\" mkdir "$(SolutionDir)..\build\sample"
+copy /Y "$(SolutionDir)sample\*" "$(SolutionDir)..\build\sample\"
+if not exist "$(SolutionDir)..\build\doc\" mkdir "$(SolutionDir)..\build\doc"
+copy /Y "$(SolutionDir)doc\tutorial.pdf" "$(SolutionDir)..\build\doc\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

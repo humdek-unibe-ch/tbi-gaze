@@ -19,8 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		assets\blank.cur = assets\blank.cur
-		assets\config.json = assets\config.json
+		sample\config.json = sample\config.json
 		README.md = README.md
+		doc\tutorial.pdf = doc\tutorial.pdf
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowMouse", "ShowMouse\ShowMouse.csproj", "{61DA0F29-0115-434F-A778-483A863C42CE}"
