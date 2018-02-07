@@ -28,5 +28,9 @@
     "GazeFilter": 0,
 
     // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
-    "HideMouse": false
+    "HideMouse": false,
+
+    // if set to true the mouse curser will be controlled by the Gaze of the Subject.
+    // if set to false the gaze position will be logged but the mouse control is left to the subject
+    "ControlMouse": true
 }

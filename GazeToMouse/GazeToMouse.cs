@@ -129,7 +129,7 @@ namespace GazeToMouse
             ts_rec -= ts_delta;
 
             // set the cursor position to the gaze position
-            Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
+            if(config.ControlMouse) Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
 
             // write the coordinates to the log file
             sw.WriteLine($"{ts_rec:hh\\:mm\\:ss\\.fff}{COL_DELIM}{x:0.0}{COL_DELIM}{y:0.0}");
