@@ -1,43 +1,59 @@
 {
-    // Location to store the output file. It must be the path to a folder (not a file).
-    // If empty, the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
+    // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
+    // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     "OutputPath": "",
 
-    // Allows to define the format of how the gaze data will be logged. Use the .NET syntax to specify the format of individual values:
-    // https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Three values are logged: the timestamp of the gaze point measurement, the x and y coordinates of the gaze point.
-    // The format definition is of the form {0:<format of timestamp>}<delimiter>{1:<format of x-coordinate>}<delimiter>{2:<format of y-coordinate>}
-    // where 0 is replaced by the timestamp, 1 is replaced by the x-coordinate, and 2 is replaced by the y-coordinate
+    // Allows to define the format of how the gaze data will be logged. Use the .NET syntax to
+    // specify the format of individual values:
+    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+    // Three values are logged:
+    //  - the timestamp of the gaze point measurement
+    //  - the x coordinate of the gaze point
+    //  - the y coordinate of the gaze point
+    // The format definition is of the form
+    //  {0:<format of timestamp>}<delim>{1:<format of x-coordinate>}<delim>{2:<format of y-coordinate>}
+    // where all values marked with <> can be customized and where
+    //  - 0 is replaced by the timestamp
+    //  - 1 is replaced by the x-coordinate
+    //  - 2 is replaced by the y-coordinate
+    // <delim> can be anything (e.g. \t from tab). Note that the x and y coordinates will be represented
+    // differently depending in the localisation settings of the windows installation (e.g. 123,4 for CH
+    // or 123.4 for US).
+    // When defining <format of timestamp>, special characters (e.g. ':', '.') need to be escaped with '\\'.
     "OutputFormat": "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
 
-    // the Tobii installation path. It must be the path to a folder (not a file).
-    "TobiiPath": "C:\\Program Files (x86)\\Tobii",
-
-    // Path to the standard mouse pointer icon. This is used to resore the mouse pointer
-    "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
-
-    // Tobii EyeX command to run a calibration
-    "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-
-    // Tobii EyeX parameter to run a calibration
-    "TobiiCalibrateArguments": "--calibrate",
-
-    // Tobii EyeX command to run a guest calibration
-    "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-
-    // Tobii EyeX parameter to run a guest calibration
-    "TobiiGuestCalibrateArguments": "--guest-calibration",
-
-    // Tobii EyeX command to run calibration test
-    "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
-
-    // filter settings for the eye tracker (0: unfiltered, 1: lightly filtered)
+    // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
     "GazeFilter": 0,
 
-    // if set to true the mouse curser will be hidden by GazeToMouse.exe and shown by GazeToMousClose.exe
+    // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
+    // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when
+    // GazeToMousClose.exe is executed.
     "HideMouse": false,
 
-    // if set to true the mouse curser will be controlled by the Gaze of the Subject.
-    // if set to false the gaze position will be logged but the mouse control is left to the subject
-    "ControlMouse": true
+    // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
+    // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
+    // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
+    // If set to false the gaze position will be logged but the mouse control is left untouched.
+    "ControlMouse": true,
+
+    // Defines the Tobii installation path. It must be the path to a folder (not a file).
+    "TobiiPath": "C:\\Program Files (x86)\\Tobii",
+
+    // Defines the Path to the standard mouse pointer icon. This is used to restore the mouse pointer.
+    "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
+
+    // The Tobii EyeX command to run a calibration.
+    "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+
+    // The Tobii EyeX parameter to run a calibration.
+    "TobiiCalibrateArguments": "--calibrate",
+
+    // The Tobii EyeX command to run a guest calibration.
+    "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+
+    // The Tobii EyeX parameter to run a guest calibration.
+    "TobiiGuestCalibrateArguments": "--guest-calibration",
+
+    // The Tobii EyeX command to run calibration test.
+    "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe"
 }

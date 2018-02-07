@@ -8,7 +8,9 @@
 \usepackage{color}
 \definecolor{bkg}{rgb}{0.9,0.9,0.9}
 \definecolor{cmt}{rgb}{0.0,0.6,0.0}
+\definecolor{boxbkg}{rgb}{0.9,0.95,1.0}
 \usepackage{fancybox}
+\usepackage{mdframed}
 \usepackage{listings}
 \defaultfontfeatures{Ligatures=TeX}
 \usepackage{graphicx}
@@ -150,7 +152,7 @@ Its address is:
 
 \url{http://phhum-g111-nns.unibe.ch:10012/}
 
-Please send \href{simon.maurer@humdek.unibe.ch}{me} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
+Please send \href{simon.maurer@humdek.unibe.ch}{Simon Maurer} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
 
 
 \chapter{Use GazeToMouse Toolset in Ztree}
@@ -216,46 +218,11 @@ This can be achieved as follows:
 \chapter{Configuration of the \texttt{GazeToMouse} Toolset}
 \label{sec.config}
 The \texttt{GazeToMouse} toolset can be configured to work with different installations.
-It allows to specify installation paths and gives some control over implemented features (e.g.~ mouse hiding or gaze filtering).
+It allows to specify installation paths and gives some control over implemented features (e.g.~mouse hiding or gaze filtering).
 The Listing~\ref{lst.config} shows the default configuration values and provides a short explanation for each value.
-\lstset{language=json}
-\begin{lstlisting}[caption={Default configuartion values},label=lst.config]
-{
-    // the path to the output file
-    "OutputPath": "",
 
-    // the Tobii installation path
-    "TobiiPath": "C:\\Program Files (x86)\\Tobii",
+\lstinputlisting[language=json, caption={Default configuartion values},label=lst.config]{../sample/config.json}
 
-    // Path to the standard mouse pointer icon. This is used to restore the
-    // mouse pointer. It has no effect if "HideMouse" is set to false
-    "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
-
-    // Tobii EyeX command to run a calibration
-    "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-
-    // Tobii EyeX parameter to run a calibration
-    "TobiiCalibrateArguments": "--calibrate",
-
-    // Tobii EyeX command to run a guest calibration
-    "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-
-    // Tobii EyeX parameter to run a guest calibration
-    "TobiiGuestCalibrateArguments": "--guest-calibration",
-
-    // Tobii EyeX command to run calibration test
-    "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
-
-    // filter settings for the eye tracker
-    //   0: unfiltered
-    //   1: lightly filtered
-    "GazeFilter": 0,
-
-    // if set to true the mouse curser will be hidden by GazeToMouse.exe and
-    // shown by GazeToMouseClose.exe
-    "HideMouse": false
-}
-\end{lstlisting}
 Note that the configuration file follows the \texttt{json} syntax which must not be violated.
 If the following points are respected, no problem should arise:
 \begin{itemize}
@@ -275,11 +242,12 @@ The configuration file must be named \texttt{config.json} and is read from the f
 \end{enumerate}
 If no configuration file can be found, the default values are used.
 
-{\fontencoding{U}\fontfamily{futs}\selectfont\char 66\relax}
-A word of warning when using the mouse hiding feature:
-This feature hides the mouse when running \texttt{GazeToMouse.exe}.
-If \texttt{GazeToMouse.exe} is forcefully closed or crashes the mouse pointer stays hidden.
-For such cases the \texttt{ShowMouse.exe} utility can be used.
+\begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Warning:}
+    A word of warning when using the mouse hiding feature.
+    This feature hides the mouse when running \texttt{GazeToMouse.exe}.
+    If \texttt{GazeToMouse.exe} is forcefully closed or crashes the mouse pointer stays hidden.
+    For such cases the \texttt{ShowMouse.exe} utility can be used.
+\end{mdframed}
 
 \section{Output File}
 When running the program \texttt{gazeToMouse.exe} an output file is generated which holds the gaze coordinates of the user.
@@ -287,7 +255,7 @@ The output file is saved in the directory specified by \texttt{OutputPath} in \t
 The name of the output file follows the form \texttt{<yyyyMMddTHHmmss>\_<hostName>\_gaze.txt} where
 
 \begin{itemize}
-    \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129085521 stands for 2018.01.12 08:55:21).
+    \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21).
     \item \texttt{<hostName>} is replaced by the name of the machine
 \end{itemize}
 
