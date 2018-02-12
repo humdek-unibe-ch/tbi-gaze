@@ -67,22 +67,33 @@ namespace GazeToMouse
             DateTime now = DateTime.Now;
             if (config.WriteDataLog)
             {
-                string gazeFileName = $"{Environment.MachineName}_data.txt";
-                sw = CreateGazeOutputFile(now, gazeFileName);
+                string gazeFilePostfix = $"_{Environment.MachineName}_data.txt";
+                string gazeFileName = $"{now:yyyyMMddTHHmmss}{gazeFilePostfix}";
+
+                // create gaze data file
+                if (config.OutputPath == "") config.OutputPath = Directory.GetCurrentDirectory();
+                sw = CreateGazeOutputFile(config.OutputPath, gazeFileName);
+                if( sw == null )
+                {
+                    // something went wrong, write to the current directory
+                    config.OutputPath = Directory.GetCurrentDirectory();
+                    string outputFilePath = $"{config.OutputPath}\\{gazeFileName}";
+                    logger.Warning($"Writing gaze data to the current directory: \"{outputFilePath}\"");
+                    sw = new StreamWriter(gazeFileName);
+                }
 
                 // check output data format
-                if(!CheckOutputFormat(config.OutputFormat))
+                if (!CheckOutputFormat(config.OutputFormat))
                 {
+                    // something is wrong with the configured format, use the default format
                     JsonConfigParser.ConfigItem default_config = parser.GetDefaultConfig();
                     config.OutputFormat = default_config.OutputFormat;
                     logger.Warning($"Using default output format of the form: \"{GetFromatSample(config.OutputFormat)}\"");
                 }
 
                 // delete old files
-                DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*_{gazeFileName}");
+                DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
             }
-
-            Application.ApplicationExit += new EventHandler(OnApplicationExit);
 
             // hide the mouse cursor
             hider = new MouseHider();
@@ -95,8 +106,8 @@ namespace GazeToMouse
             // initialize host. Make sure that the Tobii service is running
             host = new Host();
 
-            // check filter settings
-            GazePointDataMode filter = GetFilterSettings();
+            // get the filter settings
+            GazePointDataMode filter = GetFilterSettings(config.GazeFilter);
 
             // create stream
             var gazePointDataStream = host.Streams.CreateGazePointDataStream(filter);
@@ -104,6 +115,7 @@ namespace GazeToMouse
             gazePointDataStream.GazePoint((x, y, ts) => Gaze2mouse(x, y, ts, now.TimeOfDay));
 
             // add message filter to the application's message pump
+            Application.ApplicationExit += new EventHandler(OnApplicationExit);
             Application.AddMessageFilter(new ExitMessageFilter());
             Application.Run();
         }
@@ -129,63 +141,27 @@ namespace GazeToMouse
         }
 
         /**
-         * @brief takes a valid format string as parameter and returns the string with sample gaze values
-         * 
-         * @return a formatted string of sample gaze values
-         */
-        static string GetFromatSample( string format )
-        {
-            TimeSpan ts = DateTime.Now.TimeOfDay;
-            double x = 1000.000000;
-            double y = 1000.000000;
-            return String.Format(format, ts, x, y);
-        }
-
-        static GazePointDataMode GetFilterSettings()
-        {
-            GazePointDataMode filter;
-            switch (config.GazeFilter)
-            {
-                case 0: filter = GazePointDataMode.Unfiltered; break;
-                case 1: filter = GazePointDataMode.LightlyFiltered; break;
-                default:
-                    filter = GazePointDataMode.Unfiltered;
-                    logger.Error($"Unkonwn filter setting: \"{config.GazeFilter}\"");
-                    logger.Warning("Using unfiltered mode");
-                    break;
-            }
-            return filter;
-        }
-
-        /**
          * @brief create and open a data stream to a file where gaze data will be stored
          * 
-         * @param now           the current timestamp
-         * @param output_path   path to the directory where the gaze data file will be stored
-         * @param output_name   name postfix of the gaze data file
+         * @param file_path     path to the directory where the gaze data file will be stored
+         * @param file_name     name of the gaze data file
          */
-        static StreamWriter CreateGazeOutputFile(DateTime now, string output_name)
+        static StreamWriter CreateGazeOutputFile(string file_path, string file_name)
         {
-            // create output file
-            string outputFile = $"{now:yyyyMMddTHHmmss}_{output_name}";
-            string outputFilePath;
-            if (config.OutputPath == "") config.OutputPath = Directory.GetCurrentDirectory();
             try
             {
-                sw = new StreamWriter($"{config.OutputPath}\\{outputFile}");
-                FileInfo fi = new FileInfo($"{config.OutputPath}\\{outputFile}");
+                string outputFilePath;
+                sw = new StreamWriter($"{file_path}\\{file_name}");
+                FileInfo fi = new FileInfo($"{file_path}\\{file_name}");
                 outputFilePath = fi.FullName;
                 logger.Info($"Writing gaze data to \"{outputFilePath}\"");
+                return sw;
             }
             catch (Exception e)
             {
                 logger.Error(e.Message);
-                config.OutputPath = Directory.GetCurrentDirectory();
-                outputFilePath = $"{config.OutputPath}\\{outputFile}";
-                logger.Warning($"Writing gaze data to the current directory: \"{outputFilePath}\"");
-                sw = new StreamWriter($"{outputFile}");
+                return null;
             }
-            return sw;
         }
 
         /**
@@ -202,7 +178,7 @@ namespace GazeToMouse
             {
                 Array.Sort(gazeLogFiles);
                 Array.Reverse(gazeLogFiles);
-                for (int i = output_count; i< gazeLogFiles.GetLength(0); i++)
+                for (int i = output_count; i < gazeLogFiles.GetLength(0); i++)
                 {
                     File.Delete(gazeLogFiles[i]);
                     logger.Info($"Removing old gaze data file \"{gazeLogFiles[i]}\"");
@@ -233,6 +209,40 @@ namespace GazeToMouse
 
             // set the cursor position to the gaze position
             if (config.ControlMouse) Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
+        }
+
+        /**
+         * @brief get the gaze filter mode. If the configured value is unknown, use default value
+         * 
+         * @return gaze filter mode
+         */
+        static GazePointDataMode GetFilterSettings( int gaze_filter_mode )
+        {
+            GazePointDataMode filter;
+            switch (gaze_filter_mode)
+            {
+                case 0: filter = GazePointDataMode.Unfiltered; break;
+                case 1: filter = GazePointDataMode.LightlyFiltered; break;
+                default:
+                    filter = GazePointDataMode.Unfiltered;
+                    logger.Error($"Unkonwn filter setting: \"{gaze_filter_mode}\"");
+                    logger.Warning("Using unfiltered mode");
+                    break;
+            }
+            return filter;
+        }
+
+        /**
+         * @brief takes a valid format string as parameter and returns the string with sample gaze values
+         * 
+         * @return a formatted string of sample gaze values
+         */
+        static string GetFromatSample(string format)
+        {
+            TimeSpan ts = DateTime.Now.TimeOfDay;
+            double x = 1000.000000;
+            double y = 1000.000000;
+            return String.Format(format, ts, x, y);
         }
 
         /**
