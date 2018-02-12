@@ -1,4 +1,13 @@
 {
+    // Defines whether gaze data is written to a log file. If set to false, the configuration items
+    // "OuputCount", "OutpuPath", and "OutputFormat" are ignored.
+    "WriteDataLog": true,
+
+    // Number of output data files to keep in the output path. Oldest files are deleted first. When
+    // setting OtputCount to 0, no files are removed. A value of 1 means that only the output of
+    // current execution is kept.
+    "OutputCount": 20,
+
     // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
     // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     "OutputPath": "",

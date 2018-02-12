@@ -14,14 +14,22 @@ namespace GazeHelper
     public class Logger
     {
         private string logPath = Directory.GetCurrentDirectory();
-        private string logFile = "gaze.log";
+        private string logFile;
+        private string logFileBak;
         private string dateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
+        private const int max_log_size = 1000000; // 1 MB
         private enum LogLevel
         {
             Debug,
             Info,
             Warning,
             Error
+        }
+
+        public Logger()
+        {
+            logFile = $"{logPath}\\gaze.log";
+            logFileBak = $"{logFile}.0";
         }
 
         /**
@@ -41,11 +49,22 @@ namespace GazeHelper
                 case LogLevel.Error: prefix += " [ERROR]   "; break;
             }
 
+            // use a file rotation of two files. If a log file gets too big, a
+            // new log file is created whil the existing one is moved to the
+            // backup file (overwriting an existing one)
+            FileInfo fi = new FileInfo(logFile);
+            if(fi.Exists && fi.Length > max_log_size)
+            {
+                File.Delete(logFileBak);
+                File.Move(logFile, logFileBak);
+            }
+
             try
             {
-                FileStream fs = File.Open($"{logPath}\\{logFile}", FileMode.Append);
+                FileStream fs = File.Open(logFile, FileMode.Append);
                 StreamWriter sw = new StreamWriter(fs);
                 sw.WriteLine(prefix + message);
+                sw.Close();
                 sw.Dispose();
                 fs.Close();
                 fs.Dispose();

@@ -24,8 +24,10 @@ namespace GazeHelper
          */
         public class ConfigItem
         {
+            public bool WriteDataLog { get; set; }
             public string OutputPath { get; set; }
             public string OutputFormat { get; set; }
+            public int OutputCount { get; set; }
             public string TobiiPath { get; set; }
             public string TobiiCalibrate { get; set; }
             public string TobiiCalibrateArguments { get; set; }
@@ -49,10 +51,38 @@ namespace GazeHelper
         {
             
             string json;
-            ConfigItem item = new ConfigItem
+            ConfigItem item = GetDefaultConfig();
+            logger = new Logger();
+            // load configuration
+            StreamReader sr = OpenConfigFile( ConfigFile );
+            if( sr != null )
             {
+                try
+                {
+                    json = sr.ReadToEnd();
+                    item = JsonConvert.DeserializeObject<ConfigItem>(json);
+                    logger.Info("Successfully parsed the configuration file");
+                    sr.Close();
+                    sr.Dispose();
+                }
+                catch(JsonReaderException e)
+                {
+                    logger.Error(e.Message);
+                    logger.Warning("Config file could not be parsed, using default configuration values");
+                }
+            }
+
+            return item;
+        }
+
+        public ConfigItem GetDefaultConfig()
+        {
+            return new ConfigItem
+            {
+                WriteDataLog = true,
                 OutputPath = "",
                 OutputFormat = "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
+                OutputCount = 20,
                 TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiCalibrateArguments = "--calibrate",
@@ -64,27 +94,6 @@ namespace GazeHelper
                 HideMouse = false,
                 ControlMouse = true
             };
-            logger = new Logger();
-            // load configuration
-            StreamReader sr = OpenConfigFile( ConfigFile );
-            if( sr != null )
-            {
-                try
-                {
-                    json = sr.ReadToEnd();
-                    item = JsonConvert.DeserializeObject<ConfigItem>(json);
-                    logger.Info("Successfully read the configuration file");
-                    sr.Close();
-                    sr.Dispose();
-                }
-                catch (JsonReaderException e)
-                {
-                    logger.Error(e.Message);
-                    logger.Warning("Using default configuration values");
-                }
-            }
-
-            return item;
         }
 
         /**
@@ -102,7 +111,7 @@ namespace GazeHelper
             try
             {
                 sr = new StreamReader(configFile);
-                logger.Info($"Found config file \"{Directory.GetCurrentDirectory()}\\{configFile}\"");
+                logger.Info($"Parsing config file \"{Directory.GetCurrentDirectory()}\\{configFile}\"");
             }
             catch (FileNotFoundException e)
             {
@@ -111,7 +120,7 @@ namespace GazeHelper
                 try
                 {
                     sr = new StreamReader($"{path}\\{configFile}");
-                    logger.Info($"Found config file \"{path}{configFile}\"");
+                    logger.Info($"Parsing config file \"{path}{configFile}\"");
                 }
                 catch (FileNotFoundException e2)
                 {
