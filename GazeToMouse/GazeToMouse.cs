@@ -79,7 +79,7 @@ namespace GazeToMouse
                 }
 
                 // delete old files
-                DeleteOldGazeLogFiles($"*_{gazeFileName}");
+                DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*_{gazeFileName}");
             }
 
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
@@ -128,6 +128,11 @@ namespace GazeToMouse
             }
         }
 
+        /**
+         * @brief takes a valid format string as parameter and returns the string with sample gaze values
+         * 
+         * @return a formatted string of sample gaze values
+         */
         static string GetFromatSample( string format )
         {
             TimeSpan ts = DateTime.Now.TimeOfDay;
@@ -186,16 +191,18 @@ namespace GazeToMouse
         /**
          * @brief remove old gaze data log files
          * 
-         * @param filter    output data file filter
+         * @param output_path   path to the folder with the old output files
+         * @param output_count  number of files that are allowd in the path
+         * @param filter        output data file filter
          */
-        static void DeleteOldGazeLogFiles(string filter)
+        static void DeleteOldGazeLogFiles(string output_path, int output_count, string filter)
         {
-            string[] gazeLogFiles = Directory.GetFiles(config.OutputPath, filter);
-            if ((config.OutputCount > 0) && (gazeLogFiles.GetLength(0) > config.OutputCount))
+            string[] gazeLogFiles = Directory.GetFiles(output_path, filter);
+            if ((output_count > 0) && (gazeLogFiles.GetLength(0) > output_count))
             {
                 Array.Sort(gazeLogFiles);
                 Array.Reverse(gazeLogFiles);
-                for (int i = config.OutputCount; i< gazeLogFiles.GetLength(0); i++)
+                for (int i = output_count; i< gazeLogFiles.GetLength(0); i++)
                 {
                     File.Delete(gazeLogFiles[i]);
                     logger.Info($"Removing old gaze data file \"{gazeLogFiles[i]}\"");
