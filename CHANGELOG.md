@@ -2,15 +2,15 @@
 
 ## New features
 
- - allow to configure wheter the gaze data is logged
- - allow to configure the maximum allowed amount of gaze data files in the output foler.
+ - allow to configure whether the gaze data is logged
+ - allow to configure the maximum allowed amount of gaze data files in the output folder.
    Oldest files are deleted first.
 
 ## Improvements
 
  - limit the logfile size to 1MB.
    If the size is exceeded a new file is created.
-   At any time only two log files are alloed,
+   At any time only two log files are allowed,
    The older file is overwritten once both files exceed 1MB.
 
 # v0.2.0
