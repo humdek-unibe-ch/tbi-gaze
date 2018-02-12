@@ -71,7 +71,12 @@ namespace GazeToMouse
                 sw = CreateGazeOutputFile(now, gazeFileName);
 
                 // check output data format
-                CheckOutputFormat(now, parser);
+                if(!CheckOutputFormat(config.OutputFormat))
+                {
+                    JsonConfigParser.ConfigItem default_config = parser.GetDefaultConfig();
+                    config.OutputFormat = default_config.OutputFormat;
+                    logger.Warning($"Using default output format of the form: \"{GetFromatSample(config.OutputFormat)}\"");
+                }
 
                 // delete old files
                 DeleteOldGazeLogFiles($"*_{gazeFileName}");
@@ -103,25 +108,32 @@ namespace GazeToMouse
             Application.Run();
         }
 
-        static void CheckOutputFormat(DateTime now, JsonConfigParser parser)
+        /**
+         * @brief checks whether a string formatting is applicable
+         * 
+         * @param format    format string to be checked
+         * @return true if format is ok, false if not
+         */
+        static bool CheckOutputFormat(string format)
         {
-            TimeSpan ts = now.TimeOfDay;
-            double x = 1000.000000;
-            double y = 1000.000000;
-            string format_example;
             try
             {
-                format_example = String.Format(config.OutputFormat, ts, x, y);
-                logger.Info($"Output format is of the from: \"{format_example}\"");
+                logger.Info($"Output format is of the from: \"{GetFromatSample(format)}\"");
+                return true;
             }
             catch (FormatException)
             {
                 logger.Error($"Output format string was not in a correct format");
-                JsonConfigParser.ConfigItem default_config = parser.GetDefaultConfig();
-                config.OutputFormat = default_config.OutputFormat;
-                format_example = String.Format(config.OutputFormat, ts, x, y);
-                logger.Warning($"Using default output format of the form: \"{format_example}\"");
+                return false;
             }
+        }
+
+        static string GetFromatSample( string format )
+        {
+            TimeSpan ts = DateTime.Now.TimeOfDay;
+            double x = 1000.000000;
+            double y = 1000.000000;
+            return String.Format(format, ts, x, y);
         }
 
         static GazePointDataMode GetFilterSettings()

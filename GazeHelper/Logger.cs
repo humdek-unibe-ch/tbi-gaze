@@ -3,7 +3,7 @@
  * 
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @file    Logger.cs
- * @date    Jamuary 2018
+ * @date    January 2018
  */
 
 using System;
@@ -61,13 +61,10 @@ namespace GazeHelper
 
             try
             {
-                FileStream fs = File.Open(logFile, FileMode.Append);
-                StreamWriter sw = new StreamWriter(fs);
+                StreamWriter sw = new StreamWriter(logFile, true);
                 sw.WriteLine(prefix + message);
                 sw.Close();
                 sw.Dispose();
-                fs.Close();
-                fs.Dispose();
             }
             catch
             {

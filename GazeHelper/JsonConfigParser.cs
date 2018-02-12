@@ -5,7 +5,7 @@
  * 
  * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
  * @file    JsonConfigParser.cs
- * @date    Jamuary 2018
+ * @date    January 2018
  */
 
 using System;
@@ -75,6 +75,11 @@ namespace GazeHelper
             return item;
         }
 
+        /**
+         * @brief return the default configuration values
+         * 
+         * @return the default configuration values
+         */
         public ConfigItem GetDefaultConfig()
         {
             return new ConfigItem
