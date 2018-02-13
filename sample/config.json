@@ -31,19 +31,19 @@
     // When defining <format of timestamp>, special characters (e.g. ':', '.') need to be escaped with '\\'.
     "OutputFormat": "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
 
-    // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
-    "GazeFilter": 0,
+    // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
+    // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
+    // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
+    // If set to false the configuration item "HideMouse" is ignored.
+    "ControlMouse": true,
 
     // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
     // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when
     // GazeToMousClose.exe is executed.
     "HideMouse": false,
 
-    // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
-    // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
-    // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
-    // If set to false the gaze position will be logged but the mouse control is left untouched.
-    "ControlMouse": true,
+    // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
+    "GazeFilter": 0,
 
     // Defines the Tobii installation path. It must be the path to a folder (not a file).
     "TobiiPath": "C:\\Program Files (x86)\\Tobii",
