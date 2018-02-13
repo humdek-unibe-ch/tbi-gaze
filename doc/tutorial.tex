@@ -121,8 +121,9 @@ In order to get started with a quick experiment you need the following things (\
     \item the \href{http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze}{GazeToMouse toolset} installed on each client.
         To install the toolset \href{http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release}{download} the latest version (requires a subscription, see Section~\ref{sec.gitlab}) and extract all files to an installation path of your choosing.
         The GazeToMouse installation path will be referred to as \texttt{<GazeToMouse path>} throughout this document.
-    \item the \href{http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/tree/master/sample}{ztree sample file}.
-        Make sure to change the \texttt{Path} variable in \texttt{Background} of the sample file such that it points to the \texttt{GazeToMouse} toolset.
+    \item the ztree sample file.
+        The file is located in \texttt{<GazeToMouse path>\textbackslash sample\textbackslash template.ztt}.
+        Make sure to change the \texttt{Path} variable in \texttt{Background} of the sample file such that it points to \texttt{<GazeToMouse path>}.
 \end{itemize}
 
 The provided sample \texttt{ztree} program performs the following stages:
@@ -138,6 +139,10 @@ The provided sample \texttt{ztree} program performs the following stages:
     \item[Terminate]
         Terminates the gaze-to-mouse functionality and concludes this simple \texttt{ztree} program.
 \end{description}
+
+The behaviour of the GazeToMouse toolset can be configured with a configuration file (see Chapter~\ref{sec.config} for more details).
+A sample configuration file is provided in \texttt{<GazeToMouse path>\textbackslash sample\textbackslash config.json} that can be modified to suit different requirements.
+Copy the configuration file either to \texttt{<GazeToMouse path>} or \texttt{<zleaf path>} and modify it there.
 
 \section{Requesting Access to the Latest \texttt{ztree} Release}
 \label{sec.ztree}
@@ -227,7 +232,7 @@ Note that the configuration file follows the \texttt{json} syntax which must not
 If the following points are respected, no problem should arise:
 \begin{itemize}
     \item the configuration values are enclosed in `\texttt{\{}' and `\texttt{\}}'.
-    \item each configuration line ends with a `\texttt{,}'.
+    \item each configuration line ends with a `\texttt{,}' except for the last line where it is omitted.
     \item the Windows path delimiter `\texttt{\textbackslash}' must be escaped (i.e.~ write `\texttt{\textbackslash\textbackslash}' when describing a path)
     \item \texttt{json} supports standard data types (e.g. integer, boolean, string).
         Use the same type as the default value.
@@ -245,7 +250,7 @@ If no configuration file can be found, the default values are used.
 \begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Warning:}
     A word of warning when using the mouse hiding feature.
     This feature hides the mouse when running \texttt{GazeToMouse.exe}.
-    If \texttt{GazeToMouse.exe} is forcefully closed or crashes the mouse pointer stays hidden.
+    If \texttt{GazeToMouse.exe} is forcefully closed or crashes, the mouse pointer stays hidden.
     For such cases the \texttt{ShowMouse.exe} utility can be used.
 \end{mdframed}
 
