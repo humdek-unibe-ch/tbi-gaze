@@ -1,8 +1,18 @@
+# v0.3.1
+
+## Improvements
+
+ - ignore the option "HideMouse" when "ControlMouse" is disabled.
+
+## Bug Fix
+
+ - remove double log entry of mouse hiding and restoring event.
+
 # v0.3.0
 
 ## New features
 
- - allow to configure whether the gaze data is logged
+ - allow to configure whether the gaze data is logged.
  - allow to configure the maximum allowed amount of gaze data files in the output folder.
    Oldest files are deleted first.
 
@@ -17,8 +27,8 @@
 
 ## New features
 
- - allow to configure whether the mouse is controlled by the gaze of the subject or not
- - allow to configure the output format of the gaze data
+ - allow to configure whether the mouse is controlled by the gaze of the subject or not.
+ - allow to configure the output format of the gaze data.
 
 
 # v0.1.0

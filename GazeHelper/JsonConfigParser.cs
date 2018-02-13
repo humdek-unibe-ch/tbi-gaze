@@ -49,7 +49,6 @@ namespace GazeHelper
          */
         public ConfigItem ParseJsonConfig()
         {
-            
             string json;
             ConfigItem item = GetDefaultConfig();
             logger = new Logger();
