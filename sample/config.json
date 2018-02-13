@@ -1,10 +1,10 @@
 {
     // Defines whether gaze data is written to a log file. If set to false, the configuration items
-    // "OuputCount", "OutpuPath", and "OutputFormat" are ignored.
+    // "OuputCount", "OutputPath", and "OutputFormat" are ignored.
     "WriteDataLog": true,
 
-    // Number of output data files to keep in the output path. Oldest files are deleted first. When
-    // setting OtputCount to 0, no files are removed. A value of 1 means that only the output of
+    // Number of output data files to allowed the output path. Oldest files are deleted first. When
+    // setting OutputCount to 0, no files are removed. A value of 1 means that only the output of
     // current execution is kept.
     "OutputCount": 20,
 
@@ -25,9 +25,9 @@
     //  - 0 is replaced by the timestamp
     //  - 1 is replaced by the x-coordinate
     //  - 2 is replaced by the y-coordinate
-    // <delim> can be anything (e.g. \t from tab). Note that the x and y coordinates will be represented
-    // differently depending in the localisation settings of the windows installation (e.g. 123,4 for CH
-    // or 123.4 for US).
+    // <delim> can be anything (e.g. \t for tab). Note that the x and y coordinates will be represented
+    // differently depending in the localisation settings of the windows installation (e.g. 123,4 for DE_CH
+    // or 123.4 for EN_US).
     // When defining <format of timestamp>, special characters (e.g. ':', '.') need to be escaped with '\\'.
     "OutputFormat": "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
 
