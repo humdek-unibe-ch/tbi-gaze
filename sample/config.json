@@ -6,7 +6,7 @@
     // Number of output data files to allowed the output path. Oldest files are deleted first. When
     // setting OutputCount to 0, no files are removed. A value of 1 means that only the output of
     // current execution is kept.
-    "OutputCount": 20,
+    "OutputCount": 200,
 
     // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
     // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).

@@ -90,7 +90,7 @@ namespace GazeHelper
                 WriteDataLog = true,
                 OutputPath = "",
                 OutputFormat = "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
-                OutputCount = 20,
+                OutputCount = 200,
                 TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiCalibrateArguments = "--calibrate",
