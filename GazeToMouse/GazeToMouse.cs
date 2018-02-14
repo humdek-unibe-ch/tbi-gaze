@@ -59,10 +59,10 @@ namespace GazeToMouse
         static void Main(string[] args)
         {
             // load configuration
-            JsonConfigParser parser = new JsonConfigParser();
-            config = parser.ParseJsonConfig();
             logger = new Logger();
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
+            JsonConfigParser parser = new JsonConfigParser(logger);
+            config = parser.ParseJsonConfig();
 
             DateTime now = DateTime.Now;
             if (config.WriteDataLog)
@@ -96,7 +96,7 @@ namespace GazeToMouse
             }
 
             // hide the mouse cursor
-            hider = new MouseHider();
+            hider = new MouseHider(logger);
             if (config.ControlMouse && config.HideMouse) hider.HideCursor();
 
             // initialize host. Make sure that the Tobii service is running

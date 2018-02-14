@@ -17,8 +17,12 @@ namespace GazeHelper
     public class JsonConfigParser
     {
         private string ConfigFile = "config.json";
-        private static Logger logger;
-        
+        private Logger logger;
+
+        public JsonConfigParser(Logger logger)
+        {
+            this.logger = logger;
+        }        
         /**
          * @brief configuration file class
          */
@@ -51,7 +55,7 @@ namespace GazeHelper
         {
             string json;
             ConfigItem item = GetDefaultConfig();
-            logger = new Logger();
+
             // load configuration
             StreamReader sr = OpenConfigFile( ConfigFile );
             if( sr != null )

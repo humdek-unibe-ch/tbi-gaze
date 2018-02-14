@@ -19,7 +19,7 @@ namespace TobiiGuestCalibrate
         static void Main()
         {
             Logger logger = new Logger();
-            JsonConfigParser parser = new JsonConfigParser();
+            JsonConfigParser parser = new JsonConfigParser(logger);
             JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
             logger.Info($"Starting Tobii guest calibration \"{item.TobiiPath}\\{item.TobiiGuestCalibrate} {item.TobiiGuestCalibrateArguments}\"");
             Process.Start($"{item.TobiiPath}\\{item.TobiiGuestCalibrate}", item.TobiiGuestCalibrateArguments);

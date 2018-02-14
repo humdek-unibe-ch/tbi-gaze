@@ -28,7 +28,7 @@ namespace GazeHelper
 
         public Logger()
         {
-            logFile = $"{logPath}\\gaze.log";
+            logFile = $"{logPath}\\{Environment.MachineName}_gaze.log";
             logFileBak = $"{logFile}.0";
         }
 
@@ -66,9 +66,12 @@ namespace GazeHelper
                 sw.Close();
                 sw.Dispose();
             }
-            catch
+            catch(Exception e)
             {
-                throw;
+                StreamWriter sw = new StreamWriter($"{logPath}\\{DateTime.Now.ToString("yyyyMMddTHHmmss")}_{Environment.MachineName}_fatal.log", true);
+                sw.WriteLine(e.ToString());
+                sw.Close();
+                sw.Dispose();
             }
         }
 

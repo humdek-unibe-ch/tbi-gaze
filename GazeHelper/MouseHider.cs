@@ -21,12 +21,17 @@ namespace GazeHelper
         [DllImport("user32.dll")]
         static extern IntPtr LoadCursorFromFile(string lpFileName);
 
-        private Logger logger = new Logger();
+        private Logger logger;
         private string pathToBlankCur = "blank.cur";
         private string pathToStandardCur = "C:\\Windows\\Cursors\\aero_arrow.cur";
 
         const uint OCR_NORMAL = 32512;
         //const uint OCR_APPSTARTING = 32650;
+
+        public MouseHider(Logger logger)
+        {
+            this.logger = logger;
+        }
 
         /**
          * @brief hide standard mouse pointer by replacing the current icon with a transparent icon

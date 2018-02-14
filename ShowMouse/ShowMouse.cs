@@ -20,9 +20,10 @@ namespace ShowMouse
         static extern bool ShowCursor(bool show);
         static void Main()
         {
-            JsonConfigParser parser = new JsonConfigParser();
+            Logger logger = new Logger();
+            JsonConfigParser parser = new JsonConfigParser(logger);
             JsonConfigParser.ConfigItem config = parser.ParseJsonConfig();
-            MouseHider hider = new MouseHider();
+            MouseHider hider = new MouseHider(logger);
             hider.ShowCursor(config.StandardMouseIconPath);
         }
     }
