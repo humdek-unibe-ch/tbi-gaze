@@ -91,6 +91,9 @@ namespace GazeToMouse
                     logger.Warning($"Using default output format of the form: \"{GetFromatSample(config.OutputFormat)}\"");
                 }
 
+                // write header to output file
+                if (config.WriteDataLog) sw.WriteLine(config.OutputFormat, "Timestamp", "x-coord", "y-coord");
+
                 // delete old files
                 DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
             }
