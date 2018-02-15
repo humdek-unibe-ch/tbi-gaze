@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		assets\blank.cur = assets\blank.cur
+		CHANGELOG.md = CHANGELOG.md
 		sample\config.json = sample\config.json
 		README.md = README.md
 		doc\tutorial.pdf = doc\tutorial.pdf

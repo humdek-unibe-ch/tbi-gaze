@@ -1,3 +1,13 @@
+# v0.3.2
+## Improvements
+
+ - add header to the data log file.
+ - change the default value of allowd gaze data files.
+
+## Bug Fix
+
+ - create a log file per machine to prevent concurrency conflicts.
+
 # v0.3.1
 
 ## Improvements
