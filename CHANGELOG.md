@@ -2,7 +2,7 @@
 ## Improvements
 
  - add header to the data log file.
- - change the default value of allowd gaze data files.
+ - change the default value of allowed gaze data files.
 
 ## Bug Fix
 
