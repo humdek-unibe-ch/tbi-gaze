@@ -3,6 +3,7 @@
 
  - add header to the data log file.
  - change the default value of allowed gaze data files.
+ - check and wait for ready state of the eye tracker before performing operations with it.
 
 ### Bug Fix
 
