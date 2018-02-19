@@ -9,8 +9,6 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using Tobii.Interaction;
-using Tobii.Interaction.Framework;
 using GazeHelper;
 
 namespace GazeToMouse
@@ -20,10 +18,10 @@ namespace GazeToMouse
      */
     class GazeToMouse
     {
+        private static bool tracking = false;
+        private static EyeTracker tracker;
         private static StreamWriter sw;
         private static TimeSpan ts_delta;
-        private static bool hasRun = false;
-        private static Host host;
         private static Logger logger;
         private static MouseHider hider;
         private static JsonConfigParser.ConfigItem config;
@@ -63,12 +61,11 @@ namespace GazeToMouse
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
             JsonConfigParser parser = new JsonConfigParser(logger);
             config = parser.ParseJsonConfig();
-
-            DateTime now = DateTime.Now;
+            
             if (config.WriteDataLog)
             {
                 string gazeFilePostfix = $"_{Environment.MachineName}_data.txt";
-                string gazeFileName = $"{now:yyyyMMddTHHmmss}{gazeFilePostfix}";
+                string gazeFileName = $"{DateTime.Now:yyyyMMddTHHmmss}{gazeFilePostfix}";
 
                 // create gaze data file
                 if (config.OutputPath == "") config.OutputPath = Directory.GetCurrentDirectory();
@@ -103,15 +100,8 @@ namespace GazeToMouse
             if (config.ControlMouse && config.HideMouse) hider.HideCursor();
 
             // initialize host. Make sure that the Tobii service is running
-            host = new Host();
-
-            // get the filter settings
-            GazePointDataMode filter = GetFilterSettings(config.GazeFilter);
-
-            // create stream
-            var gazePointDataStream = host.Streams.CreateGazePointDataStream(filter);
-            // whenever a new gaze point is available, run gaze2mouse
-            gazePointDataStream.GazePoint((x, y, ts) => Gaze2mouse(x, y, ts, now.TimeOfDay));
+            tracker = new EyeTracker(logger);
+            tracker.RaiseTrackerReady += HandleTrackerReady;
 
             // add message filter to the application's message pump
             Application.ApplicationExit += new EventHandler(OnApplicationExit);
@@ -193,42 +183,21 @@ namespace GazeToMouse
          * @param ts    the timestamp of the the capture instant of the gaye point
          *              Note that the timestamp reference represents an arbitrary point in time
          */
-        static void Gaze2mouse(double x, double y, double ts, TimeSpan now)
+        static void Gaze2mouse(double x, double y, double ts, TimeSpan first)
         {
             // write the coordinates to the log file
             if (config.WriteDataLog)
             {
                 // create a time reference that corresponds to the local machine
                 TimeSpan ts_rec = TimeSpan.FromMilliseconds(ts);
-                if (!hasRun) ts_delta = ts_rec - now;
+                if (!tracking) ts_delta = ts_rec - first;
                 ts_rec -= ts_delta;
                 sw.WriteLine(config.OutputFormat, ts_rec, x, y);
-                hasRun = true;
+                tracking = true;
             }
 
             // set the cursor position to the gaze position
             if (config.ControlMouse) Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
-        }
-
-        /**
-         * @brief get the gaze filter mode. If the configured value is unknown, use default value
-         * 
-         * @return gaze filter mode
-         */
-        static GazePointDataMode GetFilterSettings( int gaze_filter_mode )
-        {
-            GazePointDataMode filter;
-            switch (gaze_filter_mode)
-            {
-                case 0: filter = GazePointDataMode.Unfiltered; break;
-                case 1: filter = GazePointDataMode.LightlyFiltered; break;
-                default:
-                    filter = GazePointDataMode.Unfiltered;
-                    logger.Error($"Unkonwn filter setting: \"{gaze_filter_mode}\"");
-                    logger.Warning("Using unfiltered mode");
-                    break;
-            }
-            return filter;
         }
 
         /**
@@ -242,6 +211,23 @@ namespace GazeToMouse
             double x = 1000.000000;
             double y = 1000.000000;
             return String.Format(format, ts, x, y);
+        }
+
+        /**
+         * @brief execute once the eye tracker is ready
+         * 
+         * @param sender    sender of the event
+         * @param e         event
+         */
+        static void HandleTrackerReady(object sender, EventArgs e)
+        {
+            if (tracking) return;
+            // get the filter settings and create stream
+            var gazePointDataStream = ((EyeTracker)sender).CreateGazePointDataStream(config.GazeFilter);
+
+            // whenever a new gaze point is available, run gaze2mouse
+            TimeSpan first = DateTime.Now.TimeOfDay;
+            gazePointDataStream.GazePoint((x, y, ts) => Gaze2mouse(x, y, ts, first));
         }
 
         /**
@@ -259,7 +245,7 @@ namespace GazeToMouse
                 sw.Close();
                 sw.Dispose();
             }
-            host.DisableConnection();
+            tracker.Dispose();
             logger.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" terminated gracefully{Environment.NewLine}");
         }
     }

@@ -6,6 +6,8 @@
  * @date    January 2018
  */
 
+using System;
+using System.Threading;
 using System.Diagnostics;
 using GazeHelper;
 
@@ -16,13 +18,24 @@ namespace TobiiTest
      */
     static class TobiiTest
     {
+        static Logger logger;
+        static ManualResetEvent resetEvent = new ManualResetEvent(false);
         static void Main()
         {
-            Logger logger = new Logger();
+            logger = new Logger();
+            logger.Info("Preparing to start Tobii eyetracker test");
+            EyeTracker tracker = new EyeTracker(logger);
+            tracker.RaiseTrackerReady += HandleTrackerReady;
+            resetEvent.WaitOne(); // Blocks until "set"
+        }
+
+        static void HandleTrackerReady(object sender, EventArgs e)
+        {
             JsonConfigParser parser = new JsonConfigParser(logger);
             JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
             logger.Info($"Starting Tobii eyetracker test \"{item.TobiiPath}\\{item.TobiiTest}\"");
             Process.Start($"{item.TobiiPath}\\{item.TobiiTest}");
+            resetEvent.Set(); // Allow the program to exit
         }
     }
 }

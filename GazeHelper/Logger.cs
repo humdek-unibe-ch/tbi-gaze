@@ -68,11 +68,16 @@ namespace GazeHelper
             }
             catch(Exception e)
             {
-                StreamWriter sw = new StreamWriter($"{logPath}\\{DateTime.Now.ToString("yyyyMMddTHHmmss")}_{Environment.MachineName}_fatal.log", true);
-                sw.WriteLine(e.ToString());
-                sw.Close();
-                sw.Dispose();
+                DumpFatal(e);
             }
+        }
+
+        public void DumpFatal(Exception e)
+        {
+            StreamWriter sw = new StreamWriter($"{logPath}\\{DateTime.Now.ToString("yyyyMMddTHHmmss")}_{Environment.MachineName}_fatal.log", true);
+            sw.WriteLine(e.ToString());
+            sw.Close();
+            sw.Dispose();
         }
 
         /**
@@ -80,7 +85,11 @@ namespace GazeHelper
          * 
          * @param message to be logged
          */
-        public void Debug(string message) { WriteLog(LogLevel.Debug, message); }
+        public void Debug(string message) {
+#if DEBUG
+            WriteLog(LogLevel.Debug, message);
+#endif
+        }
         /**
          * @brief wrapper function for info level logging
          * 
