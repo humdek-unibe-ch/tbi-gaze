@@ -22,8 +22,8 @@ namespace GazeHelper
         public event EventHandler TrackerDisabled;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private int readyTimer;
         private Timer dialogBoxTimer;
-        private const int MAX_WAIT_PERIOD = 5000;
         private TrackerMessageBox trackerMessageBox;
 
         private EyeTrackingDeviceStatus state;
@@ -42,13 +42,14 @@ namespace GazeHelper
         /// Initializes a new instance of the <see cref="EyeTracker"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public EyeTracker(TrackerLogger logger)
+        public EyeTracker(TrackerLogger logger, int ready_timer)
         {
             this.logger = logger;
+            this.readyTimer = ready_timer;
             host = new Host();
             var deviceStateObserver = host.States.CreateEyeTrackingDeviceStatusObserver();
             deviceStateObserver.WhenChanged(deviceState => OnUpdateDeviceStatus(deviceState));
-            dialogBoxTimer = new Timer(OnTrackerDisabledTimeout, this, MAX_WAIT_PERIOD, Timeout.Infinite);
+            dialogBoxTimer = new Timer(OnTrackerDisabledTimeout, this, ready_timer, Timeout.Infinite);
         }
 
         /// <summary>
@@ -151,7 +152,7 @@ namespace GazeHelper
                         Application.Current.Shutdown();
                         break;
                     case false:
-                        if(!IsReady()) dialogBoxTimer.Change(MAX_WAIT_PERIOD, Timeout.Infinite);
+                        if(!IsReady()) dialogBoxTimer.Change(readyTimer, Timeout.Infinite);
                         break;
                 }
             }));
@@ -166,7 +167,7 @@ namespace GazeHelper
             logger.Debug($"Eye tracker changed state: {deviceState.Value}");
             if (IsReady() && (deviceState.Value != EyeTrackingDeviceStatus.Tracking))
             {
-                dialogBoxTimer.Change(MAX_WAIT_PERIOD, Timeout.Infinite);
+                dialogBoxTimer.Change(readyTimer, Timeout.Infinite);
                 logger.Info($"Eye tracker stopped tracking: New state is \"{deviceState.Value}\"");
             }
             State = deviceState.Value;

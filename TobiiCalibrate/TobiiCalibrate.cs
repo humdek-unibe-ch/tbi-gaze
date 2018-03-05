@@ -11,6 +11,7 @@ namespace TobiiCalibrate
     static class TobiiCalibrate
     {
         static TrackerLogger logger;
+        private static JsonConfigParser.ConfigItem config;
         private static bool isCalibrated = false;
 
         /// <summary>
@@ -24,9 +25,10 @@ namespace TobiiCalibrate
                 ShutdownMode = ShutdownMode.OnExplicitShutdown
             };
             app.Exit += new ExitEventHandler(OnApplicationExit);
-
             logger = new TrackerLogger();
-            EyeTracker tracker = new EyeTracker(logger);
+            JsonConfigParser parser = new JsonConfigParser(logger);
+            config = parser.ParseJsonConfig();
+            EyeTracker tracker = new EyeTracker(logger, config.ReadyTimer);
             tracker.TrackerEnabled += OnTrackerReady;
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiCalibrate.exe\"");
             logger.Info("Preparing to start Tobii eyetracker calibration");
@@ -48,13 +50,11 @@ namespace TobiiCalibrate
             else
             {
                 // not yet calibrated, perfrom calibration
-                JsonConfigParser parser = new JsonConfigParser(logger);
-                JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
-                logger.Info($"Starting Tobii eyetracker calibration \"{item.TobiiPath}\\{item.TobiiCalibrate}  {item.TobiiCalibrateArguments}\"");
-                Process tobii_calibrate = Process.Start($"{item.TobiiPath}\\{item.TobiiCalibrate}", item.TobiiCalibrateArguments);
+                logger.Info($"Starting Tobii eyetracker calibration \"{config.TobiiPath}\\{config.TobiiCalibrate}  {config.TobiiCalibrateArguments}\"");
+                Process tobii_calibrate = Process.Start($"{config.TobiiPath}\\{config.TobiiCalibrate}", config.TobiiCalibrateArguments);
                 tobii_calibrate.WaitForExit();
                 isCalibrated = true;
-                logger.Info($"\"{item.TobiiPath}\\{item.TobiiCalibrate}  {item.TobiiCalibrateArguments}\" terminated ");
+                logger.Info($"\"{config.TobiiPath}\\{config.TobiiCalibrate}  {config.TobiiCalibrateArguments}\" terminated ");
             }
         }
 

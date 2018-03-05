@@ -80,7 +80,7 @@ namespace GazeToMouse
 
 
             // initialize host. Make sure that the Tobii service is running
-            tracker = new EyeTracker(logger);
+            tracker = new EyeTracker(logger, config.ReadyTimer);
             tracker.TrackerEnabled += OnTrackerEnabled;
             tracker.TrackerDisabled += OnTrackerDisabled;
             app.Run(window);

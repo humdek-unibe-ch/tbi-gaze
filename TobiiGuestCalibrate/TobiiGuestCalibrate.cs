@@ -11,6 +11,7 @@ namespace TobiiGuestCalibrate
     static class TobiiGuestCalibrate
     {
         static TrackerLogger logger;
+        private static JsonConfigParser.ConfigItem config;
         private static bool isCalibrated = false;
 
         /// <summary>
@@ -25,7 +26,9 @@ namespace TobiiGuestCalibrate
             };
             app.Exit += new ExitEventHandler(OnApplicationExit);
             logger = new TrackerLogger();
-            EyeTracker tracker = new EyeTracker(logger);
+            JsonConfigParser parser = new JsonConfigParser(logger);
+            config = parser.ParseJsonConfig();
+            EyeTracker tracker = new EyeTracker(logger, config.ReadyTimer);
             tracker.TrackerEnabled += OnTrackerReady;
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiGuestCalibrate.exe\"");
             logger.Info("Preparing to start Tobii eyetracker guest calibration");
@@ -47,13 +50,11 @@ namespace TobiiGuestCalibrate
             else
             {
                 // not yet calibrated, perfrom calibration
-                JsonConfigParser parser = new JsonConfigParser(logger);
-                JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
-                logger.Info($"Starting Tobii eyetracker calibration \"{item.TobiiPath}\\{item.TobiiGuestCalibrate}  {item.TobiiGuestCalibrateArguments}\"");
-                Process tobii_calibrate = Process.Start($"{item.TobiiPath}\\{item.TobiiGuestCalibrate}", item.TobiiGuestCalibrateArguments);
+                logger.Info($"Starting Tobii eyetracker calibration \"{config.TobiiPath}\\{config.TobiiGuestCalibrate}  {config.TobiiGuestCalibrateArguments}\"");
+                Process tobii_calibrate = Process.Start($"{config.TobiiPath}\\{config.TobiiGuestCalibrate}", config.TobiiGuestCalibrateArguments);
                 tobii_calibrate.WaitForExit();
                 isCalibrated = true;
-                logger.Info($"\"{item.TobiiPath}\\{item.TobiiGuestCalibrate}  {item.TobiiGuestCalibrateArguments}\" terminated ");
+                logger.Info($"\"{config.TobiiPath}\\{config.TobiiGuestCalibrate}  {config.TobiiGuestCalibrateArguments}\" terminated ");
             }
         }
 

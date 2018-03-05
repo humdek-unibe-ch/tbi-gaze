@@ -12,6 +12,7 @@ namespace TobiiTest
     {
         static TrackerLogger logger;
         private static bool IsTested = false;
+        private static JsonConfigParser.ConfigItem config;
 
         /// <summary>
         /// Defines the entry point of the application.
@@ -25,7 +26,9 @@ namespace TobiiTest
             };
             app.Exit += new ExitEventHandler(OnApplicationExit);
             logger = new TrackerLogger();
-            EyeTracker tracker = new EyeTracker(logger);
+            JsonConfigParser parser = new JsonConfigParser(logger);
+            config = parser.ParseJsonConfig();
+            EyeTracker tracker = new EyeTracker(logger, config.ReadyTimer);
             tracker.TrackerEnabled += OnTrackerReady;
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiTest.exe\"");
             logger.Info("Preparing to start Tobii eyetracker test application");
@@ -39,15 +42,13 @@ namespace TobiiTest
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnTrackerReady(object sender, EventArgs e)
         {
-            if (!IsTested)
+            if(!IsTested)
             {
-                JsonConfigParser parser = new JsonConfigParser(logger);
-                JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
-                logger.Info($"Starting Tobii eyetracker test \"{item.TobiiPath}\\{item.TobiiTest}\"");
-                Process tobii_test = Process.Start($"{item.TobiiPath}\\{item.TobiiTest}");
+                logger.Info($"Starting Tobii eyetracker test \"{config.TobiiPath}\\{config.TobiiTest}\"");
+                Process tobii_test = Process.Start($"{config.TobiiPath}\\{config.TobiiTest}");
                 tobii_test.WaitForExit();
                 IsTested = true;
-                logger.Info($"\"{item.TobiiPath}\\{item.TobiiTest}\" terminated ");
+                logger.Info($"\"{config.TobiiPath}\\{config.TobiiTest}\" terminated ");
                 Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
             }
         }
