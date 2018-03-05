@@ -39,14 +39,17 @@ namespace TobiiTest
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnTrackerReady(object sender, EventArgs e)
         {
-            JsonConfigParser parser = new JsonConfigParser(logger);
-            JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
-            logger.Info($"Starting Tobii eyetracker test \"{item.TobiiPath}\\{item.TobiiTest}\"");
-            Process tobii_test = Process.Start($"{item.TobiiPath}\\{item.TobiiTest}");
-            tobii_test.WaitForExit();
-            IsTested = true;
-            logger.Info($"\"{item.TobiiPath}\\{item.TobiiTest}\" terminated ");
-            Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
+            if (!IsTested)
+            {
+                JsonConfigParser parser = new JsonConfigParser(logger);
+                JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
+                logger.Info($"Starting Tobii eyetracker test \"{item.TobiiPath}\\{item.TobiiTest}\"");
+                Process tobii_test = Process.Start($"{item.TobiiPath}\\{item.TobiiTest}");
+                tobii_test.WaitForExit();
+                IsTested = true;
+                logger.Info($"\"{item.TobiiPath}\\{item.TobiiTest}\" terminated ");
+                Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
+            }
         }
 
         /// <summary>
