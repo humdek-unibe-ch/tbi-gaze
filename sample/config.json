@@ -45,9 +45,8 @@
     // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
     "GazeFilter": 0,
 
-    // Specifies the amount of time in milisecond to wait for the eyetracker to become ready. If the
-    // eyetracker is not ready withing the specified time the subject will be notified with a popup window
-    // that the eyetracker is currently not ready.
+    // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready. If the
+    // eyetracker is not ready withing the specified time the subject will be notified with a popup window.
     "ReadyTimer": 5000,
 
     // Defines the Tobii installation path. It must be the path to a folder (not a file).
