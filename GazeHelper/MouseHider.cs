@@ -1,19 +1,14 @@
-﻿/**
- * @brief helper class to show and hide the system curser
- * 
- * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
- * @file    MouseHider.cs
- * @date    Jamuary 2018
- */
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
+/// <summary>
+/// helper class to show and hide the system curser
+/// </summary>
 namespace GazeHelper
 {
-    /**
-     * @brief hide standard mouse pointer and resore it
-     */
+    /// <summary>
+    /// hide standard mouse pointer and resore it
+    /// </summary>
     public class MouseHider
     {
         [DllImport("user32.dll")]
@@ -21,21 +16,28 @@ namespace GazeHelper
         [DllImport("user32.dll")]
         static extern IntPtr LoadCursorFromFile(string lpFileName);
 
-        private Logger logger;
-        private string pathToBlankCur = "blank.cur";
+        private TrackerLogger logger;
+        private string pathToBlankCur = "assets\\blank.cur";
         private string pathToStandardCur = "C:\\Windows\\Cursors\\aero_arrow.cur";
 
         const uint OCR_NORMAL = 32512;
         //const uint OCR_APPSTARTING = 32650;
 
-        public MouseHider(Logger logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MouseHider"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public MouseHider(TrackerLogger logger)
         {
             this.logger = logger;
         }
 
-        /**
-         * @brief hide standard mouse pointer by replacing the current icon with a transparent icon
-         */
+        /// <summary>
+        /// Hides the cursor.
+        /// </summary>
+        /// <remarks>
+        /// Hides the standard mouse pointer by replacing the current icon with a transparent icon.
+        /// </remarks>
         public void HideCursor()
         {
             IntPtr hcur = LoadCursorFromFile(pathToBlankCur);
@@ -46,11 +48,14 @@ namespace GazeHelper
             }
             else logger.Error($"Cannot load curser file \"{pathToBlankCur}\"");
         }
-        /**
-         * @brief the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
-         * 
-         * @param pathToCur path to the standard mouse pointer icon
-         */
+
+        /// <summary>
+        /// Shows the cursor.
+        /// </summary>
+        /// <remarks>
+        /// the standard mouse pointer by replacing the current icon with the standard mouse pointer icon
+        /// </remarks>
+        /// <param name="pathToCur">The path to the standard mouse pointer icon.</param>
         public void ShowCursor(string pathToCur)
         {
             IntPtr hcur = LoadCursorFromFile(pathToCur);

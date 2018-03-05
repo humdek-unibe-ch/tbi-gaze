@@ -1,26 +1,21 @@
-﻿/**
- * Simple wrapper to send WM_CLOSE signal to GazeToMouse.exe
- * 
- * @file    GazeToMouseClose.cs
- * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
- * @date    January 2018
- */
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using GazeHelper;
 
+/// <summary>
+/// Simple wrapper to send WM_CLOSE signal to GazeToMouse.exe
+/// </summary>
 namespace GazeToMouseClose
 {
-    /**
-     * @brief Main entry point of the program GazeToMouseClose
-     */
     static class GazeToMouseClose
     {
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
         static void Main()
         {
-            Logger logger = new Logger();
+            TrackerLogger logger = new TrackerLogger();
             logger.Info("Sending WM_CLOSE signal to process \"GazeToMouse.exe\"");
-            Process.Start("taskkill", "/IM GazeToMouse.exe");
+            Process.Start("taskkill", "/T /IM GazeToMouse.exe");
         }
     }
 }

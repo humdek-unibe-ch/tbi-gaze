@@ -1,67 +1,46 @@
-﻿/**
- * Converts the stream of gaze points, captured by a Tobii eyetracker, to mouse cursor location
- * 
- * @file    GazeToMouse.cs
- * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
- * @date    January 2018
- */
-
-using System;
+﻿using System;
 using System.IO;
-using System.Windows.Forms;
+using System.Windows;
 using GazeHelper;
 
 namespace GazeToMouse
 {
-    /**
-     * @brief Main entry point of the application
-     */
-    class GazeToMouse
+    /// <summary>
+    /// Converts gaze data to mouse coordinates
+    /// </summary>
+    /// <seealso cref="System.Windows.Application" />
+    class GazeToMouse : Application
     {
         private static bool tracking = false;
         private static EyeTracker tracker;
         private static StreamWriter sw;
         private static TimeSpan ts_delta;
-        private static Logger logger;
+        private static TrackerLogger logger;
         private static MouseHider hider;
         private static JsonConfigParser.ConfigItem config;
-        /**
-         * @brief Helper class to be added to the application's message pump to filter out a message
-         */
-        private class ExitMessageFilter : IMessageFilter
-        {
-            /**
-             * @brief filters out a message before it is dispatched
-             * 
-             * The current implementation only cares about the signal that is sent to the application by taskkill (WM_CLOSE).
-             * Once WM_CLOSE is received, the event "ApplicationExit" is invoked.
-             * 
-             * @param m the pre-filtered message
-             * @return  true if the received message corresponds to WM_CLOSE
-             *          false if any other message is pre-filtered
-             */
-            public bool PreFilterMessage(ref Message m)
-            {
-                if (m.Msg == /*WM_CLOSE*/ 0x10)
-                {
-                    Application.Exit();
-                    return true;
-                }
-                return false;
-            }
-        }
 
-        /**
-         * @brief The main programm entry
-         */
-        static void Main(string[] args)
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        [STAThread]
+        public static void Main()
         {
-            // load configuration
-            logger = new Logger();
+            Application app = new Application();
+            app.Exit += new ExitEventHandler(OnApplicationExit);
+            // we need a window to gracefully terminate the program with WM_CLOSE
+            //trackerMessageBox.Show();
+            Window window = new Window
+            {
+                Visibility = Visibility.Hidden,
+                WindowStyle = WindowStyle.None
+            };
+
+            logger = new TrackerLogger();
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
+
             JsonConfigParser parser = new JsonConfigParser(logger);
             config = parser.ParseJsonConfig();
-            
+
             if (config.WriteDataLog)
             {
                 string gazeFilePostfix = $"_{Environment.MachineName}_data.txt";
@@ -70,7 +49,7 @@ namespace GazeToMouse
                 // create gaze data file
                 if (config.OutputPath == "") config.OutputPath = Directory.GetCurrentDirectory();
                 sw = CreateGazeOutputFile(config.OutputPath, gazeFileName);
-                if( sw == null )
+                if (sw == null)
                 {
                     // something went wrong, write to the current directory
                     config.OutputPath = Directory.GetCurrentDirectory();
@@ -85,7 +64,7 @@ namespace GazeToMouse
                     // something is wrong with the configured format, use the default format
                     JsonConfigParser.ConfigItem default_config = parser.GetDefaultConfig();
                     config.OutputFormat = default_config.OutputFormat;
-                    logger.Warning($"Using default output format of the form: \"{GetFromatSample(config.OutputFormat)}\"");
+                    logger.Warning($"Using default output format of the form: \"{GetFormatSample(config.OutputFormat)}\"");
                 }
 
                 // write header to output file
@@ -94,32 +73,29 @@ namespace GazeToMouse
                 // delete old files
                 DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
             }
-
+            
             // hide the mouse cursor
             hider = new MouseHider(logger);
             if (config.ControlMouse && config.HideMouse) hider.HideCursor();
 
+
             // initialize host. Make sure that the Tobii service is running
             tracker = new EyeTracker(logger);
-            tracker.RaiseTrackerReady += HandleTrackerReady;
-
-            // add message filter to the application's message pump
-            Application.ApplicationExit += new EventHandler(OnApplicationExit);
-            Application.AddMessageFilter(new ExitMessageFilter());
-            Application.Run();
+            tracker.TrackerEnabled += OnTrackerEnabled;
+            tracker.TrackerDisabled += OnTrackerDisabled;
+            app.Run(window);
         }
 
-        /**
-         * @brief checks whether a string formatting is applicable
-         * 
-         * @param format    format string to be checked
-         * @return true if format is ok, false if not
-         */
+        /// <summary>
+        /// Checks whether a string formatting is applicable.
+        /// </summary>
+        /// <param name="format">format string to be checked.</param>
+        /// <returns><c>true</c> if the format is ok; otherwise, <c>false</c></returns>
         static bool CheckOutputFormat(string format)
         {
             try
             {
-                logger.Info($"Output format is of the from: \"{GetFromatSample(format)}\"");
+                logger.Info($"Output format is of the from: \"{GetFormatSample(format)}\"");
                 return true;
             }
             catch (FormatException)
@@ -129,12 +105,12 @@ namespace GazeToMouse
             }
         }
 
-        /**
-         * @brief create and open a data stream to a file where gaze data will be stored
-         * 
-         * @param file_path     path to the directory where the gaze data file will be stored
-         * @param file_name     name of the gaze data file
-         */
+        /// <summary>
+        /// Createa and Opens a data stream to a file where gaze data will be stored.
+        /// </summary>
+        /// <param name="file_path">The file path.</param>
+        /// <param name="file_name">Name of the gaze data file.</param>
+        /// <returns>the stream handler</returns>
         static StreamWriter CreateGazeOutputFile(string file_path, string file_name)
         {
             try
@@ -153,13 +129,12 @@ namespace GazeToMouse
             }
         }
 
-        /**
-         * @brief remove old gaze data log files
-         * 
-         * @param output_path   path to the folder with the old output files
-         * @param output_count  number of files that are allowd in the path
-         * @param filter        output data file filter
-         */
+        /// <summary>
+        /// Deletes the old gaze log files.
+        /// </summary>
+        /// <param name="output_path">The Path to the folder with the old output files.</param>
+        /// <param name="output_count">The number of files that are allowd in the path.</param>
+        /// <param name="filter">The output data file filter.</param>
         static void DeleteOldGazeLogFiles(string output_path, int output_count, string filter)
         {
             string[] gazeLogFiles = Directory.GetFiles(output_path, filter);
@@ -175,14 +150,14 @@ namespace GazeToMouse
             }
         }
 
-        /**
-         * @brief set the mouse pointer to the location of the gaze point and log the coordiantes
-         * 
-         * @param x     the x-coordinate of the gaze point
-         * @param y     the y-coordinate of the gaye point
-         * @param ts    the timestamp of the the capture instant of the gaye point
-         *              Note that the timestamp reference represents an arbitrary point in time
-         */
+        /// <summary>
+        /// Sets the mouse pointer to the location of the gaze point and logs the coordiantes.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the gaze point.</param>
+        /// <param name="y">The y-coordinate of the gaye point.</param>
+        /// <param name="ts">The timestamp of the the capture instant of the gaye point.
+        /// Note that the timestamp reference represents an arbitrary point in time.</param>
+        /// <param name="first">The timestamp of the first capture.</param>
         static void Gaze2mouse(double x, double y, double ts, TimeSpan first)
         {
             // write the coordinates to the log file
@@ -197,15 +172,15 @@ namespace GazeToMouse
             }
 
             // set the cursor position to the gaze position
-            if (config.ControlMouse) Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
+            if (config.ControlMouse) System.Windows.Forms.Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
         }
 
-        /**
-         * @brief takes a valid format string as parameter and returns the string with sample gaze values
-         * 
-         * @return a formatted string of sample gaze values
-         */
-        static string GetFromatSample(string format)
+        /// <summary>
+        /// Takes a valid format string as parameter and returns the string with sample gaze values.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <returns>a formatted string of sample gaze values.</returns>
+        static string GetFormatSample(string format)
         {
             TimeSpan ts = DateTime.Now.TimeOfDay;
             double x = 1000.000000;
@@ -213,14 +188,14 @@ namespace GazeToMouse
             return String.Format(format, ts, x, y);
         }
 
-        /**
-         * @brief execute once the eye tracker is ready
-         * 
-         * @param sender    sender of the event
-         * @param e         event
-         */
-        static void HandleTrackerReady(object sender, EventArgs e)
+        /// <summary>
+        /// Called when the eye tracker is ready.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        static void OnTrackerEnabled(object sender, EventArgs e)
         {
+            if (config.ControlMouse && config.HideMouse) hider.HideCursor();
             if (tracking) return;
             // get the filter settings and create stream
             var gazePointDataStream = ((EyeTracker)sender).CreateGazePointDataStream(config.GazeFilter);
@@ -230,12 +205,21 @@ namespace GazeToMouse
             gazePointDataStream.GazePoint((x, y, ts) => Gaze2mouse(x, y, ts, first));
         }
 
-        /**
-         * @brief cleanup. To be run on application exit.
-         * 
-         * @param sender    sender of the signal
-         * @param e         signal event arguments
-         */
+        /// <summary>
+        /// Called when the eye tracker changes from ready to any other state.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        static void OnTrackerDisabled(object sender, EventArgs e)
+        {
+            if (config.ControlMouse && config.HideMouse) hider.ShowCursor(config.StandardMouseIconPath);
+        }
+
+        /// <summary>
+        /// Called when [application exit].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnApplicationExit(object sender, EventArgs e)
         {
             if (config.ControlMouse && config.HideMouse) hider.ShowCursor(config.StandardMouseIconPath);

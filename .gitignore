@@ -96,3 +96,5 @@ artifacts/
 # End of https://www.gitignore.io/api/visualstudio
 
 doc-doxygen
+build
+test

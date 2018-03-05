@@ -1,26 +1,19 @@
-﻿/**
- * @brief Simple tool to restore the mousepointer
- * 
- * @file    ShowMouse.cs
- * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
- * @date    January 2018
- */
+﻿using GazeHelper;
 
-using System.Runtime.InteropServices;
-using GazeHelper;
-
+/// <summary>
+/// Simple tool to restore the mousepointer
+/// </summary>
 namespace ShowMouse
 {
-    /**
-     * @brief Main entry point to the program ShowMouse
-     */
     static class ShowMouse
     {
-        [DllImport("user32.dll")]
-        static extern bool ShowCursor(bool show);
+
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
         static void Main()
         {
-            Logger logger = new Logger();
+            TrackerLogger logger = new TrackerLogger();
             JsonConfigParser parser = new JsonConfigParser(logger);
             JsonConfigParser.ConfigItem config = parser.ParseJsonConfig();
             MouseHider hider = new MouseHider(logger);

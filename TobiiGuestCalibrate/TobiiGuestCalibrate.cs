@@ -1,41 +1,71 @@
-﻿/**
- * Simple wrapper to run Tobii guest calibration
- * 
- * @file    TobiiGuestCalibrate.cs
- * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
- * @date    January 2018
- */
-
-using System;
-using System.Threading;
+﻿using System;
 using System.Diagnostics;
+using System.Windows;
 using GazeHelper;
 
+/// <summary>
+/// Simple wrapper to run Tobii eyetracker guest calibration
+/// </summary>
 namespace TobiiGuestCalibrate
 {
-    /**
-     * @brief Main entry point to the program TobiiGuestCalibrate
-     */
     static class TobiiGuestCalibrate
     {
-        static Logger logger;
-        static ManualResetEvent resetEvent = new ManualResetEvent(false);
+        static TrackerLogger logger;
+        private static bool isCalibrated = false;
+
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        [STAThread]
         static void Main()
         {
-            logger = new Logger();
-            logger.Info("Preparing to start Tobii guest calibration");
+            Application app = new Application
+            {
+                ShutdownMode = ShutdownMode.OnExplicitShutdown
+            };
+            app.Exit += new ExitEventHandler(OnApplicationExit);
+            logger = new TrackerLogger();
             EyeTracker tracker = new EyeTracker(logger);
-            tracker.RaiseTrackerReady += HandleTrackerReady;
-            resetEvent.WaitOne(); // Blocks until "set"
+            tracker.TrackerEnabled += OnTrackerReady;
+            logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiGuestCalibrate.exe\"");
+            logger.Info("Preparing to start Tobii eyetracker guest calibration");
+            app.Run();
         }
 
-        static void HandleTrackerReady(object sender, EventArgs e)
+        /// <summary>
+        /// is executed once the tracker is ready
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        static void OnTrackerReady(object sender, EventArgs e)
         {
-            JsonConfigParser parser = new JsonConfigParser(logger);
-            JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
-            logger.Info($"Starting Tobii guest calibration \"{item.TobiiPath}\\{item.TobiiGuestCalibrate} {item.TobiiGuestCalibrateArguments}\"");
-            Process.Start($"{item.TobiiPath}\\{item.TobiiGuestCalibrate}", item.TobiiGuestCalibrateArguments);
-            resetEvent.Set(); // Allow the program to exit
+            if(isCalibrated)
+            {
+                // calibration was successful, eye tracker switched to state ready
+                Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
+            }
+            else
+            {
+                // not yet calibrated, perfrom calibration
+                JsonConfigParser parser = new JsonConfigParser(logger);
+                JsonConfigParser.ConfigItem item = parser.ParseJsonConfig();
+                logger.Info($"Starting Tobii eyetracker calibration \"{item.TobiiPath}\\{item.TobiiGuestCalibrate}  {item.TobiiGuestCalibrateArguments}\"");
+                Process tobii_calibrate = Process.Start($"{item.TobiiPath}\\{item.TobiiGuestCalibrate}", item.TobiiGuestCalibrateArguments);
+                tobii_calibrate.WaitForExit();
+                isCalibrated = true;
+                logger.Info($"\"{item.TobiiPath}\\{item.TobiiGuestCalibrate}  {item.TobiiGuestCalibrateArguments}\" terminated ");
+            }
+        }
+
+        /// <summary>
+        /// Called when [application exit].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        static void OnApplicationExit(object sender, EventArgs e)
+        {
+            if (!isCalibrated) logger.Error("Unable to start Tobii eyetracker guest calibration");
+            logger.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}TobiiGuestCalibrate.exe\" terminated gracefully{Environment.NewLine}");
         }
     }
 }

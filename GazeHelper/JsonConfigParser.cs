@@ -1,31 +1,32 @@
-﻿/**
- * @brief Simple parser for a json config file
- * 
- * The config file "config.json" is parsed and its values are attributed to the ConfigItem class
- * 
- * @author  Simon Maurer, simon.maurer@humdek.unibe.ch
- * @file    JsonConfigParser.cs
- * @date    January 2018
- */
-
-using System;
+﻿using System;
 using System.IO;
 using Newtonsoft.Json;
 
+/// <summary>
+/// Simple parser for a json config file.
+/// </summary>
 namespace GazeHelper
 {
+    /// <summary>
+    /// The config file "config.json" is parsed and its values are attributed to the ConfigItem class.
+    /// </summary>
     public class JsonConfigParser
     {
         private string ConfigFile = "config.json";
-        private Logger logger;
+        private TrackerLogger logger;
 
-        public JsonConfigParser(Logger logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonConfigParser"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public JsonConfigParser(TrackerLogger logger)
         {
             this.logger = logger;
-        }        
-        /**
-         * @brief configuration file class
-         */
+        }
+
+        /// <summary>
+        /// configuration file class
+        /// </summary>
         public class ConfigItem
         {
             public bool WriteDataLog { get; set; }
@@ -46,19 +47,18 @@ namespace GazeHelper
 
         }
 
-        /**
-         * @brief parses the config file
-         * 
-         * @return the updated ConfigItem class
-         */
+        /// <summary>
+        /// Parses the json configuration.
+        /// </summary>
+        /// <returns>the updated ConfigItem class.</returns>
         public ConfigItem ParseJsonConfig()
         {
             string json;
             ConfigItem item = GetDefaultConfig();
 
             // load configuration
-            StreamReader sr = OpenConfigFile( ConfigFile );
-            if( sr != null )
+            StreamReader sr = OpenConfigFile(ConfigFile);
+            if (sr != null)
             {
                 try
                 {
@@ -66,9 +66,8 @@ namespace GazeHelper
                     item = JsonConvert.DeserializeObject<ConfigItem>(json);
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();
-                    sr.Dispose();
                 }
-                catch(JsonReaderException e)
+                catch (JsonReaderException e)
                 {
                     logger.Error(e.Message);
                     logger.Warning("Config file could not be parsed, using default configuration values");
@@ -78,11 +77,10 @@ namespace GazeHelper
             return item;
         }
 
-        /**
-         * @brief return the default configuration values
-         * 
-         * @return the default configuration values
-         */
+        /// <summary>
+        /// Gets the default configuration values.
+        /// </summary>
+        /// <returns>the default configuration values.</returns>
         public ConfigItem GetDefaultConfig()
         {
             return new ConfigItem
@@ -104,16 +102,15 @@ namespace GazeHelper
             };
         }
 
-        /**
-         * @brief open whichever configfile is available
-         * 
-         * First, the caller path is searched.
-         * Second, the execution path is searched.
-         * Third, default values are used.
-         * 
-         * @param configFile the name of the configuarion file
-         */
-        private StreamReader OpenConfigFile( string configFile )
+        /// <summary>
+        /// Opens whichever configuration file is availbale.
+        /// First, the caller path is searched.
+        /// Second, the execution path is searched.
+        /// Third, default values are used.
+        /// </summary>
+        /// <param name="configFile">The configuration file.</param>
+        /// <returns></returns>
+        private StreamReader OpenConfigFile(string configFile)
         {
             StreamReader sr = null;
             try
