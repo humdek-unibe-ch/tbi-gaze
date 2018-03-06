@@ -264,10 +264,10 @@ The name of the output file follows the form \texttt{<yyyyMMddTHHmmss>\_<hostNam
     \item \texttt{<hostName>} is replaced by the name of the machine
 \end{itemize}
 
-
 \section{Log File}
 All executables write continuously to the same log file.
 This allows to track the eye tracker events that happened throughout a \texttt{ztree} session within one log file.
 The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe: \texttt{<zleaf path>}).
+The name of the log file is of the form \texttt{<hostName>\_gaze.log} where \texttt{<hostName>} is replaced by the name of the machine.
 
 \end{document}

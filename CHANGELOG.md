@@ -1,3 +1,11 @@
+# v1.0.0
+### New Features
+ - Notify user with popup if eyetracker is not ready
+ - Allow to configure time interval for the software to wait for the eyetracker to become ready
+
+### Changes
+ - Rename default output file for data from **<prefix>_data.txt** to **<prefix>_gaze.txt**
+
 # v0.3.2
 ### Improvements
 
@@ -21,7 +29,7 @@
 
 # v0.3.0
 
-### New features
+### New Features
 
  - allow to configure whether the gaze data is logged.
  - allow to configure the maximum allowed amount of gaze data files in the output folder.
@@ -36,7 +44,7 @@
 
 # v0.2.0
 
-### New features
+### New Features
 
  - allow to configure whether the mouse is controlled by the gaze of the subject or not.
  - allow to configure the output format of the gaze data.
