@@ -43,7 +43,7 @@ namespace GazeToMouse
 
             if (config.WriteDataLog)
             {
-                string gazeFilePostfix = $"_{Environment.MachineName}_data.txt";
+                string gazeFilePostfix = $"_{Environment.MachineName}_gaze.txt";
                 string gazeFileName = $"{DateTime.Now:yyyyMMddTHHmmss}{gazeFilePostfix}";
 
                 // create gaze data file
