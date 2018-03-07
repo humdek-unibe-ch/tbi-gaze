@@ -12,9 +12,10 @@ namespace GazeToMouse
     class GazeToMouse : Application
     {
         private static bool tracking = false;
-        private static EyeTracker tracker;
+        private static bool usePro = false;
+        private static EyeTrackerHandler tracker;
         private static StreamWriter sw;
-        private static TimeSpan ts_delta;
+        private static TimeSpan delta;
         private static TrackerLogger logger;
         private static MouseHider hider;
         private static JsonConfigParser.ConfigItem config;
@@ -59,16 +60,14 @@ namespace GazeToMouse
                 }
 
                 // check output data format
-                if (!CheckOutputFormat(config.OutputFormat))
+                if (config.WriteDataLog && !CheckOutputFormat(config.OutputFormat))
                 {
                     // something is wrong with the configured format, use the default format
                     JsonConfigParser.ConfigItem default_config = parser.GetDefaultConfig();
                     config.OutputFormat = default_config.OutputFormat;
-                    logger.Warning($"Using default output format of the form: \"{GetFormatSample(config.OutputFormat)}\"");
+                    WriteOutputHeader(config.OutputFormat);
+                    logger.Warning($"Using default output format");
                 }
-
-                // write header to output file
-                if (config.WriteDataLog) sw.WriteLine(config.OutputFormat, "Timestamp", "x-coord", "y-coord");
 
                 // delete old files
                 DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
@@ -80,7 +79,17 @@ namespace GazeToMouse
 
 
             // initialize host. Make sure that the Tobii service is running
-            tracker = new EyeTracker(logger, config.ReadyTimer);
+            if(usePro)
+            {
+                tracker = new EyeTrackerPro(logger, config.ReadyTimer);
+                ((EyeTrackerPro)tracker).GazeDataReceived += OnGazeData;
+            }
+            else
+            {
+                tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilter);
+                ((EyeTrackerCore)tracker).GazeDataReceived += OnGazeData;
+            }
+
             tracker.TrackerEnabled += OnTrackerEnabled;
             tracker.TrackerDisabled += OnTrackerDisabled;
             app.Run(window);
@@ -95,13 +104,24 @@ namespace GazeToMouse
         {
             try
             {
-                logger.Info($"Output format is of the from: \"{GetFormatSample(format)}\"");
+                // try format without pupil information
+                WriteOutputHeader(config.OutputFormat);
                 return true;
             }
             catch (FormatException)
             {
-                logger.Error($"Output format string was not in a correct format");
-                return false;
+                try
+                {
+                    // try format with pupil information
+                    WriteOutputHeader(config.OutputFormat, true);
+                    usePro = true; // need Tobii SDK Pro
+                    return true;
+                }
+                catch
+                {
+                    logger.Error($"Output format string was not in a correct format");
+                    return false;
+                }
             }
         }
 
@@ -153,39 +173,99 @@ namespace GazeToMouse
         /// <summary>
         /// Sets the mouse pointer to the location of the gaze point and logs the coordiantes.
         /// </summary>
+        /// <param name="sender">The sender.</param>
         /// <param name="x">The x-coordinate of the gaze point.</param>
         /// <param name="y">The y-coordinate of the gaye point.</param>
         /// <param name="ts">The timestamp of the the capture instant of the gaye point.
         /// Note that the timestamp reference represents an arbitrary point in time.</param>
-        /// <param name="first">The timestamp of the first capture.</param>
-        static void Gaze2mouse(double x, double y, double ts, TimeSpan first)
+        static void OnGazeData(double x, double y, double ts)
         {
             // write the coordinates to the log file
             if (config.WriteDataLog)
             {
                 // create a time reference that corresponds to the local machine
-                TimeSpan ts_rec = TimeSpan.FromMilliseconds(ts);
-                if (!tracking) ts_delta = ts_rec - first;
-                ts_rec -= ts_delta;
+                TimeSpan ts_rec = ComputeEyeTrackerTimestamp(ts);
                 sw.WriteLine(config.OutputFormat, ts_rec, x, y);
                 tracking = true;
             }
-
             // set the cursor position to the gaze position
-            if (config.ControlMouse) System.Windows.Forms.Cursor.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
+            if (config.ControlMouse)
+            {
+                UpdateMousePosition(Convert.ToInt32(x), Convert.ToInt32(y));
+            }
+        }
+
+        static void OnGazeData(double? x, double? y, double? dia, long ts)
+        {
+            if ((x == null) && (y == null)) return;
+            // write the coordinates to the log file
+            if (config.WriteDataLog)
+            {
+                TimeSpan ts_rec = ComputeEyeTrackerTimestamp(ts/1000);
+                sw.WriteLine(config.OutputFormat, ts_rec, x, y, dia);
+                tracking = true;
+            }
+            // set the cursor position to the gaze position
+            if (config.ControlMouse)
+            {
+                UpdateMousePosition(Convert.ToInt32(x), Convert.ToInt32(y));
+            }
+        }
+
+        /// <summary>
+        /// Computes the eye tracker timestamp.
+        /// </summary>
+        /// <param name="ts">The ts.</param>
+        /// <returns></returns>
+        static TimeSpan ComputeEyeTrackerTimestamp( double ts )
+        {
+            TimeSpan res = TimeSpan.FromMilliseconds(ts);
+            if (!tracking) delta = res - DateTime.Now.TimeOfDay; ;
+            res -= delta;
+            return res;
+        }
+
+        /// <summary>
+        /// Updates the mouse position.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        static void UpdateMousePosition(int x, int y)
+        {
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
         }
 
         /// <summary>
         /// Takes a valid format string as parameter and returns the string with sample gaze values.
         /// </summary>
         /// <param name="format">The format.</param>
-        /// <returns>a formatted string of sample gaze values.</returns>
-        static string GetFormatSample(string format)
+        /// <param name="pupil">if set to <c>true</c> use format with pupil diameter.</param>
+        /// <returns>
+        /// a formatted string of sample gaze values.
+        /// </returns>
+        static void WriteOutputHeader(string format, bool pupil=false)
         {
+            string formatted;
+            string ts_title = "Timestamp";
             TimeSpan ts = DateTime.Now.TimeOfDay;
+            string x_title = "x-coord";
             double x = 1000.000000;
+            string y_title = "y-coord";
             double y = 1000.000000;
-            return String.Format(format, ts, x, y);
+            string dia_title = "diameter";
+            double dia = 1.000000;
+            if (pupil)
+            {
+                formatted = String.Format(format, ts, x, y, dia);
+                sw.WriteLine(config.OutputFormat, ts_title, x_title, y_title, dia_title);
+            }
+            else
+            {
+                formatted = String.Format(format, ts, x, y);
+                sw.WriteLine(config.OutputFormat, ts_title, x_title, y_title);
+            }
+            logger.Info($"Output format is of the from: \"{formatted}\"");
+            
         }
 
         /// <summary>
@@ -197,12 +277,6 @@ namespace GazeToMouse
         {
             if (config.ControlMouse && config.HideMouse) hider.HideCursor();
             if (tracking) return;
-            // get the filter settings and create stream
-            var gazePointDataStream = ((EyeTracker)sender).CreateGazePointDataStream(config.GazeFilter);
-
-            // whenever a new gaze point is available, run gaze2mouse
-            TimeSpan first = DateTime.Now.TimeOfDay;
-            gazePointDataStream.GazePoint((x, y, ts) => Gaze2mouse(x, y, ts, first));
         }
 
         /// <summary>

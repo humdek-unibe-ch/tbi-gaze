@@ -15,16 +15,19 @@
     // Allows to define the format of how the gaze data will be logged. Use the .NET syntax to
     // specify the format of individual values:
     //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Three values are logged:
+    // Up to four values are logged:
     //  - the timestamp of the gaze point measurement
     //  - the x coordinate of the gaze point
     //  - the y coordinate of the gaze point
-    // The format definition is of the form
+    //  - [optional] the diameter of the pupil
+    // The format definition is of the form (values enclosed in [] are optional)
     //  {0:<format of timestamp>}<delim>{1:<format of x-coordinate>}<delim>{2:<format of y-coordinate>}
+    //      [<delim>{3:<format of pupil diameter>}]
     // where all values marked with <> can be customized and where
     //  - 0 is replaced by the timestamp
     //  - 1 is replaced by the x-coordinate
     //  - 2 is replaced by the y-coordinate
+    //  - 3 is replaced by the pupil diameter (optional)
     // <delim> can be anything (e.g. \t for tab). Note that the x and y coordinates will be represented
     // differently depending in the localisation settings of the windows installation (e.g. 123,4 for DE_CH
     // or 123.4 for EN_US).

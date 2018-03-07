@@ -53,12 +53,17 @@
     <Reference Include="Tobii.Interaction.Net, Version=0.7.3.333, Culture=neutral, PublicKeyToken=70326046dcdce6cb, processorArchitecture=MSIL">
       <HintPath>..\packages\Tobii.Interaction.0.7.3\lib\net45\Tobii.Interaction.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Tobii.Research, Version=1.3.0.872, Culture=neutral, PublicKeyToken=70326046dcdce6cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tobii.Research.x86.1.3.0.872\lib\net45\Tobii.Research.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EyeTracker.cs" />
+    <Compile Include="EyeTrackerCore.cs" />
+    <Compile Include="EyeTrackerHandler.cs" />
+    <Compile Include="EyeTrackerPro.cs" />
     <Compile Include="JsonConfigParser.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MouseHider.cs" />
@@ -104,6 +109,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Tobii.Interaction.0.7.3\build\Tobii.Interaction.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Tobii.Interaction.0.7.3\build\Tobii.Interaction.targets'))" />
+    <Error Condition="!Exists('..\packages\Tobii.Research.x86.1.3.0.872\build\Tobii.Research.x86.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Tobii.Research.x86.1.3.0.872\build\Tobii.Research.x86.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)build\" mkdir "$(SolutionDir)build"
@@ -123,4 +129,5 @@ copy /Y "$(TargetDir)*.dll" "$(SolutionDir)test\"
 if not exist "$(SolutionDir)test\assets\" mkdir "$(SolutionDir)test\assets"
 copy /Y "$(ProjectDir)assets\*" "$(SolutionDir)test\assets\"</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Tobii.Research.x86.1.3.0.872\build\Tobii.Research.x86.targets" Condition="Exists('..\packages\Tobii.Research.x86.1.3.0.872\build\Tobii.Research.x86.targets')" />
 </Project>
