@@ -228,7 +228,8 @@ namespace GazeToMouse
             }
         }
 
-        static void OnGazeData(double? x, double? y, double? dia, long ts)
+        static void OnGazeData(double? x, double x_left, double x_right, double? y, double y_left, double y_right,
+            double? dia, double dia_left, double dia_right, bool valid_left, bool valid_right, long ts)
         {
             if ((x == null) && (y == null)) return;
             // write the coordinates to the log file
@@ -237,16 +238,16 @@ namespace GazeToMouse
                 string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
                 formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(config.FormatTimeStamp);
                 formatted_values[(int)GazeOutputValue.XCoord] = Math.Round((double)x, 0).ToString();
-                formatted_values[(int)GazeOutputValue.XCoordLeft] = "";
-                formatted_values[(int)GazeOutputValue.XCoordRight] = "";
+                formatted_values[(int)GazeOutputValue.XCoordLeft] = Math.Round(x_left, 0).ToString();
+                formatted_values[(int)GazeOutputValue.XCoordRight] = Math.Round(x_right, 0).ToString();
                 formatted_values[(int)GazeOutputValue.YCoord] = Math.Round((double)y, 0).ToString();
-                formatted_values[(int)GazeOutputValue.YCoordLeft] = "";
-                formatted_values[(int)GazeOutputValue.YCoordRight] = "";
+                formatted_values[(int)GazeOutputValue.YCoordLeft] = Math.Round(y_left, 0).ToString();
+                formatted_values[(int)GazeOutputValue.YCoordRight] = Math.Round(y_right, 0).ToString();
                 formatted_values[(int)GazeOutputValue.PupilDia] = ((double)dia).ToString(config.FormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = "";
-                formatted_values[(int)GazeOutputValue.PupilDiaRight] = "";
-                formatted_values[(int)GazeOutputValue.ValidLeft] = "";
-                formatted_values[(int)GazeOutputValue.ValidRight] = "";
+                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = dia_left.ToString(config.FormatDiameter);
+                formatted_values[(int)GazeOutputValue.PupilDiaRight] = dia_right.ToString(config.FormatDiameter);
+                formatted_values[(int)GazeOutputValue.ValidLeft] = valid_left.ToString();
+                formatted_values[(int)GazeOutputValue.ValidRight] = valid_right.ToString();
                 sw.WriteLine(String.Format(config.OutputOrder, formatted_values));
                 tracking = true;
             }

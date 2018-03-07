@@ -11,7 +11,8 @@ namespace GazeHelper
 {
     public class EyeTrackerPro : EyeTrackerHandler
     {
-        public event Action<double?, double?, double?, long> GazeDataReceived;
+        public event Action<double?, double, double, double?, double, double, double?, double, double, bool, bool, long> GazeDataReceived;
+
         public EyeTrackerPro(TrackerLogger logger, int ready_timer) : base(logger, ready_timer)
         {
             logger.Info("Using Tobii SDK Pro");
@@ -68,9 +69,15 @@ namespace GazeHelper
             double left_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
             double right_x = data.RightEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
             double right_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
-            GazeDataReceived?.Invoke(GazeFilter(left_x, right_x), GazeFilter(left_y, right_y), GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter), data.DeviceTimeStamp);
-            //Console.WriteLine($"left x: {left_x}, y: {left_y}, dia: {data.LeftEye.Pupil.PupilDiameter} ({data.LeftEye.Pupil.Validity})");
-            //Console.WriteLine($"right x: {right_x}, y: {right_y}, dia: {data.RightEye.Pupil.PupilDiameter} ({data.RightEye.Pupil.Validity})");
+            GazeDataReceived?.Invoke(
+                GazeFilter(left_x, right_x),
+                left_x, right_x,
+                GazeFilter(left_y, right_y),
+                left_y, right_y,
+                GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter),
+                data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter,
+                (data.LeftEye.Pupil.Validity == Validity.Valid), (data.RightEye.Pupil.Validity == Validity.Valid),
+                data.DeviceTimeStamp);
         }
 
         private double? GazeFilter( double left, double right)
