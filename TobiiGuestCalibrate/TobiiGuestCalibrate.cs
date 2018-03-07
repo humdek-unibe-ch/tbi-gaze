@@ -11,7 +11,7 @@ namespace TobiiGuestCalibrate
     static class TobiiGuestCalibrate
     {
         static TrackerLogger logger;
-        private static JsonConfigParser.ConfigItem config;
+        private static ConfigItem config;
         private static bool isCalibrated = false;
 
         /// <summary>

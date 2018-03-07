@@ -12,27 +12,58 @@
     // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     "OutputPath": "",
 
-    // Allows to define the format of how the gaze data will be logged. Use the .NET syntax to
-    // specify the format of individual values:
+    // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
     //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Up to four values are logged:
-    //  - the timestamp of the gaze point measurement
-    //  - the x coordinate of the gaze point
-    //  - the y coordinate of the gaze point
-    //  - [optional] the diameter of the pupil
-    // The format definition is of the form (values enclosed in [] are optional)
-    //  {0:<format of timestamp>}<delim>{1:<format of x-coordinate>}<delim>{2:<format of y-coordinate>}
-    //      [<delim>{3:<format of pupil diameter>}]
-    // where all values marked with <> can be customized and where
-    //  - 0 is replaced by the timestamp
-    //  - 1 is replaced by the x-coordinate
-    //  - 2 is replaced by the y-coordinate
-    //  - 3 is replaced by the pupil diameter (optional)
-    // <delim> can be anything (e.g. \t for tab). Note that the x and y coordinates will be represented
-    // differently depending in the localisation settings of the windows installation (e.g. 123,4 for DE_CH
-    // or 123.4 for EN_US).
-    // When defining <format of timestamp>, special characters (e.g. ':', '.') need to be escaped with '\\'.
-    "OutputFormat": "{0:hh\\:mm\\:ss\\.fff}\t{1:0.0}\t{2:0.0}",
+    // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
+    "FormatTimeStamp": "hh\\:mm\\:ss\\.fff",
+
+    // Allows to define the format of how the pupil diameter will be logged. Use the .NET syntax to
+    // specify the format:
+    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+    // Note that the numbers will be represented differently depending in the localisation settings of the
+    // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+    "FormatDiameter": "0.000",
+
+    // Allows to define the order and the delimiters between the different values. The definition is
+    // of the form
+    //  {0}<delim>{1}<delim> ... <delim>{11}
+    // where <delim> can be customized and where the numbers are replaced by the following values
+    //  - 0: timestamp of the gaze data item (uses ValueFormat.TimeStamp)
+    //  - 1: x-coordinate of the gaze point of both eyes (pixel value)
+    //  - 2: x-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
+    //  - 3: x-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
+    //  - 4: y-coordinate of the gaze point of both eyes (pixel value)
+    //  - 5: y-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
+    //  - 6: y-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
+    //  - 7: average pupil diameter of both eyes (uses ValueFormat.Diameter) [SDK Pro only]
+    //  - 8: pupil diameter of the left eye (uses ValueFormat.Diameter) [SDK Pro only]
+    //  - 9: pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
+    //  - 10: validity of the data of the left eye [SDK Pro only]
+    //  - 11: validity of the data of the right eye [SDK Pro only]
+    // <delim> can be anything (e.g. \t for tab).
+    "OutputOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+
+    // Defines the titles of the value columns
+    "ValueTitle": [
+        "Timestamp",
+        "x-coord",
+        "x-coord-left",
+        "x-coord-right",
+        "y-coord",
+        "y-coord-left",
+        "y-coord-right",
+        "pupil-dia",
+        "pupil-dia-left",
+        "pupil-dia-right",
+        "valid-left",
+        "valid-right"
+    ],
+
+    // Choose the Tobii SDK (0: Tobii SDK Core, 1: Tobii SDK Pro)
+    "TobiiSDK": 0,
+
+    // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
+    "GazeFilter": 0,
 
     // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
     // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
@@ -44,9 +75,6 @@
     // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when
     // GazeToMousClose.exe is executed.
     "HideMouse": false,
-
-    // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
-    "GazeFilter": 0,
 
     // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready. If the
     // eyetracker is not ready withing the specified time the subject will be notified with a popup window.

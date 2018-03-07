@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using GazeHelper;
@@ -12,13 +13,12 @@ namespace GazeToMouse
     class GazeToMouse : Application
     {
         private static bool tracking = false;
-        private static bool usePro = false;
         private static EyeTrackerHandler tracker;
         private static StreamWriter sw;
         private static TimeSpan delta;
         private static TrackerLogger logger;
         private static MouseHider hider;
-        private static JsonConfigParser.ConfigItem config;
+        private static ConfigItem config;
 
         /// <summary>
         /// Defines the entry point of the application.
@@ -60,14 +60,17 @@ namespace GazeToMouse
                 }
 
                 // check output data format
-                if (config.WriteDataLog && !CheckOutputFormat(config.OutputFormat))
+                if (config.WriteDataLog && !CheckOutputFormat(config.OutputOrder, config.FormatTimeStamp, config.FormatDiameter))
                 {
                     // something is wrong with the configured format, use the default format
-                    JsonConfigParser.ConfigItem default_config = parser.GetDefaultConfig();
-                    config.OutputFormat = default_config.OutputFormat;
-                    WriteOutputHeader(config.OutputFormat);
-                    logger.Warning($"Using default output format");
+                    ConfigItem default_config = parser.GetDefaultConfig();
+                    config.OutputOrder = default_config.OutputOrder;
+                    config.FormatTimeStamp = default_config.FormatTimeStamp;
+                    config.FormatDiameter = default_config.FormatDiameter;
+                    logger.Warning($"Using default output format of the from: \"{GetFormatSample(config.OutputOrder, config.FormatTimeStamp, config.FormatDiameter)}\"");
                 }
+
+                if (config.WriteDataLog) sw.WriteLine(config.OutputOrder, config.ValueTitle);
 
                 // delete old files
                 DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
@@ -79,12 +82,12 @@ namespace GazeToMouse
 
 
             // initialize host. Make sure that the Tobii service is running
-            if(usePro)
+            if(config.TobiiSDK == 1)
             {
                 tracker = new EyeTrackerPro(logger, config.ReadyTimer);
                 ((EyeTrackerPro)tracker).GazeDataReceived += OnGazeData;
             }
-            else
+            else if(config.TobiiSDK == 0)
             {
                 tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilter);
                 ((EyeTrackerCore)tracker).GazeDataReceived += OnGazeData;
@@ -100,30 +103,49 @@ namespace GazeToMouse
         /// </summary>
         /// <param name="format">format string to be checked.</param>
         /// <returns><c>true</c> if the format is ok; otherwise, <c>false</c></returns>
-        static bool CheckOutputFormat(string format)
+        static bool CheckOutputFormat(string order, string format_timestamp, string format_diameter)
         {
             try
             {
-                // try format without pupil information
-                WriteOutputHeader(config.OutputFormat);
+                logger.Info($"Output format is of the from: \"{GetFormatSample(order, format_timestamp, format_diameter)}\"");
                 return true;
             }
             catch (FormatException)
             {
-                try
-                {
-                    // try format with pupil information
-                    WriteOutputHeader(config.OutputFormat, true);
-                    usePro = true; // need Tobii SDK Pro
-                    return true;
-                }
-                catch
-                {
-                    logger.Error($"Output format string was not in a correct format");
-                    return false;
-                }
+                logger.Error($"Output format string was not in a correct format");
+                return false;
             }
         }
+
+
+        /// <summary>
+        /// Takes a valid format string as parameter and returns the string with sample gaze values.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <returns>a formatted string of sample gaze values.</returns>
+        static string GetFormatSample(string order, string format_timestamp, string format_diameter)
+        {
+            string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
+            formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(format_timestamp);
+            formatted_values[(int)GazeOutputValue.XCoord] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.XCoordLeft] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.XCoordRight] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.YCoord] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.YCoordLeft] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.YCoordRight] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.PupilDia] = 1.000000.ToString(format_diameter);
+            formatted_values[(int)GazeOutputValue.PupilDiaLeft] = 1.000000.ToString(format_diameter);
+            formatted_values[(int)GazeOutputValue.PupilDiaRight] = 1.000000.ToString(format_diameter);
+            formatted_values[(int)GazeOutputValue.ValidLeft] = true.ToString();
+            formatted_values[(int)GazeOutputValue.ValidRight] = true.ToString();
+            return String.Format(order, formatted_values);
+        }
+
+        static int GetConfigValueCount()
+        {
+            return config.ValueTitle.Length;
+        }
+
 
         /// <summary>
         /// Createa and Opens a data stream to a file where gaze data will be stored.
@@ -183,9 +205,20 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (config.WriteDataLog)
             {
-                // create a time reference that corresponds to the local machine
-                TimeSpan ts_rec = ComputeEyeTrackerTimestamp(ts);
-                sw.WriteLine(config.OutputFormat, ts_rec, x, y);
+                string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
+                formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(config.FormatTimeStamp);
+                formatted_values[(int)GazeOutputValue.XCoord] = Math.Round(x, 0).ToString();
+                formatted_values[(int)GazeOutputValue.XCoordLeft] = "";
+                formatted_values[(int)GazeOutputValue.XCoordRight] = "";
+                formatted_values[(int)GazeOutputValue.YCoord] = Math.Round(y, 0).ToString();
+                formatted_values[(int)GazeOutputValue.YCoordLeft] = "";
+                formatted_values[(int)GazeOutputValue.YCoordRight] = "";
+                formatted_values[(int)GazeOutputValue.PupilDia] = "";
+                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = "";
+                formatted_values[(int)GazeOutputValue.PupilDiaRight] = "";
+                formatted_values[(int)GazeOutputValue.ValidLeft] = "";
+                formatted_values[(int)GazeOutputValue.ValidRight] = "";
+                sw.WriteLine(String.Format(config.OutputOrder, formatted_values));
                 tracking = true;
             }
             // set the cursor position to the gaze position
@@ -201,8 +234,20 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (config.WriteDataLog)
             {
-                TimeSpan ts_rec = ComputeEyeTrackerTimestamp(ts/1000);
-                sw.WriteLine(config.OutputFormat, ts_rec, x, y, dia);
+                string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
+                formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(config.FormatTimeStamp);
+                formatted_values[(int)GazeOutputValue.XCoord] = Math.Round((double)x, 0).ToString();
+                formatted_values[(int)GazeOutputValue.XCoordLeft] = "";
+                formatted_values[(int)GazeOutputValue.XCoordRight] = "";
+                formatted_values[(int)GazeOutputValue.YCoord] = Math.Round((double)y, 0).ToString();
+                formatted_values[(int)GazeOutputValue.YCoordLeft] = "";
+                formatted_values[(int)GazeOutputValue.YCoordRight] = "";
+                formatted_values[(int)GazeOutputValue.PupilDia] = ((double)dia).ToString(config.FormatDiameter);
+                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = "";
+                formatted_values[(int)GazeOutputValue.PupilDiaRight] = "";
+                formatted_values[(int)GazeOutputValue.ValidLeft] = "";
+                formatted_values[(int)GazeOutputValue.ValidRight] = "";
+                sw.WriteLine(String.Format(config.OutputOrder, formatted_values));
                 tracking = true;
             }
             // set the cursor position to the gaze position
@@ -233,39 +278,6 @@ namespace GazeToMouse
         static void UpdateMousePosition(int x, int y)
         {
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
-        }
-
-        /// <summary>
-        /// Takes a valid format string as parameter and returns the string with sample gaze values.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="pupil">if set to <c>true</c> use format with pupil diameter.</param>
-        /// <returns>
-        /// a formatted string of sample gaze values.
-        /// </returns>
-        static void WriteOutputHeader(string format, bool pupil=false)
-        {
-            string formatted;
-            string ts_title = "Timestamp";
-            TimeSpan ts = DateTime.Now.TimeOfDay;
-            string x_title = "x-coord";
-            double x = 1000.000000;
-            string y_title = "y-coord";
-            double y = 1000.000000;
-            string dia_title = "diameter";
-            double dia = 1.000000;
-            if (pupil)
-            {
-                formatted = String.Format(format, ts, x, y, dia);
-                sw.WriteLine(config.OutputFormat, ts_title, x_title, y_title, dia_title);
-            }
-            else
-            {
-                formatted = String.Format(format, ts, x, y);
-                sw.WriteLine(config.OutputFormat, ts_title, x_title, y_title);
-            }
-            logger.Info($"Output format is of the from: \"{formatted}\"");
-            
         }
 
         /// <summary>

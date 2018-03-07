@@ -12,7 +12,7 @@ namespace TobiiTest
     {
         static TrackerLogger logger;
         private static bool IsTested = false;
-        private static JsonConfigParser.ConfigItem config;
+        private static ConfigItem config;
 
         /// <summary>
         /// Defines the entry point of the application.
