@@ -9,8 +9,6 @@ namespace GazeHelper
     {
         private Host host;
 
-        public event Action<double, double, double> GazeDataReceived;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="EyeTrackerCore"/> class.
         /// </summary>
@@ -33,7 +31,10 @@ namespace GazeHelper
         public EyeTrackerCore(TrackerLogger logger, int ready_timer, int gaze_filter_mode) : this(logger, ready_timer)
         {
             GazePointDataStream gazePointDataStream = host.Streams.CreateGazePointDataStream(GetFilterMode(gaze_filter_mode));
-            gazePointDataStream.GazePoint((x, y, ts) => GazeDataReceived(x, y, ts));
+            gazePointDataStream.GazePoint((x, y, ts) => {
+                GazeDataArgs gazeData = new GazeDataArgs(TimeSpan.FromMilliseconds(ts), Math.Round(x, 0), Math.Round(y, 0));
+                OnGazeDataReceived(gazeData);
+            });
         }
 
         /// <summary>

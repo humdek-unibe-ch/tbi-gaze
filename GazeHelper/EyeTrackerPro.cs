@@ -11,8 +11,6 @@ namespace GazeHelper
 {
     public class EyeTrackerPro : EyeTrackerHandler
     {
-        public event Action<double?, double, double, double?, double, double, double?, double, double, bool, bool, long> GazeDataReceived;
-
         public EyeTrackerPro(TrackerLogger logger, int ready_timer) : base(logger, ready_timer)
         {
             logger.Info("Using Tobii SDK Pro");
@@ -23,7 +21,7 @@ namespace GazeHelper
                 eyeTracker = _eyeTracker;
                 break;
             }
-            eyeTracker.GazeDataReceived += OnGazeDataReceived;
+            eyeTracker.GazeDataReceived += OnGazeDataReceivedPro;
             eyeTracker.ConnectionLost += OnConnectionLost;
             eyeTracker.ConnectionRestored += OnConnectionRestored;
 
@@ -62,27 +60,32 @@ namespace GazeHelper
             State = EyeTrackingDeviceStatus.Initializing;
         }
 
-        private void OnGazeDataReceived(object sender, GazeDataEventArgs data)
+        private void OnGazeDataReceivedPro(object sender, GazeDataEventArgs data)
         {
             State = EyeTrackingDeviceStatus.Tracking;
             double left_x = data.LeftEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
-            double left_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
             double right_x = data.RightEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
+            double left_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
             double right_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
-            GazeDataReceived?.Invoke(
-                GazeFilter(left_x, right_x),
-                left_x, right_x,
-                GazeFilter(left_y, right_y),
-                left_y, right_y,
+            GazeDataArgs gazeData = new GazeDataArgs(
+                TimeSpan.FromMilliseconds(data.DeviceTimeStamp/1000),
+                Math.Round(GazeFilter(left_x, right_x), 0),
+                Math.Round(left_x, 0),
+                Math.Round(right_x, 0),
+                Math.Round(GazeFilter(left_y, right_y), 0),
+                Math.Round(left_y, 0),
+                Math.Round(right_y, 0),
                 GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter),
-                data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter,
-                (data.LeftEye.Pupil.Validity == Validity.Valid), (data.RightEye.Pupil.Validity == Validity.Valid),
-                data.DeviceTimeStamp);
+                data.LeftEye.Pupil.PupilDiameter,
+                data.RightEye.Pupil.PupilDiameter,
+                (data.LeftEye.Pupil.Validity == Validity.Valid),
+                (data.RightEye.Pupil.Validity == Validity.Valid)
+            );
+            OnGazeDataReceived(gazeData);
         }
 
-        private double? GazeFilter( double left, double right)
+        private double GazeFilter( double left, double right)
         {
-            if (double.IsNaN(left) && double.IsNaN(right)) return null;
             if (double.IsNaN(left)) return right;
             if (double.IsNaN(right)) return left;
             return (left + right) / 2;

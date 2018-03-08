@@ -7,6 +7,57 @@ using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
+    public class GazeDataArgs : EventArgs
+    {
+        private TimeSpan timestamp;
+        private double xCoord;
+        private double? xCoordLeft = null;
+        private double? xCoordRight = null;
+        private double yCoord;
+        private double? yCoordLeft = null;
+        private double? yCoordRight = null;
+        private double? dia = null;
+        private double? diaLeft = null;
+        private double? diaRight = null;
+        private bool? validLeft = null;
+        private bool? validRight = null;
+
+        public GazeDataArgs(TimeSpan timestamp, double xCoord, double yCoord)
+        {
+            this.timestamp = timestamp;
+            this.xCoord = xCoord;
+            this.yCoord = yCoord;
+        }
+        public GazeDataArgs( TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
+            double dia, double diaLeft, double diaRight, bool validLeft, bool validRight )
+        {
+            this.timestamp = timestamp;
+            this.xCoord = xCoord;
+            this.xCoordLeft = xCoordLeft;
+            this.xCoordRight = xCoordRight;
+            this.yCoord = yCoord;
+            this.yCoordLeft = yCoordLeft;
+            this.yCoordRight = yCoordRight;
+            this.dia = dia;
+            this.diaLeft = diaLeft;
+            this.diaRight = diaRight;
+            this.validLeft = validLeft;
+            this.validRight = validRight;
+        }
+        public TimeSpan Timestamp { get { return timestamp; } }
+        public double XCoord { get { return xCoord; } }
+        public double? XCoordLeft { get { return xCoordLeft; } }
+        public double? XCoordRight { get { return xCoordRight; } }
+        public double YCoord { get { return yCoord; } }
+        public double? YCoordLeft { get { return yCoordLeft; } }
+        public double? YCoordRight { get { return yCoordRight; } }
+        public double? Dia { get { return dia; } }
+        public double? DiaLeft { get { return diaLeft; } }
+        public double? DiaRight { get { return diaRight; } }
+        public bool? ValidLeft { get { return validLeft; } }
+        public bool? ValidRight { get { return validRight; } }
+    }
+
     public abstract class EyeTrackerHandler : INotifyPropertyChanged, IDisposable
     {
         private EyeTrackingDeviceStatus state;
@@ -18,6 +69,8 @@ namespace GazeHelper
         public event EventHandler TrackerEnabled;
         public event EventHandler TrackerDisabled;
         public event PropertyChangedEventHandler PropertyChanged;
+        public delegate void GazeDataHandler(Object sender, GazeDataArgs e);
+        public event GazeDataHandler GazeDataReceived;
 
         public EyeTrackingDeviceStatus State
         {
@@ -77,6 +130,12 @@ namespace GazeHelper
         ///   <c>true</c> if this instance is ready; otherwise, <c>false</c>.
         /// </returns>
         protected bool IsReady() { return (State == EyeTrackingDeviceStatus.Tracking); }
+
+        /// <summary>
+        /// Called when [gaze data received].
+        /// </summary>
+        /// <param name="e">The gaze data event data.</param>
+        protected virtual void OnGazeDataReceived(GazeDataArgs e) { GazeDataReceived?.Invoke(this, e); }
 
         /// <summary>
         /// Called when when the state property of EyeTracker is changing.
