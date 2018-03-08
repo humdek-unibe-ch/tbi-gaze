@@ -1,3 +1,14 @@
+# v2.0.0
+### New Features
+ - Support for Tobii Pro SDK
+   - apply license to eyetracker device at stratup
+   - logging of pupil diameter
+   - logging of individual eye data
+ - Allow to configure column headers of output file
+
+### Changes
+ - Improved configuration options for the output file
+
 # v1.0.0
 ### New Features
  - Notify user with popup if eyetracker is not ready
