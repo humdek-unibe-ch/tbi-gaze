@@ -73,6 +73,7 @@
     //      both eyes".
     // - 1: lightly filtered, Tobii: "an adaptive filter which is weighted based on the age of the gaze
     //      data points GazePointData and the velocity of the eye movements".
+    // also see https://tobii.github.io/CoreSDK/articles/streams.html
     // Note that this parameter only has effect for Tobii SDK Core (see parameter "TobiiSDK").
     "GazeFilterCore": 0,
 
