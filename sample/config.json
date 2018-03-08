@@ -22,9 +22,9 @@
     "DataLogColumnOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}",
 
     // Defines the titles of the data log value columns. A title for all possible columns must be defined.
-    // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but must
-    // still be defined here. The index of a title must correspond to the value number of the configuration
-    // parameter "DataLogColumnOrder".
+    // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but
+    // must still be defined here. The index of a title must correspond to the value number of the
+    // configuration parameter "DataLogColumnOrder".
     "DataLogColumnTitle": [
         "Timestamp",
         "coord-x",
