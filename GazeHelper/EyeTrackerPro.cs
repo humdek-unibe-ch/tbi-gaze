@@ -107,7 +107,7 @@ namespace GazeHelper
             double left_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
             double right_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
             GazeDataArgs gazeData = new GazeDataArgs(
-                TimeSpan.FromMilliseconds(data.DeviceTimeStamp/1000),
+                TimeSpan.FromMilliseconds(data.SystemTimeStamp/1000),
                 Math.Round(GazeFilter(left_x, right_x), 0),
                 Math.Round(left_x, 0),
                 Math.Round(right_x, 0),
