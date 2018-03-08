@@ -20,7 +20,7 @@ namespace GazeHelper
         public string DataLogFormatTimeStamp { get; set; }
         public string DataLogPath { get; set; }
         public bool DataLogWriteOutput { get; set; }
-        public int GazeFilter { get; set; }
+        public int GazeFilterCore { get; set; }
         public string LicensePath { get; set; }
         public bool MouseControl { get; set; }
         public bool MouseHide { get; set; }
@@ -143,7 +143,7 @@ namespace GazeHelper
                 DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff",
                 DataLogFormatDiameter = "0.000",
                 DataLogCount = 200,
-                GazeFilter = 0,
+                GazeFilterCore = 0,
                 LicensePath = "licenses",
                 MouseControl = true,
                 MouseHide = false,

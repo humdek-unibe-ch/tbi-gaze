@@ -100,7 +100,7 @@ namespace GazeToMouse
             }
             else if(config.TobiiSDK == 0)
             {
-                tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilter);
+                tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilterCore);
             }
             tracker.GazeDataReceived += OnGazeDataReceived;
             tracker.TrackerEnabled += OnTrackerEnabled;
