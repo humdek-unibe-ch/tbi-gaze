@@ -1,3 +1,8 @@
+# v2.0.1
+### Bug Fix
+ - with SDK Pro, use system timestamp to cope with disconnected device
+ - fix the path in the z-tree sample file
+
 # v2.0.0
 ### New Features
  - Support for Tobii Pro SDK
