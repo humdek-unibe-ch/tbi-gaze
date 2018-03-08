@@ -23,6 +23,7 @@
 \restylefloat{figure}
 \usepackage{makeidx}
 \usepackage{listings}
+\usepackage{amsmath}
 \lstset{
   backgroundcolor=\color{bkg},
   basicstyle=\small\ttfamily,
@@ -86,7 +87,7 @@ The following set of executables are provided:
         Similar to \texttt{TobiiCalibrate.exe} it launches the calibration tool, however, the calibration data is stored in a guest profile.
     \item[TobiiTest.exe] This program is a simple wrapper for the Tobii eye tracking testing tool.
         It launches a GUI where the result of the calibration can be verified and a new calibration process can be started if required.
-    \item[GazeToMouse.exe] This program uses the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} to get the position on the screen where the subject is looking at.
+    \item[GazeToMouse.exe] This program uses the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} (default) or the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} to get the position on the screen where the subject is looking at.
         The mouse cursor position is updated to this position.
         As a consequence, the mouse cursor is controlled by the gaze of the subject.
         This program runs infinitely until it is terminated by an external command.
@@ -255,7 +256,7 @@ If no configuration file can be found, the default values are used.
 \end{mdframed}
 
 \section{Output File}
-When running the program \texttt{gazeToMouse.exe} an output file is generated which holds the gaze coordinates of the user.
+When running the program \texttt{gazeToMouse.exe} an output file can be generated which holds the gaze data provided by the Tobii engine.
 The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
 The name of the output file follows the form \texttt{<yyyyMMddTHHmmss>\_<hostName>\_gaze.txt} where
 
@@ -263,6 +264,30 @@ The name of the output file follows the form \texttt{<yyyyMMddTHHmmss>\_<hostNam
     \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21).
     \item \texttt{<hostName>} is replaced by the name of the machine
 \end{itemize}
+
+An output file is only generated if the parameter \texttt{"DataLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
+The presentation of the gaze data is configurable with the help of the parameters \texttt{"DataLogColumnOrder"}, \texttt{"DataLogColumnTitle"}, \texttt{"DataLogFormatDiameter"}, and \texttt{"DataLogFormatTimeStamp"} (see Listing~\ref{lst.config} for more details).
+
+By default the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} is used (parameter \texttt{"TobiiSDK"} is set to 0) and only the timestamps, the x and the y coordinates of the gaze point are available.
+Hence, the parameter \texttt{"DataLogColumnOrder"} is set to the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"} in order to not bloat the output file with unnecessary data.
+
+However, when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, much more values are provided and can be logged to the output file.
+This can be achieved by setting the value of parameter \texttt{"DataLogColumnOrder"} as follows:
+\begin{lstlisting}
+"DataLogColumnOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}"
+\end{lstlisting}
+
+Note that when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, the values 1 (x coordinate of the gaze point), 4 (y coordinate of the gaze point), and 9 (pupil diameter) are computed by averaging the values of both eyes:
+\begin{displaymath}
+    \text{val} =
+        \begin{cases}
+            \text{NaN}                                      & \quad \text{if val\_right and val\_left are not valid}\\
+            \text{val\_left}                                & \quad \text{if val\_right is not valid}\\
+            \text{val\_right}                               & \quad \text{if val\_left is not valid}\\
+            \frac{\text{val\_left} + \text{val\_right}}{2}  & \quad \text{otherwise}
+        \end{cases}
+\end{displaymath}
+When using \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK}, filter settings can be configured with the parameter \texttt{"GazeFilterCore"} (see Listing~\ref{lst.config} for more details).
 
 \section{Log File}
 All executables write continuously to the same log file.
