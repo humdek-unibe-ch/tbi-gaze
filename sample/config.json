@@ -18,8 +18,9 @@
     //  - 11: pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
     //  - 12: validity of the pupil data of the left eye [SDK Pro only]
     //  - 13: validity of the pupul data of the right eye [SDK Pro only]
-    // Values that are not required can be removed (eg. if value 3 is not required, remove "{3}\t")
-    "DataLogColumnOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}",
+    // To log all possible values use:
+    // "DataLogColumnOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}",
+    "DataLogColumnOrder": "{0}\t{1}\t{4}",
 
     // Defines the titles of the data log value columns. A title for all possible columns must be defined.
     // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but
