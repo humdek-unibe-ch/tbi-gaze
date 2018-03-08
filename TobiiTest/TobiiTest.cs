@@ -44,11 +44,11 @@ namespace TobiiTest
         {
             if(!IsTested)
             {
-                logger.Info($"Starting Tobii eyetracker test \"{config.TobiiPath}\\{config.TobiiTest}\"");
-                Process tobii_test = Process.Start($"{config.TobiiPath}\\{config.TobiiTest}");
+                logger.Info($"Starting Tobii eyetracker test \"{config.TobiiApplicationPath}\\{config.TobiiTest}\"");
+                Process tobii_test = Process.Start($"{config.TobiiApplicationPath}\\{config.TobiiTest}");
                 tobii_test.WaitForExit();
                 IsTested = true;
-                logger.Info($"\"{config.TobiiPath}\\{config.TobiiTest}\" terminated ");
+                logger.Info($"\"{config.TobiiApplicationPath}\\{config.TobiiTest}\" terminated ");
                 Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
             }
         }

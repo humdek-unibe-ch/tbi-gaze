@@ -13,27 +13,26 @@ namespace GazeHelper
     /// </summary>
     public class ConfigItem
     {
-        public bool WriteDataLog { get; set; }
-        public string OutputPath { get; set; }
+        public string DataLogColumnOrder { get; set; }
+        public string[] DataLogColumnTitle { get; set; }
+        public int DataLogCount { get; set; }
+        public string DataLogFormatDiameter { get; set; }
+        public string DataLogFormatTimeStamp { get; set; }
+        public string DataLogPath { get; set; }
+        public bool DataLogWriteOutput { get; set; }
+        public int GazeFilter { get; set; }
         public string LicensePath { get; set; }
-        public string OutputOrder { get; set; }
-        public string FormatTimeStamp { get; set; }
-        public string FormatDiameter { get; set; }
-        public string[] ValueTitle { get; set; }
-        public int OutputCount { get; set; }
-        public string TobiiPath { get; set; }
+        public bool MouseControl { get; set; }
+        public bool MouseHide { get; set; }
+        public string MouseStandardIconPath { get; set; }
+        public int ReadyTimer { get; set; }
+        public int TobiiSDK { get; set; }
+        public string TobiiApplicationPath { get; set; }
         public string TobiiCalibrate { get; set; }
         public string TobiiCalibrateArguments { get; set; }
         public string TobiiGuestCalibrate { get; set; }
         public string TobiiGuestCalibrateArguments { get; set; }
         public string TobiiTest { get; set; }
-        public int ReadyTimer { get; set; }
-        public int TobiiSDK { get; set; }
-        public int GazeFilter { get; set; }
-        public bool HideMouse { get; set; }
-        public bool ControlMouse { get; set; }
-        public string BlankMouseIconPath { get; set; }
-        public string StandardMouseIconPath { get; set; }
     }
 
     public enum GazeOutputValue
@@ -108,10 +107,9 @@ namespace GazeHelper
         {
             return new ConfigItem
             {
-                WriteDataLog = true,
-                OutputPath = "",
-                LicensePath = "licenses",
-                OutputOrder =
+                DataLogWriteOutput = true,
+                DataLogPath = "",
+                DataLogColumnOrder =
                     $"{{{(int)GazeOutputValue.DataTimeStamp}}}\t" +
                     $"{{{(int)GazeOutputValue.XCoord}}}\t" + 
                     $"{{{(int)GazeOutputValue.XCoordLeft}}}\t" +
@@ -119,40 +117,45 @@ namespace GazeHelper
                     $"{{{(int)GazeOutputValue.YCoord}}}\t" +
                     $"{{{(int)GazeOutputValue.YCoordLeft}}}\t" +
                     $"{{{(int)GazeOutputValue.YCoordRight}}}\t" +
+                    $"{{{(int)GazeOutputValue.ValidCoordLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.ValidCoordRight}}}\t" +
                     $"{{{(int)GazeOutputValue.PupilDia}}}\t" +
                     $"{{{(int)GazeOutputValue.PupilDiaLeft}}}\t" +
                     $"{{{(int)GazeOutputValue.PupilDiaRight}}}\t" +
                     $"{{{(int)GazeOutputValue.ValidPupilLeft}}}\t" +
                     $"{{{(int)GazeOutputValue.ValidPupilRight}}}",
-                ValueTitle = new string[] {
+                DataLogColumnTitle = new string[] {
                     "Timestamp",
-                    "x-coord",
-                    "x-coord-left",
-                    "x-coord-right",
-                    "y-coord",
-                    "y-coord-left",
-                    "y-coord-right",
+                    "coord-x",
+                    "coord-x-left",
+                    "coord-x-right",
+                    "coord-y",
+                    "coord-y-left",
+                    "coord-y-right",
+                    "coord-valid-left",
+                    "coord-valid-right",
                     "pupil-dia",
                     "pupil-dia-left",
                     "pupil-dia-right",
-                    "valid-left",
-                    "valid-right"
+                    "pupil-valid-left",
+                    "pupil-valid-right"
                 },
-                FormatTimeStamp = "hh\\:mm\\:ss\\.fff",
-                FormatDiameter = "0.000",
-                OutputCount = 200,
-                TobiiPath = "C:\\Program Files (x86)\\Tobii\\",
+                DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff",
+                DataLogFormatDiameter = "0.000",
+                DataLogCount = 200,
+                GazeFilter = 0,
+                LicensePath = "licenses",
+                MouseControl = true,
+                MouseHide = false,
+                MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur",
+                ReadyTimer = 5000,
+                TobiiSDK = 0,
+                TobiiApplicationPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiCalibrateArguments = "--calibrate",
                 TobiiGuestCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiGuestCalibrateArguments = "--guest-calibration",
-                TobiiTest = "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe",
-                StandardMouseIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur",
-                TobiiSDK = 0,
-                GazeFilter = 0,
-                ReadyTimer = 5000,
-                HideMouse = false,
-                ControlMouse = true
+                TobiiTest = "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe"
             };
         }
 

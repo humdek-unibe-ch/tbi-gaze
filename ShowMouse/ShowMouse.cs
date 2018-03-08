@@ -17,7 +17,7 @@ namespace ShowMouse
             JsonConfigParser parser = new JsonConfigParser(logger);
             ConfigItem config = parser.ParseJsonConfig();
             MouseHider hider = new MouseHider(logger);
-            hider.ShowCursor(config.StandardMouseIconPath);
+            hider.ShowCursor(config.MouseStandardIconPath);
         }
     }
 }

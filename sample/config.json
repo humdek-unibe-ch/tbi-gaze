@@ -1,37 +1,9 @@
 {
-    // Defines whether gaze data is written to a log file. If set to false, the configuration items
-    // "OuputCount", "OutputPath", and "OutputFormat" are ignored.
-    "WriteDataLog": true,
-
-    // Number of output data files to allowed the output path. Oldest files are deleted first. When
-    // setting OutputCount to 0, no files are removed. A value of 1 means that only the output of
-    // current execution is kept.
-    "OutputCount": 200,
-
-    // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
-    // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
-    "OutputPath": "",
-
-    // Defines the location of the license files. It must be the path to a folder (not a file).
-    // This is only required when Tobii SDK Pro is used (see parameter "TobiiSDK")
-    "LicensePath": "licenses",
-
-    // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
-    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
-    "FormatTimeStamp": "hh\\:mm\\:ss\\.fff",
-
-    // Allows to define the format of how the pupil diameter will be logged. Use the .NET syntax to
-    // specify the format:
-    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Note that the numbers will be represented differently depending in the localisation settings of the
-    // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
-    "FormatDiameter": "0.000",
-
     // Allows to define the order and the delimiters between the different values. The definition is
     // of the form
-    //  {0}<delim>{1}<delim> ... <delim>{11}
-    // where <delim> can be customized and where the numbers are replaced by the following values
+    //  {0}<delim>{1}<delim> ... <delim>{13}
+    // where <delim> can be customized (e.g. \t for tab) and where the numbers are replaced by the
+    // following values
     //  - 0: timestamp of the gaze data item (uses ValueFormat.TimeStamp)
     //  - 1: x-coordinate of the gaze point of both eyes (pixel value)
     //  - 2: x-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
@@ -46,11 +18,14 @@
     //  - 11: pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
     //  - 12: validity of the pupil data of the left eye [SDK Pro only]
     //  - 13: validity of the pupul data of the right eye [SDK Pro only]
-    // <delim> can be anything (e.g. \t for tab).
-    "OutputOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}",
+    // Values that are not required can be removed (eg. if value 3 is not required, remove "{3}\t")
+    "DataLogColumnOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}",
 
-    // Defines the titles of the value columns
-    "ValueTitle": [
+    // Defines the titles of the data log value columns. A title for all possible columns must be defined.
+    // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but must
+    // still be defined here. The index of a title must correspond to the value number of the configuration
+    // parameter "DataLogColumnOrder".
+    "DataLogColumnTitle": [
         "Timestamp",
         "coord-x",
         "coord-x-left",
@@ -67,34 +42,63 @@
         "pupil-valid-right"
     ],
 
-    // Choose the Tobii SDK (0: Tobii SDK Core, 1: Tobii SDK Pro).
-    // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
-    "TobiiSDK": 0,
+    // Number of output data files to allowed the output path. Oldest files are deleted first. When
+    // setting OutputCount to 0, no files are removed. A value of 1 means that only the output of
+    // current execution is kept.
+    "DataLogCount": 200,
+
+    // Allows to define the format of how the pupil diameter will be logged. Use the .NET syntax to
+    // specify the format:
+    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+    // Note that the numbers will be represented differently depending in the localisation settings of the
+    // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+    "DataLogFormatDiameter": "0.000",
+
+    // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
+    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+    // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
+    "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
+
+    // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
+    // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
+    "DataLogPath": "",
+
+    // Defines whether gaze data is written to a log file. If set to false, the configuration items
+    // "OuputCount", "OutputPath", and "OutputFormat" are ignored.
+    "DataLogWriteOutput": true,
 
     // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
-    // note that this parameter only has evvect for Tobii SDK Core (see parameter "TobiiSDK")
+    // Note that this parameter only has evvect for Tobii SDK Core (see parameter "TobiiSDK").
     "GazeFilter": 0,
+
+    // Defines the location of the license files. It must be the path to a folder (not a file).
+    // This is only required when Tobii SDK Pro is used (see parameter "TobiiSDK")
+    "LicensePath": "licenses",
 
     // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
     // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
     // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
     // If set to false the configuration item "HideMouse" is ignored.
-    "ControlMouse": true,
+    "MouseControl": true,
 
     // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
     // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when
     // GazeToMousClose.exe is executed.
-    "HideMouse": false,
+    "MouseHide": false,
+
+    // Defines the Path to the standard mouse pointer icon. This is used to restore the mouse pointer.
+    "MouseStandardIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
     // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready. If the
     // eyetracker is not ready withing the specified time the subject will be notified with a popup window.
     "ReadyTimer": 5000,
 
-    // Defines the Tobii installation path. It must be the path to a folder (not a file).
-    "TobiiPath": "C:\\Program Files (x86)\\Tobii",
+    // Choose the Tobii SDK (0: Tobii SDK Core, 1: Tobii SDK Pro).
+    // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
+    "TobiiSDK": 0,
 
-    // Defines the Path to the standard mouse pointer icon. This is used to restore the mouse pointer.
-    "StandardMouseIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
+    // Defines the Tobii installation path. It must be the path to a folder (not a file).
+    "TobiiApplicationPath": "C:\\Program Files (x86)\\Tobii",
 
     // The Tobii EyeX command to run a calibration.
     "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",

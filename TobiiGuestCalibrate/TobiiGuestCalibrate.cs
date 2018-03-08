@@ -50,11 +50,11 @@ namespace TobiiGuestCalibrate
             else
             {
                 // not yet calibrated, perfrom calibration
-                logger.Info($"Starting Tobii eyetracker calibration \"{config.TobiiPath}\\{config.TobiiGuestCalibrate}  {config.TobiiGuestCalibrateArguments}\"");
-                Process tobii_calibrate = Process.Start($"{config.TobiiPath}\\{config.TobiiGuestCalibrate}", config.TobiiGuestCalibrateArguments);
+                logger.Info($"Starting Tobii eyetracker calibration \"{config.TobiiApplicationPath}\\{config.TobiiGuestCalibrate}  {config.TobiiGuestCalibrateArguments}\"");
+                Process tobii_calibrate = Process.Start($"{config.TobiiApplicationPath}\\{config.TobiiGuestCalibrate}", config.TobiiGuestCalibrateArguments);
                 tobii_calibrate.WaitForExit();
                 isCalibrated = true;
-                logger.Info($"\"{config.TobiiPath}\\{config.TobiiGuestCalibrate}  {config.TobiiGuestCalibrateArguments}\" terminated ");
+                logger.Info($"\"{config.TobiiApplicationPath}\\{config.TobiiGuestCalibrate}  {config.TobiiGuestCalibrateArguments}\" terminated ");
             }
         }
 

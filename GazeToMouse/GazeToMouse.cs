@@ -41,40 +41,40 @@ namespace GazeToMouse
             JsonConfigParser parser = new JsonConfigParser(logger);
             config = parser.ParseJsonConfig();
 
-            if (config.WriteDataLog)
+            if (config.DataLogWriteOutput)
             {
                 string gazeFilePostfix = $"_{Environment.MachineName}_gaze.txt";
                 string gazeFileName = $"{DateTime.Now:yyyyMMddTHHmmss}{gazeFilePostfix}";
 
                 // create gaze data file
-                if (config.OutputPath == "") config.OutputPath = Directory.GetCurrentDirectory();
-                sw = CreateGazeOutputFile(config.OutputPath, gazeFileName);
+                if (config.DataLogPath == "") config.DataLogPath = Directory.GetCurrentDirectory();
+                sw = CreateGazeOutputFile(config.DataLogPath, gazeFileName);
                 if (sw == null)
                 {
                     // something went wrong, write to the current directory
-                    config.OutputPath = Directory.GetCurrentDirectory();
-                    string outputFilePath = $"{config.OutputPath}\\{gazeFileName}";
+                    config.DataLogPath = Directory.GetCurrentDirectory();
+                    string outputFilePath = $"{config.DataLogPath}\\{gazeFileName}";
                     logger.Warning($"Writing gaze data to the current directory: \"{outputFilePath}\"");
                     sw = new StreamWriter(gazeFileName);
                 }
 
                 // check output data format
-                if (config.WriteDataLog && !CheckOutputFormat(config.OutputOrder, config.FormatTimeStamp, config.FormatDiameter))
+                if (config.DataLogWriteOutput && !CheckOutputFormat(config.DataLogColumnOrder, config.DataLogFormatTimeStamp, config.DataLogFormatDiameter))
                 {
                     // something is wrong with the configured format, use the default format
                     ConfigItem default_config = parser.GetDefaultConfig();
-                    config.OutputOrder = default_config.OutputOrder;
-                    config.FormatTimeStamp = default_config.FormatTimeStamp;
-                    config.FormatDiameter = default_config.FormatDiameter;
+                    config.DataLogColumnOrder = default_config.DataLogColumnOrder;
+                    config.DataLogFormatTimeStamp = default_config.DataLogFormatTimeStamp;
+                    config.DataLogFormatDiameter = default_config.DataLogFormatDiameter;
                     logger.Warning($"Using default output format");
                 }
 
-                if (config.WriteDataLog)
+                if (config.DataLogWriteOutput)
                 {
-                    logger.Debug($"Output format is of the from: \"{GetFormatSample(config.OutputOrder, config.FormatTimeStamp, config.FormatDiameter)}\"");
+                    logger.Debug($"Output format is of the from: \"{GetFormatSample(config.DataLogColumnOrder, config.DataLogFormatTimeStamp, config.DataLogFormatDiameter)}\"");
                     try
                     {
-                        sw.WriteLine(config.OutputOrder, config.ValueTitle);
+                        sw.WriteLine(config.DataLogColumnOrder, config.DataLogColumnTitle);
                     }
                     catch
                     {
@@ -85,12 +85,12 @@ namespace GazeToMouse
                 }
 
                 // delete old files
-                DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
+                DeleteOldGazeLogFiles(config.DataLogPath, config.DataLogCount, $"*{gazeFilePostfix}");
             }
             
             // hide the mouse cursor
             hider = new MouseHider(logger);
-            if (config.ControlMouse && config.HideMouse) hider.HideCursor();
+            if (config.MouseControl && config.MouseHide) hider.HideCursor();
 
 
             // initialize host. Make sure that the Tobii service is running
@@ -237,9 +237,9 @@ namespace GazeToMouse
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnApplicationExit(object sender, EventArgs e)
         {
-            if (config.ControlMouse && config.HideMouse) hider.ShowCursor(config.StandardMouseIconPath);
+            if (config.MouseControl && config.MouseHide) hider.ShowCursor(config.MouseStandardIconPath);
 
-            if (config.WriteDataLog)
+            if (config.DataLogWriteOutput)
             {
                 sw.Close();
                 sw.Dispose();
@@ -257,10 +257,10 @@ namespace GazeToMouse
         {
             
             // write the coordinates to the log file
-            if (config.WriteDataLog)
+            if (config.DataLogWriteOutput)
             {
                 string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
-                formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetGazeDataValueString(data.Timestamp, config.FormatTimeStamp);
+                formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetGazeDataValueString(data.Timestamp, config.DataLogFormatTimeStamp);
                 formatted_values[(int)GazeOutputValue.XCoord] = GetGazeDataValueString(data.XCoord);
                 formatted_values[(int)GazeOutputValue.XCoordLeft] = GetGazeDataValueString(data.XCoordLeft);
                 formatted_values[(int)GazeOutputValue.XCoordRight] = GetGazeDataValueString(data.XCoordRight);
@@ -269,16 +269,16 @@ namespace GazeToMouse
                 formatted_values[(int)GazeOutputValue.YCoordRight] = GetGazeDataValueString(data.YCoordRight);
                 formatted_values[(int)GazeOutputValue.ValidCoordLeft] = GetGazeDataValueString(data.IsValidCoordLeft);
                 formatted_values[(int)GazeOutputValue.ValidCoordRight] = GetGazeDataValueString(data.IsValidCoordRight);
-                formatted_values[(int)GazeOutputValue.PupilDia] = GetGazeDataValueString(data.Dia, config.FormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = GetGazeDataValueString(data.DiaLeft, config.FormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaRight] = GetGazeDataValueString(data.DiaRight, config.FormatDiameter);
+                formatted_values[(int)GazeOutputValue.PupilDia] = GetGazeDataValueString(data.Dia, config.DataLogFormatDiameter);
+                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = GetGazeDataValueString(data.DiaLeft, config.DataLogFormatDiameter);
+                formatted_values[(int)GazeOutputValue.PupilDiaRight] = GetGazeDataValueString(data.DiaRight, config.DataLogFormatDiameter);
                 formatted_values[(int)GazeOutputValue.ValidPupilLeft] = GetGazeDataValueString(data.IsValidDiaLeft);
                 formatted_values[(int)GazeOutputValue.ValidPupilRight] = GetGazeDataValueString(data.IsValidDiaRight);
-                sw.WriteLine(String.Format(config.OutputOrder, formatted_values));
+                sw.WriteLine(String.Format(config.DataLogColumnOrder, formatted_values));
                 tracking = true;
             }
             // set the cursor position to the gaze position
-            if (config.ControlMouse)
+            if (config.MouseControl)
             {
                 if (double.IsNaN(data.XCoord) || double.IsNaN(data.YCoord)) return;
                 UpdateMousePosition(Convert.ToInt32(data.XCoord), Convert.ToInt32(data.YCoord));
@@ -292,7 +292,7 @@ namespace GazeToMouse
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnTrackerEnabled(object sender, EventArgs e)
         {
-            if (config.ControlMouse && config.HideMouse) hider.HideCursor();
+            if (config.MouseControl && config.MouseHide) hider.HideCursor();
             if (tracking) return;
         }
 
@@ -303,7 +303,7 @@ namespace GazeToMouse
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnTrackerDisabled(object sender, EventArgs e)
         {
-            if (config.ControlMouse && config.HideMouse) hider.ShowCursor(config.StandardMouseIconPath);
+            if (config.MouseControl && config.MouseHide) hider.ShowCursor(config.MouseStandardIconPath);
         }
 
         /// <summary>
