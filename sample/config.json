@@ -2,8 +2,8 @@
     // Allows to define the order and the delimiters between the different values. The definition is
     // of the form
     //  {0}<delim>{1}<delim> ... <delim>{13}
-    // where <delim> can be customized (e.g. \t for tab) and where the numbers are replaced by the
-    // following values
+    // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
+    // replaced by the following values
     //  - 0: timestamp of the gaze data item (uses ValueFormat.TimeStamp)
     //  - 1: x-coordinate of the gaze point of both eyes (pixel value)
     //  - 2: x-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
