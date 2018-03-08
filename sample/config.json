@@ -68,8 +68,12 @@
     // "OuputCount", "OutputPath", and "OutputFormat" are ignored.
     "DataLogWriteOutput": true,
 
-    // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
-    // Note that this parameter only has evvect for Tobii SDK Core (see parameter "TobiiSDK").
+    // Defines filter settings for the eye tracker:
+    // - 0: unfiltered, Tobii: "removal of invalid data points and the averaging of the gaze points from
+    //      both eyes".
+    // - 1: lightly filtered, Tobii: "an adaptive filter which is weighted based on the age of the gaze
+    //      data points GazePointData and the velocity of the eye movements".
+    // Note that this parameter only has effect for Tobii SDK Core (see parameter "TobiiSDK").
     "GazeFilterCore": 0,
 
     // Defines the location of the license files. It must be the path to a folder (not a file).
