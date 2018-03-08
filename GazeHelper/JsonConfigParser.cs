@@ -15,6 +15,7 @@ namespace GazeHelper
     {
         public bool WriteDataLog { get; set; }
         public string OutputPath { get; set; }
+        public string LicensePath { get; set; }
         public string OutputOrder { get; set; }
         public string FormatTimeStamp { get; set; }
         public string FormatDiameter { get; set; }
@@ -44,11 +45,13 @@ namespace GazeHelper
         YCoord, // y-coordinate of the gaze point of both eyes (pixel value)
         YCoordLeft, // y-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
         YCoordRight, // y-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
+        ValidCoordLeft, // validity of the gaze data of the left eye [SDK Pro only]
+        ValidCoordRight, // validity of the gaze data of the right eye [SDK Pro only]
         PupilDia, // average pupil diameter of both eyes (uses ValueFormat.Diameter) [SDK Pro only]
         PupilDiaLeft, // pupil diameter of the left eye (uses ValueFormat.Diameter) [SDK Pro only]
         PupilDiaRight, // pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
-        ValidLeft, // validity of the data of the left eye [SDK Pro only]
-        ValidRight // validity of the data of the right eye [SDK Pro only]
+        ValidPupilLeft, // validity of the pupil data of the left eye [SDK Pro only]
+        ValidPupilRight // validity of the pupil data of the right eye [SDK Pro only]
     }
 
     /// <summary>
@@ -107,7 +110,7 @@ namespace GazeHelper
             {
                 WriteDataLog = true,
                 OutputPath = "",
-                //OutputOrder = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                LicensePath = "licenses",
                 OutputOrder =
                     $"{{{(int)GazeOutputValue.DataTimeStamp}}}\t" +
                     $"{{{(int)GazeOutputValue.XCoord}}}\t" + 
@@ -119,8 +122,8 @@ namespace GazeHelper
                     $"{{{(int)GazeOutputValue.PupilDia}}}\t" +
                     $"{{{(int)GazeOutputValue.PupilDiaLeft}}}\t" +
                     $"{{{(int)GazeOutputValue.PupilDiaRight}}}\t" +
-                    $"{{{(int)GazeOutputValue.ValidLeft}}}\t" +
-                    $"{{{(int)GazeOutputValue.ValidRight}}}",
+                    $"{{{(int)GazeOutputValue.ValidPupilLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.ValidPupilRight}}}",
                 ValueTitle = new string[] {
                     "Timestamp",
                     "x-coord",

@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Windows;
 using Tobii.Interaction;
 using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
+    /// <summary>
+    /// Interface to the Tobii SDK Core engine
+    /// </summary>
+    /// <seealso cref="GazeHelper.EyeTrackerHandler" />
     public class EyeTrackerCore : EyeTrackerHandler
     {
         private Host host;
@@ -47,6 +50,7 @@ namespace GazeHelper
             {
                 host.DisableConnection();
                 host.Dispose();
+                base.Dispose(true);
             }
         }
 

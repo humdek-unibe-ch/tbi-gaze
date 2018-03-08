@@ -12,6 +12,10 @@
     // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     "OutputPath": "",
 
+    // Defines the location of the license files. It must be the path to a folder (not a file).
+    // This is only required when Tobii SDK Pro is used (see parameter "TobiiSDK")
+    "LicensePath": "licenses",
+
     // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
     //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
     // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
@@ -35,34 +39,40 @@
     //  - 4: y-coordinate of the gaze point of both eyes (pixel value)
     //  - 5: y-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
     //  - 6: y-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
-    //  - 7: average pupil diameter of both eyes (uses ValueFormat.Diameter) [SDK Pro only]
-    //  - 8: pupil diameter of the left eye (uses ValueFormat.Diameter) [SDK Pro only]
-    //  - 9: pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
-    //  - 10: validity of the data of the left eye [SDK Pro only]
-    //  - 11: validity of the data of the right eye [SDK Pro only]
+    //  - 7: validity of the gaze data of the left eye [SDK Pro only]
+    //  - 8: validity of the gaze data of the right eye [SDK Pro only]
+    //  - 9: average pupil diameter of both eyes (uses ValueFormat.Diameter) [SDK Pro only]
+    //  - 10: pupil diameter of the left eye (uses ValueFormat.Diameter) [SDK Pro only]
+    //  - 11: pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
+    //  - 12: validity of the pupil data of the left eye [SDK Pro only]
+    //  - 13: validity of the pupul data of the right eye [SDK Pro only]
     // <delim> can be anything (e.g. \t for tab).
-    "OutputOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+    "OutputOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}",
 
     // Defines the titles of the value columns
     "ValueTitle": [
         "Timestamp",
-        "x-coord",
-        "x-coord-left",
-        "x-coord-right",
-        "y-coord",
-        "y-coord-left",
-        "y-coord-right",
+        "coord-x",
+        "coord-x-left",
+        "coord-x-right",
+        "coord-y",
+        "coord-y-left",
+        "coord-y-right",
+        "coord-valid-left",
+        "coord-valid-right",
         "pupil-dia",
         "pupil-dia-left",
         "pupil-dia-right",
-        "valid-left",
-        "valid-right"
+        "pupil-valid-left",
+        "pupil-valid-right"
     ],
 
-    // Choose the Tobii SDK (0: Tobii SDK Core, 1: Tobii SDK Pro)
+    // Choose the Tobii SDK (0: Tobii SDK Core, 1: Tobii SDK Pro).
+    // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
     "TobiiSDK": 0,
 
     // Defines filter settings for the eye tracker (0: unfiltered, 1: lightly filtered).
+    // note that this parameter only has evvect for Tobii SDK Core (see parameter "TobiiSDK")
     "GazeFilter": 0,
 
     // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the

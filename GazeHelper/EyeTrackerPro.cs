@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Windows;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tobii.Research;
 using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
+    /// <summary>
+    /// Interface to the Tobii SDK Pro engine
+    /// </summary>
+    /// <seealso cref="GazeHelper.EyeTrackerHandler" />
     public class EyeTrackerPro : EyeTrackerHandler
     {
-        public EyeTrackerPro(TrackerLogger logger, int ready_timer) : base(logger, ready_timer)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="ready_timer">The ready timer.</param>
+        /// <param name="license_path">The license path.</param>
+        public EyeTrackerPro(TrackerLogger logger, int ready_timer, string license_path) : base(logger, ready_timer)
         {
             logger.Info("Using Tobii SDK Pro");
             State = EyeTrackingDeviceStatus.Configuring;
@@ -25,9 +31,14 @@ namespace GazeHelper
             eyeTracker.ConnectionLost += OnConnectionLost;
             eyeTracker.ConnectionRestored += OnConnectionRestored;
 
-            ApplyLicense(eyeTracker, @"C:\Users\Simon Maurer\Documents\IS404-100107249362");
+            ApplyLicense(eyeTracker, $"{license_path}\\{eyeTracker.SerialNumber}");
         }
 
+        /// <summary>
+        /// Applies a license to a tobii eyetracker.
+        /// </summary>
+        /// <param name="eyeTracker">The eye tracker.</param>
+        /// <param name="licensePath">The license path.</param>
         private void ApplyLicense(IEyeTracker eyeTracker, string licensePath)
         {
             // Create a collection with the license.
@@ -50,16 +61,44 @@ namespace GazeHelper
             }
         }
 
+        /// <summary>
+        /// Combines the data values form the left and the right eye.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns></returns>
+        private double GazeFilter(double left, double right)
+        {
+            if (double.IsNaN(left)) return right;
+            if (double.IsNaN(right)) return left;
+            return (left + right) / 2;
+        }
+
+        /// <summary>
+        /// Called when [connection lost].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="ConnectionLostEventArgs"/> instance containing the event data.</param>
         private void OnConnectionLost(object sender, ConnectionLostEventArgs e)
         {
             State = EyeTrackingDeviceStatus.DeviceNotConnected;
         }
 
+        /// <summary>
+        /// Called when [connection restored].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="ConnectionRestoredEventArgs"/> instance containing the event data.</param>
         private void OnConnectionRestored(object sender, ConnectionRestoredEventArgs e)
         {
             State = EyeTrackingDeviceStatus.Initializing;
         }
 
+        /// <summary>
+        /// Called when [gaze data received].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="data">The <see cref="GazeDataEventArgs"/> instance containing the event data.</param>
         private void OnGazeDataReceivedPro(object sender, GazeDataEventArgs data)
         {
             State = EyeTrackingDeviceStatus.Tracking;
@@ -75,6 +114,8 @@ namespace GazeHelper
                 Math.Round(GazeFilter(left_y, right_y), 0),
                 Math.Round(left_y, 0),
                 Math.Round(right_y, 0),
+                (data.LeftEye.GazePoint.Validity == Validity.Valid),
+                (data.RightEye.GazePoint.Validity == Validity.Valid),
                 GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter),
                 data.LeftEye.Pupil.PupilDiameter,
                 data.RightEye.Pupil.PupilDiameter,
@@ -82,13 +123,6 @@ namespace GazeHelper
                 (data.RightEye.Pupil.Validity == Validity.Valid)
             );
             OnGazeDataReceived(gazeData);
-        }
-
-        private double GazeFilter( double left, double right)
-        {
-            if (double.IsNaN(left)) return right;
-            if (double.IsNaN(right)) return left;
-            return (left + right) / 2;
         }
     }
 }

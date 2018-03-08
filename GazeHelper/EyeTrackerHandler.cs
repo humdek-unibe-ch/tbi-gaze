@@ -7,57 +7,11 @@ using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
-    public class GazeDataArgs : EventArgs
-    {
-        private TimeSpan timestamp;
-        private double xCoord;
-        private double? xCoordLeft = null;
-        private double? xCoordRight = null;
-        private double yCoord;
-        private double? yCoordLeft = null;
-        private double? yCoordRight = null;
-        private double? dia = null;
-        private double? diaLeft = null;
-        private double? diaRight = null;
-        private bool? validLeft = null;
-        private bool? validRight = null;
-
-        public GazeDataArgs(TimeSpan timestamp, double xCoord, double yCoord)
-        {
-            this.timestamp = timestamp;
-            this.xCoord = xCoord;
-            this.yCoord = yCoord;
-        }
-        public GazeDataArgs( TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
-            double dia, double diaLeft, double diaRight, bool validLeft, bool validRight )
-        {
-            this.timestamp = timestamp;
-            this.xCoord = xCoord;
-            this.xCoordLeft = xCoordLeft;
-            this.xCoordRight = xCoordRight;
-            this.yCoord = yCoord;
-            this.yCoordLeft = yCoordLeft;
-            this.yCoordRight = yCoordRight;
-            this.dia = dia;
-            this.diaLeft = diaLeft;
-            this.diaRight = diaRight;
-            this.validLeft = validLeft;
-            this.validRight = validRight;
-        }
-        public TimeSpan Timestamp { get { return timestamp; } }
-        public double XCoord { get { return xCoord; } }
-        public double? XCoordLeft { get { return xCoordLeft; } }
-        public double? XCoordRight { get { return xCoordRight; } }
-        public double YCoord { get { return yCoord; } }
-        public double? YCoordLeft { get { return yCoordLeft; } }
-        public double? YCoordRight { get { return yCoordRight; } }
-        public double? Dia { get { return dia; } }
-        public double? DiaLeft { get { return diaLeft; } }
-        public double? DiaRight { get { return diaRight; } }
-        public bool? ValidLeft { get { return validLeft; } }
-        public bool? ValidRight { get { return validRight; } }
-    }
-
+    /// <summary>
+    /// The common interface for the Tobii eyetracker Engines Core and Pro
+    /// </summary>
+    /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
+    /// <seealso cref="System.IDisposable" />
     public abstract class EyeTrackerHandler : INotifyPropertyChanged, IDisposable
     {
         private EyeTrackingDeviceStatus state;
@@ -203,5 +157,66 @@ namespace GazeHelper
                 OnTrackerEnabled(new EventArgs());
             }
         }
+    }
+
+    /// <summary>
+    /// The event argument class for Tobii eyetracker data
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
+    public class GazeDataArgs : EventArgs
+    {
+        private TimeSpan timestamp;
+        private double xCoord;
+        private double? xCoordLeft = null;
+        private double? xCoordRight = null;
+        private double yCoord;
+        private double? yCoordLeft = null;
+        private double? yCoordRight = null;
+        private bool? isValidCoordLeft = null;
+        private bool? isValidCoordRight = null;
+        private double? dia = null;
+        private double? diaLeft = null;
+        private double? diaRight = null;
+        private bool? isValidDiaLeft = null;
+        private bool? isValidDiaRight = null;
+
+        public GazeDataArgs(TimeSpan timestamp, double xCoord, double yCoord)
+        {
+            this.timestamp = timestamp;
+            this.xCoord = xCoord;
+            this.yCoord = yCoord;
+        }
+        public GazeDataArgs(TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
+            bool isValidCoordLeft, bool isValidCoordRight, double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight)
+        {
+            this.timestamp = timestamp;
+            this.xCoord = xCoord;
+            this.xCoordLeft = xCoordLeft;
+            this.xCoordRight = xCoordRight;
+            this.yCoord = yCoord;
+            this.yCoordLeft = yCoordLeft;
+            this.yCoordRight = yCoordRight;
+            this.isValidCoordLeft = isValidCoordLeft;
+            this.isValidCoordRight = isValidCoordRight;
+            this.dia = dia;
+            this.diaLeft = diaLeft;
+            this.diaRight = diaRight;
+            this.isValidDiaLeft = isValidDiaLeft;
+            this.isValidDiaRight = isValidDiaRight;
+        }
+        public TimeSpan Timestamp { get { return timestamp; } }
+        public double XCoord { get { return xCoord; } }
+        public double? XCoordLeft { get { return xCoordLeft; } }
+        public double? XCoordRight { get { return xCoordRight; } }
+        public double YCoord { get { return yCoord; } }
+        public double? YCoordLeft { get { return yCoordLeft; } }
+        public double? YCoordRight { get { return yCoordRight; } }
+        public bool? IsValidCoordLeft { get { return isValidCoordLeft; } }
+        public bool? IsValidCoordRight { get { return isValidCoordRight; } }
+        public double? Dia { get { return dia; } }
+        public double? DiaLeft { get { return diaLeft; } }
+        public double? DiaRight { get { return diaRight; } }
+        public bool? IsValidDiaLeft { get { return isValidDiaLeft; } }
+        public bool? IsValidDiaRight { get { return isValidDiaRight; } }
     }
 }

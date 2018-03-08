@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using GazeHelper;
@@ -67,10 +66,23 @@ namespace GazeToMouse
                     config.OutputOrder = default_config.OutputOrder;
                     config.FormatTimeStamp = default_config.FormatTimeStamp;
                     config.FormatDiameter = default_config.FormatDiameter;
-                    logger.Warning($"Using default output format of the from: \"{GetFormatSample(config.OutputOrder, config.FormatTimeStamp, config.FormatDiameter)}\"");
+                    logger.Warning($"Using default output format");
                 }
 
-                if (config.WriteDataLog) sw.WriteLine(config.OutputOrder, config.ValueTitle);
+                if (config.WriteDataLog)
+                {
+                    logger.Debug($"Output format is of the from: \"{GetFormatSample(config.OutputOrder, config.FormatTimeStamp, config.FormatDiameter)}\"");
+                    try
+                    {
+                        sw.WriteLine(config.OutputOrder, config.ValueTitle);
+                    }
+                    catch
+                    {
+                        logger.Error($"Column titles do not match with the format");
+                        logger.Warning($"Column titles are omitted");
+                    }
+
+                }
 
                 // delete old files
                 DeleteOldGazeLogFiles(config.OutputPath, config.OutputCount, $"*{gazeFilePostfix}");
@@ -84,7 +96,7 @@ namespace GazeToMouse
             // initialize host. Make sure that the Tobii service is running
             if(config.TobiiSDK == 1)
             {
-                tracker = new EyeTrackerPro(logger, config.ReadyTimer);
+                tracker = new EyeTrackerPro(logger, config.ReadyTimer, config.LicensePath);
             }
             else if(config.TobiiSDK == 0)
             {
@@ -105,7 +117,7 @@ namespace GazeToMouse
         {
             try
             {
-                logger.Info($"Output format is of the from: \"{GetFormatSample(order, format_timestamp, format_diameter)}\"");
+                GetFormatSample(order, format_timestamp, format_diameter);
                 return true;
             }
             catch (FormatException)
@@ -114,36 +126,6 @@ namespace GazeToMouse
                 return false;
             }
         }
-
-
-        /// <summary>
-        /// Takes a valid format string as parameter and returns the string with sample gaze values.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <returns>a formatted string of sample gaze values.</returns>
-        static string GetFormatSample(string order, string format_timestamp, string format_diameter)
-        {
-            string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
-            formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(format_timestamp);
-            formatted_values[(int)GazeOutputValue.XCoord] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.XCoordLeft] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.XCoordRight] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.YCoord] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.YCoordLeft] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.YCoordRight] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.PupilDia] = 1.000000.ToString(format_diameter);
-            formatted_values[(int)GazeOutputValue.PupilDiaLeft] = 1.000000.ToString(format_diameter);
-            formatted_values[(int)GazeOutputValue.PupilDiaRight] = 1.000000.ToString(format_diameter);
-            formatted_values[(int)GazeOutputValue.ValidLeft] = true.ToString();
-            formatted_values[(int)GazeOutputValue.ValidRight] = true.ToString();
-            return String.Format(order, formatted_values);
-        }
-
-        static int GetConfigValueCount()
-        {
-            return config.ValueTitle.Length;
-        }
-
 
         /// <summary>
         /// Createa and Opens a data stream to a file where gaze data will be stored.
@@ -191,6 +173,82 @@ namespace GazeToMouse
         }
 
         /// <summary>
+        /// Takes a valid format string as parameter and returns the string with sample gaze values.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <returns>a formatted string of sample gaze values.</returns>
+        static string GetFormatSample(string order, string format_timestamp, string format_diameter)
+        {
+            string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
+            formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(format_timestamp);
+            formatted_values[(int)GazeOutputValue.XCoord] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.XCoordLeft] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.XCoordRight] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.YCoord] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.YCoordLeft] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.YCoordRight] = 1000.ToString();
+            formatted_values[(int)GazeOutputValue.ValidCoordLeft] = true.ToString();
+            formatted_values[(int)GazeOutputValue.ValidCoordRight] = true.ToString();
+            formatted_values[(int)GazeOutputValue.PupilDia] = 1.000000.ToString(format_diameter);
+            formatted_values[(int)GazeOutputValue.PupilDiaLeft] = 1.000000.ToString(format_diameter);
+            formatted_values[(int)GazeOutputValue.PupilDiaRight] = 1.000000.ToString(format_diameter);
+            formatted_values[(int)GazeOutputValue.ValidPupilLeft] = true.ToString();
+            formatted_values[(int)GazeOutputValue.ValidPupilRight] = true.ToString();
+            return String.Format(order, formatted_values);
+        }
+
+        /// <summary>
+        /// Gets the gaze data value string.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
+        static string GetGazeDataValueString(bool? data)
+        {
+            return (data == null) ? "" : ((bool)data).ToString();
+        }
+
+        /// <summary>
+        /// Gets the gaze data value string.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns></returns>
+        static string GetGazeDataValueString(double? data, string format = "")
+        {
+            return (data == null) ? "" : ((double)data).ToString(format);
+        }
+
+        /// <summary>
+        /// Computes the eye tracker timestamp.
+        /// </summary>
+        /// <param name="ts">The ts.</param>
+        /// <returns></returns>
+        static string GetGazeDataValueString(TimeSpan ts, string format)
+        {
+            TimeSpan res = ts;
+            if (!tracking) delta = res - DateTime.Now.TimeOfDay; ;
+            res -= delta;
+            return res.ToString(format);
+        }
+
+        /// <summary>
+        /// Called when [application exit].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        static void OnApplicationExit(object sender, EventArgs e)
+        {
+            if (config.ControlMouse && config.HideMouse) hider.ShowCursor(config.StandardMouseIconPath);
+
+            if (config.WriteDataLog)
+            {
+                sw.Close();
+                sw.Dispose();
+            }
+            tracker.Dispose();
+            logger.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" terminated gracefully{Environment.NewLine}");
+        }
+
+        /// <summary>
         /// Called when [gaze data received].
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -209,11 +267,13 @@ namespace GazeToMouse
                 formatted_values[(int)GazeOutputValue.YCoord] = GetGazeDataValueString(data.YCoord);
                 formatted_values[(int)GazeOutputValue.YCoordLeft] = GetGazeDataValueString(data.YCoordLeft);
                 formatted_values[(int)GazeOutputValue.YCoordRight] = GetGazeDataValueString(data.YCoordRight);
+                formatted_values[(int)GazeOutputValue.ValidCoordLeft] = GetGazeDataValueString(data.IsValidCoordLeft);
+                formatted_values[(int)GazeOutputValue.ValidCoordRight] = GetGazeDataValueString(data.IsValidCoordRight);
                 formatted_values[(int)GazeOutputValue.PupilDia] = GetGazeDataValueString(data.Dia, config.FormatDiameter);
                 formatted_values[(int)GazeOutputValue.PupilDiaLeft] = GetGazeDataValueString(data.DiaLeft, config.FormatDiameter);
                 formatted_values[(int)GazeOutputValue.PupilDiaRight] = GetGazeDataValueString(data.DiaRight, config.FormatDiameter);
-                formatted_values[(int)GazeOutputValue.ValidLeft] = GetGazeDataValueString(data.ValidLeft);
-                formatted_values[(int)GazeOutputValue.ValidRight] = GetGazeDataValueString(data.ValidRight);
+                formatted_values[(int)GazeOutputValue.ValidPupilLeft] = GetGazeDataValueString(data.IsValidDiaLeft);
+                formatted_values[(int)GazeOutputValue.ValidPupilRight] = GetGazeDataValueString(data.IsValidDiaRight);
                 sw.WriteLine(String.Format(config.OutputOrder, formatted_values));
                 tracking = true;
             }
@@ -223,49 +283,6 @@ namespace GazeToMouse
                 if (double.IsNaN(data.XCoord) || double.IsNaN(data.YCoord)) return;
                 UpdateMousePosition(Convert.ToInt32(data.XCoord), Convert.ToInt32(data.YCoord));
             }
-        }
-
-        /// <summary>
-        /// Gets the gaze data value string.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <returns></returns>
-        static string GetGazeDataValueString(bool? data)
-        {
-            return (data == null) ? "" : ((bool)data).ToString();
-        }
-
-        /// <summary>
-        /// Gets the gaze data value string.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <returns></returns>
-        static string GetGazeDataValueString(double? data, string format="")
-        {
-            return (data == null) ? "" : ((double)data).ToString(format);
-        }
-
-        /// <summary>
-        /// Computes the eye tracker timestamp.
-        /// </summary>
-        /// <param name="ts">The ts.</param>
-        /// <returns></returns>
-        static string GetGazeDataValueString( TimeSpan ts, string format )
-        {
-            TimeSpan res = ts;
-            if (!tracking) delta = res - DateTime.Now.TimeOfDay; ;
-            res -= delta;
-            return res.ToString(format);
-        }
-
-        /// <summary>
-        /// Updates the mouse position.
-        /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        static void UpdateMousePosition(int x, int y)
-        {
-            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
         }
 
         /// <summary>
@@ -290,21 +307,13 @@ namespace GazeToMouse
         }
 
         /// <summary>
-        /// Called when [application exit].
+        /// Updates the mouse position.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        static void OnApplicationExit(object sender, EventArgs e)
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        static void UpdateMousePosition(int x, int y)
         {
-            if (config.ControlMouse && config.HideMouse) hider.ShowCursor(config.StandardMouseIconPath);
-
-            if (config.WriteDataLog)
-            {
-                sw.Close();
-                sw.Dispose();
-            }
-            tracker.Dispose();
-            logger.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" terminated gracefully{Environment.NewLine}");
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
         }
     }
 }
