@@ -1,3 +1,13 @@
+# v2.1.0
+### New Features
+ - Log eye origin coordinates
+   - x, y, z coordinates of the left and the right eye
+   - compute distance of the left and right eye to the eyetracker
+   - compute the average distance of the two eyes
+
+### Improvements
+ - Check the three format values and the column order individually to produce more specific log entries
+
 # v2.0.1
 ### Bug Fix
  - with SDK Pro, use system timestamp to cope with disconnected device
