@@ -179,6 +179,17 @@ namespace GazeHelper
         private double? diaRight = null;
         private bool? isValidDiaLeft = null;
         private bool? isValidDiaRight = null;
+        private double? xOriginLeft = null;
+        private double? xOriginRight = null;
+        private double? yOriginLeft = null;
+        private double? yOriginRight = null;
+        private double? zOriginLeft = null;
+        private double? zOriginRight = null;
+        private double? distOrigin = null;
+        private double? distOriginLeft = null;
+        private double? distOriginRight = null;
+        private bool? isValidOriginLeft = null;
+        private bool? isValidOriginRight = null;
 
         public GazeDataArgs(TimeSpan timestamp, double xCoord, double yCoord)
         {
@@ -187,7 +198,9 @@ namespace GazeHelper
             this.yCoord = yCoord;
         }
         public GazeDataArgs(TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
-            bool isValidCoordLeft, bool isValidCoordRight, double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight)
+            bool isValidCoordLeft, bool isValidCoordRight, double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight,
+            double xOriginLeft, double yOriginLeft, double zOriginLeft, double xOriginRight, double yOriginRight, double zOriginRight,
+            double distOrigin, double distOriginLeft, double distOriginRight, bool isValidOriginLeft, bool isValidOriginRight)
         {
             this.timestamp = timestamp;
             this.xCoord = xCoord;
@@ -203,6 +216,17 @@ namespace GazeHelper
             this.diaRight = diaRight;
             this.isValidDiaLeft = isValidDiaLeft;
             this.isValidDiaRight = isValidDiaRight;
+            this.xOriginLeft = xOriginLeft;
+            this.xOriginRight = xOriginRight;
+            this.yOriginLeft = yOriginLeft;
+            this.yOriginRight = yOriginRight;
+            this.zOriginLeft = zOriginLeft;
+            this.zOriginRight = zOriginRight;
+            this.distOrigin = distOrigin;
+            this.distOriginLeft = distOriginLeft;
+            this.distOriginRight = distOriginRight;
+            this.isValidOriginLeft = isValidOriginLeft;
+            this.isValidOriginRight = isValidOriginRight;
         }
         public TimeSpan Timestamp { get { return timestamp; } }
         public double XCoord { get { return xCoord; } }
@@ -218,5 +242,16 @@ namespace GazeHelper
         public double? DiaRight { get { return diaRight; } }
         public bool? IsValidDiaLeft { get { return isValidDiaLeft; } }
         public bool? IsValidDiaRight { get { return isValidDiaRight; } }
+        public double? XOriginLeft { get { return xOriginLeft; } }
+        public double? XOriginRight { get { return xOriginRight; } }
+        public double? YOriginLeft { get { return yOriginLeft; } }
+        public double? YOriginRight { get { return yOriginRight; } }
+        public double? ZOriginLeft { get { return zOriginLeft; } }
+        public double? ZOriginRight { get { return zOriginRight; } }
+        public double? DistOrigin { get { return distOrigin; } }
+        public double? DistOriginLeft { get { return distOriginLeft; } }
+        public double? DistOriginRight { get { return distOriginRight; } }
+        public bool? IsValidOriginLeft { get { return isValidOriginLeft; } }
+        public bool? IsValidOriginRight { get { return isValidOriginRight; } }
     }
 }

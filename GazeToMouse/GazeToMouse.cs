@@ -58,30 +58,34 @@ namespace GazeToMouse
                     sw = new StreamWriter(gazeFileName);
                 }
 
-                // check output data format
-                if (config.DataLogWriteOutput && !CheckOutputFormat(config.DataLogColumnOrder, config.DataLogFormatTimeStamp, config.DataLogFormatDiameter))
-                {
-                    // something is wrong with the configured format, use the default format
-                    ConfigItem default_config = parser.GetDefaultConfig();
-                    config.DataLogColumnOrder = default_config.DataLogColumnOrder;
-                    config.DataLogFormatTimeStamp = default_config.DataLogFormatTimeStamp;
-                    config.DataLogFormatDiameter = default_config.DataLogFormatDiameter;
-                    logger.Warning($"Using default output format");
-                }
-
                 if (config.DataLogWriteOutput)
                 {
-                    logger.Debug($"Output format is of the from: \"{GetFormatSample(config.DataLogColumnOrder, config.DataLogFormatTimeStamp, config.DataLogFormatDiameter)}\"");
-                    try
+                    // check output data format
+                    ConfigItem default_config = parser.GetDefaultConfig();
+                    if (!CheckDataLogFormat(DateTime.Now.TimeOfDay, config.DataLogFormatTimeStamp))
                     {
-                        sw.WriteLine(config.DataLogColumnOrder, config.DataLogColumnTitle);
+                        config.DataLogFormatTimeStamp = default_config.DataLogFormatTimeStamp;
+                        logger.Warning($"Using the default output format for timestamps: \"{config.DataLogFormatTimeStamp}\"");
                     }
-                    catch
+                    if (!CheckDataLogFormat(1.000000, config.DataLogFormatDiameter))
                     {
-                        logger.Error($"Column titles do not match with the format");
+                        config.DataLogFormatDiameter = default_config.DataLogFormatDiameter;
+                        logger.Warning($"Using the default output format for pupil diameters: \"{config.DataLogFormatDiameter}\"");
+                    }
+                    if (!CheckDataLogFormat(1.000000, config.DataLogFormatOrigin))
+                    {
+                        config.DataLogFormatOrigin = default_config.DataLogFormatOrigin;
+                        logger.Warning($"Using the default output format for gaze origin values: \"{config.DataLogFormatOrigin}\"");
+                    }
+                    if (!CheckDataLogColumnOrder(config.DataLogColumnOrder))
+                    {
+                        config.DataLogColumnOrder = default_config.DataLogColumnOrder;
+                        logger.Warning($"Using the default column order: \"{config.DataLogFormatOrigin}\"");
+                    }
+                    if (!CheckDataLogColumnTitles(config.DataLogColumnOrder, config.DataLogColumnTitle))
+                    {
                         logger.Warning($"Column titles are omitted");
                     }
-
                 }
 
                 // delete old files
@@ -109,20 +113,63 @@ namespace GazeToMouse
         }
 
         /// <summary>
-        /// Checks whether a string formatting is applicable.
+        /// Checks the data log format.
         /// </summary>
-        /// <param name="format">format string to be checked.</param>
-        /// <returns><c>true</c> if the format is ok; otherwise, <c>false</c></returns>
-        static bool CheckOutputFormat(string order, string format_timestamp, string format_diameter)
+        /// <param name="value">The value.</param>
+        /// <param name="format">The format.</param>
+        /// <returns></returns>
+        static bool CheckDataLogFormat(dynamic value, string format)
         {
             try
             {
-                GetFormatSample(order, format_timestamp, format_diameter);
+                value.ToString(format);
                 return true;
             }
             catch (FormatException)
             {
-                logger.Error($"Output format string was not in a correct format");
+                logger.Error($"The output format string \"{format}\" is not valid");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks the data log column order.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <returns></returns>
+        static bool CheckDataLogColumnOrder(string order)
+        {
+            try
+            {
+                int max_col = Enum.GetNames(typeof(GazeOutputValue)).Length;
+                string[] values = new string[max_col];
+                for (int i = 0; i < max_col; i++) values[i] = "";
+                String.Format(order, values);
+                return true;
+            }
+            catch (FormatException)
+            {
+                logger.Error($"The column order string \"{order}\" is not valid");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks the data log column titles.
+        /// </summary>
+        /// <param name="order">The order.</param>
+        /// <param name="titles">The titles.</param>
+        /// <returns></returns>
+        static bool CheckDataLogColumnTitles(string order, string[] titles)
+        {
+            try
+            {
+                sw.WriteLine(order, titles);
+                return true;
+            }
+            catch (FormatException)
+            {
+                logger.Error($"Column titles do not match with the column order");
                 return false;
             }
         }
@@ -170,31 +217,6 @@ namespace GazeToMouse
                     logger.Info($"Removing old gaze data file \"{gazeLogFiles[i]}\"");
                 }
             }
-        }
-
-        /// <summary>
-        /// Takes a valid format string as parameter and returns the string with sample gaze values.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <returns>a formatted string of sample gaze values.</returns>
-        static string GetFormatSample(string order, string format_timestamp, string format_diameter)
-        {
-            string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
-            formatted_values[(int)GazeOutputValue.DataTimeStamp] = DateTime.Now.TimeOfDay.ToString(format_timestamp);
-            formatted_values[(int)GazeOutputValue.XCoord] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.XCoordLeft] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.XCoordRight] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.YCoord] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.YCoordLeft] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.YCoordRight] = 1000.ToString();
-            formatted_values[(int)GazeOutputValue.ValidCoordLeft] = true.ToString();
-            formatted_values[(int)GazeOutputValue.ValidCoordRight] = true.ToString();
-            formatted_values[(int)GazeOutputValue.PupilDia] = 1.000000.ToString(format_diameter);
-            formatted_values[(int)GazeOutputValue.PupilDiaLeft] = 1.000000.ToString(format_diameter);
-            formatted_values[(int)GazeOutputValue.PupilDiaRight] = 1.000000.ToString(format_diameter);
-            formatted_values[(int)GazeOutputValue.ValidPupilLeft] = true.ToString();
-            formatted_values[(int)GazeOutputValue.ValidPupilRight] = true.ToString();
-            return String.Format(order, formatted_values);
         }
 
         /// <summary>
@@ -274,6 +296,17 @@ namespace GazeToMouse
                 formatted_values[(int)GazeOutputValue.PupilDiaRight] = GetGazeDataValueString(data.DiaRight, config.DataLogFormatDiameter);
                 formatted_values[(int)GazeOutputValue.ValidPupilLeft] = GetGazeDataValueString(data.IsValidDiaLeft);
                 formatted_values[(int)GazeOutputValue.ValidPupilRight] = GetGazeDataValueString(data.IsValidDiaRight);
+                formatted_values[(int)GazeOutputValue.XOriginLeft] = GetGazeDataValueString(data.XOriginLeft, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.XOriginRight] = GetGazeDataValueString(data.XOriginRight, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.YOriginLeft] = GetGazeDataValueString(data.YOriginLeft, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.YOriginRight] = GetGazeDataValueString(data.YOriginRight, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.ZOriginLeft] = GetGazeDataValueString(data.ZOriginLeft, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.ZOriginRight] = GetGazeDataValueString(data.ZOriginRight, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.DistOrigin] = GetGazeDataValueString(data.DistOrigin, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.DistOriginLeft] = GetGazeDataValueString(data.DistOriginLeft, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.DistOriginRight] = GetGazeDataValueString(data.DistOriginRight, config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.ValidOriginLeft] = GetGazeDataValueString(data.IsValidOriginLeft);
+                formatted_values[(int)GazeOutputValue.ValidOriginRight] = GetGazeDataValueString(data.IsValidOriginRight);
                 sw.WriteLine(String.Format(config.DataLogColumnOrder, formatted_values));
                 tracking = true;
             }

@@ -17,6 +17,7 @@ namespace GazeHelper
         public string[] DataLogColumnTitle { get; set; }
         public int DataLogCount { get; set; }
         public string DataLogFormatDiameter { get; set; }
+        public string DataLogFormatOrigin { get; set; }
         public string DataLogFormatTimeStamp { get; set; }
         public string DataLogPath { get; set; }
         public bool DataLogWriteOutput { get; set; }
@@ -50,7 +51,18 @@ namespace GazeHelper
         PupilDiaLeft, // pupil diameter of the left eye (uses ValueFormat.Diameter) [SDK Pro only]
         PupilDiaRight, // pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
         ValidPupilLeft, // validity of the pupil data of the left eye [SDK Pro only]
-        ValidPupilRight // validity of the pupil data of the right eye [SDK Pro only]
+        ValidPupilRight, // validity of the pupil data of the right eye [SDK Pro only]
+        XOriginLeft, // x-coordinate of the gaze origin of the left eye (pixel value) [SDK Pro only]
+        XOriginRight, // x-coordinate of the gaze origin of the right eye (pixel value) [SDK Pro only]
+        YOriginLeft, // y-coordinate of the gaze origin of the left eye (pixel value) [SDK Pro only]
+        YOriginRight, // y-coordinate of the gaze origin of the right eye (pixel value) [SDK Pro only]
+        ZOriginLeft, // z-coordinate of the gaze origin of the left eye (pixel value) [SDK Pro only]
+        ZOriginRight, // z-coordinate of the gaze origin of the right eye (pixel value) [SDK Pro only]
+        DistOrigin, // distance of the gaze origin of the average of both eyes to the eyetracker [SDK Pro only]
+        DistOriginLeft, // distance of the gaze origin of the left eye to the eyetracker [SDK Pro only]
+        DistOriginRight, // distance of the gaze origin of the right eye to the eyetracker [SDK Pro only]
+        ValidOriginLeft, // validity of the gaze origin data of the left eye [SDK Pro only]
+        ValidOriginRight // validity of the gaze origin data of the right eye [SDK Pro only]
     }
 
     /// <summary>
@@ -77,7 +89,8 @@ namespace GazeHelper
         public ConfigItem ParseJsonConfig()
         {
             string json;
-            ConfigItem item = GetDefaultConfig();
+            ConfigItem item_default = GetDefaultConfig();
+            ConfigItem item = item_default;
 
             // load configuration
             StreamReader sr = OpenConfigFile(ConfigFile);
@@ -87,6 +100,9 @@ namespace GazeHelper
                 {
                     json = sr.ReadToEnd();
                     item = JsonConvert.DeserializeObject<ConfigItem>(json);
+
+                    if (item.DataLogColumnOrder == "")
+                        item.DataLogColumnOrder = item_default.DataLogColumnOrder;
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();
                 }
@@ -123,7 +139,18 @@ namespace GazeHelper
                     $"{{{(int)GazeOutputValue.PupilDiaLeft}}}\t" +
                     $"{{{(int)GazeOutputValue.PupilDiaRight}}}\t" +
                     $"{{{(int)GazeOutputValue.ValidPupilLeft}}}\t" +
-                    $"{{{(int)GazeOutputValue.ValidPupilRight}}}",
+                    $"{{{(int)GazeOutputValue.ValidPupilRight}}}\t" +
+                    $"{{{(int)GazeOutputValue.XOriginLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.YOriginLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.ZOriginLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.XOriginRight}}}\t" +
+                    $"{{{(int)GazeOutputValue.YOriginRight}}}\t" +
+                    $"{{{(int)GazeOutputValue.ZOriginRight}}}\t" +
+                    $"{{{(int)GazeOutputValue.DistOrigin}}}\t" +
+                    $"{{{(int)GazeOutputValue.DistOriginLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.DistOriginRight}}}\t" +
+                    $"{{{(int)GazeOutputValue.ValidOriginLeft}}}\t" +
+                    $"{{{(int)GazeOutputValue.ValidOriginRight}}}",
                 DataLogColumnTitle = new string[] {
                     "Timestamp",
                     "coord-x",
@@ -138,10 +165,22 @@ namespace GazeHelper
                     "pupil-dia-left",
                     "pupil-dia-right",
                     "pupil-valid-left",
-                    "pupil-valid-right"
+                    "pupil-valid-right",
+                    "origin-x-left",
+                    "origin-y-left",
+                    "origin-z-left",
+                    "origin-x-right",
+                    "origin-y-right",
+                    "origin-z-right",
+                    "origin-dist",
+                    "origin-dist-left",
+                    "origin-dist-right",
+                    "origin-valid-left",
+                    "origin-valid-right"
                 },
-                DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff",
                 DataLogFormatDiameter = "0.000",
+                DataLogFormatOrigin = "0.000",
+                DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff",
                 DataLogCount = 200,
                 GazeFilterCore = 0,
                 LicensePath = "licenses",

@@ -61,6 +61,11 @@ namespace GazeHelper
             }
         }
 
+        private double ComputeEyeDistance(double x, double y, double z)
+        {
+            return Math.Sqrt(x * x + y * y + z * z);
+        }
+
         /// <summary>
         /// Combines the data values form the left and the right eye.
         /// </summary>
@@ -102,25 +107,46 @@ namespace GazeHelper
         private void OnGazeDataReceivedPro(object sender, GazeDataEventArgs data)
         {
             State = EyeTrackingDeviceStatus.Tracking;
-            double left_x = data.LeftEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
-            double right_x = data.RightEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
-            double left_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
-            double right_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
+            double left_gaze_x = data.LeftEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
+            double right_gaze_x = data.RightEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
+            double left_gaze_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
+            double right_gaze_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
+            double distance_left = ComputeEyeDistance(
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates.X,
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Y,
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Z
+            );
+            double distance_right = ComputeEyeDistance(
+                data.RightEye.GazeOrigin.PositionInUserCoordinates.X,
+                data.RightEye.GazeOrigin.PositionInUserCoordinates.Y,
+                data.RightEye.GazeOrigin.PositionInUserCoordinates.Z
+            );
             GazeDataArgs gazeData = new GazeDataArgs(
                 TimeSpan.FromMilliseconds(data.SystemTimeStamp/1000),
-                Math.Round(GazeFilter(left_x, right_x), 0),
-                Math.Round(left_x, 0),
-                Math.Round(right_x, 0),
-                Math.Round(GazeFilter(left_y, right_y), 0),
-                Math.Round(left_y, 0),
-                Math.Round(right_y, 0),
+                Math.Round(GazeFilter(left_gaze_x, right_gaze_x), 0),
+                Math.Round(left_gaze_x, 0),
+                Math.Round(right_gaze_x, 0),
+                Math.Round(GazeFilter(left_gaze_y, right_gaze_y), 0),
+                Math.Round(left_gaze_y, 0),
+                Math.Round(right_gaze_y, 0),
                 (data.LeftEye.GazePoint.Validity == Validity.Valid),
                 (data.RightEye.GazePoint.Validity == Validity.Valid),
                 GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter),
                 data.LeftEye.Pupil.PupilDiameter,
                 data.RightEye.Pupil.PupilDiameter,
                 (data.LeftEye.Pupil.Validity == Validity.Valid),
-                (data.RightEye.Pupil.Validity == Validity.Valid)
+                (data.RightEye.Pupil.Validity == Validity.Valid),
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates.X,
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Y,
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Z,
+                data.RightEye.GazeOrigin.PositionInUserCoordinates.X,
+                data.RightEye.GazeOrigin.PositionInUserCoordinates.Y,
+                data.RightEye.GazeOrigin.PositionInUserCoordinates.Z,
+                GazeFilter(distance_left, distance_right),
+                distance_left,
+                distance_right,
+                (data.LeftEye.GazeOrigin.Validity == Validity.Valid),
+                (data.RightEye.GazeOrigin.Validity == Validity.Valid)
             );
             OnGazeDataReceived(gazeData);
         }
