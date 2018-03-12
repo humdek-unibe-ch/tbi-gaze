@@ -16,16 +16,49 @@ namespace GazeHelper
     {
         private EyeTrackingDeviceStatus state;
 
+        /// <summary>
+        /// Timer to control the apperance of the dialog box
+        /// </summary>
         protected Timer dialogBoxTimer;
+        /// <summary>
+        /// The logger
+        /// </summary>
         protected TrackerLogger logger;
+        /// <summary>
+        /// The dialog box taht is controlled by the dialogBoxTimer
+        /// </summary>
         protected TrackerMessageBox trackerMessageBox;
 
+        /// <summary>
+        /// Occurs when [tracker enabled].
+        /// </summary>
         public event EventHandler TrackerEnabled;
+        /// <summary>
+        /// Occurs when [tracker disabled].
+        /// </summary>
         public event EventHandler TrackerDisabled;
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-        public delegate void GazeDataHandler(Object sender, GazeDataArgs e);
+        /// <summary>
+        /// Occurs when [gaze data received].
+        /// </summary>
         public event GazeDataHandler GazeDataReceived;
+        
+        /// <summary>
+        /// Event handler for gaze data events of the eyetracker
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
+        public delegate void GazeDataHandler(Object sender, GazeDataArgs e);
 
+        /// <summary>
+        /// Gets or sets the state of the eyetracker device.
+        /// </summary>
+        /// <value>
+        /// The state.
+        /// </value>
         public EyeTrackingDeviceStatus State
         {
             get { return state; }

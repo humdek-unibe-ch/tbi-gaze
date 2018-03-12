@@ -36,6 +36,10 @@ namespace GazeHelper
         public string TobiiTest { get; set; }
     }
 
+
+    /// <summary>
+    /// enummerates output values produced by the eyetracker
+    /// </summary>
     public enum GazeOutputValue
     {
         DataTimeStamp = 0, // timestamp of the gaze data item (uses ValueFormat.TimeStamp)
