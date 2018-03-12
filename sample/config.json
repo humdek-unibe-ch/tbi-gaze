@@ -1,7 +1,7 @@
 {
     // Allows to define the order and the delimiters between the different values. The definition is
     // of the form
-    //  {0}<delim>{1}<delim> ... <delim>{21}
+    //  {0}<delim>{1}<delim> ... <delim>{24}
     // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
     // replaced by the following values
     //  - 0: timestamp of the gaze data item (uses DataLogFormatTimeStamp)
@@ -21,26 +21,27 @@
     //  - 14: x-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
     //  - 15: y-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
     //  - 16: z-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 17: x-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) (pixel value)
-    //        [SDK Pro only]
+    //  - 17: x-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
     //  - 18: y-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
     //  - 19: z-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 20: distance of the gaze origin of the average of both eyes to the eyetracker (uses
-    //        DataLogFormatOrigin) [SDK Pro only]
+    //  - 20: distance of the gaze origin of both eyes (average) to the eyetracker (uses DataLogFormatOrigin)
+    //        [SDK Pro only]
     //  - 21: distance of the gaze origin of the left eye to the eyetracker (uses DataLogFormatOrigin)
     //        [SDK Pro only]
     //  - 22: distance of the gaze origin of the right eye to the eyetracker (uses DataLogFormatOrigin)
     //        [SDK Pro only]
     //  - 23: validity of the gaze origin data of the left eye [SDK Pro only]
     //  - 24: validity of the gaze origin data of the right eye [SDK Pro only]
-    // To log all possible values with a tab as delimiter use the empty string
-    //"DataLogColumnOrder": "",
+    // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+    // "DataLogColumnOrder": "",
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogColumnOrder": "{0}\t{1}\t{4}",
 
     // Defines the titles of the data log value columns. A title for all possible columns must be defined.
     // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but
     // must still be defined here. The index of a title must correspond to the value number of the
     // configuration parameter "DataLogColumnOrder".
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogColumnTitle": [
         "Timestamp",
         "coord-x",
@@ -69,36 +70,43 @@
         "origin-valid-right"
     ],
 
-    // Number of output data files to allowed the output path. Oldest files are deleted first. When
-    // setting OutputCount to 0, no files are removed. A value of 1 means that only the output of
-    // current execution is kept.
+    // Number of maximal allowed output data files in the output path. Oldest files are deleted first. To
+    // keep all files set the value to 0. A value of 1 means that only the output of the current execution
+    // is kept.
+    // Note that if multiple clients write to the same folder, this value should be set to at least the
+    // number of clients.
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogCount": 200,
 
-    // Allows to define the format of how the pupil diameter will be logged. Use the .NET syntax to
-    // specify the format:
+    // Allows to define the format of how the pupil diameter (in millimetres) will be logged. Use the .NET
+    // syntax to specify the format:
     //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
     // Note that the numbers will be represented differently depending in the localisation settings of the
     // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogFormatDiameter": "0.000",
 
-    // Allows to define the format of how the gaze origin values will be logged. Use the .NET syntax to
-    // specify the format:
+    // Allows to define the format of how the gaze origin values (in millimetres) will be logged. Use the
+    // .NET syntax to specify the format:
     //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
     // Note that the numbers will be represented differently depending in the localisation settings of the
     // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogFormatOrigin": "0.000",
 
     // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
     //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
     // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
 
     // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
     // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
+    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogPath": "",
 
-    // Defines whether gaze data is written to a log file. If set to false, the configuration items
-    // "OuputCount", "OutputPath", and "OutputFormat" are ignored.
+    // Defines whether gaze data is written to a log file. If set to false, all the configuration items
+    // matching the pattern "DataLog*" are ignored.
     "DataLogWriteOutput": true,
 
     // Defines filter settings for the eye tracker:
@@ -121,18 +129,21 @@
     "MouseControl": true,
 
     // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
-    // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when
-    // GazeToMousClose.exe is executed.
+    // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when GazeToMousClose.exe
+    // is executed.
+    // This parameter is ignored if "MouseControl" is set to false.
     "MouseHide": false,
 
     // Defines the Path to the standard mouse pointer icon. This is used to restore the mouse pointer.
+    // This parameter is ignored if "MouseControl" or "MouseHide" is set to false.
     "MouseStandardIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
-    // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready. If the
-    // eyetracker is not ready withing the specified time the subject will be notified with a popup window.
+    // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready while it
+    // is in any other state. If the eyetracker is not ready withing the specified time the subject will
+    // be notified with a popup window.
     "ReadyTimer": 5000,
 
-    // Choose the Tobii SDK (0: Tobii SDK Core, 1: Tobii SDK Pro).
+    // Choose the Tobii SDK (0: Tobii Core SDK, 1: Tobii Pro SDK).
     // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
     "TobiiSDK": 0,
 

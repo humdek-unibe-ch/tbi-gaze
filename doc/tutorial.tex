@@ -90,7 +90,8 @@ The following set of executables are provided:
     \item[GazeToMouse.exe] This program uses the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} (default) or the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} to get the position on the screen where the subject is looking at.
         The mouse cursor position is updated to this position.
         As a consequence, the mouse cursor is controlled by the gaze of the subject.
-        This program runs infinitely until it is terminated by an external command.
+        The gaze position on the screen (as well as pupil size or eye positions when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}) are further logged to an output file.
+        \texttt{GazeToMouse.exe} runs infinitely until it is terminated by an external command.
         This should \textbf{not} be done with a forced kill (e.g.~by executing the command \texttt{taskkill /F /IM GazeToMouse.exe} or by killing the task with the task manager) because it prevents the program from terminating gracefully.
         This as several consequences:
         \begin{itemize}
@@ -112,15 +113,15 @@ The following set of executables are provided:
 In order to get started with a quick experiment you need the following things (\emph{server} refers to the machine running \texttt{ztree} and \emph{client} refers to the machines running \texttt{zleaf}):
 \begin{itemize}
     \item a \href{http://www.ztree.uzh.ch/en.html}{ztree} installation with a server and one or more clients.
-        To install \texttt{ztree} download the latest \texttt{ztree} version from the \href{https://www.uzh.ch/ztree/ssl-dir/index.php}{download secetion} (requires a license and a login, see Section~\ref{sec.ztree}) and extract the server file \texttt{ztree.exe} to the chosen installation path on the server and the client file \texttt{zleaf.exe} to the chosen installation path on each client.
+        To install \texttt{ztree} download the latest \texttt{ztree} version from the \href{https://www.uzh.ch/ztree/ssl-dir/index.php}{download secetion}\footnote{https://www.uzh.ch/ztree/ssl-dir/index.php} (requires a license and a login, see Section~\ref{sec.ztree}) and extract the server file \texttt{ztree.exe} to the chosen installation path on the server and the client file \texttt{zleaf.exe} to the chosen installation path on each client.
         Throughout this documentation the installation paths of the \texttt{ztree} client and server will be referred to as \texttt{<zleaf path>} and \texttt{<ztree path>}, respectively.
     \item the \href{https://tobiigaming.com/getstarted/}{Tobii Eye Tracking Core Software} installed on each client.
-        To install the software \href{https://tobiigaming.com/downloadlatest/?bundle=tobii-core}{download} and execute the installation file.
+        To install the software \href{https://tobiigaming.com/downloadlatest/?bundle=tobii-core}{download}\footnote{https://tobiigaming.com/downloadlatest/?bundle=tobii-core} and execute the installation file.
         The installation path of this software will be referred to as \texttt{<Tobii path>} throughout this documentation.
     \item the \href{https://tobiigaming.com/eye-tracker-4c/}{Tobii Eye Tracker 4C} mounted and connected on each client.
-        When encountering connection problems follow \href{https://help.tobii.com/hc/en-us/articles/115000432589-Is-your-Eye-Tracker-4C-not-connecting-}{these} instructions which might help to solve the problem.
-    \item the \href{http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze}{GazeToMouse toolset} installed on each client.
-        To install the toolset \href{http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release}{download} the latest version (requires a subscription, see Section~\ref{sec.gitlab}) and extract all files to an installation path of your choosing.
+        When encountering connection problems follow \href{https://help.tobii.com/hc/en-us/articles/115000432589-Is-your-Eye-Tracker-4C-not-connecting-}{these}\footnote{https://help.tobii.com/hc/en-us/articles/115000432589-Is-your-Eye-Tracker-4C-not-connecting-} instructions which might help to solve the problem.
+    \item the \href{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze}{GazeToMouse toolset} installed on each client.
+        To install the toolset \href{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/tree/master/release}{download}\footnote{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii\_eye\_tracker\_gaze/tree/master/release} the latest version (requires a subscription, see Section~\ref{sec.gitlab}) and extract all files to an installation path of your choosing.
         The GazeToMouse installation path will be referred to as \texttt{<GazeToMouse path>} throughout this document.
     \item the ztree sample file.
         The file is located in \texttt{<GazeToMouse path>\textbackslash sample\textbackslash template.ztt}.
@@ -147,18 +148,14 @@ Copy the configuration file either to \texttt{<GazeToMouse path>} or \texttt{<zl
 
 \section{Requesting Access to the Latest \texttt{ztree} Release}
 \label{sec.ztree}
-To download the latest release of the \texttt{ztree} software a login must be requested \href{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}{here}.
+To download the latest release of the \texttt{ztree} software a login must be requested \href{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}{here}\footnote{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}.
 Make a careful note of the terms and conditions.
 
 \section{Requesting a TPF GitLab Account}
 \label{sec.gitlab}
-The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the TPF server.
+The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the \href{http://phhum-g111-nns.unibe.ch:10012/}{TPF server}\footnote{http://phhum-g111-nns.unibe.ch:10012/}.
 
-Its address is:
-
-\url{http://phhum-g111-nns.unibe.ch:10012/}
-
-Please send \href{simon.maurer@humdek.unibe.ch}{Simon Maurer} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
+Please send \href{christian.mozzini@ispw.unibe.ch}{Christian Moizzini}\footnote{christian.mozzini@ispw.unibe.ch} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
 
 
 \chapter{Use GazeToMouse Toolset in Ztree}
@@ -188,6 +185,7 @@ A user-friendly calibration tool is included in the Tobii software package.
 For each person different calibration data must be stored.
 For this reason the Tobii software supports multiple user profiles which can be switched on the fly.
 Given that in an economic experiment a workstation is used by a subject only once it is suggested to use the \emph{Guest} profile to store the eye tracker calibration data.
+The guest calibration can be launched by executing the \texttt{TobiiGuestCalibrate.exe} program, provided in the toolset.
 Once the eye tracker is calibrated for a subject, everything is ready.
 
 \section{Execute 3rd Party Applications in \texttt{ztree}}
@@ -206,7 +204,7 @@ In order to define a path
 When writing the different stages of a \texttt{ztree} program, calls to external applications can be made.
 This can be achieved as follows:
 \begin{enumerate}
-    \item click on the position where you want to include the call to the external program
+    \item click on the position in your \texttt{ztree} experiment file where you want to include the call to the external program
     \item choose the menu \texttt{Treatment} $\rightarrow$ \texttt{New External Program...}
     \item choose \texttt{Run on z-Leaf}
     \item add the call to the external program to the field \texttt{Command Line} \\
@@ -224,8 +222,8 @@ This can be achieved as follows:
 \chapter{Configuration of the \texttt{GazeToMouse} Toolset}
 \label{sec.config}
 The \texttt{GazeToMouse} toolset can be configured to work with different installations.
-It allows to specify installation paths and gives some control over implemented features (e.g.~mouse hiding or gaze filtering).
-The Listing~\ref{lst.config} shows the default configuration values and provides a short explanation for each value.
+It allows to specify installation paths and gives some control over implemented features (e.g.~mouse hiding, gaze filtering, or data logging).
+The Listing~\ref{lst.config} shows the default configuration values and provides an explanation for each value.
 
 \lstinputlisting[language=json, caption={Default configuartion values},label=lst.config]{../sample/config.json}
 
@@ -252,7 +250,7 @@ If no configuration file can be found, the default values are used.
     A word of warning when using the mouse hiding feature.
     This feature hides the mouse when running \texttt{GazeToMouse.exe}.
     If \texttt{GazeToMouse.exe} is forcefully closed or crashes, the mouse pointer stays hidden.
-    For such cases the \texttt{ShowMouse.exe} utility can be used.
+    For such cases the \texttt{ShowMouse.exe} utility can be used to restore the mouse pointer.
 \end{mdframed}
 
 \section{Output File}
@@ -266,19 +264,63 @@ The name of the output file follows the form \texttt{<yyyyMMddTHHmmss>\_<hostNam
 \end{itemize}
 
 An output file is only generated if the parameter \texttt{"DataLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
-The presentation of the gaze data is configurable with the help of the parameters \texttt{"DataLogColumnOrder"}, \texttt{"DataLogColumnTitle"}, \texttt{"DataLogFormatDiameter"}, and \texttt{"DataLogFormatTimeStamp"} (see Listing~\ref{lst.config} for more details).
+The presentation of the gaze data is configurable with the help of the parameters \texttt{"DataLogColumnOrder"}, \texttt{"DataLogColumnTitle"}, \texttt{"DataLogFormatDiameter"}, \texttt{"DataLogFormatOrigin"}, and \texttt{"DataLogFormatTimeStamp"} (see Listing~\ref{lst.config} for more details).
 
-By default the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} is used (parameter \texttt{"TobiiSDK"} is set to 0) and only the timestamps, the x and the y coordinates of the gaze point are available.
-Hence, the parameter \texttt{"DataLogColumnOrder"} is set to the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"} in order to not bloat the output file with unnecessary data.
+By default the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} is used (parameter \texttt{"TobiiSDK"} is set to 0) and only the timestamps and the x and the y coordinates of the gaze points are available.
+A gaze point describes a point on the screen in x and y coordinates (pixel values) the user is gazing at.
+This illustrated in Figure~\ref{fig.adcs}.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{adcs.png}
+    \caption{The Active Display Coordinate System (ADCS). Figure source: \href{http://developer.tobiipro.com/commonconcepts/coordinatesystems.html}{Tobii}}
+    \label{fig.adcs}
+\end{figure}
+By default, the system is configured to log the x and y coordinates of the gaze point and the timestamp of when the gaze point was captured by the eye tracker.
+Hence, the parameter \texttt{"DataLogColumnOrder"} is set to the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"} in order to not bloat the output file with unnecessary header data.
 
 However, when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, much more values are provided and can be logged to the output file.
-This can be achieved by setting the value of parameter \texttt{"DataLogColumnOrder"} as follows:
+This includes the pupil diameters of each eye as well as the eye positions in space.
+The latter uses a coordinate system as illustrated in Figure~\ref{fig.ucs}.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ucs.png}
+    \caption{The User Coordinate System (UCS). Figure source: \href{http://developer.tobiipro.com/commonconcepts/coordinatesystems.html}{Tobii}}
+    \label{fig.ucs}
+\end{figure}
+
+In order to log additional data fields, the parameter \texttt{"DataLogColumnOrder"} must be modified by adding the required numbers, representing different data fields.
+For example, to log all raw data fields (omitting any data field that is computed from raw data) the following string can be used:
 \begin{lstlisting}
-"DataLogColumnOrder": "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}"
+"DataLogColumnOrder": "{0}\t{2}\t{3}\t{5}\t{6}\t{7}\t{8}\t{10}\t{11}\t{12}\t{13}\t{14}\t{15}\t{16}\t{17}\t{18}\t{19}\t{23}\t{24}"
 \end{lstlisting}
 
-Note that when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, the values 1 (x coordinate of the gaze point), 4 (y coordinate of the gaze point), and 9 (pupil diameter) are computed by averaging the values of both eyes:
-\begin{displaymath}
+When using the empty string, all possible data fields are logged:
+\begin{lstlisting}
+"DataLogColumnOrder": ""
+\end{lstlisting}
+
+\subsection{Data Fields}
+The comments above the parameter \texttt{"DataLogColumnOrder"} in the configuration file (see Listing~\ref{lst.config}) provide a short description for each available data field.
+In the following some further information is provided.
+
+The following five data field types with individual data fields are provided:
+\begin{enumerate}
+    \item timestamps indicating when the data was sampled by the eye tracker (field number: 0)
+    \item gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as pixel values
+        \begin{description}
+            \item[Tobii Core SDK] \hfill
+                \begin{itemize}
+                    \item the average x and y coordinates where filtering depends on parameter "GazeFilterCore"\\
+                        (field numbers: 1 and 4)
+                \end{itemize}
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item raw x and y coordinates of the left and the right eye\\
+                        (field numbers: 2, 3, 5, and 6)
+                    \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
+                        (field numbers: 1 and 4)
+\begin{equation}
+    \label{eq.average}
     \text{val} =
         \begin{cases}
             \text{NaN}                                      & \quad \text{if val\_right and val\_left are not valid}\\
@@ -286,8 +328,47 @@ Note that when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro 
             \text{val\_right}                               & \quad \text{if val\_left is not valid}\\
             \frac{\text{val\_left} + \text{val\_right}}{2}  & \quad \text{otherwise}
         \end{cases}
-\end{displaymath}
-When using \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK}, filter settings can be configured with the parameter \texttt{"GazeFilterCore"} (see Listing~\ref{lst.config} for more details).
+\end{equation}
+                \end{itemize}
+        \end{description}
+    \item gaze origin UCS coordinates (see Figure~\ref{fig.ucs}) in millimetres
+        \begin{description}
+            \item[Tobii Core SDK] not supported
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item raw x, y, and z coordinates of the left and the right eye\\
+                        (field numbers: 14 - 19)
+                    \item the distance from the left and the right eye to the eye tracker which is computed from raw data as defined by Equation~\ref{eq.dist}\\
+\begin{equation}
+    \label{eq.dist}
+    \text{dist} = \sqrt{x^2 + y^2 + z^2}
+\end{equation}
+                        (field numbers: 21 and 22)
+                    \item the average distance which is computed from the distance of the left and the right eye as defined by Equation~\ref{eq.average}\\
+                        (field number: 20)
+                \end{itemize}
+        \end{description}
+    \item pupil diameters in millimetres
+        \begin{description}
+            \item[Tobii Core SDK] not supported
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item raw diameters of the left and the right eye\\
+                        (field numbers: 10 and 11)
+                    \item the average diameter which is computed from raw data as defined by Equation~\ref{eq.average}\\
+                        (field number: 9)
+                \end{itemize}
+        \end{description}
+    \item data validity indicators as true or false
+        \begin{description}
+            \item[Tobii Core SDK] not supported
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for the left and the right eye\\
+                        (field numbers: 7, 8, 12, 13, 23, 24)
+                \end{itemize}
+        \end{description}
+\end{enumerate}
 
 \section{Log File}
 All executables write continuously to the same log file.
