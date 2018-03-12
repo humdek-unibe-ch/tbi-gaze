@@ -268,17 +268,34 @@ The presentation of the gaze data is configurable with the help of the parameter
 
 By default the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} is used (parameter \texttt{"TobiiSDK"} is set to 0) and only the timestamps and the x and the y coordinates of the gaze points are available.
 A gaze point describes a point on the screen in x and y coordinates (pixel values) the user is gazing at.
-This illustrated in Figure~\ref{fig.adcs}.
+This is illustrated in Figure~\ref{fig.adcs}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{adcs.png}
     \caption{The Active Display Coordinate System (ADCS). Figure source: \href{http://developer.tobiipro.com/commonconcepts/coordinatesystems.html}{Tobii}}
     \label{fig.adcs}
 \end{figure}
-By default, the system is configured to log the x and y coordinates of the gaze point and the timestamp of when the gaze point was captured by the eye tracker.
+Accordingly, the system is configured to log the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 1 and 4, respectively).
 Hence, the parameter \texttt{"DataLogColumnOrder"} is set to the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"} in order to not bloat the output file with unnecessary header data.
+This produces an output file that is similar to the following:
+\lstset{columns=flexible}
+\lstset{keepspaces=true}
+\begin{lstlisting}
+Timestamp   coord-x coord-y
+12:51:55.409    426 342
+12:51:55.420    430 341
+12:51:55.431    431 341
+...
+\end{lstlisting}
 
-However, when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, much more values are provided and can be logged to the output file.
+When opening the file with a spreadsheet software such as LibreOffice Calc or Microsoft Office Excel two things need to be considered:
+\begin{enumerate}
+    \item The column delimiter needs to be set to the delimiter set in the configuration file (\texttt{'\textbackslash t'} by default).
+    \item The language needs to be set to the language of the windows system where the configuration file was produced.
+        This is important because numbers are represented differently in different languages and depending on the settings, commas might be interpreted as delimiters when they are not.
+\end{enumerate}
+
+When using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, much more values are provided and can be logged to the output file.
 This includes the pupil diameters of each eye as well as the eye positions in space.
 The latter uses a coordinate system as illustrated in Figure~\ref{fig.ucs}.
 \begin{figure}[ht]
