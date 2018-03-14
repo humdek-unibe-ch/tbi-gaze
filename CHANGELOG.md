@@ -8,6 +8,7 @@
    - Allow to configure whether to log data setes where all data is invalid (eyes closed, no subject in fornt of the screen, etc)
 
 ### Improvements
+ - Fall back to Core SDK if the license file cannot be applied to the device
 
 ### Bug Fix
 

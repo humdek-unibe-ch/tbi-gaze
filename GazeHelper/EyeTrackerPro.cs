@@ -11,6 +11,8 @@ namespace GazeHelper
     /// <seealso cref="GazeHelper.EyeTrackerHandler" />
     public class EyeTrackerPro : EyeTrackerHandler
     {
+        private bool hasLicense = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
         /// </summary>
@@ -41,6 +43,17 @@ namespace GazeHelper
         /// <param name="licensePath">The license path.</param>
         private void ApplyLicense(IEyeTracker eyeTracker, string licensePath)
         {
+            byte[] license_file = null;
+            try
+            {
+                license_file = System.IO.File.ReadAllBytes(licensePath);
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+                logger.Error("Failed to apply license");
+                return;
+            }
             // Create a collection with the license.
             var licenseCollection = new LicenseCollection(
                 new System.Collections.Generic.List<LicenseKey>
@@ -52,6 +65,7 @@ namespace GazeHelper
             if (eyeTracker.TryApplyLicenses(licenseCollection, out failedLicenses))
             {
                 State = EyeTrackingDeviceStatus.Initializing;
+                hasLicense = true;
                 logger.Info("Successfully applied license");
             }
             else
@@ -61,6 +75,13 @@ namespace GazeHelper
             }
         }
 
+        /// <summary>
+        /// Computes the distance of an eye to the tracker device.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        /// <param name="z">The z coordinate.</param>
+        /// <returns></returns>
         private double ComputeEyeDistance(double x, double y, double z)
         {
             return Math.Sqrt(x * x + y * y + z * z);
@@ -77,6 +98,17 @@ namespace GazeHelper
             if (double.IsNaN(left)) return right;
             if (double.IsNaN(right)) return left;
             return (left + right) / 2;
+        }
+
+        /// <summary>
+        /// Determines whether the license is applied to the eyetracker device 
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if [is license ok]; otherwise, <c>false</c>.
+        /// </returns>
+        public bool IsLicenseOk()
+        {
+            return hasLicense;
         }
 
         /// <summary>

@@ -144,6 +144,11 @@ namespace GazeHelper
             return item;
         }
 
+        /// <summary>
+        /// Serializes the json configuration object to a string and writes it to a file.
+        /// </summary>
+        /// <param name="item">The json configuration item.</param>
+        /// <param name="path">The path where the file will be written.</param>
         public void SerializeJsonConfig( ConfigItem item, string path )
         {
             string json = JsonConvert.SerializeObject(item);

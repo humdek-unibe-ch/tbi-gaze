@@ -89,6 +89,34 @@ namespace GazeToMouse
                 // delete old files
                 DeleteOldGazeLogFiles(config.DataLogPath, config.DataLogCount, $"*_{gazeFilePostfix}");
             }
+            
+            // hide the mouse cursor
+            hider = new MouseHider(logger);
+            if (config.MouseControl && config.MouseHide) hider.HideCursor();
+
+
+            // intitialise the tracker device 
+            if(config.TobiiSDK == 1)
+            {
+                EyeTrackerPro tracker_pro = new EyeTrackerPro(logger, config.ReadyTimer, config.LicensePath);
+                if (tracker_pro.IsLicenseOk())
+                {
+                    tracker = tracker_pro;
+                }
+                else
+                {
+                    tracker_pro.Dispose();
+                    config.TobiiSDK = 0;
+                    logger.Warning("Fall back to Tobii Core SDK");
+                }
+            }
+            if(config.TobiiSDK == 0)
+            {
+                tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilterCore);
+            }
+            tracker.GazeDataReceived += OnGazeDataReceived;
+            tracker.TrackerEnabled += OnTrackerEnabled;
+            tracker.TrackerDisabled += OnTrackerDisabled;
 
             // dump configuration values to file
             if(!CheckConfigName(config.ConfigName))
@@ -97,27 +125,15 @@ namespace GazeToMouse
                 logger.Warning($"Using the default config name: \"{config.ConfigName}\"");
             }
             parser.SerializeJsonConfig(config, $"{config.DataLogPath}\\{startTime}_{Environment.MachineName}_config_{config.ConfigName}.json");
-            
-            // hide the mouse cursor
-            hider = new MouseHider(logger);
-            if (config.MouseControl && config.MouseHide) hider.HideCursor();
 
-
-            // initialize host. Make sure that the Tobii service is running
-            if(config.TobiiSDK == 1)
-            {
-                tracker = new EyeTrackerPro(logger, config.ReadyTimer, config.LicensePath);
-            }
-            else if(config.TobiiSDK == 0)
-            {
-                tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilterCore);
-            }
-            tracker.GazeDataReceived += OnGazeDataReceived;
-            tracker.TrackerEnabled += OnTrackerEnabled;
-            tracker.TrackerDisabled += OnTrackerDisabled;
             app.Run(window);
         }
 
+        /// <summary>
+        /// Checks the name of the configuration.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
         static bool CheckConfigName( string name )
         {
             if(!Uri.IsWellFormedUriString(name, UriKind.Relative))
