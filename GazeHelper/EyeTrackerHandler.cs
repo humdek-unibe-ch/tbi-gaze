@@ -139,7 +139,8 @@ namespace GazeHelper
         /// <summary>
         /// Called after a specified amount of time of the eyetracker not being ready.
         /// </summary>
-        /// <param name="tracker">The eyetracker.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="e">The <see cref="System.Timers.ElapsedEventArgs"/> instance containing the event data.</param>
         protected void OnTrackerDisabledTimeout(Object source, System.Timers.ElapsedEventArgs e)
         {
             OnTrackerDisabled(new EventArgs());
@@ -224,12 +225,46 @@ namespace GazeHelper
         private bool? isValidOriginLeft = null;
         private bool? isValidOriginRight = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
+        /// </summary>
+        /// <param name="timestamp">The timestamp.</param>
+        /// <param name="xCoord">The x coord of the gaze point.</param>
+        /// <param name="yCoord">The y coord of the gaze point.</param>
         public GazeDataArgs(TimeSpan timestamp, double xCoord, double yCoord)
         {
             this.timestamp = timestamp;
             this.xCoord = xCoord;
             this.yCoord = yCoord;
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
+        /// </summary>
+        /// <param name="timestamp">The timestamp.</param>
+        /// <param name="xCoord">The x coord of the gaze point.</param>
+        /// <param name="xCoordLeft">The x coord of the gaze point of the left eye.</param>
+        /// <param name="xCoordRight">The x coord of the gaze point of the right eye.</param>
+        /// <param name="yCoord">The y coord of the gaze point.</param>
+        /// <param name="yCoordLeft">The y coord of the gaze point of the left eye.</param>
+        /// <param name="yCoordRight">The y coord of the gaze point of the right eye.</param>
+        /// <param name="isValidCoordLeft">if set to <c>true</c> the gaze point coordinate of the left eye is valid.</param>
+        /// <param name="isValidCoordRight">if set to <c>true</c> the gaze point coordinate of the right eye is valid.</param>
+        /// <param name="dia">The average diameter of the pupils.</param>
+        /// <param name="diaLeft">The diameter of the left pupil.</param>
+        /// <param name="diaRight">The diameter of the right pupil.</param>
+        /// <param name="isValidDiaLeft">if set to <c>true</c> the diameter of the left pupil is valid.</param>
+        /// <param name="isValidDiaRight">if set to <c>true</c> the diameter of the right pupil is valid.</param>
+        /// <param name="xOriginLeft">The x coord of the origin position of the left eye.</param>
+        /// <param name="yOriginLeft">The y coord of the origin position of the left eye.</param>
+        /// <param name="zOriginLeft">The z coord of the origin position of the left eye.</param>
+        /// <param name="xOriginRight">The x coord of the origin position of the right eye.</param>
+        /// <param name="yOriginRight">The y coord of the origin position of the right eye.</param>
+        /// <param name="zOriginRight">The z coord of the origin position of the right eye.</param>
+        /// <param name="distOrigin">The distance of the eye origin to the tracker.</param>
+        /// <param name="distOriginLeft">The distance of the left eye origin to the tracker.</param>
+        /// <param name="distOriginRight">The distance of the right eye origin to the tracker.</param>
+        /// <param name="isValidOriginLeft">if set to <c>true</c> the origin point of the left eye is valid.</param>
+        /// <param name="isValidOriginRight">if set to <c>true</c> the origin point of the right eye is valid.</param>
         public GazeDataArgs(TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
             bool isValidCoordLeft, bool isValidCoordRight, double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight,
             double xOriginLeft, double yOriginLeft, double zOriginLeft, double xOriginRight, double yOriginRight, double zOriginRight,
