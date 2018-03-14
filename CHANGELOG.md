@@ -1,3 +1,16 @@
+# v2.2.0
+### New Features
+ - Configuration file
+   - Dump the configuartions used for an experiment to a file at the "DataLogPath"
+   - Allow to configure an experiment name which is used as a postfix of the dumped configuartion file name
+   - Consider the config file as invalid if not all required configuration parameters are defined
+   - Consider the config file as invalid if unknown parameters are defined
+   - Allow to configure whether to log data setes where all data is invalid (eyes closed, no subject in fornt of the screen, etc)
+
+### Improvements
+
+### Bug Fix
+
 # v2.1.0
 ### New Features
  - Log eye origin coordinates
@@ -21,7 +34,7 @@
    - logging of individual eye data
  - Allow to configure column headers of output file
 
-### Changes
+### Improvements
  - Improved configuration options for the output file
 
 # v1.0.0
@@ -29,7 +42,7 @@
  - Notify user with popup if eyetracker is not ready
  - Allow to configure time interval for the software to wait for the eyetracker to become ready
 
-### Changes
+### Improvements
  - Rename default output file for data from **<prefix>_data.txt** to **<prefix>_gaze.txt**
 
 # v0.3.2

@@ -1,4 +1,11 @@
 {
+    // Use this parameter to associate the configuartion with an experiment. When "GazeToMouse.exe" is
+    // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
+    // "ConfigName" is postfixed to the filename of the copied config file. By default the following file
+    // will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
+    // Note that the following characters are not allowed in a file name: <>:"/\|?*
+    "ConfigName": "experiment_x",
+
     // Allows to define the order and the delimiters between the different values. The definition is
     // of the form
     //  {0}<delim>{1}<delim> ... <delim>{24}
@@ -100,9 +107,18 @@
     // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
 
+    // When set to true, invalid data will not be logged to the output file. When set to false invalid
+    // data will be logged to the output file. This might be useful to estimate the number of blinks of
+    // the subject or track when the subject is not gazing at the screen.
+    // This configuration value has no effect for the Core SDK where invalid data is always ignored.
+    // Note that invlaid data is only removed if it affects all values.
+    "DataLogIgnoreInvalid": false,
+
     // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
     // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
     // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+    // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
+    //  C:\\Users\\Subject\\Documents
     "DataLogPath": "",
 
     // Defines whether gaze data is written to a log file. If set to false, all the configuration items
@@ -120,7 +136,9 @@
 
     // Defines the location of the license files. It must be the path to a folder (not a file).
     // This is only required when Tobii SDK Pro is used (see parameter "TobiiSDK")
-    "LicensePath": "licenses",
+    // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
+    //  C:\\Users\\Subject\\Documents\\tobii_licenses
+    "LicensePath": "tobii_licenses",
 
     // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
     // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when

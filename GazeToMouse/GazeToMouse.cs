@@ -40,11 +40,13 @@ namespace GazeToMouse
 
             JsonConfigParser parser = new JsonConfigParser(logger);
             config = parser.ParseJsonConfig();
+            ConfigItem default_config = parser.GetDefaultConfig();
 
+            string startTime = $"{DateTime.Now:yyyyMMddTHHmmss}";
             if (config.DataLogWriteOutput)
             {
-                string gazeFilePostfix = $"_{Environment.MachineName}_gaze.txt";
-                string gazeFileName = $"{DateTime.Now:yyyyMMddTHHmmss}{gazeFilePostfix}";
+                string gazeFilePostfix = $"{Environment.MachineName}_gaze.txt";
+                string gazeFileName = $"{startTime}_{gazeFilePostfix}";
 
                 // create gaze data file
                 if (config.DataLogPath == "") config.DataLogPath = Directory.GetCurrentDirectory();
@@ -58,39 +60,43 @@ namespace GazeToMouse
                     sw = new StreamWriter(gazeFileName);
                 }
 
-                if (config.DataLogWriteOutput)
+                // check output data format
+                if (!CheckDataLogFormat(DateTime.Now.TimeOfDay, config.DataLogFormatTimeStamp))
                 {
-                    // check output data format
-                    ConfigItem default_config = parser.GetDefaultConfig();
-                    if (!CheckDataLogFormat(DateTime.Now.TimeOfDay, config.DataLogFormatTimeStamp))
-                    {
-                        config.DataLogFormatTimeStamp = default_config.DataLogFormatTimeStamp;
-                        logger.Warning($"Using the default output format for timestamps: \"{config.DataLogFormatTimeStamp}\"");
-                    }
-                    if (!CheckDataLogFormat(1.000000, config.DataLogFormatDiameter))
-                    {
-                        config.DataLogFormatDiameter = default_config.DataLogFormatDiameter;
-                        logger.Warning($"Using the default output format for pupil diameters: \"{config.DataLogFormatDiameter}\"");
-                    }
-                    if (!CheckDataLogFormat(1.000000, config.DataLogFormatOrigin))
-                    {
-                        config.DataLogFormatOrigin = default_config.DataLogFormatOrigin;
-                        logger.Warning($"Using the default output format for gaze origin values: \"{config.DataLogFormatOrigin}\"");
-                    }
-                    if (!CheckDataLogColumnOrder(config.DataLogColumnOrder))
-                    {
-                        config.DataLogColumnOrder = default_config.DataLogColumnOrder;
-                        logger.Warning($"Using the default column order: \"{config.DataLogFormatOrigin}\"");
-                    }
-                    if (!CheckDataLogColumnTitles(config.DataLogColumnOrder, config.DataLogColumnTitle))
-                    {
-                        logger.Warning($"Column titles are omitted");
-                    }
+                    config.DataLogFormatTimeStamp = default_config.DataLogFormatTimeStamp;
+                    logger.Warning($"Using the default output format for timestamps: \"{config.DataLogFormatTimeStamp}\"");
+                }
+                if (!CheckDataLogFormat(1.000000, config.DataLogFormatDiameter))
+                {
+                    config.DataLogFormatDiameter = default_config.DataLogFormatDiameter;
+                    logger.Warning($"Using the default output format for pupil diameters: \"{config.DataLogFormatDiameter}\"");
+                }
+                if (!CheckDataLogFormat(1.000000, config.DataLogFormatOrigin))
+                {
+                    config.DataLogFormatOrigin = default_config.DataLogFormatOrigin;
+                    logger.Warning($"Using the default output format for gaze origin values: \"{config.DataLogFormatOrigin}\"");
+                }
+                if (!CheckDataLogColumnOrder(config.DataLogColumnOrder))
+                {
+                    config.DataLogColumnOrder = default_config.DataLogColumnOrder;
+                    logger.Warning($"Using the default column order: \"{config.DataLogColumnOrder}\"");
+                }
+                if (!CheckDataLogColumnTitles(config.DataLogColumnOrder, config.DataLogColumnTitle))
+                {
+                    logger.Warning($"Column titles are omitted");
                 }
 
                 // delete old files
-                DeleteOldGazeLogFiles(config.DataLogPath, config.DataLogCount, $"*{gazeFilePostfix}");
+                DeleteOldGazeLogFiles(config.DataLogPath, config.DataLogCount, $"*_{gazeFilePostfix}");
             }
+
+            // dump configuration values to file
+            if(!CheckConfigName(config.ConfigName))
+            {
+                config.ConfigName = default_config.ConfigName;
+                logger.Warning($"Using the default config name: \"{config.ConfigName}\"");
+            }
+            parser.SerializeJsonConfig(config, $"{config.DataLogPath}\\{startTime}_{Environment.MachineName}_config_{config.ConfigName}.json");
             
             // hide the mouse cursor
             hider = new MouseHider(logger);
@@ -110,6 +116,16 @@ namespace GazeToMouse
             tracker.TrackerEnabled += OnTrackerEnabled;
             tracker.TrackerDisabled += OnTrackerDisabled;
             app.Run(window);
+        }
+
+        static bool CheckConfigName( string name )
+        {
+            if(!Uri.IsWellFormedUriString(name, UriKind.Relative))
+            {
+                logger.Error($"The config file name \"{name}\" is invalid and cannot be used as file name postfix");
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -252,6 +268,25 @@ namespace GazeToMouse
             return res.ToString(format);
         }
 
+        static bool IsDataValid(GazeDataArgs data, bool ignore_invalid)
+        {
+            if (!ignore_invalid) return true; // don't check, log everything
+            if ((data.IsValidCoordLeft == true)
+                || (data.IsValidCoordRight == true)
+                || (data.IsValidDiaLeft == true)
+                || (data.IsValidDiaRight == true)
+                || (data.IsValidOriginLeft == true)
+                || (data.IsValidOriginRight == true)
+                || ((data.IsValidCoordLeft == null)
+                    && (data.IsValidCoordRight == null)
+                    && (data.IsValidDiaLeft == null)
+                    && (data.IsValidDiaRight == null)
+                    && (data.IsValidOriginLeft == null)
+                    && (data.IsValidOriginRight == null)))
+                return true; // at least one value is valid or Core SDK is used
+            else return false; // all vaules of this data set are invalid
+        }
+
         /// <summary>
         /// Called when [application exit].
         /// </summary>
@@ -279,7 +314,7 @@ namespace GazeToMouse
         {
             
             // write the coordinates to the log file
-            if (config.DataLogWriteOutput)
+            if (config.DataLogWriteOutput && IsDataValid(data, config.DataLogIgnoreInvalid))
             {
                 string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
                 formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetGazeDataValueString(data.Timestamp, config.DataLogFormatTimeStamp);

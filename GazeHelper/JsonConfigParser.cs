@@ -13,26 +13,51 @@ namespace GazeHelper
     /// </summary>
     public class ConfigItem
     {
+        [JsonProperty(Required = Required.Always)]
+        public string ConfigName { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string DataLogColumnOrder { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string[] DataLogColumnTitle { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public int DataLogCount { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string DataLogFormatDiameter { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string DataLogFormatOrigin { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string DataLogFormatTimeStamp { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public bool DataLogIgnoreInvalid { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string DataLogPath { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public bool DataLogWriteOutput { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public int GazeFilterCore { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string LicensePath { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public bool MouseControl { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public bool MouseHide { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string MouseStandardIconPath { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public int ReadyTimer { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public int TobiiSDK { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TobiiApplicationPath { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TobiiCalibrate { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TobiiCalibrateArguments { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TobiiGuestCalibrate { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TobiiGuestCalibrateArguments { get; set; }
+        [JsonProperty(Required = Required.Always)]
         public string TobiiTest { get; set; }
     }
 
@@ -103,20 +128,28 @@ namespace GazeHelper
                 try
                 {
                     json = sr.ReadToEnd();
-                    item = JsonConvert.DeserializeObject<ConfigItem>(json);
+                    item = JsonConvert.DeserializeObject<ConfigItem>(json, new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error });
 
                     if (item.DataLogColumnOrder == "")
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();
                 }
-                catch (JsonReaderException e)
+                catch (Exception e)
                 {
                     logger.Error(e.Message);
                     logger.Warning("Config file could not be parsed, using default configuration values");
                 }
             }
             return item;
+        }
+
+        public void SerializeJsonConfig( ConfigItem item, string path )
+        {
+            string json = JsonConvert.SerializeObject(item);
+            StreamWriter sw = new StreamWriter(path);
+            sw.Write(json);
+            sw.Close();
         }
 
         /// <summary>
@@ -127,11 +160,10 @@ namespace GazeHelper
         {
             return new ConfigItem
             {
-                DataLogWriteOutput = true,
-                DataLogPath = "",
+                ConfigName = "experiment_x",
                 DataLogColumnOrder =
                     $"{{{(int)GazeOutputValue.DataTimeStamp}}}\t" +
-                    $"{{{(int)GazeOutputValue.XCoord}}}\t" + 
+                    $"{{{(int)GazeOutputValue.XCoord}}}\t" +
                     $"{{{(int)GazeOutputValue.XCoordLeft}}}\t" +
                     $"{{{(int)GazeOutputValue.XCoordRight}}}\t" +
                     $"{{{(int)GazeOutputValue.YCoord}}}\t" +
@@ -182,10 +214,13 @@ namespace GazeHelper
                     "origin-valid-left",
                     "origin-valid-right"
                 },
+                DataLogCount = 200,
                 DataLogFormatDiameter = "0.000",
                 DataLogFormatOrigin = "0.000",
                 DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff",
-                DataLogCount = 200,
+                DataLogIgnoreInvalid = false,
+                DataLogPath = "",
+                DataLogWriteOutput = true,
                 GazeFilterCore = 0,
                 LicensePath = "licenses",
                 MouseControl = true,
