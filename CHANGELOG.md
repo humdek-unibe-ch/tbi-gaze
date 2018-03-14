@@ -44,7 +44,7 @@
  - Allow to configure time interval for the software to wait for the eyetracker to become ready
 
 ### Improvements
- - Rename default output file for data from **<prefix>_data.txt** to **<prefix>_gaze.txt**
+ - Rename default output file for data from ```<prefix>_data.txt``` to ``<prefix>_gaze.txt``
 
 # v0.3.2
 ### Improvements
