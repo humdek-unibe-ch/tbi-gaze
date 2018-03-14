@@ -1,8 +1,8 @@
 {
-    // Use this parameter to associate the configuartion with an experiment. When "GazeToMouse.exe" is
+    // Use this parameter to associate the configuration with an experiment. When "GazeToMouse.exe" is
     // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
-    // "ConfigName" is postfixed to the filename of the copied config file. By default the following file
-    // will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
+    // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following
+    // file will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
     // Note that the following characters are not allowed in a file name: <>:"/\|?*
     "ConfigName": "experiment_x",
 
@@ -31,7 +31,7 @@
     //  - 17: x-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
     //  - 18: y-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
     //  - 19: z-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 20: distance of the gaze origin of both eyes (average) to the eyetracker (uses DataLogFormatOrigin)
+    //  - 20: average distance of the gaze origin of both eyes to the eyetracker (uses DataLogFormatOrigin)
     //        [SDK Pro only]
     //  - 21: distance of the gaze origin of the left eye to the eyetracker (uses DataLogFormatOrigin)
     //        [SDK Pro only]
@@ -107,11 +107,13 @@
     // This configuration value has no effect if "DataLogWriteOutput" is set to false.
     "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
 
-    // When set to true, invalid data will not be logged to the output file. When set to false invalid
-    // data will be logged to the output file. This might be useful to estimate the number of blinks of
-    // the subject or track when the subject is not gazing at the screen.
+    // When set to true, invalid data will be ignored and not logged to the output file. When set to false
+    // invalid data will appear as "NaN" or "n. def" (depending on the language of the system) in the output
+    // file. A data set is invalid if the tracker is not able to detect the required features of the eye.
+    // This parameter might be useful to estimate the number of blinks of the subject or to track when the
+    // subject is not gazing at the screen.
     // This configuration value has no effect for the Core SDK where invalid data is always ignored.
-    // Note that invlaid data is only removed if it affects all values.
+    // Note that invlaid data is only removed if it affects all values associated to a timestamp.
     "DataLogIgnoreInvalid": false,
 
     // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
@@ -126,10 +128,10 @@
     "DataLogWriteOutput": true,
 
     // Defines filter settings for the eye tracker:
-    // - 0: unfiltered, Tobii: "removal of invalid data points and the averaging of the gaze points from
-    //      both eyes".
-    // - 1: lightly filtered, Tobii: "an adaptive filter which is weighted based on the age of the gaze
-    //      data points GazePointData and the velocity of the eye movements".
+    //  - 0: unfiltered, Tobii: "removal of invalid data points and the averaging of the gaze points from
+    //       both eyes".
+    //  - 1: lightly filtered, Tobii: "an adaptive filter which is weighted based on the age of the gaze
+    //       data points GazePointData and the velocity of the eye movements".
     // also see https://tobii.github.io/CoreSDK/articles/streams.html
     // Note that this parameter only has effect for Tobii SDK Core (see parameter "TobiiSDK").
     "GazeFilterCore": 0,
@@ -143,7 +145,6 @@
     // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
     // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
     // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
-    // If set to false the configuration item "HideMouse" is ignored.
     "MouseControl": true,
 
     // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
@@ -157,7 +158,7 @@
     "MouseStandardIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
     // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready while it
-    // is in any other state. If the eyetracker is not ready withing the specified time the subject will
+    // is in any other state. If the eyetracker is not ready within the specified time the subject will
     // be notified with a popup window.
     "ReadyTimer": 5000,
 
