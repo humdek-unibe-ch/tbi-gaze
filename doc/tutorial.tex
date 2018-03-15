@@ -24,20 +24,33 @@
 \usepackage{makeidx}
 \usepackage{listings}
 \usepackage{amsmath}
+
+\newtoggle{InString}{}% Keep track of if we are within a string
+\togglefalse{InString}% Assume not initally in string
+
 \lstset{
-  backgroundcolor=\color{bkg},
-  basicstyle=\small\ttfamily,
-  breaklines=true,
-  columns=fullflexible,
-  numbers=left,
-  numberstyle=\tiny,
-  keywordstyle=\color{blue},
-  commentstyle=\color{cmt},
-  stepnumber=5,
-  captionpos=b,
+    backgroundcolor=\color{bkg},
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    columns=fullflexible,
+    numbers=left,
+    numberstyle=\tiny,
+    keywordstyle=\color{blue},
+    commentstyle=\color{cmt},
+    stepnumber=5,
+    captionpos=b,
 }
 \lstdefinelanguage{json}{
-  morecomment=[l]{//},
+    string=[s]{"}{"},
+    showstringspaces=false,
+    stringstyle=\color{purple},
+    morecomment=[s][\color{black}\ttfamily]{\ \ \"}{\"},
+    morecomment=[s][\color{purple}\ttfamily]{\ \ \ \ \ \"}{\"},
+    keywords=[1]{true, false},
+    keywordstyle=[1]\color{cyan},
+    columns=flexible,
+    keepspaces=true,
+    morecomment=[l]{//},
 }
 \usepackage{caption}
 \usepackage{subcaption}
@@ -72,6 +85,7 @@ Simon Maurer - \texttt{simon.maurer@humdek.unibe.ch}\\
 
 \tableofcontents
 
+%==============================================================================
 \chapter{Introduction}\label{sec.intro}
 This documents describes how to use the \href{https://tobiigaming.com/eye-tracker-4c/}{Tobii Eye Tracker 4C} in order to track the gaze of a subject and feed the gaze data to the mouse device.
 This allows to use the eye tracker to control the mouse pointer position such that the mouse pointer is placed at the screen coordinates where the subject is gazing at.
@@ -108,6 +122,8 @@ The following set of executables are provided:
         A good solution for such a case is to install a shortcut to \texttt{ShowMouse.exe} on the desktop in order to execute it with the keyboard.
 \end{description}
 
+
+%==============================================================================
 \chapter{Quick Start}
 \label{sec.quick}
 In order to get started with a quick experiment you need the following things (\emph{server} refers to the machine running \texttt{ztree} and \emph{client} refers to the machines running \texttt{zleaf}):
@@ -146,11 +162,13 @@ The behaviour of the GazeToMouse toolset can be configured with a configuration 
 A sample configuration file is provided in \texttt{<GazeToMouse path>\textbackslash sample\textbackslash config.json} that can be modified to suit different requirements.
 Copy the configuration file either to \texttt{<GazeToMouse path>} or \texttt{<zleaf path>} and modify it there.
 
+%------------------------------------------------------------------------------
 \section{Requesting Access to the Latest \texttt{ztree} Release}
 \label{sec.ztree}
 To download the latest release of the \texttt{ztree} software a login must be requested \href{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}{here}\footnote{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}.
 Make a careful note of the terms and conditions.
 
+%------------------------------------------------------------------------------
 \section{Requesting a TPF GitLab Account}
 \label{sec.gitlab}
 The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the \href{http://phhum-g111-nns.unibe.ch:10012/}{TPF server}\footnote{http://phhum-g111-nns.unibe.ch:10012/}.
@@ -158,6 +176,7 @@ The necessary code for what is described in this document is contained in a \tex
 Please send \href{christian.mozzini@ispw.unibe.ch}{Christian Moizzini}\footnote{christian.mozzini@ispw.unibe.ch} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
 
 
+%==============================================================================
 \chapter{Use GazeToMouse Toolset in Ztree}
 \label{sec.gazetomouse}
 This chapter provides instructions of how to use the Tobii Eye Tracker 4C in a \texttt{ztree} program.
@@ -168,6 +187,7 @@ In order to do this there are two main points to understand:
 \end{enumerate}
 The first point is addressed in Section~\ref{sec.eyetracker} and the second point in Section~\ref{sec.external}.
 
+%------------------------------------------------------------------------------
 \section{Basic Principles of the Tobii Eye Tracker 4C}
 \label{sec.eyetracker}
 The eye tracker is mounted on the bottom of the screen such that its cameras are able to capture the eyes of the subject.
@@ -188,6 +208,7 @@ Given that in an economic experiment a workstation is used by a subject only onc
 The guest calibration can be launched by executing the \texttt{TobiiGuestCalibrate.exe} program, provided in the toolset.
 Once the eye tracker is calibrated for a subject, everything is ready.
 
+%------------------------------------------------------------------------------
 \section{Execute 3rd Party Applications in \texttt{ztree}}
 \label{sec.external}
 In a first step, it is useful to define a global variable \texttt{Path} in a \texttt{ztree} program that points to the location of the toolset.
@@ -219,18 +240,22 @@ This can be achieved as follows:
     \label{fig.extcall}
 \end{figure}
 
+%==============================================================================
 \chapter{Configuration of the \texttt{GazeToMouse} Toolset}
 \label{sec.config}
 The \texttt{GazeToMouse} toolset can be configured to work with different installations.
 It allows to specify installation paths and gives some control over implemented features (e.g.~mouse hiding, gaze filtering, or data logging).
 The Listing~\ref{lst.config} shows the default configuration values and provides an explanation for each value.
+The configuration file contains detailed descriptions for each parameter.
+It is recommended to go through all the configuration parameters and read the description in order to get an understanding of the available configuration options.
 
 \lstinputlisting[language=json, caption={Default configuartion values},label=lst.config]{../sample/config.json}
 
 Note that the configuration file follows the \texttt{json} syntax which must not be violated.
 If the following points are respected, no problem should arise:
 \begin{itemize}
-    \item the configuration values are enclosed in `\texttt{\{}' and `\texttt{\}}'.
+    \item the configuration parameters are enclosed in `\texttt{\{}' and `\texttt{\}}'.
+    \item all configuration parameters are of the form \texttt{"key":value} where \texttt{"key"} must not be changed.
     \item each configuration line ends with a `\texttt{,}' except for the last line where it is omitted.
     \item the Windows path delimiter `\texttt{\textbackslash}' must be escaped (i.e.~ write `\texttt{\textbackslash\textbackslash}' when describing a path)
     \item \texttt{json} supports standard data types (e.g. integer, boolean, string).
@@ -253,6 +278,7 @@ If no configuration file can be found, the default values are used.
     For such cases the \texttt{ShowMouse.exe} utility can be used to restore the mouse pointer.
 \end{mdframed}
 
+%------------------------------------------------------------------------------
 \section{Output File}
 When running the program \texttt{gazeToMouse.exe} an output file can be generated which holds the gaze data provided by the Tobii engine.
 The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
@@ -268,14 +294,15 @@ The presentation of the gaze data is configurable with the help of the parameter
 
 By default the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} is used (parameter \texttt{"TobiiSDK"} is set to 0) and only the timestamps and the x and the y coordinates of the gaze points are available.
 A gaze point describes a point on the screen in x and y coordinates (pixel values) the user is gazing at.
-This is illustrated in Figure~\ref{fig.adcs}.
+This coordinate system is called \emph{Active Display Coordinate System (ADCS)} and is illustrated in Figure~\ref{fig.adcs}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{adcs.png}
     \caption{The Active Display Coordinate System (ADCS). Figure source: \href{http://developer.tobiipro.com/commonconcepts/coordinatesystems.html}{Tobii}}
     \label{fig.adcs}
 \end{figure}
-Accordingly, the system is configured to log the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 1 and 4, respectively).
+
+By default, the system is configured to log the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 1 and 4, respectively).
 Hence, the parameter \texttt{"DataLogColumnOrder"} is set to the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"} in order to not bloat the output file with unnecessary header data.
 This produces an output file that is similar to the following:
 \lstset{columns=flexible}
@@ -297,7 +324,8 @@ When opening the file with a spreadsheet software such as LibreOffice Calc or Mi
 
 When using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}, much more values are provided and can be logged to the output file.
 This includes the pupil diameters of each eye as well as the eye positions in space.
-The latter uses a coordinate system as illustrated in Figure~\ref{fig.ucs}.
+The latter uses a coordinate system which is called \emph{User Coordinate System (UCS)}.
+The UCS is illustrated in Figure~\ref{fig.ucs}.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{ucs.png}
@@ -355,7 +383,7 @@ The following five data field types with individual data fields are provided:
                 \begin{itemize}
                     \item raw x, y, and z coordinates of the left and the right eye\\
                         (field numbers: 14 - 19)
-                    \item the distance from the left and the right eye to the eye tracker which is computed from raw data as defined by Equation~\ref{eq.dist}\\
+                    \item the distance from the eye tracker to the left and the right eye, respectively which are computed from raw data as defined by Equation~\ref{eq.dist}\\
                         (field numbers: 21 and 22)
 \begin{equation}
     \label{eq.dist}
@@ -381,12 +409,27 @@ The following five data field types with individual data fields are provided:
             \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for the left and the right eye\\
+                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for the left and the right eye, respectively\\
                         (field numbers: 7, 8, 12, 13, 23, 24)
                 \end{itemize}
         \end{description}
 \end{enumerate}
 
+\subsection{Configuration File Dump}
+For each experiment where the utility \texttt{GazeToMouse.exe} is executed, a dump of the configuration file is produced.
+This allows to associate a set of configuration values to an experiment, reuse the same configuration file should the experiment be repeated, and provides transparency of how the output data was produced.
+Note that in this configuration file all comments are omitted and the formatting (indentations, white spaces, carriage return) is removed.
+To reformat the file or display the file as a tree structure, online tools, such as the \href{http://jsonviewer.stack.hu/}{Online JSON Viewer}\footnote{http://jsonviewer.stack.hu/}, can be used.
+
+The name of the dumped configuration file is of the form \texttt{<yyyyMMddTHHmmss>\_<hostName>\_config\_<ConfigName>.json} where
+
+\begin{itemize}
+    \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21)
+    \item \texttt{<hostName>} is replaced by the name of the machine
+    \item \texttt{<ConfigName>} is replaced by the configuration value \texttt{"ConfigName"} as specified in the configuration file (see Listing~\ref{lst.config} for more details)
+\end{itemize}
+
+%------------------------------------------------------------------------------
 \section{Log File}
 All executables write continuously to the same log file.
 This allows to track the eye tracker events that happened throughout a \texttt{ztree} session within one log file.
