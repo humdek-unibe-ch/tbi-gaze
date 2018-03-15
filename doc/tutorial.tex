@@ -282,11 +282,19 @@ If no configuration file can be found, the default values are used.
 \section{Output File}
 When running the program \texttt{gazeToMouse.exe} an output file can be generated which holds the gaze data provided by the Tobii engine.
 The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
-The name of the output file follows the form \texttt{<yyyyMMddTHHmmss>\_<hostName>\_gaze.txt} where
-
+The name of the output file follows the form
+\begin{lstlisting}
+<yyyyMMddTHHmmss>_<hostName>_<ConfigName>_gaze[_err-<code>].txt
+\end{lstlisting}
+where
 \begin{itemize}
     \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21).
     \item \texttt{<hostName>} is replaced by the name of the machine
+    \item \texttt{<ConfigName>} is replaced by the configuration value \texttt{"ConfigName"} as specified in the configuration file (see Listing~\ref{lst.config} for more details)
+    \item \texttt{[\_err-<code>]} is either omitted if no error occurred during the experiment or indicates data errors where
+        \begin{itemize}
+            \item \texttt{<code>} is replaced by an error code which is a binary string where each character can either be 1, indicating an error or 0, indicating no error (see Section~\ref{sect.data.error})
+        \end{itemize}
 \end{itemize}
 
 An output file is only generated if the parameter \texttt{"DataLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
@@ -415,19 +423,94 @@ The following five data field types with individual data fields are provided:
         \end{description}
 \end{enumerate}
 
-\subsection{Configuration File Dump}
+\subsection{Data Error Code}
+\label{sect.data.error}
+The data error code that is postfixed to the output file name is a binary string where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
+Multiple errors can occur at the same time hence the position of a \texttt{1} in the error code indicates the specific error.
+If all positions of the error code are 0, the errors are not postfixed to the output file name.
+
+The following list describes the individual errors that can occur during an experiment:
+\begin{description}
+    \item[code \texttt{10}] \hfill \\
+        This code indicates that during the experiment the eye tracker device stopped tracking.
+        This means that in the output file gaze data is potentially missing.
+        This can be cause by a malfunctioning of the eye tracker device or simply because the device was disconnected.
+        The exact time instances of such an occurrence is logged to the log file.
+    \item[code \texttt{01}] \hfill \\
+        This code indicates that the system had to fall back to the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK}.
+        This error occurs if the system was configured to use the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} but was not able to do so.
+        This usually happens when the license file is not accessible.
+        Check the whether the license files are accessible by the system and whether the license path is correctly defined in parameter \texttt{"LicensePath"}.
+\end{description}
+
+\section{Configuration File Dump}
 For each experiment where the utility \texttt{GazeToMouse.exe} is executed, a dump of the configuration file is produced.
 This allows to associate a set of configuration values to an experiment, reuse the same configuration file should the experiment be repeated, and provides transparency of how the output data was produced.
 Note that in this configuration file all comments are omitted and the formatting (indentations, white spaces, carriage return) is removed.
 To reformat the file or display the file as a tree structure, online tools, such as the \href{http://jsonviewer.stack.hu/}{Online JSON Viewer}\footnote{http://jsonviewer.stack.hu/}, can be used.
 
-The name of the dumped configuration file is of the form \texttt{<yyyyMMddTHHmmss>\_<hostName>\_config\_<ConfigName>.json} where
-
+The name of the dumped configuration file is of the form
+\begin{lstlisting}
+<yyyyMMddTHHmmss>_<hostName>_<ConfigName>_config[_err-<code>-<code>].txt
+\end{lstlisting}
+where
 \begin{itemize}
     \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21)
     \item \texttt{<hostName>} is replaced by the name of the machine
     \item \texttt{<ConfigName>} is replaced by the configuration value \texttt{"ConfigName"} as specified in the configuration file (see Listing~\ref{lst.config} for more details)
+    \item \texttt{[\_err-<code>-<code>]} is either omitted if no error occurred during the experiment or indicates data errors where
+        \begin{itemize}
+            \item \texttt{<code>} is replaced by an error code which is a binary string where each character can either be 1, indicating an error or 0, indicating no error (see Section~\ref{sect.config.error})
+        \end{itemize}
 \end{itemize}
+
+\subsection{Configuration Error Code}
+\label{sect.config.error}
+The configuration error codes that are postfixed to the dumped configuration file name are binary strings where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
+Multiple errors can occur at the same time hence the position of a \texttt{1} in the error code indicates the specific error.
+If all positions of all error codes are 0, the errors are not postfixed to the dumped configuration file.
+
+The following list describes the individual errors of the first error code that addresses general problems with the configuration file:
+\begin{description}
+    \item[code \texttt{100}] \hfill \\
+        The system ignores the configuration file and falls back to the default configuration values.
+        This happens if an invalid configuration file is provided that cannot be parsed.
+        Verify the syntax of the configuration file and make sure that the key names are not modified and no additional keys are added to the file.
+        Note that it is perfectly valid to not provide a configuration file which causes the system to use the default values without creating an error.
+    \item[code \texttt{010}] \hfill \\
+        The system uses the current location (e.g. \texttt{<zleaf path>}) to store the output files.
+        This happens if the provided path in the configuration file (parameter \texttt{"DataLogPath"}) is invalid or non-existent.
+        Verify that the provided path exists and that no invalid characters are used (do not use \texttt{<>:"/\textbackslash |?}).
+    \item[code \texttt{001}] \hfill \\
+        The system falls back to the default configuration name.
+        This happens if the provided name in the configuration file (parameter \texttt{"ConfigName"}) is invalid.
+        Verify that in the provided name no invalid characters are used (do not use \texttt{<>:"/\textbackslash |?}).
+\end{description}
+
+The following list describes the individual errors of the second error code that specifically addresses problems concerning the formatting of the output file:
+\begin{description}
+    \item[code \texttt{10000}] \hfill \\
+        The system falls back to the default column order.
+        This happens if the parameter \texttt{"DataLogColumnOrder"} is invalid.
+        Make sure that only existing data filed numbers are used and that the format string is valid.
+        More information on format strings is provided on the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting}{Composite Formatting}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting}.
+    \item[code \texttt{01000}] \hfill \\
+        The column titles are not printed to the output file.
+        This happens if the value of parameter \texttt{"DataLogColumnTitle"} is not valid.
+        Make sure that a title is provided for all possible data fields (not only the ones that are displayed).
+    \item[code \texttt{00100}] \hfill \\
+        The system falls back to the default format for the timestamp.
+        This happens if the value provided for the parameter \texttt{"DataLogFormatTimeStamp"} is invalid.
+        Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types} for more information.
+    \item[code \texttt{00010}] \hfill \\
+        The system falls back to the default format for the gaze origin coordinates.
+        This happens if the value provided for the parameter \texttt{"DataLogFormatOrigin"} is invalid.
+        Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnotemark[\value{footnote}] for more information.
+    \item[code \texttt{00001}] \hfill \\
+        The system falls back to the default format for the diameter of the pupil.
+        This happens if the value provided for the parameter \texttt{"DataLogFormatDiameter"} is invalid.
+        Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types} for more information.
+\end{description}
 
 %------------------------------------------------------------------------------
 \section{Log File}

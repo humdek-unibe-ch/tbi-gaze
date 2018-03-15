@@ -6,6 +6,7 @@
    - Consider the config file as invalid if not all required configuration parameters are defined
    - Consider the config file as invalid if unknown parameters are defined
    - Allow to configure whether to log data setes where all data is invalid (eyes closed, no subject in fornt of the screen, etc)
+ - Error Handling
    - Attach an error string to the output file, indicating errors that ocurred during the run
    - Attach an error string to the dumped configuratioun file, indicating errors of the configuration
 
