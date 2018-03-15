@@ -28,6 +28,11 @@ namespace TobiiCalibrate
             logger = new TrackerLogger();
             JsonConfigParser parser = new JsonConfigParser(logger);
             config = parser.ParseJsonConfig();
+            if (config == null)
+            {
+                logger.Warning("Using default configuration values");
+                config = parser.GetDefaultConfig();
+            }
             EyeTrackerHandler tracker = new EyeTrackerCore(logger, config.ReadyTimer);
             tracker.TrackerEnabled += OnTrackerReady;
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiCalibrate.exe\"");

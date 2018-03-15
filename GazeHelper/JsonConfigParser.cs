@@ -118,8 +118,8 @@ namespace GazeHelper
         public ConfigItem ParseJsonConfig()
         {
             string json;
+            ConfigItem item = null;
             ConfigItem item_default = GetDefaultConfig();
-            ConfigItem item = item_default;
 
             // load configuration
             StreamReader sr = OpenConfigFile(ConfigFile);
@@ -138,8 +138,12 @@ namespace GazeHelper
                 catch (Exception e)
                 {
                     logger.Error(e.Message);
-                    logger.Warning("Config file could not be parsed, using default configuration values");
                 }
+            }
+            else
+            {
+                logger.Warning("No config file found, using default values");
+                item = item_default;
             }
             return item;
         }
@@ -270,7 +274,6 @@ namespace GazeHelper
                 catch (FileNotFoundException e2)
                 {
                     logger.Info(e2.Message);
-                    logger.Warning("No config file found, using default configuration values");
                 }
             }
             return sr;
