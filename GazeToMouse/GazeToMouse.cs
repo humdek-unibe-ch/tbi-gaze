@@ -19,7 +19,8 @@ namespace GazeToMouse
         private static MouseHider hider;
         private static ConfigItem config;
         private static GazeDataError gazeDataError = 0;
-        private static string starttime;
+        private static GazeConfigError gazeConfigError = 0;
+        private static string outputFilePath;
 
         /// <summary>
         /// Error values of the gaze output data
@@ -27,16 +28,24 @@ namespace GazeToMouse
         [Flags]
         private enum GazeDataError
         {
-            FallbackToDefualtConfig = 0x0001,
-            FallbackToDefaultConfigName = 0x0002,
-            FallbackToCurrentOutputDir = 0x0004,
-            FallbackToDefaultTimestampFormat = 0x0008,
-            FallbackToDefaultDiameterFormat = 0x0010,
-            FallbackToDefaultOriginFormat = 0x0020,
-            FallbackToDefualtColumnOrder = 0x0040,
-            OmitColumnTitles = 0x0080,
-            DeviceInterrupt = 0x0100,
-            FallbackToCore = 0x0200
+            FallbackToCore = 0x01,
+            DeviceInterrupt = 0x02
+        }
+
+        /// <summary>
+        /// Error values of the configuration
+        /// </summary>
+        private enum GazeConfigError
+        {
+            FallbackToDefaultConfigName = 0x01,
+            FallbackToCurrentOutputDir = 0x02,
+            FallbackToDefualtConfig = 0x04,
+
+            FallbackToDefaultDiameterFormat = 0x08,
+            FallbackToDefaultOriginFormat = 0x10,
+            FallbackToDefaultTimestampFormat = 0x20,
+            OmitColumnTitles = 0x40,
+            FallbackToDefualtColumnOrder = 0x80
         }
 
         /// <summary>
@@ -54,7 +63,7 @@ namespace GazeToMouse
                 WindowStyle = WindowStyle.None
             };
 
-            starttime = $"{DateTime.Now:yyyyMMddTHHmmss}";
+            string starttime = $"{DateTime.Now:yyyyMMddTHHmmss}";
 
             logger = new TrackerLogger();
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
@@ -66,7 +75,7 @@ namespace GazeToMouse
             {
                 logger.Warning("Using default configuration values");
                 config = default_config;
-                gazeDataError |= GazeDataError.FallbackToDefualtConfig;
+                gazeConfigError |= GazeConfigError.FallbackToDefualtConfig;
             }
 
             // check configuration name
@@ -74,12 +83,12 @@ namespace GazeToMouse
             {
                 config.ConfigName = default_config.ConfigName;
                 logger.Warning($"Using the default config name: \"{config.ConfigName}\"");
-                gazeDataError |= GazeDataError.FallbackToDefaultConfigName;
+                gazeConfigError |= GazeConfigError.FallbackToDefaultConfigName;
             }
 
             if (config.DataLogWriteOutput)
             {
-                string gazeFilePostfix = $"{Environment.MachineName}_{config.ConfigName}_gaze.txt";
+                string gazeFilePostfix = $"{Environment.MachineName}_{config.ConfigName}_gaze";
                 string gazeFileName = $"{starttime}_{gazeFilePostfix}";
 
                 // create gaze data file
@@ -89,9 +98,9 @@ namespace GazeToMouse
                 {
                     // something went wrong, write to the current directory
                     config.DataLogPath = Directory.GetCurrentDirectory();
-                    string outputFilePath = $"{config.DataLogPath}\\{gazeFileName}";
+                    outputFilePath = $"{config.DataLogPath}\\{gazeFileName}";
                     logger.Warning($"Writing gaze data to the current directory: \"{outputFilePath}\"");
-                    gazeDataError |= GazeDataError.FallbackToCurrentOutputDir;
+                    gazeConfigError |= GazeConfigError.FallbackToCurrentOutputDir;
                     sw = new StreamWriter(gazeFileName);
                 }
 
@@ -100,35 +109,37 @@ namespace GazeToMouse
                 {
                     config.DataLogFormatTimeStamp = default_config.DataLogFormatTimeStamp;
                     logger.Warning($"Using the default output format for timestamps: \"{config.DataLogFormatTimeStamp}\"");
-                    gazeDataError |= GazeDataError.FallbackToDefaultTimestampFormat;
+                    gazeConfigError |= GazeConfigError.FallbackToDefaultTimestampFormat;
                 }
                 if (!CheckDataLogFormat(1.000000, config.DataLogFormatDiameter))
                 {
                     config.DataLogFormatDiameter = default_config.DataLogFormatDiameter;
                     logger.Warning($"Using the default output format for pupil diameters: \"{config.DataLogFormatDiameter}\"");
-                    gazeDataError |= GazeDataError.FallbackToDefaultDiameterFormat;
+                    gazeConfigError |= GazeConfigError.FallbackToDefaultDiameterFormat;
                 }
                 if (!CheckDataLogFormat(1.000000, config.DataLogFormatOrigin))
                 {
                     config.DataLogFormatOrigin = default_config.DataLogFormatOrigin;
                     logger.Warning($"Using the default output format for gaze origin values: \"{config.DataLogFormatOrigin}\"");
-                    gazeDataError |= GazeDataError.FallbackToDefaultOriginFormat;
+                    gazeConfigError |= GazeConfigError.FallbackToDefaultOriginFormat;
                 }
                 if (!CheckDataLogColumnOrder(config.DataLogColumnOrder))
                 {
                     config.DataLogColumnOrder = default_config.DataLogColumnOrder;
                     logger.Warning($"Using the default column order: \"{config.DataLogColumnOrder}\"");
-                    gazeDataError |= GazeDataError.FallbackToDefualtColumnOrder;
+                    gazeConfigError |= GazeConfigError.FallbackToDefualtColumnOrder;
                 }
                 if (!CheckDataLogColumnTitles(config.DataLogColumnOrder, config.DataLogColumnTitle))
                 {
                     logger.Warning($"Column titles are omitted");
-                    gazeDataError |= GazeDataError.OmitColumnTitles;
+                    gazeConfigError |= GazeConfigError.OmitColumnTitles;
                 }
 
                 // delete old files
                 DeleteOldGazeLogFiles(config.DataLogPath, config.DataLogCount, $"*_{gazeFilePostfix}");
             }
+            parser.SerializeJsonConfig(config, $"{config.DataLogPath}\\{starttime}"
+                + $"_{Environment.MachineName}_{config.ConfigName}_config{GetGazeConfigErrorString()}.json");
             
             // hide the mouse cursor
             hider = new MouseHider(logger);
@@ -262,7 +273,6 @@ namespace GazeToMouse
         {
             try
             {
-                string outputFilePath;
                 sw = new StreamWriter($"{file_path}\\{file_name}");
                 FileInfo fi = new FileInfo($"{file_path}\\{file_name}");
                 outputFilePath = fi.FullName;
@@ -301,15 +311,25 @@ namespace GazeToMouse
         /// Gets the gaze error string.
         /// </summary>
         /// <returns>the error string with binary error values if errors ocurred, the empty srting otherwise</returns>
-        static string GetGazeErrorString()
+        static string GetGazeConfigErrorString()
         {
-            int dataError = ((int)gazeDataError & 0x300) >> 8; 
-            int formatError = ((int)gazeDataError & 0xF8) >> 3; 
-            int configError = ((int)gazeDataError & 0x07); 
+            int formatError = ((int)gazeConfigError & 0xF8) >> 3; 
+            int configError = ((int)gazeConfigError & 0x07);
             string confErrorStr = "_err"
-                + $"-{ConvertToBinString(dataError, 2)}"
-                + $"-{ConvertToBinString(formatError, 5)}"
-                + $"-{ConvertToBinString(configError, 3)}";
+                + $"-{ConvertToBinString(configError, 3)}"
+                + $"-{ConvertToBinString(formatError, 5)}";
+            if (gazeConfigError == 0) confErrorStr = "";
+            return confErrorStr;
+
+        }
+
+        /// <summary>
+        /// Gets the gaze error string.
+        /// </summary>
+        /// <returns>the error string with binary error values if errors ocurred, the empty srting otherwise</returns>
+        static string GetGazeDataErrorString()
+        {
+            string confErrorStr = $"_err-{ConvertToBinString((int)gazeDataError, 2)}";
             if (gazeDataError == 0) confErrorStr = "";
             return confErrorStr;
 
@@ -388,16 +408,13 @@ namespace GazeToMouse
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnApplicationExit(object sender, EventArgs e)
         {
-            JsonConfigParser parser = new JsonConfigParser(logger);
-            parser.SerializeJsonConfig(config, $"{config.DataLogPath}\\{starttime}"
-                + $"_{Environment.MachineName}_{config.ConfigName}_config{GetGazeErrorString()}.json");
-
             if (config.MouseControl && config.MouseHide) hider.ShowCursor(config.MouseStandardIconPath);
 
             if (config.DataLogWriteOutput)
             {
                 sw.Close();
                 sw.Dispose();
+                File.Move(outputFilePath, $"{outputFilePath}{GetGazeDataErrorString()}.txt");
             }
             tracker.Dispose();
             logger.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" terminated gracefully{Environment.NewLine}");
