@@ -426,7 +426,7 @@ The following five data field types with individual data fields are provided:
 \subsection{Data Error Code}
 \label{sect.data.error}
 The data error code that is postfixed to the output file name is a binary string where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
-Multiple errors can occur at the same time hence the position of a \texttt{1} in the error code indicates the specific error.
+Multiple errors can occur at the same time, hence, the position of a \texttt{1} in the error code indicates the specific error.
 If all positions of the error code are 0, the errors are not postfixed to the output file name.
 
 The following list describes the individual errors that can occur during an experiment:
@@ -434,13 +434,13 @@ The following list describes the individual errors that can occur during an expe
     \item[code \texttt{10}] \hfill \\
         This code indicates that during the experiment the eye tracker device stopped tracking.
         This means that in the output file gaze data is potentially missing.
-        This can be cause by a malfunctioning of the eye tracker device or simply because the device was disconnected.
+        This can be caused by a malfunctioning of the eye tracker device or simply because the device was disconnected.
         The exact time instances of such an occurrence is logged to the log file.
     \item[code \texttt{01}] \hfill \\
         This code indicates that the system had to fall back to the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK}.
         This error occurs if the system was configured to use the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} but was not able to do so.
         This usually happens when the license file is not accessible.
-        Check the whether the license files are accessible by the system and whether the license path is correctly defined in parameter \texttt{"LicensePath"}.
+        Check whether the license files are accessible by the system and whether the license path is correctly defined in parameter \texttt{"LicensePath"}.
 \end{description}
 
 \section{Configuration File Dump}
@@ -467,7 +467,7 @@ where
 \subsection{Configuration Error Code}
 \label{sect.config.error}
 The configuration error codes that are postfixed to the dumped configuration file name are binary strings where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
-Multiple errors can occur at the same time hence the position of a \texttt{1} in the error code indicates the specific error.
+Multiple errors can occur at the same time, hence, the position of a \texttt{1} in the error code indicates the specific error.
 If all positions of all error codes are 0, the errors are not postfixed to the dumped configuration file.
 
 The following list describes the individual errors of the first error code that addresses general problems with the configuration file:

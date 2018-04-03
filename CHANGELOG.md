@@ -1,19 +1,17 @@
 # v2.2.0
 ### New Features
  - Configuration file
-   - Dump the configuartions used for an experiment to a file at the "DataLogPath"
-   - Allow to configure an experiment name which is used as a postfix of the dumped configuartion file name
+   - Dump the configurations used for an experiment to a file at the "DataLogPath"
+   - Allow to configure an experiment name which is used as a postfix of the dumped configuration file name
    - Consider the config file as invalid if not all required configuration parameters are defined
    - Consider the config file as invalid if unknown parameters are defined
-   - Allow to configure whether to log data setes where all data is invalid (eyes closed, no subject in fornt of the screen, etc)
+   - Allow to configure whether to log data sets where all data is invalid (eyes closed, no subject in front of the screen, etc)
  - Error Handling
-   - Attach an error string to the output file, indicating errors that ocurred during the run
-   - Attach an error string to the dumped configuratioun file, indicating errors of the configuration
+   - Attach an error string to the output file, indicating errors that occurred during the run
+   - Attach an error string to the dumped configuration file, indicating errors of the configuration
 
 ### Improvements
  - Fall back to Core SDK if the license file cannot be applied to the device
-
-### Bug Fix
 
 # v2.1.0
 ### New Features
