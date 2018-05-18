@@ -105,6 +105,7 @@ The following set of executables are provided:
         The mouse cursor position is updated to this position.
         As a consequence, the mouse cursor is controlled by the gaze of the subject.
         The gaze position on the screen (as well as pupil size or eye positions when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}) are further logged to an output file.
+        Instead of using an eye tracker device it is also possible to simply log the mouse coordinates.
         \texttt{GazeToMouse.exe} runs infinitely until it is terminated by an external command.
         This should \textbf{not} be done with a forced kill (e.g.~by executing the command \texttt{taskkill /F /IM GazeToMouse.exe} or by killing the task with the task manager) because it prevents the program from terminating gracefully.
         This as several consequences:
@@ -173,7 +174,7 @@ Make a careful note of the terms and conditions.
 \label{sec.gitlab}
 The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the \href{http://phhum-g111-nns.unibe.ch:10012/}{TPF server}\footnote{http://phhum-g111-nns.unibe.ch:10012/}.
 
-Please send \href{christian.mozzini@ispw.unibe.ch}{Christian Moizzini}\footnote{christian.mozzini@ispw.unibe.ch} a mail with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
+Please send a mail to \href{tpf@humdek.unibe.ch}{TPF}\footnote{tpf@humdek.unibe.ch} with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
 
 
 %==============================================================================
@@ -361,6 +362,11 @@ The following five data field types with individual data fields are provided:
     \item timestamps indicating when the data was sampled by the eye tracker (field number: 0)
     \item gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as pixel values
         \begin{description}
+            \item[Mouse Tracker] \hfill
+                \begin{itemize}
+                    \item the x and y coordinates of the mouse pointer\\
+                        (field numbers: 1 and 4)
+                \end{itemize}
             \item[Tobii Core SDK] \hfill
                 \begin{itemize}
                     \item the average x and y coordinates where filtering depends on parameter "GazeFilterCore"\\
@@ -386,6 +392,7 @@ The following five data field types with individual data fields are provided:
         \end{description}
     \item gaze origin UCS coordinates (see Figure~\ref{fig.ucs}) in millimetres
         \begin{description}
+            \item[Mouse Tracker] not applicable
             \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
@@ -403,6 +410,7 @@ The following five data field types with individual data fields are provided:
         \end{description}
     \item pupil diameters in millimetres
         \begin{description}
+            \item[Mouse Tracker] not applicable
             \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
@@ -414,6 +422,7 @@ The following five data field types with individual data fields are provided:
         \end{description}
     \item data validity indicators as true or false
         \begin{description}
+            \item[Mouse Tracker] not supported
             \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
@@ -422,6 +431,11 @@ The following five data field types with individual data fields are provided:
                 \end{itemize}
         \end{description}
 \end{enumerate}
+
+\begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{orange}Notice:}
+    The time resolution of the mouse tracker device is rather poor (15 milliseconds).
+    Therefore it can happen that multiple mouse events are logged with the same timestamp.
+\end{mdframed}
 
 \subsection{Data Error Code}
 \label{sect.data.error}
