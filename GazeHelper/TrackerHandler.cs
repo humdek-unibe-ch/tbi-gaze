@@ -75,10 +75,11 @@ namespace GazeHelper
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EyeTrackerHandler"/> class.
+        /// Initializes a new instance of the <see cref="EyeTrackerHandler" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
+        /// <param name="device_name">Name of the device.</param>
         public TrackerHandler(TrackerLogger logger, int ready_timer, string device_name)
         {
             this.DeviceName = device_name;
