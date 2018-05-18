@@ -46,7 +46,7 @@ namespace GazeHelper
         [JsonProperty(Required = Required.Always)]
         public int ReadyTimer { get; set; }
         [JsonProperty(Required = Required.Always)]
-        public int TobiiSDK { get; set; }
+        public int TrackerDevice { get; set; }
         [JsonProperty(Required = Required.Always)]
         public string TobiiApplicationPath { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -236,7 +236,7 @@ namespace GazeHelper
                 MouseHide = false,
                 MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur",
                 ReadyTimer = 5000,
-                TobiiSDK = 0,
+                TrackerDevice = 0,
                 TobiiApplicationPath = "C:\\Program Files (x86)\\Tobii\\",
                 TobiiCalibrate = "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
                 TobiiCalibrateArguments = "--calibrate",

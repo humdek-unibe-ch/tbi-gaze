@@ -33,7 +33,7 @@ namespace TobiiTest
                 logger.Warning("Using default configuration values");
                 config = parser.GetDefaultConfig();
             }
-            EyeTrackerHandler tracker = new EyeTrackerCore(logger, config.ReadyTimer);
+            TrackerHandler tracker = new EyeTrackerCore(logger, config.ReadyTimer);
             tracker.TrackerEnabled += OnTrackerReady;
             logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiTest.exe\"");
             logger.Info("Preparing to start Tobii eyetracker test application");

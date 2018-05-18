@@ -7,8 +7,8 @@ namespace GazeHelper
     /// <summary>
     /// Interface to the Tobii SDK Core engine
     /// </summary>
-    /// <seealso cref="GazeHelper.EyeTrackerHandler" />
-    public class EyeTrackerCore : EyeTrackerHandler
+    /// <seealso cref="GazeHelper.TrackerHandler" />
+    public class EyeTrackerCore : TrackerHandler
     {
         private Host host;
 
@@ -17,9 +17,8 @@ namespace GazeHelper
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
-        public EyeTrackerCore(TrackerLogger logger, int ready_timer) : base(logger, ready_timer)
+        public EyeTrackerCore(TrackerLogger logger, int ready_timer) : base(logger, ready_timer, "Tobii SDK Core")
         {
-            logger.Info("Using Tobii SDK Core");
             host = new Host();
             EngineStateObserver<EyeTrackingDeviceStatus> deviceStateObserver = host.States.CreateEyeTrackingDeviceStatusObserver();
             deviceStateObserver.Changed += OnUpdateDeviceStatus;

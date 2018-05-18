@@ -62,7 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EyeTrackerCore.cs" />
-    <Compile Include="EyeTrackerHandler.cs" />
+    <Compile Include="MouseTracker.cs" />
+    <Compile Include="TrackerHandler.cs" />
     <Compile Include="EyeTrackerPro.cs" />
     <Compile Include="JsonConfigParser.cs" />
     <Compile Include="Logger.cs" />

@@ -162,9 +162,9 @@
     // be notified with a popup window.
     "ReadyTimer": 5000,
 
-    // Choose the Tobii SDK (0: Tobii Core SDK, 1: Tobii Pro SDK).
+    // Choose the tracker device (0: Tobii Core SDK, 1: Tobii Pro SDK, 2: Mouse Tracker).
     // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
-    "TobiiSDK": 0,
+    "TrackerDevice": 0,
 
     // Defines the Tobii installation path. It must be the path to a folder (not a file).
     "TobiiApplicationPath": "C:\\Program Files (x86)\\Tobii",

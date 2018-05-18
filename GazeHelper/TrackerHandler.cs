@@ -12,7 +12,7 @@ namespace GazeHelper
     /// </summary>
     /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
     /// <seealso cref="System.IDisposable" />
-    public abstract class EyeTrackerHandler : INotifyPropertyChanged, IDisposable
+    public abstract class TrackerHandler : INotifyPropertyChanged, IDisposable
     {
         private EyeTrackingDeviceStatus state;
 
@@ -28,6 +28,10 @@ namespace GazeHelper
         /// The dialog box taht is controlled by the dialogBoxTimer
         /// </summary>
         protected TrackerMessageBox trackerMessageBox;
+        /// <summary>
+        /// The name of the tracker device
+        /// </summary>
+        public readonly string DeviceName;
 
         /// <summary>
         /// Occurs when [tracker enabled].
@@ -45,7 +49,7 @@ namespace GazeHelper
         /// Occurs when [gaze data received].
         /// </summary>
         public event GazeDataHandler GazeDataReceived;
-        
+
         /// <summary>
         /// Event handler for gaze data events of the eyetracker
         /// </summary>
@@ -75,9 +79,11 @@ namespace GazeHelper
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
-        public EyeTrackerHandler(TrackerLogger logger, int ready_timer)
+        public TrackerHandler(TrackerLogger logger, int ready_timer, string device_name)
         {
+            this.DeviceName = device_name;
             this.logger = logger;
+            logger.Info($"Using {DeviceName}");
             dialogBoxTimer = new Timer
             {
                 Interval = ready_timer,
@@ -176,18 +182,18 @@ namespace GazeHelper
         /// <param name="deviceState">State of the eyetracker device.</param>
         private void OnUpdateState(EyeTrackingDeviceStatus state)
         {
-            logger.Debug($"Eye tracker changed state: {state}");
+            logger.Debug($"{DeviceName} changed state: {state}");
             if (IsReady() && (state != EyeTrackingDeviceStatus.Tracking))
             {
                 dialogBoxTimer.Start();
-                logger.Info($"Eye tracker stopped tracking: New state is \"{state}\"");
+                logger.Info($"{DeviceName} stopped tracking: New state is \"{state}\"");
             }
             this.state = state;
             if (IsReady())
             {
                 Application.Current.Dispatcher.Invoke(callback: () => { trackerMessageBox?.Close(); });
                 dialogBoxTimer.Stop();
-                logger.Info("Eye tracker is ready");
+                logger.Info($"{DeviceName} is ready");
                 OnTrackerEnabled(new EventArgs());
             }
         }

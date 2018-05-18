@@ -12,7 +12,7 @@ namespace GazeToMouse
     class GazeToMouse : Application
     {
         private static bool tracking = false;
-        private static EyeTrackerHandler tracker;
+        private static TrackerHandler tracker;
         private static StreamWriter sw;
         private static TimeSpan delta;
         private static TrackerLogger logger;
@@ -147,7 +147,7 @@ namespace GazeToMouse
 
 
             // intitialise the tracker device 
-            if(config.TobiiSDK == 1)
+            if(config.TrackerDevice == 1)
             {
                 EyeTrackerPro tracker_pro = new EyeTrackerPro(logger, config.ReadyTimer, config.LicensePath);
                 if (tracker_pro.IsLicenseOk())
@@ -157,14 +157,17 @@ namespace GazeToMouse
                 else
                 {
                     tracker_pro.Dispose();
-                    config.TobiiSDK = 0;
+                    config.TrackerDevice = 0;
                     logger.Warning("Fall back to Tobii Core SDK");
                     gazeDataError |= GazeDataError.FallbackToCore;
                 }
             }
-            if(config.TobiiSDK == 0)
+            if(config.TrackerDevice == 0)
             {
                 tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilterCore);
+            }
+            else if(config.TrackerDevice == 2) {
+                tracker = new MouseTracker(logger, config.ReadyTimer);
             }
             tracker.GazeDataReceived += OnGazeDataReceived;
             tracker.TrackerEnabled += OnTrackerEnabled;

@@ -8,8 +8,8 @@ namespace GazeHelper
     /// <summary>
     /// Interface to the Tobii SDK Pro engine
     /// </summary>
-    /// <seealso cref="GazeHelper.EyeTrackerHandler" />
-    public class EyeTrackerPro : EyeTrackerHandler
+    /// <seealso cref="GazeHelper.TrackerHandler" />
+    public class EyeTrackerPro : TrackerHandler
     {
         private bool hasLicense = false;
 
@@ -19,9 +19,8 @@ namespace GazeHelper
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
         /// <param name="license_path">The license path.</param>
-        public EyeTrackerPro(TrackerLogger logger, int ready_timer, string license_path) : base(logger, ready_timer)
+        public EyeTrackerPro(TrackerLogger logger, int ready_timer, string license_path) : base(logger, ready_timer, "Tobii SDK Pro")
         {
-            logger.Info("Using Tobii SDK Pro");
             State = EyeTrackingDeviceStatus.Configuring;
             IEyeTracker eyeTracker = null;
             foreach (IEyeTracker _eyeTracker in EyeTrackingOperations.FindAllEyeTrackers())
