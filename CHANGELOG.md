@@ -1,3 +1,12 @@
+# v2.3.0
+### New Features
+ - A mouse tracker device can now be used instead of an eyetracker device.
+   The mouse tracker logs the timestamp and the x and y coordinates of the mouse pointer whenever the mouse-move event is fired.
+   The mouse tracker is used when the configuration filed 'TrackerDevice' is set to the value 2.
+
+### Improvements
+ - Rename the configuration field 'TobiiSDK' to 'TrackerDevice'.
+
 # v2.2.0
 ### New Features
  - Configuration file
