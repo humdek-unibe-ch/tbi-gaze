@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
-using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
@@ -14,7 +13,15 @@ namespace GazeHelper
     /// <seealso cref="System.IDisposable" />
     public abstract class TrackerHandler : INotifyPropertyChanged, IDisposable
     {
-        private EyeTrackingDeviceStatus state;
+        public enum DeviceStatus
+        {
+            Configuring,
+            Initializing,
+            InvalidConfiguration,
+            DeviceNotConnected,
+            Tracking
+        }
+        private DeviceStatus state;
 
         /// <summary>
         /// Timer to control the apperance of the dialog box
@@ -63,7 +70,7 @@ namespace GazeHelper
         /// <value>
         /// The state.
         /// </value>
-        public EyeTrackingDeviceStatus State
+        public DeviceStatus State
         {
             get { return state; }
             set
@@ -105,6 +112,11 @@ namespace GazeHelper
             GC.SuppressFinalize(this);
         }
 
+        public virtual string PatternReplace(string pattern)
+        {
+            return pattern;
+        }
+
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
@@ -123,7 +135,7 @@ namespace GazeHelper
         /// <returns>
         ///   <c>true</c> if this instance is ready; otherwise, <c>false</c>.
         /// </returns>
-        protected bool IsReady() { return (State == EyeTrackingDeviceStatus.Tracking); }
+        protected bool IsReady() { return (State == DeviceStatus.Tracking); }
 
         /// <summary>
         /// Called when [gaze data received].
@@ -181,10 +193,10 @@ namespace GazeHelper
         /// Called when the state of eye tracker is updated.
         /// </summary>
         /// <param name="deviceState">State of the eyetracker device.</param>
-        private void OnUpdateState(EyeTrackingDeviceStatus state)
+        private void OnUpdateState(DeviceStatus state)
         {
             logger.Debug($"{DeviceName} changed state: {state}");
-            if (IsReady() && (state != EyeTrackingDeviceStatus.Tracking))
+            if (IsReady() && (state != DeviceStatus.Tracking))
             {
                 dialogBoxTimer.Start();
                 logger.Info($"{DeviceName} stopped tracking: New state is \"{state}\"");

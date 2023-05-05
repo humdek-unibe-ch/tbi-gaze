@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
@@ -110,7 +109,7 @@ namespace GazeHelper
         /// <param name="ready_timer">The ready timer.</param>
         public MouseTracker(TrackerLogger logger, int ready_timer) : base(logger, ready_timer, "Mouse Tracker")
         {
-            State = EyeTrackingDeviceStatus.Initializing;
+            State = DeviceStatus.Initializing;
             _proc = HookCallback;
             Start();
         }
@@ -133,7 +132,7 @@ namespace GazeHelper
         public void Start()
         {
             _hookID = SetHook(_proc);
-            State = EyeTrackingDeviceStatus.Tracking;
+            State = DeviceStatus.Tracking;
         }
         /// <summary>
         /// Removes to mouse event hook.
@@ -141,7 +140,7 @@ namespace GazeHelper
         public void Stop()
         {
             UnhookWindowsHookEx(_hookID);
-            State = EyeTrackingDeviceStatus.DeviceNotConnected;
+            State = DeviceStatus.DeviceNotConnected;
         }
 
         /// <summary>

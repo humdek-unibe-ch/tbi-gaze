@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using Tobii.Research;
-using Tobii.Interaction.Framework;
 
 namespace GazeHelper
 {
@@ -11,7 +10,8 @@ namespace GazeHelper
     /// <seealso cref="GazeHelper.TrackerHandler" />
     public class EyeTrackerPro : TrackerHandler
     {
-        private bool hasLicense = false;
+        private bool hasLicense = true;
+        private IEyeTracker eyeTracker = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
@@ -21,18 +21,27 @@ namespace GazeHelper
         /// <param name="license_path">The license path.</param>
         public EyeTrackerPro(TrackerLogger logger, int ready_timer, string license_path) : base(logger, ready_timer, "Tobii SDK Pro")
         {
-            State = EyeTrackingDeviceStatus.Configuring;
-            IEyeTracker eyeTracker = null;
+            State = DeviceStatus.Configuring;
             foreach (IEyeTracker _eyeTracker in EyeTrackingOperations.FindAllEyeTrackers())
             {
+                logger.Debug($"Tracker: {_eyeTracker.Address}");
                 eyeTracker = _eyeTracker;
                 break;
+            }
+
+            if (eyeTracker == null)
+            {
+                logger.Error("No eye tracker connected");
+                return;
             }
             eyeTracker.GazeDataReceived += OnGazeDataReceivedPro;
             eyeTracker.ConnectionLost += OnConnectionLost;
             eyeTracker.ConnectionRestored += OnConnectionRestored;
-
-            ApplyLicense(eyeTracker, $"{license_path}\\{eyeTracker.SerialNumber}");
+            
+            if(license_path.Length > 0)
+            {
+                ApplyLicense(eyeTracker, PatternReplace(license_path));
+            }
         }
 
         /// <summary>
@@ -42,6 +51,8 @@ namespace GazeHelper
         /// <param name="licensePath">The license path.</param>
         private void ApplyLicense(IEyeTracker eyeTracker, string licensePath)
         {
+            logger.Info($"Applying license {licensePath}");
+            hasLicense = false;
             byte[] license_file = null;
             try
             {
@@ -63,13 +74,13 @@ namespace GazeHelper
             FailedLicenseCollection failedLicenses;
             if (eyeTracker.TryApplyLicenses(licenseCollection, out failedLicenses))
             {
-                State = EyeTrackingDeviceStatus.Initializing;
+                State = DeviceStatus.Initializing;
                 hasLicense = true;
                 logger.Info("Successfully applied license");
             }
             else
             {
-                State = EyeTrackingDeviceStatus.InvalidConfiguration;
+                State = DeviceStatus.InvalidConfiguration;
                 logger.Error($"Failed to apply license. The validation result is {failedLicenses[0].ValidationResult}.");
             }
         }
@@ -111,13 +122,27 @@ namespace GazeHelper
         }
 
         /// <summary>
+        /// Replaces a patten string with information from the eye tracker. 
+        /// </summary>
+        /// <returns>
+        ///   The string where patterns were replaced.
+        /// </returns>
+        override public string PatternReplace(string pattern)
+        {
+            string res = pattern;
+            res = res.Replace("%S", eyeTracker.SerialNumber);
+            res = res.Replace("%A", eyeTracker.Address.ToString());
+            return res;
+        }
+
+        /// <summary>
         /// Called when [connection lost].
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ConnectionLostEventArgs"/> instance containing the event data.</param>
         private void OnConnectionLost(object sender, ConnectionLostEventArgs e)
         {
-            State = EyeTrackingDeviceStatus.DeviceNotConnected;
+            State = DeviceStatus.DeviceNotConnected;
         }
 
         /// <summary>
@@ -127,7 +152,7 @@ namespace GazeHelper
         /// <param name="e">The <see cref="ConnectionRestoredEventArgs"/> instance containing the event data.</param>
         private void OnConnectionRestored(object sender, ConnectionRestoredEventArgs e)
         {
-            State = EyeTrackingDeviceStatus.Initializing;
+            State = DeviceStatus.Initializing;
         }
 
         /// <summary>
@@ -137,7 +162,7 @@ namespace GazeHelper
         /// <param name="data">The <see cref="GazeDataEventArgs"/> instance containing the event data.</param>
         private void OnGazeDataReceivedPro(object sender, GazeDataEventArgs data)
         {
-            State = EyeTrackingDeviceStatus.Tracking;
+            State = DeviceStatus.Tracking;
             double left_gaze_x = data.LeftEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
             double right_gaze_x = data.RightEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
             double left_gaze_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;

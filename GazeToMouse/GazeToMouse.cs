@@ -157,14 +157,8 @@ namespace GazeToMouse
                 else
                 {
                     tracker_pro.Dispose();
-                    config.TrackerDevice = 0;
-                    logger.Warning("Fall back to Tobii Core SDK");
                     gazeDataError |= GazeDataError.FallbackToCore;
                 }
-            }
-            if(config.TrackerDevice == 0)
-            {
-                tracker = new EyeTrackerCore(logger, config.ReadyTimer, config.GazeFilterCore);
             }
             else if(config.TrackerDevice == 2) {
                 tracker = new MouseTracker(logger, config.ReadyTimer);

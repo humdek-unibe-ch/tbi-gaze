@@ -8,7 +8,8 @@ using GazeHelper;
 /// </summary>
 namespace TobiiCalibrate
 {
-    static class TobiiCalibrate
+  
+    class TobiiCalibrate
     {
         static TrackerLogger logger;
         private static ConfigItem config;
@@ -33,9 +34,8 @@ namespace TobiiCalibrate
                 logger.Warning("Using default configuration values");
                 config = parser.GetDefaultConfig();
             }
-            TrackerHandler tracker = new EyeTrackerCore(logger, config.ReadyTimer);
+            TrackerHandler tracker = new EyeTrackerPro(logger, config.ReadyTimer, config.LicensePath);
             tracker.TrackerEnabled += OnTrackerReady;
-            logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}TobiiCalibrate.exe\"");
             logger.Info("Preparing to start Tobii eyetracker calibration");
             app.Run();
         }
@@ -47,6 +47,7 @@ namespace TobiiCalibrate
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         static void OnTrackerReady(object sender, EventArgs e)
         {
+            TrackerHandler tracker = (TrackerHandler)sender;
             if (isCalibrated)
             {
                 // calibration was successful, eye tracker switched to state ready
@@ -54,13 +55,45 @@ namespace TobiiCalibrate
             }
             else
             {
-                // not yet calibrated, perfrom calibration
-                logger.Info($"Starting Tobii eyetracker calibration \"{config.TobiiApplicationPath}\\{config.TobiiCalibrate}  {config.TobiiCalibrateArguments}\"");
-                Process tobii_calibrate = Process.Start($"{config.TobiiApplicationPath}\\{config.TobiiCalibrate}", config.TobiiCalibrateArguments);
-                tobii_calibrate.WaitForExit();
-                isCalibrated = true;
-                logger.Info($"\"{config.TobiiApplicationPath}\\{config.TobiiCalibrate}  {config.TobiiCalibrateArguments}\" terminated ");
+                string executablePath = $"{tracker.PatternReplace(config.TobiiApplicationPath)}\\{tracker.PatternReplace(config.TobiiCalibrate)}";
+                string arguments = $"{tracker.PatternReplace(config.TobiiCalibrateArguments)}";
+                StartCalibration(executablePath, arguments);
             }
+        }
+
+        static void StartCalibration(string executablePath, string arguments)
+        {
+            logger.Info($"Starting Tobii eyetracker calibration \"{executablePath} {arguments}\"");
+            Process tobii_calibrate = new Process();
+            // Redirect the output stream of the child process.
+            tobii_calibrate.StartInfo.UseShellExecute = false;
+            tobii_calibrate.StartInfo.RedirectStandardError = true;
+            tobii_calibrate.StartInfo.RedirectStandardOutput = true;
+            tobii_calibrate.StartInfo.FileName = executablePath;
+            tobii_calibrate.StartInfo.Arguments = arguments;
+            tobii_calibrate.Start();
+
+            string stdOutput = tobii_calibrate.StandardOutput.ReadToEnd();
+
+            tobii_calibrate.WaitForExit();
+            int exitCode = tobii_calibrate.ExitCode;
+            if (exitCode == 0)
+            {
+                logger.Info("Eye Tracker Manager was called successfully!");
+                isCalibrated = true;
+            }
+            else
+            {
+                logger.Error($"Eye Tracker Manager call returned the error code: {exitCode}");
+                foreach (string line in stdOutput.Split(Environment.NewLine.ToCharArray()))
+                {
+                    if (line.StartsWith("ETM Error:"))
+                    {
+                        logger.Error(line);
+                    }
+                }
+            }
+            Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
         }
 
         /// <summary>
