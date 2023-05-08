@@ -17,7 +17,7 @@
             GazeDataCollected
         </Button>
         <Viewbox Stretch="Fill" StretchDirection="Both">
-            <ItemsControl Name="Points">
+            <ItemsControl ItemsSource="{Binding CalibrationPoints}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>

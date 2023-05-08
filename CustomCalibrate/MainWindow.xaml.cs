@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CustomCalibrate.Models;
+using System.Windows;
 
 namespace CustomCalibrate
 {
@@ -10,7 +11,8 @@ namespace CustomCalibrate
         public MainWindow()
         {
             InitializeComponent();
-            Main.Content = new Calibration();
+            CalibrationModel model = new CalibrationModel();
+            Main.Content = new Calibration(model);
         }
     }
 }
