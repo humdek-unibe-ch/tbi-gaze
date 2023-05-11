@@ -1,5 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
+using System.Windows.Input;
 using CustomCalibrate.Models;
 
 namespace CustomCalibrate.ViewModels
@@ -15,36 +19,73 @@ namespace CustomCalibrate.ViewModels
             get { return _calibrationPoints; }
         }
 
-        public CalibrationViewModel(CalibrationModel calibrationModel)
+        public CalibrationViewModel(CalibrationModel model)
         {
-            _model = calibrationModel;
+            _model = model;
+            foreach (CalibrationPoint item in _model.CalibrationPoints)
+            {
+                _calibrationPoints.Add(new CalibrationPointViewModel(item));
+                item.PropertyChanged += OnCollectionItemChanged;
+            }
+            _model.CalibrationPoints.CollectionChanged += OnCollectionChanged;
         }
 
-        private CalibrationPointViewModel CreateCalibrationPoint(Point position)
+        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            return new CalibrationPointViewModel(position);
+            if (e.NewItems != null)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach (CalibrationPoint item in e.NewItems)
+                        {
+                            _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                            item.PropertyChanged += OnCollectionItemChanged;
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach (CalibrationPoint item in e.OldItems)
+                        {
+                            _calibrationPoints.RemoveAt(item.Index);
+                            item.PropertyChanged -= OnCollectionItemChanged;
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                        foreach (CalibrationPoint item in e.NewItems)
+                        {
+                            _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                            item.PropertyChanged += OnCollectionItemChanged;
+                        }
+                        foreach (CalibrationPoint item in e.OldItems)
+                        {
+                            item.PropertyChanged -= OnCollectionItemChanged;
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Move:
+                        _calibrationPoints.Move(e.OldStartingIndex, e.NewStartingIndex);
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                        _calibrationPoints.Clear();
+                        break;
+                }
+            }
         }
-
-        public void NextCalibrationPoint()
+        private void OnCollectionItemChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (_model.Positions == null)
+            CalibrationPoint? typedSender = sender as CalibrationPoint;
+            if (typedSender == null || e.PropertyName == null)
             {
                 return;
             }
-            CalibrationPoints.Insert(Index, CreateCalibrationPoint(_model.Positions[Index]));
-            Index++;
-            if (Index == _model.Positions.Length)
-            {
-                Index = 0;
-            }
-        }
+            CalibrationPointViewModel point = _calibrationPoints[typedSender.Index];
+            PropertyInfo? piIn = typedSender.GetType().GetProperty(e.PropertyName);
+            PropertyInfo? piOut = point.GetType().GetProperty(e.PropertyName);
 
-        public void GazeDataCollected()
-        {
-            CalibrationPoints[Index - 1].HasData = true;
-            CalibrationPoints[Index - 1].GazePositionAverage = new Point(CalibrationPoints[Index - 1].Position.X, CalibrationPoints[Index - 1].Position.Y + 5);
-            CalibrationPoints[Index - 1].GazePositionLeft = new Point(CalibrationPoints[Index - 1].Position.X - 10, CalibrationPoints[Index - 1].Position.Y + 5);
-            CalibrationPoints[Index - 1].GazePositionRight = new Point(CalibrationPoints[Index - 1].Position.X + 10, CalibrationPoints[Index - 1].Position.Y + 5);
+            if (piIn == null || piOut == null)
+            {
+                return;
+            }
+            piOut.SetValue(point, piIn.GetValue(typedSender));
         }
     }
 }

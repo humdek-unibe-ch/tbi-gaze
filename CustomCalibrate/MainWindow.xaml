@@ -8,5 +8,5 @@
         Title="CalibrationWindow"
         WindowState="Maximized"
         WindowStyle="None">
-    <Frame x:Name="Main"/>
+    <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
 </Window>

@@ -3,37 +3,35 @@ using CustomCalibrate.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace CustomCalibrate
+namespace CustomCalibrate.Views
 {
     /// <summary>
     /// Interaction logic for Calibration.xaml
     /// </summary>
     public partial class Calibration : Page
     {
-        private CalibrationViewModel _viewModel;
         private CalibrationModel _model;
 
         public Calibration(CalibrationModel model)
         {
             InitializeComponent();
             _model = model;
-            _viewModel = new CalibrationViewModel(_model);
-            DataContext = _viewModel;
-        }
-
-        public void OnLoad(object sender, RoutedEventArgs e)
-        {
-            _model.Init(ActualWidth, ActualHeight);
+            DataContext = new CalibrationViewModel(_model);
         }
 
         public void NextCalibrationPoint(object sender, RoutedEventArgs e)
         {
-            _viewModel.NextCalibrationPoint();
+            _model.NextCalibrationPoint();
         }
 
         public void GazeDataCollected(object sender, RoutedEventArgs e)
         {
-            _viewModel.GazeDataCollected();
+            _model.GazeDataCollected();
+        }
+
+        public void CalibrationResult(object sender, RoutedEventArgs e)
+        {
+            _model.Status = CalibrationModel.CalibrationStatus.DataResult;
         }
     }
 }
