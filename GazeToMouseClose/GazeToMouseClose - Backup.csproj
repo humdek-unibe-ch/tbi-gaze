@@ -5,14 +5,15 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <PlatformTarget>x64</PlatformTarget>
     <Platforms>AnyCPU;x64</Platforms>
-    <StartupObject>CustomCalibrate.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CustomCalibrationLibrary\CustomCalibrationLibrary.csproj" />
     <ProjectReference Include="..\GazeUtilityLibrary\GazeUtilityLibrary.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)build\&quot;" />
+  </Target>
 
 </Project>

@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="CustomCalibrate.Views.CalibrationPoint"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converter="clr-namespace:CustomCalibrate.Converters"
+             xmlns:local="clr-namespace:CustomCalibrate.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converter:PositionConverter x:Key="PositionConverter" />
+        <Style x:Key="CalibrationPoint" TargetType="{x:Type Ellipse}">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5" />
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <SolidColorBrush Color="White" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TransformGroup>
+                        <RotateTransform Angle="0"/>
+                        <ScaleTransform CenterX="0" CenterY="0" ScaleX="1.0" ScaleY="1.0" />
+                    </TransformGroup>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasData}" Value="false">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard Name="StoryboardCollecting">
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(Ellipse.Opacity)"
+                                    From="0.0" To="1.0" Duration="0:0:0.5"
+                                />
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[1].(ScaleTransform.ScaleX)"
+                                    To="3.0" Duration="0:0:0.5"
+                                    AutoReverse="True"
+                                >
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[1].(ScaleTransform.ScaleY)"
+                                    To="3.0" Duration="0:0:0.5"
+                                    AutoReverse="True"
+                                >
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation
+                                    BeginTime="0:0:1"
+                                    Storyboard.TargetProperty="(Ellipse.Height)"
+                                    To="15" Duration="0:0:0.1"
+                                />
+                                <DoubleAnimation
+                                    BeginTime="0:0:1"
+                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)"
+                                    From="0.0" To="360" Duration="0:0:0.2" RepeatBehavior="Forever"
+                                />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="StoryboardCollecting" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding HasData}" Value="true">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard Name="StoryboardCollected">
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[1].(ScaleTransform.ScaleX)"
+                                    To="10.0" Duration="0:0:0.5"
+                                >
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[1].(ScaleTransform.ScaleY)"
+                                    To="10.0" Duration="0:0:0.5"
+                                >
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(Ellipse.Opacity)"
+                                    From="1.0" To="0.0" Duration="0:0:0.5"
+                                >
+                                    <DoubleAnimation.EasingFunction>
+                                        <SineEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <ColorAnimation
+                                    Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)"
+                                    To="Red" Duration="0:0:0.5"
+                                />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="StoryboardCollected" />
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid RenderTransformOrigin="0.5, 0.5">
+        <Ellipse Style="{StaticResource CalibrationPoint}" />
+        <Grid.RenderTransform>
+            <TranslateTransform
+                X="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                Y="{Binding Position.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            />
+        </Grid.RenderTransform>
+    </Grid>
+</UserControl>
