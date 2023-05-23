@@ -30,15 +30,15 @@
                     </TextBlock>
                 </Grid>
             </Grid>
-            <Grid>
-                <TextBlock Text="{Binding Error}"/>
+            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Foreground="White" Text="{Binding Error}" FontSize="18"/>
             </Grid>
             <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button ui:ThemeManager.RequestedTheme="Dark" Click="OnCalibrationRestart">
                         Restart Calibration
                     </Button>
-                    <Button ui:ThemeManager.RequestedTheme="Dark" Margin="10,0,0,0" Style="{ui:ThemeResource AccentButtonStyle}" Click="OnCalibrationAbort">
+                    <Button ui:ThemeManager.RequestedTheme="Dark" Margin="10,0,0,0" Click="OnCalibrationAbort">
                         Abort Calibration
                     </Button>
                 </DockPanel>

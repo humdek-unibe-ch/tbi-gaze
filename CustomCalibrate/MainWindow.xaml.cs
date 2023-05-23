@@ -4,7 +4,7 @@ using GazeUtilityLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Metrics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using Tobii.Research;
@@ -42,7 +42,7 @@ namespace CustomCalibrate
             Top = 0;
 
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibrate.exe\"");
-            this.Content = new CustomCalibrationLibrary.Views.CalibrationCollection(_calibrationModel);
+            this.Content = new CalibrationCollection(_calibrationModel);
 
             if (!Init())
             {
@@ -96,7 +96,7 @@ namespace CustomCalibrate
             _logger.Error(_calibrationModel.Error);
         }
 
-        private async Task<bool> CollectCalibrationData(ScreenBasedCalibration calibration)
+        private async Task CollectCalibrationData(ScreenBasedCalibration calibration)
         {
             // Collect data.
             foreach (NormalizedPoint2D point in _pointsToCalibrate)
@@ -110,30 +110,14 @@ namespace CustomCalibrate
 
                 int fail_count = 0;
                 CalibrationStatus status = CalibrationStatus.Failure;
-                try
-                {
-                    status = await calibration.CollectDataAsync(point);
-                }
-                catch (Exception ex)
-                {
-                    HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
-                    return false;
-                }
+                status = await calibration.CollectDataAsync(point);
                 while (status != CalibrationStatus.Success && fail_count < 3)
                 {
                     // Try again if it didn't go well the first time.
                     // Not all eye tracker models will fail at this point, but instead fail on ComputeAndApply.
                     _logger.Warning($"Data collection failed, retry #{fail_count}");
                     fail_count++;
-                    try
-                    {
-                        status = await calibration.CollectDataAsync(point);
-                    }
-                    catch (Exception ex)
-                    {
-                        HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
-                        return false;
-                    }
+                    status = await calibration.CollectDataAsync(point);
                 }
 
                 _calibrationModel.GazeDataCollected();
@@ -149,29 +133,23 @@ namespace CustomCalibrate
                 //System.Threading.Thread.Sleep(700);
                 await Task.Delay(700);
             }
-
-            return true;
         }
 
-        private async Task<bool> Calibrate()
+        private async Task Calibrate()
         {
             if (!_restartCalibration)
             {
-                return true;
+                return;
             }
 
             if (_screenBasedCalibration == null)
             {
-                HandleCalibrationError("Screenbased calibration is not initialised.");
-                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
-                return false;
+                throw new Exception("Screenbased calibration is not initialised");
             }
 
             if (!_config.PrepareCalibrationOutputFile())
             {
-                HandleCalibrationError("Failed to prepare calibration output file");
-                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
-                return false;
+                throw new Exception("Failed to prepare calibration output file");
             }
 
             _calibrationModel.InitCalibration();
@@ -179,28 +157,13 @@ namespace CustomCalibrate
 
             await _screenBasedCalibration.EnterCalibrationModeAsync();
 
-            bool res = await CollectCalibrationData(_screenBasedCalibration);
-            if (!res)
-            {
-                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
-                _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
-                return false;
-            }
+            await CollectCalibrationData(_screenBasedCalibration);
 
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.Computing;
 
             Tobii.Research.CalibrationResult calibrationResult;
-            try
-            {
-                calibrationResult = await _screenBasedCalibration.ComputeAndApplyAsync();
-            }
-            catch (Exception ex)
-            {
-                HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
-                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
-                _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
-                return false;
-            }
+
+            calibrationResult = await _screenBasedCalibration.ComputeAndApplyAsync();
 
             _logger.Info($"Calibration returned {calibrationResult.Status} and collected {calibrationResult.CalibrationPoints.Count} points.");
 
@@ -228,11 +191,10 @@ namespace CustomCalibrate
             _calibrationModel.SetCalibrationResult(calibrationResult.CalibrationPoints);
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataResult;
 
+           
             await _screenBasedCalibration.LeaveCalibrationModeAsync();
 
             _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
-
-            return true;
         }
 
         /// <summary>
@@ -256,6 +218,7 @@ namespace CustomCalibrate
         private void OnTrackerEnabled(object? sender, EventArgs e)
         {
             _logger.Info("Connection to the device enabled");
+            _calibrationModel.Error = "No Error";
             _calibrationModel.OnCalibrationEvent(CalibrationEventType.Start);
         }
 
@@ -267,6 +230,7 @@ namespace CustomCalibrate
         private void OnTrackerDisabled(object? sender, EventArgs e)
         {
             _logger.Warning("Connection to the device interrupted");
+            _calibrationModel.Error = "Connection to the device interrupted";
             _error.Error = EGazeDataError.DeviceInterrupt;
         }
 
@@ -288,8 +252,21 @@ namespace CustomCalibrate
                     _restartCalibration = true;
                     goto case CalibrationEventType.Start;
                 case CalibrationEventType.Start:
-                    bool res = await Calibrate();
-                    _restartCalibration = !res;
+                    _calibrationModel.Error = "No Error";
+                    try
+                    {
+                        await Calibrate();
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
+                        _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                        _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
+                    }
+                    finally
+                    {
+                        _restartCalibration = false;
+                    }
                     break;
             }
         }

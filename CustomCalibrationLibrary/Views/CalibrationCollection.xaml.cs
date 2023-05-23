@@ -25,7 +25,7 @@ namespace CustomCalibrationLibrary.Views
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (sender == null)
+            if (sender == null || e.PropertyName != "Status")
             {
                 return;
             }

@@ -103,8 +103,8 @@ namespace CustomCalibrationLibrary.Models
 
     public class CalibrationModel : INotifyPropertyChanged
     {
-        private string _error = "";
-        public string Error { get { return _error; } set { _error = value; } }
+        private string _error = "No Error";
+        public string Error { get { return _error; } set { _error = value; OnPropertyChanged(); } }
         public event EventHandler<CalibrationEventType>? CalibrationEvent;
         public void OnCalibrationEvent(CalibrationEventType type)
         {
