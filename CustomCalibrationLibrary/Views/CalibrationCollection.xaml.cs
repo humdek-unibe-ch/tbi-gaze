@@ -32,7 +32,7 @@ namespace CustomCalibrationLibrary.Views
             switch (((CalibrationModel)sender).Status)
             {
                 case CalibrationModel.CalibrationStatus.HeadPosition:
-                    this.Content = new Calibration(_model);
+                    this.Content = new UserPositionGuide(_model);
                     break;
                 case CalibrationModel.CalibrationStatus.DataCollection:
                     this.Content = new Calibration(_model);

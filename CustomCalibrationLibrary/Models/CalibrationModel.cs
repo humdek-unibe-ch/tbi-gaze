@@ -159,6 +159,23 @@ namespace CustomCalibrationLibrary.Models
             }
         }
 
+        public event EventHandler<UserPositionGuideEventArgs>? UserPositionGuideChanged;
+        private UserPositionGuideEventArgs _userPositionGuide;
+        public UserPositionGuideEventArgs UserPositionGuide
+        {
+            get { return _userPositionGuide; }
+            set { _userPositionGuide = value; OnUserPositionGuideChanged(); }
+        }
+        private void OnUserPositionGuideChanged([CallerMemberName] string? property_name = null)
+        {
+            if (Application.Current != null)
+            {
+                Application.Current.Dispatcher.Invoke(() => {
+                    UserPositionGuideChanged?.Invoke(this, _userPositionGuide);
+                });
+            }
+        }
+
         private int _index = -1;
         public int Index { get { return _index; } }
 

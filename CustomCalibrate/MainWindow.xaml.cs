@@ -86,6 +86,7 @@ namespace CustomCalibrate
             }
 
             _screenBasedCalibration = new ScreenBasedCalibration(_tracker.Device);
+            _tracker.Device.UserPositionGuideReceived += OnUserPositionGuideReceived;
 
             return true;
         }
@@ -191,7 +192,6 @@ namespace CustomCalibrate
             _calibrationModel.SetCalibrationResult(calibrationResult.CalibrationPoints);
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataResult;
 
-           
             await _screenBasedCalibration.LeaveCalibrationModeAsync();
 
             _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
@@ -210,6 +210,11 @@ namespace CustomCalibrate
             }
         }
 
+        private void OnUserPositionGuideReceived(object? sender, UserPositionGuideEventArgs e)
+        {
+            _calibrationModel.UserPositionGuide = e;
+        }
+
         /// <summary>
         /// Called when the eye tracker is ready.
         /// </summary>
@@ -219,7 +224,8 @@ namespace CustomCalibrate
         {
             _logger.Info("Connection to the device enabled");
             _calibrationModel.Error = "No Error";
-            _calibrationModel.OnCalibrationEvent(CalibrationEventType.Start);
+            //_calibrationModel.OnCalibrationEvent(CalibrationEventType.Start);
+            _calibrationModel.Status = CalibrationModel.CalibrationStatus.HeadPosition;
         }
 
         /// <summary>
