@@ -53,7 +53,7 @@ namespace GazeUtilityLibrary
         /// </summary>
         /// <param name="order">The order.</param>
         /// <returns></returns>
-        public static bool CheckDataLogColumnOrder(string? order, TrackerLogger? logger = null)
+        public static bool CheckLogColumnOrder<T>(string? order, TrackerLogger? logger = null)
         {
             if (order == null)
             {
@@ -61,7 +61,7 @@ namespace GazeUtilityLibrary
             }
             try
             {
-                int max_col = Enum.GetNames(typeof(GazeOutputValue)).Length;
+                int max_col = Enum.GetNames(typeof(T)).Length;
                 string[] values = new string[max_col];
                 for (int i = 0; i < max_col; i++) values[i] = "";
                 String.Format(order, values);
@@ -80,7 +80,7 @@ namespace GazeUtilityLibrary
         /// <param name="order">The order.</param>
         /// <param name="titles">The titles.</param>
         /// <returns></returns>
-        public static bool CheckDataLogColumnTitles(string order, string[] titles, TrackerLogger? logger = null)
+        public static bool CheckLogColumnTitles(string order, string[] titles, TrackerLogger? logger = null)
         {
             try
             {

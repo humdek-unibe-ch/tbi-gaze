@@ -1,30 +1,116 @@
-﻿<Page x:Class="CustomCalibrate.Views.CalibrationResult"
+﻿<Page x:Class="CustomCalibrationLibrary.Views.CalibrationResult"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:uc="clr-namespace:CustomCalibrate.Views"
-      xmlns:converter="clr-namespace:CustomCalibrate.Converters"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="CalibrationResult">
+      xmlns:uc="clr-namespace:CustomCalibrationLibrary.Views"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d"
+      Title="CalibrationResult"
+      >
     <Page.Resources>
-        <converter:PositionConverter x:Key="PositionConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Templates/CalibrationPoint.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Styles/GazePoints.xaml" />
+                <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Page.Resources>
-    <StackPanel>
-        <Grid>
-            <ItemsControl ItemsSource="{Binding CalibrationPoints}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <uc:CalibrationResultPoint />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+    <Grid>
+        <Grid Background="Black">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="0">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ui:ToggleSwitch ui:ThemeManager.RequestedTheme="Dark" Header="Gaze" OnContent="On" OffContent="Off" IsOn="False" Grid.Column="0" Toggled="OnGazeToggle"/>
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                        <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                        Calibration Result
+                        </TextBlock>
+                        <DockPanel>
+                            <DockPanel>
+                                <ContentControl Template="{StaticResource CalibrationPoint}" />
+                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                Calibration Point
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel Margin="15,0,0,0">
+                                <Ellipse Style="{StaticResource AverageGazePoint}" />
+                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                Average Result
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel Margin="15,0,0,0">
+                                <Ellipse Style="{StaticResource LeftGazePoint}" />
+                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                Left Eye
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel Margin="15,0,0,0">
+                                <Ellipse Style="{StaticResource RightGazePoint}" />
+                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                Right Eye
+                                </TextBlock>
+                            </DockPanel>
+                            <DockPanel Margin="15,0,0,0" Visibility="{Binding GazePoint.Visibility}">
+                                <Ellipse Style="{StaticResource LiveGazePoint}" />
+                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                Gaze
+                                </TextBlock>
+                            </DockPanel>
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <Viewbox Stretch="Uniform" Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding CalibrationPoints}" Grid.Row="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <uc:CalibrationResultPoint />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Viewbox>
+            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
+                <DockPanel Margin="10" HorizontalAlignment="Right">
+                    <Button ui:ThemeManager.RequestedTheme="Dark" Click="OnCalibrationRestart">
+                        Restart Calibration
+                    </Button>
+                    <Button ui:ThemeManager.RequestedTheme="Dark" Margin="10,0,0,0" Style="{ui:ThemeResource AccentButtonStyle}" Click="OnCalibrationAccept">
+                        Accept Calibration
+                    </Button>
+                </DockPanel>
+            </Grid>
         </Grid>
-    </StackPanel>
+        <Ellipse
+            Visibility="{Binding GazePoint.Visibility}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            RenderTransformOrigin="0.5, 0.5"
+            Style="{StaticResource LiveGazePoint}"
+        >
+            <Ellipse.RenderTransform>
+                <TranslateTransform
+                    X="{Binding GazePoint.X}"
+                    Y="{Binding GazePoint.Y}"
+                />
+            </Ellipse.RenderTransform>
+        </Ellipse>
+    </Grid>
 </Page>

@@ -25,9 +25,9 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackerLogger"/> class.
         /// </summary>
-        public TrackerLogger()
+        public TrackerLogger(EOutputType type = EOutputType.gaze)
         {
-            logFile = $"{logPath}\\{Environment.MachineName}_gaze.log";
+            logFile = $"{logPath}\\{Environment.MachineName}_{type.ToString()}.log";
             logFileBak = $"{logFile}.0";
         }
 

@@ -1,23 +1,26 @@
-﻿using CustomCalibrate.Models;
-using CustomCalibrate.Views;  
+﻿using CustomCalibrationLibrary.Models;
+using System;
 using System.ComponentModel;
 using System.Windows.Controls;
-using GazeUtilityLibrary;
+using System.Windows.Navigation;
 
 namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for CalibrationCollection.xaml
     /// </summary>
-    public partial class CalibrationCollection : Page
+    public partial class CalibrationCollection : Frame
     {
         private CalibrationModel _model;
-        public CalibrationCollection(TrackerLogger logger)
+        private Computing _computingView;
+
+        public CalibrationCollection(CalibrationModel model)
         {
+            _computingView = new Computing();
             InitializeComponent();
-            _model = new CalibrationModel(logger);
+            _model = model;
             _model.PropertyChanged += OnPropertyChanged;
-            Main.Content = new Calibration(_model);
+            this.Content = _computingView;
         }
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -28,13 +31,23 @@ namespace CustomCalibrationLibrary.Views
             }
             switch (((CalibrationModel)sender).Status)
             {
+                case CalibrationModel.CalibrationStatus.HeadPosition:
+                    this.Content = new Calibration(_model);
+                    break;
                 case CalibrationModel.CalibrationStatus.DataCollection:
-                    Main.Content = new Calibration(_model);
+                    this.Content = new Calibration(_model);
+                    break;
+                case CalibrationModel.CalibrationStatus.Computing:
+                    this.Content = _computingView;
                     break;
                 case CalibrationModel.CalibrationStatus.DataResult:
-                    Main.Content = new CalibrationResult(_model);
+                    this.Content = new CalibrationResult(_model);
+                    break;
+                case CalibrationModel.CalibrationStatus.Error:
+                    this.Content = new CalibrationFailed(_model);
                     break;
             }
         }
     }
+
 }

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace CustomCalibrate.Views
+namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for CalibrationPoint.xaml

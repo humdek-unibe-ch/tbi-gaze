@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace CustomCalibrate.ViewModels
+namespace CustomCalibrationLibrary.ViewModels
 {
-    class CalibrationPointViewModel : Models.CalibrationPoint, INotifyPropertyChanged
+    class CalibrationPointViewModel : Models.CalibrationPoint
     {
         public CalibrationPointViewModel(Point point, int index) : base(point, index) { }
         public CalibrationPointViewModel(Models.CalibrationPoint model) : base(model.Position, model.Index) {

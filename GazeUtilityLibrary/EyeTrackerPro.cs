@@ -12,6 +12,7 @@ namespace GazeUtilityLibrary
     {
         private bool hasLicense = true;
         private IEyeTracker? eyeTracker = null;
+        public IEyeTracker? Device { get { return eyeTracker; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
@@ -37,8 +38,8 @@ namespace GazeUtilityLibrary
             eyeTracker.GazeDataReceived += OnGazeDataReceivedPro;
             eyeTracker.ConnectionLost += OnConnectionLost;
             eyeTracker.ConnectionRestored += OnConnectionRestored;
-            
-            if(license_path != null)
+
+            if (license_path != null)
             {
                 ApplyLicense(eyeTracker, PatternReplace(license_path));
             }

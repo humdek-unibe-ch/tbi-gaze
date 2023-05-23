@@ -1,6 +1,13 @@
-﻿using GazeUtilityLibrary;
+﻿using CustomCalibrationLibrary.Models;
+using CustomCalibrationLibrary.Views;
+using GazeUtilityLibrary;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics.Metrics;
+using System.Threading.Tasks;
 using System.Windows;
+using Tobii.Research;
 
 namespace CustomCalibrate
 {
@@ -9,12 +16,282 @@ namespace CustomCalibrate
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TrackerLogger _logger;
+        private GazeConfiguration _config;
+        private GazeDataError _error = new GazeDataError();
+        private CalibrationModel _calibrationModel;
+        private ScreenBasedCalibration? _screenBasedCalibration = null;
+        private EyeTrackerPro? _tracker;
+        private List<NormalizedPoint2D> _pointsToCalibrate = new List<NormalizedPoint2D>();
+        private bool _restartCalibration = true;
+
         public MainWindow()
         {
             InitializeComponent();
-            TrackerLogger logger = new TrackerLogger();
-            logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibrate.exe\"");
-            Main.Content = new CustomCalibrationLibrary.Views.CalibrationCollection(logger);
+            _logger = new TrackerLogger(EOutputType.calibration);
+            _config = new GazeConfiguration(_logger);
+            _calibrationModel = new CalibrationModel(_logger);
+            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
+
+            foreach (Point point in _calibrationModel.Points)
+            {
+                _pointsToCalibrate.Add(new NormalizedPoint2D((float)point.X, (float)point.Y));
+            }
+
+            Left = SystemParameters.PrimaryScreenWidth;
+            Top = 0;
+
+            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibrate.exe\"");
+            this.Content = new CustomCalibrationLibrary.Views.CalibrationCollection(_calibrationModel);
+
+            if (!Init())
+            {
+                _logger.Error("Failed to initialise the calibration process, aborting");
+                Close();
+            }
+        }
+
+        private void OnApplicationShutdown(object sender, CancelEventArgs e)
+        {
+            _tracker?.Dispose();
+            _logger?.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibration.exe\" terminated gracefully{Environment.NewLine}");
+        }
+
+        private bool Init()
+        {
+            if (!_config.InitConfig())
+            {
+                return false;
+            }
+            if (_config.Config.TrackerDevice != 1)
+            {
+                _logger.Warning("Custom calibration only works with Tobii Pro SDK");
+                return false;
+            }
+
+            _tracker = new EyeTrackerPro(_logger, _config.Config.ReadyTimer, _config.Config.LicensePath);
+            if (!_tracker.IsLicenseOk())
+            {
+                return false;
+            }
+
+            _tracker.TrackerEnabled += OnTrackerEnabled;
+            _tracker.TrackerDisabled += OnTrackerDisabled;
+            _tracker.GazeDataReceived += OnGazeDataReceived;
+
+            if (_tracker.Device == null)
+            {
+                _logger.Warning("Failed to initialise the tracker device");
+                return false;
+            }
+
+            _screenBasedCalibration = new ScreenBasedCalibration(_tracker.Device);
+
+            return true;
+        }
+
+        private void HandleCalibrationError(string error)
+        {
+            _calibrationModel.Error = error;
+            _logger.Error(_calibrationModel.Error);
+        }
+
+        private async Task<bool> CollectCalibrationData(ScreenBasedCalibration calibration)
+        {
+            // Collect data.
+            foreach (NormalizedPoint2D point in _pointsToCalibrate)
+            {
+                _logger.Debug($"Show calibration point at [{point.X}, {point.Y}]");
+                _calibrationModel.NextCalibrationPoint();
+
+                // Wait a little for user to focus.
+                //System.Threading.Thread.Sleep(1000);
+                await Task.Delay(1000);
+
+                int fail_count = 0;
+                CalibrationStatus status = CalibrationStatus.Failure;
+                try
+                {
+                    status = await calibration.CollectDataAsync(point);
+                }
+                catch (Exception ex)
+                {
+                    HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
+                    return false;
+                }
+                while (status != CalibrationStatus.Success && fail_count < 3)
+                {
+                    // Try again if it didn't go well the first time.
+                    // Not all eye tracker models will fail at this point, but instead fail on ComputeAndApply.
+                    _logger.Warning($"Data collection failed, retry #{fail_count}");
+                    fail_count++;
+                    try
+                    {
+                        status = await calibration.CollectDataAsync(point);
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
+                        return false;
+                    }
+                }
+
+                _calibrationModel.GazeDataCollected();
+                if (status != CalibrationStatus.Success)
+                {
+                    HandleCalibrationError($"Failed to collect data for calibration point at [{point.X}, {point.Y}]");
+                    break;
+                }
+
+                _logger.Debug($"Calibration data collected at point [{point.X}, {point.Y}]");
+
+                // Wait a little.
+                //System.Threading.Thread.Sleep(700);
+                await Task.Delay(700);
+            }
+
+            return true;
+        }
+
+        private async Task<bool> Calibrate()
+        {
+            if (!_restartCalibration)
+            {
+                return true;
+            }
+
+            if (_screenBasedCalibration == null)
+            {
+                HandleCalibrationError("Screenbased calibration is not initialised.");
+                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                return false;
+            }
+
+            if (!_config.PrepareCalibrationOutputFile())
+            {
+                HandleCalibrationError("Failed to prepare calibration output file");
+                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                return false;
+            }
+
+            _calibrationModel.InitCalibration();
+            _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataCollection;
+
+            await _screenBasedCalibration.EnterCalibrationModeAsync();
+
+            bool res = await CollectCalibrationData(_screenBasedCalibration);
+            if (!res)
+            {
+                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
+                return false;
+            }
+
+            _calibrationModel.Status = CalibrationModel.CalibrationStatus.Computing;
+
+            Tobii.Research.CalibrationResult calibrationResult;
+            try
+            {
+                calibrationResult = await _screenBasedCalibration.ComputeAndApplyAsync();
+            }
+            catch (Exception ex)
+            {
+                HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
+                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
+                return false;
+            }
+
+            _logger.Info($"Calibration returned {calibrationResult.Status} and collected {calibrationResult.CalibrationPoints.Count} points.");
+
+
+            foreach (Tobii.Research.CalibrationPoint point in calibrationResult.CalibrationPoints )
+            {
+                foreach (CalibrationSample sample in point.CalibrationSamples)
+                {
+                    string[] formatted_values = GazeData.PrepareCalibrationData(
+                        new CalibrationDataArgs(
+                            point.PositionOnDisplayArea.X,
+                            point.PositionOnDisplayArea.Y,
+                            sample.LeftEye.PositionOnDisplayArea.X,
+                            sample.LeftEye.PositionOnDisplayArea.Y,
+                            sample.LeftEye.Validity,
+                            sample.RightEye.PositionOnDisplayArea.X,
+                            sample.RightEye.PositionOnDisplayArea.Y,
+                            sample.RightEye.Validity
+                        ),
+                        _config.Config
+                    );
+                    _config.WriteToCalibrationOutput( formatted_values );
+                }
+            }
+            _calibrationModel.SetCalibrationResult(calibrationResult.CalibrationPoints);
+            _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataResult;
+
+            await _screenBasedCalibration.LeaveCalibrationModeAsync();
+
+            _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
+
+            return true;
+        }
+
+        /// <summary>
+        /// Called when [gaze data received].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="data">The data.</param>
+        private void OnGazeDataReceived(object? sender, GazeDataArgs data)
+        {
+            if((data.IsValidCoordLeft ?? false) || (data.IsValidCoordRight ?? false))
+            {
+                _calibrationModel.GazePoint = new CustomCalibrationLibrary.Models.GazePoint(data.XCoord, data.YCoord, _calibrationModel.GazePoint.Visibility);
+            }
+        }
+
+        /// <summary>
+        /// Called when the eye tracker is ready.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void OnTrackerEnabled(object? sender, EventArgs e)
+        {
+            _logger.Info("Connection to the device enabled");
+            _calibrationModel.OnCalibrationEvent(CalibrationEventType.Start);
+        }
+
+        /// <summary>
+        /// Called when the eye tracker changes from ready to any other state.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void OnTrackerDisabled(object? sender, EventArgs e)
+        {
+            _logger.Warning("Connection to the device interrupted");
+            _error.Error = EGazeDataError.DeviceInterrupt;
+        }
+
+        /// <summary>
+        /// Called on a calibration event from the calibration model.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="type">The calibration event type.</param>
+        private async void OnCalibrationEvent(object? sender, CalibrationEventType type)
+        {
+            _logger.Info($"Received calibration user event {type.ToString()}");
+            switch(type)
+            {
+                case CalibrationEventType.Accept:
+                case CalibrationEventType.Abort:
+                    Close();
+                    break;
+                case CalibrationEventType.Restart:
+                    _restartCalibration = true;
+                    goto case CalibrationEventType.Start;
+                case CalibrationEventType.Start:
+                    bool res = await Calibrate();
+                    _restartCalibration = !res;
+                    break;
+            }
         }
     }
 }

@@ -1,11 +1,40 @@
-﻿using GazeUtilityLibrary;
+﻿using CustomCalibrationLibrary.ViewModels;
+using GazeUtilityLibrary;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Markup;
+using Tobii.Research;
 
-namespace CustomCalibrate.Models
+namespace CustomCalibrationLibrary.Models
 {
+    public class GazePoint
+    {
+        private double _x;
+        public double X { get { return _x; } }
+        private double _y;
+        public double Y { get { return _y; } }
+        private Visibility _visibility;
+        public Visibility Visibility { get { return _visibility; } }
+
+        public GazePoint()
+        {
+            _x = 0;
+            _y = 0;
+            _visibility = System.Windows.Visibility.Hidden;
+        }
+
+        public GazePoint(double x, double y, Visibility visibility)
+        {
+            _x = x;
+            _y = y;
+            _visibility = visibility;
+        }
+    }
+
     public class CalibrationPoint : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -64,32 +93,74 @@ namespace CustomCalibrate.Models
         }
     }
 
+    public enum CalibrationEventType
+    {
+        Start,
+        Accept,
+        Restart,
+        Abort
+    }
+
     public class CalibrationModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        private string _error = "";
+        public string Error { get { return _error; } set { _error = value; } }
+        public event EventHandler<CalibrationEventType>? CalibrationEvent;
+        public void OnCalibrationEvent(CalibrationEventType type)
+        {
+            Application.Current.Dispatcher.Invoke(() => {
+                CalibrationEvent?.Invoke(this, type);
+            });
+        }
 
+        public event PropertyChangedEventHandler? PropertyChanged;
         private CalibrationStatus _status;
         public enum CalibrationStatus
         {
             HeadPosition,
             DataCollection,
-            DataResult
+            Computing,
+            DataResult,
+            Error
         }
         public CalibrationStatus Status
         {
             get { return _status; }
             set { _status = value; OnPropertyChanged(); }
         }
-        private void OnPropertyChanged([CallerMemberName] string? property_name = null) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name)); }
+        private void OnPropertyChanged([CallerMemberName] string? property_name = null)
+        {
+            Application.Current.Dispatcher.Invoke(() => {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
+            });
+        }
         private Point[] _points;
+        public Point[] Points { get { return _points; } }
         private ObservableCollection<CalibrationPoint> _calibrationPoints = new ObservableCollection<CalibrationPoint>();
         public ObservableCollection<CalibrationPoint> CalibrationPoints
         {
             get { return _calibrationPoints; }
         }
 
-        private int _index = 0;
-        public int Index { get { return _index == 0 ? _index : _index - 1; } }
+        public event EventHandler<GazePoint>? GazePointChanged;
+        private GazePoint _gazePoint;
+        public GazePoint GazePoint
+        {
+            get { return _gazePoint;  }
+            set { _gazePoint = value; OnGazePointChanged(); }
+        }
+        private void OnGazePointChanged([CallerMemberName] string? property_name = null)
+        {
+            if (Application.Current != null)
+            {
+                Application.Current.Dispatcher.Invoke(() => {
+                    GazePointChanged?.Invoke(this, _gazePoint);
+                });
+            }
+        }
+
+        private int _index = -1;
+        public int Index { get { return _index; } }
 
         private TrackerLogger _logger;
 
@@ -110,24 +181,78 @@ namespace CustomCalibrate.Models
             _points[6] = new Point(1 - XDelta, YDelta); // top right
             _points[7] = new Point(Center.X, 1 - YDelta); // bottom middle
             _status = CalibrationStatus.DataCollection;
+            _gazePoint = new GazePoint();
+        }
+
+        public void InitCalibration()
+        {
+            _index = -1;
+            _calibrationPoints.Clear();
         }
 
         public void NextCalibrationPoint()
         {
-            _calibrationPoints.Add(new CalibrationPoint(_points[_index], _index)); // center right
             _index++;
-            if (_index == _points.Length)
-            {
-                _index = 0;
-            }
+            _calibrationPoints.Add(new CalibrationPoint(_points[_index], _index));
+        }
+
+        public void RedoCalibrationPoint()
+        {
+            _calibrationPoints.RemoveAt(_index);
+            _calibrationPoints.Add(new CalibrationPoint(_points[_index], _index));
         }
 
         public void GazeDataCollected()
         {
             CalibrationPoints[Index].HasData = true;
-            CalibrationPoints[Index].GazePositionAverage = new Point(CalibrationPoints[Index].Position.X, CalibrationPoints[Index].Position.Y + 0.01);
-            CalibrationPoints[Index].GazePositionLeft = new Point(CalibrationPoints[Index].Position.X - 0.1, CalibrationPoints[Index].Position.Y + 0.01);
-            CalibrationPoints[Index].GazePositionRight = new Point(CalibrationPoints[Index].Position.X + 0.1, CalibrationPoints[Index].Position.Y + 0.01);
+        }
+
+        public void SetCalibrationResult(CalibrationPointCollection points)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                double xLeft = 0;
+                double yLeft = 0;
+                double xRight = 0;
+                double yRight = 0;
+                double xLeftSum = 0;
+                double yLeftSum = 0;
+                double xRightSum = 0;
+                double yRightSum = 0;
+                int leftCount = 0;
+                int rightCount = 0;
+                foreach (var point in points[i].CalibrationSamples)
+                {
+                    if (point.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed)
+                    {
+                        xLeftSum += point.LeftEye.PositionOnDisplayArea.X;
+                        yLeftSum += point.LeftEye.PositionOnDisplayArea.Y;
+                        leftCount++;
+                    }
+                    if (point.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed)
+                    {
+                        xRightSum += point.RightEye.PositionOnDisplayArea.X;
+                        yRightSum += point.RightEye.PositionOnDisplayArea.Y;
+                        rightCount++;
+                    }
+                }
+                if (leftCount > 0)
+                {
+                    xLeft = xLeftSum / leftCount;
+                    yLeft = yLeftSum / leftCount;
+                }
+                if (rightCount > 0)
+                {
+                    xRight = xRightSum / rightCount;
+                    yRight = yRightSum / rightCount;
+                }
+                double xAvg = (xLeft + xRight) / 2;
+                double yAvg = (yLeft + yRight) / 2;
+                CalibrationPoints[i].GazePositionAverage = new Point(xAvg, yAvg);
+                CalibrationPoints[i].GazePositionLeft = new Point(xLeft, yLeft);
+                CalibrationPoints[i].GazePositionRight = new Point(xRight, yRight);
+                _logger.Debug($"Calibration at [{points[i].PositionOnDisplayArea.X}, {points[i].PositionOnDisplayArea.Y}]: [{xLeft}, {yLeft}], [{xAvg}, {yAvg}], [{xRight}, {yRight}]");
+            }
         }
     }
 }

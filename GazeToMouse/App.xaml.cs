@@ -37,7 +37,7 @@ namespace GazeToMouse
                 Current.Shutdown();
                 return;
             }
-            if (!_config.PrepareOutputFile())
+            if (!_config.PrepareGazeOutputFile())
             {
                 Current.Shutdown();
                 return;
@@ -74,7 +74,7 @@ namespace GazeToMouse
             {
                 _tracker = new MouseTracker(_logger, _config.Config.ReadyTimer);
             }
-            _tracker!.GazeDataReceived += OnGazeDataReceived;
+            _tracker.GazeDataReceived += OnGazeDataReceived;
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;
         }
@@ -92,7 +92,7 @@ namespace GazeToMouse
                 _hider?.ShowCursor(_config.Config.MouseStandardIconPath);
             }
             _tracker?.Dispose();
-            _config?.CleanupOutputFile(_error.GetGazeDataErrorString());
+            _config?.CleanupGazeOutputFile(_error.GetGazeDataErrorString());
             _logger?.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" terminated gracefully{Environment.NewLine}");
         }
 
@@ -167,7 +167,7 @@ namespace GazeToMouse
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="data">The data.</param>
-        private void OnGazeDataReceived(Object sender, GazeDataArgs data)
+        private void OnGazeDataReceived(Object? sender, GazeDataArgs data)
         {
 
             // write the coordinates to the log file
@@ -199,7 +199,7 @@ namespace GazeToMouse
                 formatted_values[(int)GazeOutputValue.DistOriginRight] = GetGazeDataValueString(data.DistOriginRight, _config.Config.DataLogFormatOrigin);
                 formatted_values[(int)GazeOutputValue.ValidOriginLeft] = GetGazeDataValueString(data.IsValidOriginLeft);
                 formatted_values[(int)GazeOutputValue.ValidOriginRight] = GetGazeDataValueString(data.IsValidOriginRight);
-                _config.WriteToOutput(formatted_values);
+                _config.WriteToGazeOutput(formatted_values);
                 tracking = true;
             }
             // set the cursor position to the gaze position

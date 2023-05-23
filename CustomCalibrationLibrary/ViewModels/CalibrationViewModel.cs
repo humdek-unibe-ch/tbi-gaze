@@ -2,13 +2,14 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
-using CustomCalibrate.Models;
+using System.Windows;
+using CustomCalibrationLibrary.Models;
 
-namespace CustomCalibrate.ViewModels
+namespace CustomCalibrationLibrary.ViewModels
 {
     class CalibrationViewModel
     {
-        private CalibrationModel _model;
+        protected CalibrationModel _model;
 
         private ObservableCollection<CalibrationPointViewModel> _calibrationPoints = new ObservableCollection<CalibrationPointViewModel>();
         public ObservableCollection<CalibrationPointViewModel> CalibrationPoints
@@ -36,7 +37,9 @@ namespace CustomCalibrate.ViewModels
                     case NotifyCollectionChangedAction.Add:
                         foreach (CalibrationPoint item in e.NewItems)
                         {
-                            _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                            Application.Current.Dispatcher.Invoke(() => {
+                                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                            });
                             item.PropertyChanged += OnCollectionItemChanged;
                         }
                         break;
@@ -44,14 +47,18 @@ namespace CustomCalibrate.ViewModels
                         if (e.OldItems == null) break;
                         foreach (CalibrationPoint item in e.OldItems)
                         {
-                            _calibrationPoints.RemoveAt(item.Index);
+                            Application.Current.Dispatcher.Invoke(() => {
+                                _calibrationPoints.RemoveAt(item.Index);
+                            });
                             item.PropertyChanged -= OnCollectionItemChanged;
                         }
                         break;
                     case NotifyCollectionChangedAction.Replace:
                         foreach (CalibrationPoint item in e.NewItems)
                         {
-                            _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                            Application.Current.Dispatcher.Invoke(() => {
+                                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                            });
                             item.PropertyChanged += OnCollectionItemChanged;
                         }
                         if (e.OldItems == null) break;
@@ -61,10 +68,14 @@ namespace CustomCalibrate.ViewModels
                         }
                         break;
                     case NotifyCollectionChangedAction.Move:
-                        _calibrationPoints.Move(e.OldStartingIndex, e.NewStartingIndex);
+                        Application.Current.Dispatcher.Invoke(() => {
+                            _calibrationPoints.Move(e.OldStartingIndex, e.NewStartingIndex);
+                        });
                         break;
                     case NotifyCollectionChangedAction.Reset:
-                        _calibrationPoints.Clear();
+                        Application.Current.Dispatcher.Invoke(() => {
+                            _calibrationPoints.Clear();
+                        });
                         break;
                 }
             }

@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Globalization;
 
-namespace CustomCalibrate.Converters
+namespace CustomCalibrationLibrary.Converters
 {
     public class PositionConverter: IValueConverter
     {

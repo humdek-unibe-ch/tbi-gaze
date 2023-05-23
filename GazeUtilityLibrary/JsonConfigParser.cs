@@ -19,12 +19,18 @@ namespace GazeUtilityLibrary
         public string DataLogColumnOrder { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string[] DataLogColumnTitle { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public string CalibrationLogColumnOrder { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public string[] CalibrationLogColumnTitle { get; set; }
         [JsonProperty(Required = Required.Default)]
         public int DataLogCount { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatDiameter { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatOrigin { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public string DataLogFormatNormalizedPoint { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatTimeStamp { get; set; }
         [JsonProperty(Required = Required.Default)]
@@ -33,6 +39,8 @@ namespace GazeUtilityLibrary
         public string DataLogPath { get; set; }
         [JsonProperty(Required = Required.Always)]
         public bool DataLogWriteOutput { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public bool CalibrationLogWriteOutput { get; set; }
         [JsonProperty(Required = Required.Always)]
         public int GazeFilterCore { get; set; }
         [JsonProperty(Required = Required.Default)]
@@ -59,6 +67,7 @@ namespace GazeUtilityLibrary
             DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff";
             DataLogFormatDiameter = "0.000";
             DataLogFormatOrigin = "0.000";
+            DataLogFormatNormalizedPoint = "0.000";
             TobiiApplicationPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\TobiiProEyeTrackerManager";
             TobiiCalibrate = "TobiiProEyeTrackerManager.exe";
             TobiiCalibrateArguments = "--device-sn=%S --mode=usercalibration";
@@ -115,10 +124,30 @@ namespace GazeUtilityLibrary
                 "origin-valid-left",
                 "origin-valid-right"
             };
+            CalibrationLogColumnOrder =
+                $"{{{(int)CalibrationOutputValue.XCoord}}}\t" +
+                $"{{{(int)CalibrationOutputValue.YCoord}}}\t" +
+                $"{{{(int)CalibrationOutputValue.XCoordLeft}}}\t" +
+                $"{{{(int)CalibrationOutputValue.YCoordLeft}}}\t" +
+                $"{{{(int)CalibrationOutputValue.ValidCoordLeft}}}\t" +
+                $"{{{(int)CalibrationOutputValue.XCoordRight}}}\t" +
+                $"{{{(int)CalibrationOutputValue.YCoordRight}}}\t" +
+                $"{{{(int)CalibrationOutputValue.ValidCoordRight}}}";
+            CalibrationLogColumnTitle = new string[] {
+                "coord-x",
+                "coord-y",
+                "coord-x-left",
+                "coord-y-left",
+                "coord-valid-left",
+                "coord-x-right",
+                "coord-y-right",
+                "coord-valid-right"
+            };
             DataLogCount = 200;
             DataLogIgnoreInvalid = false;
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;
+            CalibrationLogWriteOutput = true;
             GazeFilterCore = 0;
             MouseControl = true;
             MouseHide = false;
@@ -127,7 +156,6 @@ namespace GazeUtilityLibrary
             TrackerDevice = 0;
         }
     }
-
 
     /// <summary>
     /// enummerates output values produced by the eyetracker
@@ -159,6 +187,21 @@ namespace GazeUtilityLibrary
         DistOriginRight, // distance of the gaze origin of the right eye to the eyetracker [SDK Pro only]
         ValidOriginLeft, // validity of the gaze origin data of the left eye [SDK Pro only]
         ValidOriginRight // validity of the gaze origin data of the right eye [SDK Pro only]
+    }
+
+    /// <summary>
+    /// enummerates output values produced by the eyetracker
+    /// </summary>
+    public enum CalibrationOutputValue
+    {
+        XCoord, // x-coordinate of the calibration point (normalised value)
+        YCoord, // y-coordinate of the gaze calibration (normalised value)
+        XCoordLeft, // x-coordinate of the gaze point of the left eye (normalised value)
+        YCoordLeft, // y-coordinate of the gaze point of the left eye (normalised value)
+        ValidCoordLeft, // validity of the gaze data of the left eye
+        XCoordRight, // x-coordinate of the gaze point of the right eye (normalised value)
+        YCoordRight, // y-coordinate of the gaze point of the right eye (normalised value)
+        ValidCoordRight // validity of the gaze data of the right eye
     }
 
     /// <summary>
@@ -201,6 +244,8 @@ namespace GazeUtilityLibrary
 
                     if (item?.DataLogColumnOrder == "")
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
+                    if (item?.CalibrationLogColumnOrder == "")
+                        item.CalibrationLogColumnOrder = item_default.CalibrationLogColumnOrder;
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();
                 }

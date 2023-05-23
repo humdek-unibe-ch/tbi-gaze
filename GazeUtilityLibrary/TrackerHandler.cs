@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
+using Tobii.Research;
 
 namespace GazeUtilityLibrary
 {
@@ -340,5 +341,52 @@ namespace GazeUtilityLibrary
         public double? DistOriginRight { get { return distOriginRight; } }
         public bool? IsValidOriginLeft { get { return isValidOriginLeft; } }
         public bool? IsValidOriginRight { get { return isValidOriginRight; } }
+    }
+
+    /// <summary>
+    /// The event argument class for Tobii eyetracker data
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
+    public class CalibrationDataArgs : EventArgs
+    {
+        private double _xCoord;
+        public double XCoord { get { return _xCoord; } }
+        private double _yCoord;
+        public double YCoord { get { return _yCoord; } }
+        private double _xCoordLeft;
+        public double XCoordLeft { get { return _xCoordLeft; } }
+        private double _yCoordLeft;
+        public double YCoordLeft { get { return _yCoordLeft; } }
+        private CalibrationEyeValidity _validityLeft;
+        public CalibrationEyeValidity ValidityLeft { get { return _validityLeft; } }
+        private double _xCoordRight;
+        public double XCoordRight { get { return _xCoordRight; } }
+        private double _yCoordRight;
+        public double YCoordRight { get { return _yCoordRight; } }
+        private CalibrationEyeValidity _validityRight;
+        public CalibrationEyeValidity ValidityRight { get { return _validityRight; } }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
+        /// </summary>
+        /// <param name="xCoord">The x coord of the calibration point.</param>
+        /// <param name="yCoord">The y coord of the calibration point.</param>
+        /// <param name="xCoordLeft">The x coord of the gaze point of the left eye.</param>
+        /// <param name="yCoordLeft">The y coord of the gaze point of the left eye.</param>
+        /// <param name="validityLeft">the validity of gaze point coordinate of the left eye.</param>
+        /// <param name="xCoordRight">The x coord of the gaze point of the right eye.</param>
+        /// <param name="yCoordRight">The y coord of the gaze point of the right eye.</param>
+        /// <param name="validityRight">the validity of gaze point coordinate of the right eye.</param>
+        public CalibrationDataArgs(double xCoord, double yCoord, double xCoordLeft, double yCoordLeft, CalibrationEyeValidity validityLeft, double xCoordRight, double yCoordRight, CalibrationEyeValidity validityRight)
+        {
+            _xCoord = xCoord;
+            _yCoord = yCoord;
+            _xCoordLeft = xCoordLeft;
+            _yCoordLeft = yCoordLeft;
+            _validityLeft = validityLeft;
+            _xCoordRight = xCoordRight;
+            _yCoordRight = yCoordRight;
+            _validityRight = validityRight;
+        }
     }
 }

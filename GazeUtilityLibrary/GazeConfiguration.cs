@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace GazeUtilityLibrary
 {
+    public enum EOutputType
+    {
+        gaze,
+        calibration
+    }
+
     public class GazeConfiguration
     {
         private ConfigItem? _config;
@@ -16,9 +22,9 @@ namespace GazeUtilityLibrary
         private TrackerLogger _logger;
         private GazeConfigError _error = new GazeConfigError();
         private string _starttime;
-        private StreamWriter? _sw = null;
+        private StreamWriter? _swGaze = null;
+        private StreamWriter? _swCalibration = null;
         private JsonConfigParser _parser;
-        private string? _outputFilePath;
         public GazeConfiguration(TrackerLogger logger)
         {
             _logger = logger;
@@ -34,7 +40,6 @@ namespace GazeUtilityLibrary
             {
                 return false;
             }
-            _outputFilePath = $"{_config!.DataLogPath}\\out";
 
             // check configuration name
             if (!ConfigChecker.CheckConfigName(_config!.ConfigName, _logger))
@@ -49,19 +54,25 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Createa and Opens a data stream to a file where gaze data will be stored.
         /// </summary>
-        private void InitGazeOutputFile()
+        private StreamWriter? InitOutputFile(string path)
         {
+            StreamWriter? sw = null;
             try
             {
-                _sw = new StreamWriter($"{_outputFilePath}");
-                FileInfo fi = new FileInfo($"{_outputFilePath}");
-                _outputFilePath = fi.FullName;
-                _logger.Info($"Writing gaze data to \"{_outputFilePath}\"");
+                sw = new StreamWriter($"{path}");
+                FileInfo fi = new FileInfo($"{path}");
+                _logger.Info($"Writing data to \"{getFileSwFullPath(sw)}\"");
             }
             catch (Exception e)
             {
-                _logger.Error($"Failed to open file {_outputFilePath}: {e.Message}");
+                _logger.Error($"Failed to open file {path}: {e.Message}");
             }
+            return sw;
+        }
+
+        private string getFileSwFullPath(StreamWriter sw)
+        {
+            return ((FileStream)(sw.BaseStream)).Name;
         }
 
         private void ReportUninitalisedConfig()
@@ -69,7 +80,7 @@ namespace GazeUtilityLibrary
             _logger.Error($"Configuration not initialized: Call InitConfig on the GazeConfiguration instance");
         }
 
-        public bool CleanupOutputFile(string error)
+        public bool CleanupGazeOutputFile(string error)
         {
             if (_config == null)
             {
@@ -79,10 +90,29 @@ namespace GazeUtilityLibrary
             {
                 return true;
             }
-            _sw?.Close();
-            _sw?.Dispose();
-            _sw = null;
-            File.Move(_outputFilePath!, $"{_outputFilePath}{error}.txt");
+            string path = getFileSwFullPath(_swGaze!);
+            _swGaze?.Close();
+            _swGaze?.Dispose();
+            _swGaze = null;
+            File.Move(path, $"{path}{error}.txt");
+            return true;
+        }
+
+        public bool CleanupCalibrationOutputFile(string error)
+        {
+            if (_config == null)
+            {
+                return false;
+            }
+            if (!_config.CalibrationLogWriteOutput)
+            {
+                return true;
+            }
+            string path = getFileSwFullPath(_swCalibration!);
+            _swCalibration?.Close();
+            _swCalibration?.Dispose();
+            _swCalibration = null;
+            File.Move(path, $"{path}{error}.txt", true);
             return true;
         }
 
@@ -119,7 +149,7 @@ namespace GazeUtilityLibrary
             return true;
         }
 
-        public bool PrepareOutputFile()
+        public bool PrepareGazeOutputFile()
         {
             if (_config == null)
             {
@@ -131,8 +161,8 @@ namespace GazeUtilityLibrary
                 return true;
             }
 
-            string gazeFilePostfix = $"{Environment.MachineName}_{_config.ConfigName}_gaze";
-            string gazeFileName = $"{_starttime}_{gazeFilePostfix}";
+            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}_{EOutputType.gaze.ToString()}";
+            string fileName = $"{_starttime}_{filePostfix}";
 
             // create gaze data file
             if (_config.DataLogPath == "")
@@ -140,16 +170,16 @@ namespace GazeUtilityLibrary
                 _config.DataLogPath = Directory.GetCurrentDirectory();
             }
 
-            _outputFilePath = $"{_config.DataLogPath}\\{gazeFileName}";
-            InitGazeOutputFile();
-            if (_sw == null)
+            string outputFilePath = $"{_config.DataLogPath}\\{fileName}";
+            _swGaze = InitOutputFile(outputFilePath);
+            if (_swGaze == null)
             {
                 // something went wrong, write to the current directory
                 _config.DataLogPath = Directory.GetCurrentDirectory();
-                _outputFilePath = $"{_config.DataLogPath}\\{gazeFileName}";
-                _logger.Warning($"Writing gaze data to the current directory: \"{_outputFilePath}\"");
+                outputFilePath = $"{_config.DataLogPath}\\{fileName}";
+                _logger.Warning($"Writing gaze data to the current directory: \"{outputFilePath}\"");
                 _error.Error = EGazeConfigError.FallbackToCurrentOutputDir;
-                _sw = new StreamWriter(gazeFileName);
+                _swGaze = new StreamWriter(outputFilePath);
             }
 
             // check output data format
@@ -171,30 +201,102 @@ namespace GazeUtilityLibrary
                 _logger.Warning($"Using the default output format for gaze origin values: \"{_config.DataLogFormatOrigin}\"");
                 _error.Error = EGazeConfigError.FallbackToDefaultOriginFormat;
             }
-            if (!ConfigChecker.CheckDataLogColumnOrder(_config.DataLogColumnOrder, _logger))
+            if (!ConfigChecker.CheckLogColumnOrder<GazeOutputValue>(_config.DataLogColumnOrder, _logger))
             {
                 _config.DataLogColumnOrder = _default_config.DataLogColumnOrder;
                 _logger.Warning($"Using the default column order: \"{_config.DataLogColumnOrder}\"");
                 _error.Error = EGazeConfigError.FallbackToDefualtColumnOrder;
             }
-            if (!ConfigChecker.CheckDataLogColumnTitles(_config.DataLogColumnOrder, _config.DataLogColumnTitle, _logger))
+            if (!ConfigChecker.CheckLogColumnTitles(_config.DataLogColumnOrder, _config.DataLogColumnTitle, _logger))
             {
                 _logger.Warning($"Column titles are omitted");
                 _error.Error = EGazeConfigError.OmitColumnTitles;
             }
 
+            // write titles
+            _swGaze?.WriteLine(String.Format(_config.DataLogColumnOrder, _config.DataLogColumnTitle));
+
             // delete old files
-            DeleteOldGazeLogFiles(_config.DataLogPath, _config.DataLogCount, $"*_{gazeFilePostfix}");
+            DeleteOldGazeLogFiles(_config.DataLogPath, _config.DataLogCount, $"*_{filePostfix}");
             return true;
         }
 
-        public void WriteToOutput(string[] formatted_values)
+        public bool PrepareCalibrationOutputFile()
+        {
+            if (_config == null)
+            {
+                ReportUninitalisedConfig();
+                return false;
+            }
+            if (!_config.CalibrationLogWriteOutput)
+            {
+                return true;
+            }
+
+            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}_{EOutputType.calibration.ToString()}";
+            string fileName = $"{_starttime}_{filePostfix}";
+
+            // create gaze data file
+            if (_config.DataLogPath == "")
+            {
+                _config.DataLogPath = Directory.GetCurrentDirectory();
+            }
+
+            string outputFilePath = $"{_config.DataLogPath}\\{fileName}";
+            _swCalibration = InitOutputFile(outputFilePath);
+            if (_swCalibration == null)
+            {
+                // something went wrong, write to the current directory
+                _config.DataLogPath = Directory.GetCurrentDirectory();
+                outputFilePath = $"{_config.DataLogPath}\\{fileName}";
+                _logger.Warning($"Writing calibration data to the current directory: \"{outputFilePath}\"");
+                _error.Error = EGazeConfigError.FallbackToCurrentOutputDir;
+                _swCalibration = new StreamWriter(outputFilePath);
+            }
+
+            // check output data format
+            if (!ConfigChecker.CheckDataLogFormat(1.000000, _config.DataLogFormatNormalizedPoint, _logger))
+            {
+                _config.DataLogFormatNormalizedPoint = _default_config.DataLogFormatNormalizedPoint;
+                _logger.Warning($"Using the default output format for normaliyed point values: \"{_config.DataLogFormatNormalizedPoint}\"");
+                _error.Error = EGazeConfigError.FallbackToDefaultOriginFormat;
+            }
+            if (!ConfigChecker.CheckLogColumnOrder<CalibrationOutputValue>(_config.CalibrationLogColumnOrder, _logger))
+            {
+                _config.CalibrationLogColumnOrder = _default_config.CalibrationLogColumnOrder;
+                _logger.Warning($"Using the default column order: \"{_config.CalibrationLogColumnOrder}\"");
+                _error.Error = EGazeConfigError.FallbackToDefualtColumnOrder;
+            }
+            if (!ConfigChecker.CheckLogColumnTitles(_config.CalibrationLogColumnOrder, _config.CalibrationLogColumnTitle, _logger))
+            {
+                _logger.Warning($"Column titles are omitted");
+                _error.Error = EGazeConfigError.OmitColumnTitles;
+            }
+
+            // write titles
+            _swCalibration?.WriteLine(String.Format(_config.CalibrationLogColumnOrder, _config.CalibrationLogColumnTitle));
+
+            // delete old files
+            DeleteOldGazeLogFiles(_config.DataLogPath, _config.DataLogCount, $"*_{filePostfix}");
+            return true;
+        }
+
+        public void WriteToGazeOutput(string[] formatted_values)
         {
             if (_config == null)
             {
                 return;
             }
-            _sw?.WriteLine(String.Format(_config.DataLogColumnOrder, formatted_values));
+            _swGaze?.WriteLine(String.Format(_config.DataLogColumnOrder, formatted_values));
+        }
+
+        public void WriteToCalibrationOutput(string[] formatted_values)
+        {
+            if (_config == null)
+            {
+                return;
+            }
+            _swCalibration?.WriteLine(String.Format(_config.CalibrationLogColumnOrder, formatted_values));
         }
     }
 }
