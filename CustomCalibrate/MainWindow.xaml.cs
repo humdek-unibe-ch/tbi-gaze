@@ -20,7 +20,6 @@ namespace CustomCalibrate
         private GazeConfiguration _config;
         private GazeDataError _error = new GazeDataError();
         private CalibrationModel _calibrationModel;
-        private ScreenBasedCalibration? _screenBasedCalibration = null;
         private EyeTrackerPro? _tracker;
         private List<NormalizedPoint2D> _pointsToCalibrate = new List<NormalizedPoint2D>();
         private bool _restartCalibration = true;
@@ -85,7 +84,6 @@ namespace CustomCalibrate
                 return false;
             }
 
-            _screenBasedCalibration = new ScreenBasedCalibration(_tracker.Device);
             _tracker.Device.UserPositionGuideReceived += OnUserPositionGuideReceived;
 
             return true;
@@ -143,9 +141,9 @@ namespace CustomCalibrate
                 return;
             }
 
-            if (_screenBasedCalibration == null)
+            if (_tracker == null)
             {
-                throw new Exception("Screenbased calibration is not initialised");
+                throw new Exception("No tracker connected.");
             }
 
             if (!_config.PrepareCalibrationOutputFile())
@@ -156,15 +154,16 @@ namespace CustomCalibrate
             _calibrationModel.InitCalibration();
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataCollection;
 
-            await _screenBasedCalibration.EnterCalibrationModeAsync();
+            ScreenBasedCalibration screenBasedCalibration = new ScreenBasedCalibration(_tracker.Device);
+            await screenBasedCalibration.EnterCalibrationModeAsync();
 
-            await CollectCalibrationData(_screenBasedCalibration);
+            await CollectCalibrationData(screenBasedCalibration);
 
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.Computing;
 
             Tobii.Research.CalibrationResult calibrationResult;
 
-            calibrationResult = await _screenBasedCalibration.ComputeAndApplyAsync();
+            calibrationResult = await screenBasedCalibration.ComputeAndApplyAsync();
 
             _logger.Info($"Calibration returned {calibrationResult.Status} and collected {calibrationResult.CalibrationPoints.Count} points.");
 
@@ -192,7 +191,7 @@ namespace CustomCalibrate
             _calibrationModel.SetCalibrationResult(calibrationResult.CalibrationPoints);
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataResult;
 
-            await _screenBasedCalibration.LeaveCalibrationModeAsync();
+            await screenBasedCalibration.LeaveCalibrationModeAsync();
 
             _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
         }
@@ -224,7 +223,6 @@ namespace CustomCalibrate
         {
             _logger.Info("Connection to the device enabled");
             _calibrationModel.Error = "No Error";
-            //_calibrationModel.OnCalibrationEvent(CalibrationEventType.Start);
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.HeadPosition;
         }
 

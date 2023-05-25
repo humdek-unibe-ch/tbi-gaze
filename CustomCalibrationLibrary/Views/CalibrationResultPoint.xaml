@@ -24,38 +24,41 @@
                 />
             </ContentControl.RenderTransform>
         </ContentControl>
-        <Ellipse
-            Style="{StaticResource AverageGazePoint}"
-            RenderTransformOrigin="0.5, 0.5"
-        >
-            <Ellipse.RenderTransform>
+        <Grid>
+            <Ellipse
+                Style="{StaticResource AverageGazePoint}"
+                RenderTransformOrigin="0.5, 0.5"
+            />
+            <Grid.RenderTransform>
                 <TranslateTransform
                     X="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
                     Y="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
-            </Ellipse.RenderTransform>
-        </Ellipse>
-        <Ellipse
-            RenderTransformOrigin="0.5, 0.5"
-            Style="{StaticResource LeftGazePoint}"
-        >
-            <Ellipse.RenderTransform>
+            </Grid.RenderTransform>
+        </Grid>
+        <Grid>
+            <Ellipse
+                RenderTransformOrigin="0.5, 0.5"
+                Style="{StaticResource LeftGazePoint}"
+            />
+            <Grid.RenderTransform>
                 <TranslateTransform
                     X="{Binding GazePositionLeft.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
                     Y="{Binding GazePositionLeft.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
-            </Ellipse.RenderTransform>
-        </Ellipse>
-        <Ellipse
-            RenderTransformOrigin="0.5, 0.5"
-            Style="{StaticResource RightGazePoint}"
-        >
-            <Ellipse.RenderTransform>
+            </Grid.RenderTransform>
+        </Grid>
+        <Grid>
+            <Ellipse
+                RenderTransformOrigin="0.5, 0.5"
+                Style="{StaticResource RightGazePoint}"
+            />
+            <Grid.RenderTransform>
                 <TranslateTransform
                     X="{Binding GazePositionRight.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
                     Y="{Binding GazePositionRight.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
-            </Ellipse.RenderTransform>
-        </Ellipse>
+            </Grid.RenderTransform>
+        </Grid>
     </Grid>
 </UserControl>

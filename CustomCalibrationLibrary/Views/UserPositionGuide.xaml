@@ -2,48 +2,92 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:CustomCalibrationLibrary.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
+      xmlns:ui="http://schemas.modernwpf.com/2019" xmlns:views="clr-namespace:CustomCalibrationLibrary.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="UserPositionGuide"
       Background="Black">
     <Page.Resources>
         <ResourceDictionary>
+            <converter:CenterConverter x:Key="CenterConverter" />
             <converter:PositionConverter x:Key="PositionConverter" />
+            <converter:PointPositionConverter x:Key="PointPositionConverter" />
+            <converter:ProximityColorConverter x:Key="ProximityColorConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+                <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Styles/CenterTransform.xaml" />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
     <Grid>
-        <Ellipse
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            RenderTransformOrigin="0.5, 0.5"
-            Height="50"
-            Width="50"
-            Fill="White"
-        >
-            <Ellipse.RenderTransform>
-                <TranslateTransform
-                    X="{Binding Left.UserPosition.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                    Y="{Binding Left.UserPosition.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                />
-            </Ellipse.RenderTransform>
-        </Ellipse>
-        <Ellipse
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            RenderTransformOrigin="0.5, 0.5"
-            Fill="White"
-            Height="50"
-            Width="50"
-        >
-            <Ellipse.RenderTransform>
-                <TranslateTransform
-                    X="{Binding Right.UserPosition.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                    Y="{Binding Right.UserPosition.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                />
-            </Ellipse.RenderTransform>
-        </Ellipse>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <StackPanel Margin="10" HorizontalAlignment="Center">
+                <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                    User Position Guide
+                </TextBlock>
+                <TextBlock Foreground="White">
+                    Position your head such that the two dots appear in the center of the screen and light up green.
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+        <Viewbox Stretch="Uniform" Grid.Row="1">
+            <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
+                <Grid>
+                    <Ellipse
+                        Style="{StaticResource CenterTransform}"
+                        RenderTransformOrigin="0.5, 0.5"
+                        Height="5cm"
+                        Width="5cm"
+                        Fill="{Binding Left.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
+                    />
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Left.UserPosition.Z}" ScaleY="{Binding Left.UserPosition.Z}" />
+                            <TranslateTransform
+                                X="{Binding Left.UserPosition.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding Left.UserPosition.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                            />
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                </Grid>
+                <Grid>
+                    <Ellipse
+                        Style="{StaticResource CenterTransform}"
+                        RenderTransformOrigin="0.5, 0.5"
+                        Fill="{Binding Right.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
+                        Height="5cm"
+                        Width="5cm"
+                    />
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Right.UserPosition.Z}" ScaleY="{Binding Right.UserPosition.Z}" />
+                            <TranslateTransform
+                                X="{Binding Right.UserPosition.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding Right.UserPosition.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                            />
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                </Grid>
+            </Canvas>
+        </Viewbox>
+        <Grid Grid.Row="2" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <DockPanel Margin="10" HorizontalAlignment="Right">
+                <Button ui:ThemeManager.RequestedTheme="Dark" Click="OnCalibrationAbort">
+                    Abort Calibration
+                </Button>
+                <Button ui:ThemeManager.RequestedTheme="Dark" Margin="10,0,0,0" Style="{ui:ThemeResource AccentButtonStyle}" Click="OnCalibrationStart">
+                    Start Calibration
+                </Button>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Page>

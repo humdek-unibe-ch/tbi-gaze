@@ -1,12 +1,9 @@
-﻿using CustomCalibrationLibrary.ViewModels;
-using GazeUtilityLibrary;
+﻿using GazeUtilityLibrary;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Markup;
 using Tobii.Research;
 
 namespace CustomCalibrationLibrary.Models
@@ -108,9 +105,7 @@ namespace CustomCalibrationLibrary.Models
         public event EventHandler<CalibrationEventType>? CalibrationEvent;
         public void OnCalibrationEvent(CalibrationEventType type)
         {
-            Application.Current.Dispatcher.Invoke(() => {
-                CalibrationEvent?.Invoke(this, type);
-            });
+            CalibrationEvent?.Invoke(this, type);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -151,12 +146,7 @@ namespace CustomCalibrationLibrary.Models
         }
         private void OnGazePointChanged([CallerMemberName] string? property_name = null)
         {
-            if (Application.Current != null)
-            {
-                Application.Current.Dispatcher.Invoke(() => {
-                    GazePointChanged?.Invoke(this, _gazePoint);
-                });
-            }
+            GazePointChanged?.Invoke(this, _gazePoint);
         }
 
         public event EventHandler<UserPositionGuideEventArgs>? UserPositionGuideChanged;
@@ -168,12 +158,7 @@ namespace CustomCalibrationLibrary.Models
         }
         private void OnUserPositionGuideChanged([CallerMemberName] string? property_name = null)
         {
-            if (Application.Current != null)
-            {
-                Application.Current.Dispatcher.Invoke(() => {
-                    UserPositionGuideChanged?.Invoke(this, _userPositionGuide);
-                });
-            }
+            UserPositionGuideChanged?.Invoke(this, _userPositionGuide);
         }
 
         private int _index = -1;
@@ -199,6 +184,10 @@ namespace CustomCalibrationLibrary.Models
             _points[7] = new Point(Center.X, 1 - YDelta); // bottom middle
             _status = CalibrationStatus.DataCollection;
             _gazePoint = new GazePoint();
+            _userPositionGuide = new UserPositionGuideEventArgs(
+                new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid),
+                new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid)
+            );
         }
 
         public void InitCalibration()

@@ -1,5 +1,6 @@
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CustomCalibrationLibrary.Views
@@ -15,6 +16,15 @@ namespace CustomCalibrationLibrary.Views
             InitializeComponent();
             _model = model;
             DataContext = new UserPositionGuideViewModel(_model);
+        }
+        private void OnCalibrationAbort(object sender, RoutedEventArgs e)
+        {
+            _model.OnCalibrationEvent(CalibrationEventType.Abort);
+        }
+
+        private void OnCalibrationStart(object sender, RoutedEventArgs e)
+        {
+            _model.OnCalibrationEvent(CalibrationEventType.Start);
         }
     }
 }

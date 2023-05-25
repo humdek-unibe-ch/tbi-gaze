@@ -1,5 +1,6 @@
 ﻿using CustomCalibrationLibrary.Models;
 using System.ComponentModel;
+using System.Windows;
 using System.Runtime.CompilerServices;
 using Tobii.Research;
 
@@ -21,6 +22,7 @@ namespace CustomCalibrationLibrary.ViewModels
             get { return _right; }
             set { _right = value; OnPropertyChanged(); }
         }
+
         /// <summary>
         /// Called when when the state property of EyeTracker is changing.
         /// </summary>
@@ -43,10 +45,18 @@ namespace CustomCalibrationLibrary.ViewModels
             {
                 return;
             }
-            NormalizedPoint3D point = position.LeftEye.UserPosition;
-            Left = new UserPositionGuide(new NormalizedPoint3D(1 - point.X, point.Y, point.Z), position.LeftEye.Validity);
-            point = position.RightEye.UserPosition;
-            Right = new UserPositionGuide(new NormalizedPoint3D(1 - point.X, point.Y, point.Z), position.RightEye.Validity);
+            NormalizedPoint3D left = new NormalizedPoint3D(
+                1 - position.LeftEye.UserPosition.X,
+                position.LeftEye.UserPosition.Y,
+                1 - position.LeftEye.UserPosition.Z
+            );
+            NormalizedPoint3D right = new NormalizedPoint3D(
+                1 - position.RightEye.UserPosition.X,
+                position.RightEye.UserPosition.Y,
+                1 - position.RightEye.UserPosition.Z
+            );
+            Left = new UserPositionGuide(left, position.LeftEye.Validity);
+            Right = new UserPositionGuide(right, position.RightEye.Validity);
         }
     }
 }

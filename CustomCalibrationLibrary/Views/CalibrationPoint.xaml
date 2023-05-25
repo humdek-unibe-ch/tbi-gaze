@@ -9,6 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:PositionConverter x:Key="PositionConverter" />
+        <converter:CenterConverter x:Key="CenterConverter" />
         <Style x:Key="CalibrationPoint" TargetType="{x:Type Ellipse}">
             <Setter Property="Width" Value="20" />
             <Setter Property="Height" Value="20" />
@@ -23,6 +24,10 @@
                     <TransformGroup>
                         <RotateTransform Angle="0"/>
                         <ScaleTransform CenterX="0" CenterY="0" ScaleX="1.0" ScaleY="1.0" />
+                        <TranslateTransform
+                            X="-10"
+                            Y="-10"
+                        />
                     </TransformGroup>
                 </Setter.Value>
             </Setter>

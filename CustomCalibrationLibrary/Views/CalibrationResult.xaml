@@ -98,19 +98,21 @@
                 </DockPanel>
             </Grid>
         </Grid>
-        <Ellipse
-            Visibility="{Binding GazePoint.Visibility}"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            RenderTransformOrigin="0.5, 0.5"
-            Style="{StaticResource LiveGazePoint}"
-        >
-            <Ellipse.RenderTransform>
+        <Grid>
+            <Ellipse
+                Visibility="{Binding GazePoint.Visibility}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                RenderTransformOrigin="0.5, 0.5"
+                Style="{StaticResource LiveGazePoint}"
+            >
+            </Ellipse>
+            <Grid.RenderTransform>
                 <TranslateTransform
                     X="{Binding GazePoint.X}"
                     Y="{Binding GazePoint.Y}"
                 />
-            </Ellipse.RenderTransform>
-        </Ellipse>
+            </Grid.RenderTransform>
+        </Grid>
     </Grid>
 </Page>
