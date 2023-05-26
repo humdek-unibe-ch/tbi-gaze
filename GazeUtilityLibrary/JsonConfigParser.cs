@@ -41,8 +41,6 @@ namespace GazeUtilityLibrary
         public bool DataLogWriteOutput { get; set; }
         [JsonProperty(Required = Required.Always)]
         public bool CalibrationLogWriteOutput { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public int GazeFilterCore { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
         [JsonProperty(Required = Required.Always)]
@@ -148,7 +146,6 @@ namespace GazeUtilityLibrary
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;
             CalibrationLogWriteOutput = true;
-            GazeFilterCore = 0;
             MouseControl = true;
             MouseHide = false;
             MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur";

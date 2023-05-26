@@ -64,6 +64,11 @@ namespace TobiiCalibrate
             }
         }
 
+        /// <summary>
+        /// Start the Tobii calibration tool.
+        /// </summary>
+        /// <param name="executablePath">The path to the executable.</param>
+        /// <param name="arguments">The arguments with which the executable will be invoked.</param>
         private void StartCalibration(string executablePath, string arguments)
         {
             _logger.Info($"Starting Tobii eyetracker calibration \"{executablePath} {arguments}\"");
@@ -96,7 +101,7 @@ namespace TobiiCalibrate
                     }
                 }
             }
-            Application.Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
+            Current.Dispatcher.Invoke(callback: () => { Application.Current.Shutdown(); });
         }
     }
 }

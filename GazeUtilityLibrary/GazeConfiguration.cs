@@ -33,6 +33,10 @@ namespace GazeUtilityLibrary
             _default_config = _parser.GetDefaultConfig();
         }
 
+        /// <summary>
+        /// Initialise the gaze configuration by parsing and checking the configuration file.
+        /// </summary>
+        /// <returns>True on success, False on failure.</returns>
         public bool InitConfig()
         {
             _config = _parser.ParseJsonConfig();
@@ -70,16 +74,29 @@ namespace GazeUtilityLibrary
             return sw;
         }
 
+        /// <summary>
+        /// Get the full path given a stream writer instance.
+        /// </summary>
+        /// <param name="sw">The stream writer instance.</param>
+        /// <returns>The full path string.</returns>
         private string getFileSwFullPath(StreamWriter sw)
         {
             return ((FileStream)(sw.BaseStream)).Name;
         }
 
+        /// <summary>
+        /// Writes a log message if the configuration was not initialised.
+        /// </summary>
         private void ReportUninitalisedConfig()
         {
             _logger.Error($"Configuration not initialized: Call InitConfig on the GazeConfiguration instance");
         }
 
+        /// <summary>
+        /// Close the gaze outputfile and rename it by appending error codes.
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns>True on success, False on failure.</returns>
         public bool CleanupGazeOutputFile(string error)
         {
             if (_config == null)
@@ -98,6 +115,11 @@ namespace GazeUtilityLibrary
             return true;
         }
 
+        /// <summary>
+        /// Close the calibration outputfile and rename it by appending error codes.
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns>True on success, False on failure.</returns>
         public bool CleanupCalibrationOutputFile(string error)
         {
             if (_config == null)
@@ -137,6 +159,10 @@ namespace GazeUtilityLibrary
             }
         }
 
+        /// <summary>
+        /// Dump current configuration to the disk.
+        /// </summary>
+        /// <returns>True on success, False on failure.</returns>
         public bool DumpCurrentConfigurationFile()
         {
             if (_config == null)
@@ -149,6 +175,10 @@ namespace GazeUtilityLibrary
             return true;
         }
 
+        /// <summary>
+        /// Prepare the gaze output file based on the configuration.
+        /// </summary>
+        /// <returns>True on success, False on failure.</returns>
         public bool PrepareGazeOutputFile()
         {
             if (_config == null)
@@ -221,6 +251,10 @@ namespace GazeUtilityLibrary
             return true;
         }
 
+        /// <summary>
+        /// Prepare the calibration output file based on the configuration.
+        /// </summary>
+        /// <returns>True on success, False on failure.</returns>
         public bool PrepareCalibrationOutputFile()
         {
             if (_config == null)
@@ -281,6 +315,10 @@ namespace GazeUtilityLibrary
             return true;
         }
 
+        /// <summary>
+        /// Write to the gaze output file
+        /// </summary>
+        /// <param name="formatted_values">The list of formatted values to be written to the file.</param>
         public void WriteToGazeOutput(string[] formatted_values)
         {
             if (_config == null)
@@ -290,6 +328,10 @@ namespace GazeUtilityLibrary
             _swGaze?.WriteLine(String.Format(_config.DataLogColumnOrder, formatted_values));
         }
 
+        /// <summary>
+        /// Write to the calibration output file
+        /// </summary>
+        /// <param name="formatted_values">The list of formatted values to be written to the file.</param>
         public void WriteToCalibrationOutput(string[] formatted_values)
         {
             if (_config == null)

@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO.Pipes;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using GazeUtilityLibrary;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace GazeToMouse
 {
@@ -26,9 +30,14 @@ namespace GazeToMouse
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected override void OnStartup(StartupEventArgs e)
+        private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             _logger = new TrackerLogger();
+
+            Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+            dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
+            new Thread(HandleTerminationSignal).Start(dispatcher);
+
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
 
             _config = new GazeConfiguration(_logger);
@@ -74,9 +83,49 @@ namespace GazeToMouse
             {
                 _tracker = new MouseTracker(_logger, _config.Config.ReadyTimer);
             }
+            else
+            {
+                _logger.Error($"Unknown tracker configuration option {_config.Config.TrackerDevice}");
+                return;
+            }
             _tracker.GazeDataReceived += OnGazeDataReceived;
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;
+        }
+
+        /// <summary>
+        /// Called when application shutdown is triggered through pipe.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void OnDispatcherShutdownStarted(object? sender, EventArgs e)
+        {
+            Cleanup();  
+        }
+
+        /// <summary>
+        /// Handler passed to the thread which listens to the termination signal.
+        /// </summary>
+        /// <param name="data">The context passed to the handler.</param>
+        private void HandleTerminationSignal(object? data)
+        {
+            Dispatcher? dispatcher = (Dispatcher?)data;
+            string pipeName = "tobii_gaze";
+            using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In))
+            {
+                // Wait for a client to connect
+                pipeServer.WaitForConnection();
+                using (StreamReader sr = new StreamReader(pipeServer))
+                {
+                    string? msg = null;
+                    do
+                    {
+                        msg = sr.ReadLine();
+                    }
+                    while (msg == null || !msg.StartsWith("TERMINATE"));
+                    dispatcher?.InvokeShutdown();
+                }
+            }
         }
 
         /// <summary>
@@ -84,9 +133,16 @@ namespace GazeToMouse
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected override void OnExit(ExitEventArgs e)
+        private void OnApplicationExit(object? sender, ExitEventArgs e)
         {
-            base.OnExit(e);
+            Cleanup();
+        }
+
+        /// <summary>
+        /// Prforms application cleanup duties.
+        /// </summary>
+        private void Cleanup()
+        {
             if (_config != null && _config.Config.MouseControl && _config.Config.MouseHide)
             {
                 _hider?.ShowCursor(_config.Config.MouseStandardIconPath);

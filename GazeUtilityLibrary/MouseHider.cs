@@ -67,6 +67,11 @@ namespace GazeUtilityLibrary
             }
         }
 
+        /// <summary>
+        /// Load a mouse cursor given a path to the cursor file.
+        /// </summary>
+        /// <param name="pathToCur">Path to the cursor file.</param>
+        /// <returns></returns>
         private bool LoadCursor(string pathToCur)
         {
             IntPtr hcur = LoadCursorFromFile(pathToCur);

@@ -50,12 +50,21 @@ namespace CustomCalibrate
             }
         }
 
+        /// <summary>
+        /// Is called on application shutdown.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnApplicationShutdown(object sender, CancelEventArgs e)
         {
             _tracker?.Dispose();
             _logger?.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibration.exe\" terminated gracefully{Environment.NewLine}");
         }
 
+        /// <summary>
+        /// Initialise the eye tracker device.
+        /// </summary>
+        /// <returns></returns>
         private bool Init()
         {
             if (!_config.InitConfig())
@@ -97,12 +106,21 @@ namespace CustomCalibrate
             return true;
         }
 
+        /// <summary>
+        /// Sets the error property and logs the error message
+        /// </summary>
+        /// <param name="error">The error message.</param>
         private void HandleCalibrationError(string error)
         {
             _calibrationModel.Error = error;
             _logger.Error(_calibrationModel.Error);
         }
 
+        /// <summary>
+        /// Collect the calibration data.
+        /// </summary>
+        /// <param name="calibration">The Tobii calibration object.</param>
+        /// <returns></returns>
         private async Task CollectCalibrationData(ScreenBasedCalibration calibration)
         {
             // Collect data.
@@ -142,6 +160,11 @@ namespace CustomCalibrate
             }
         }
 
+        /// <summary>
+        /// Calibrat the eyetracker.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         private async Task Calibrate()
         {
             if (!_restartCalibration)
@@ -217,6 +240,11 @@ namespace CustomCalibrate
             }
         }
 
+        /// <summary>
+        /// Called when user position data is received.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnUserPositionGuideReceived(object? sender, UserPositionGuideEventArgs e)
         {
             _calibrationModel.UserPositionGuide = e;
