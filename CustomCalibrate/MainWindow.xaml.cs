@@ -68,7 +68,15 @@ namespace CustomCalibrate
                 return false;
             }
 
-            _tracker = new EyeTrackerPro(_logger, _config.Config.ReadyTimer, _config.Config.LicensePath);
+            try
+            {
+                _tracker = new EyeTrackerPro(_logger, _config.Config.ReadyTimer, _config.Config.LicensePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warning($"Failed to instantiate Tobii Pro SDK: {ex.Message}");
+                return false;
+            }
             if (!_tracker.IsLicenseOk())
             {
                 return false;
