@@ -2,10 +2,11 @@
 
 This repository contains the source code for multiple simple tools that allow to control a Tobii eye tracker from a 3rd party application.
 Specifically, this project aims at providing a set of executables that can be called from within [ztree](http://www.ztree.uzh.ch/en.html) to allow eye tracker support for economic experiments.
-For more details please refer to the [documentation](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
+
+[**needs update**] For more details please refer to the [documentation](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
 
 ## Installation
-The complete toolset package can be downloaded from the [release folder](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
+The complete toolset package can be downloaded from the [release folder](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
 The package contains the following executables:
 
  - **CustomCalibrate.exe** launches the custom calibration tool
@@ -28,11 +29,11 @@ Further, the Tobii engine must be running and the eye tracker must be enabled.
 To install the driver for the [Tobii Eye Tracker 4c](https://tobiigaming.com/eye-tracker-4c/) install [Tobii Experience Driver](https://files.update.tech.tobii.com/Tobii.IS4C.Offline.Installer_4.124.0.15937.msi).
 
 This will start the following services:
-- `Tobii Rntime Service`
+- `Tobii Runtime Service`
 - `Tobii Service`
 
 and the following processs:
-- `Tobii Interaction Engin
+- `Tobii Interaction Engine`
 
 ### Tobii Pro Spark
 To install the driver for the [Tobii Pro Spark](https://www.tobii.com/products/eye-trackers/screen-based/tobii-pro-spark) use the [Tobii Pro Eye Tracker Manager](https://www.tobii.com/products/software/applications-and-developer-kits/tobii-pro-eye-tracker-manager):
@@ -45,7 +46,7 @@ This starts the service `Tobii Pro Spark Runtime`.
 
 ### ztree
 
-For quick starters, a simple [``ztree`` sample program](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/sample/template.ztt) is available.
+For quick starters, a simple [``ztree`` sample program](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/sample/template.ztt) is available.
 
 ## Release Notes
-Information about the releases can be found in the [CHANGELOG](http://tpf.fluido.as:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/CHANGELOG.md)
+Information about the releases can be found in the [CHANGELOG](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/CHANGELOG.md)
