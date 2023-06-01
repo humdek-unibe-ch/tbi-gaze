@@ -19,12 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomCalibrationLibrary", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeUtilityLibrary", "GazeUtilityLibrary\GazeUtilityLibrary.csproj", "{79F4BEAA-9E92-4079-874C-452D5E7E9F78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeToMouse", "GazeToMouse\GazeToMouse.csproj", "{30FC25E0-A2A2-4D9A-B65B-E9CD95FED2EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gaze", "GazeToMouse\Gaze.csproj", "{30FC25E0-A2A2-4D9A-B65B-E9CD95FED2EF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{79F4BEAA-9E92-4079-874C-452D5E7E9F78} = {79F4BEAA-9E92-4079-874C-452D5E7E9F78}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeToMouseClose", "GazeToMouseClose\GazeToMouseClose.csproj", "{73B9DD33-E1B2-45FF-85F1-51B69C8BF784}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeClose", "GazeToMouseClose\GazeClose.csproj", "{73B9DD33-E1B2-45FF-85F1-51B69C8BF784}"
 	ProjectSection(ProjectDependencies) = postProject
 		{79F4BEAA-9E92-4079-874C-452D5E7E9F78} = {79F4BEAA-9E92-4079-874C-452D5E7E9F78}
 	EndProjectSection
@@ -33,9 +33,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShowMouse", "ShowMouse\Show
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TobiiCalibrate", "TobiiCalibrate\TobiiCalibrate.csproj", "{27521A82-9393-491A-A4BE-41EDC47E2F9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeToMouseRecordingEnable", "GazeToMouseRecordingEnable\GazeToMouseRecordingEnable.csproj", "{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeRecordingEnable", "GazeToMouseRecordingEnable\GazeRecordingEnable.csproj", "{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeToMouseRecordingDisable", "GazeToMouseRecordingDisable\GazeToMouseRecordingDisable.csproj", "{7282D353-C749-4500-A2B5-BB1D7502AE61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeRecordingDisable", "GazeToMouseRecordingDisable\GazeRecordingDisable.csproj", "{7282D353-C749-4500-A2B5-BB1D7502AE61}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MouseTrackingEnable", "MouseTrackingEnable\MouseTrackingEnable.csproj", "{5E413636-2FAB-4AA2-B13A-B4E531CA237F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseTrackingDisable", "MouseTrackingDisable\MouseTrackingDisable.csproj", "{249DF228-2E50-444B-A3FF-237CC1E807ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,16 +111,32 @@ Global
 		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Debug|x64.Build.0 = Debug|x64
 		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|x64.ActiveCfg = Release|Any CPU
-		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|x64.Build.0 = Release|Any CPU
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|x64.ActiveCfg = Release|x64
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|x64.Build.0 = Release|x64
 		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|x64.ActiveCfg = Debug|x64
 		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|x64.Build.0 = Debug|x64
 		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|x64.ActiveCfg = Release|Any CPU
-		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|x64.Build.0 = Release|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|x64.ActiveCfg = Release|x64
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|x64.Build.0 = Release|x64
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Debug|x64.ActiveCfg = Debug|x64
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Debug|x64.Build.0 = Debug|x64
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Release|x64.ActiveCfg = Release|x64
+		{5E413636-2FAB-4AA2-B13A-B4E531CA237F}.Release|x64.Build.0 = Release|x64
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Debug|x64.ActiveCfg = Debug|x64
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Debug|x64.Build.0 = Debug|x64
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Release|x64.ActiveCfg = Release|x64
+		{249DF228-2E50-444B-A3FF-237CC1E807ED}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

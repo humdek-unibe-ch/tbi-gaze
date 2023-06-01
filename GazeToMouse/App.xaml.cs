@@ -22,6 +22,7 @@ namespace GazeToMouse
         private GazeDataError _error = new GazeDataError();
         private GazeConfiguration? _config = null;
         private bool _isRecording = true;
+        private bool _isMouseTracking = false;
         private Dispatcher? _dispatcher = null;
         public Dispatcher? CurrentDispatcher { get { return _dispatcher; } }
 
@@ -36,6 +37,15 @@ namespace GazeToMouse
         public void GazeRecordingDisable()
         {
             _isRecording = false;
+        }
+        public void MouseTrackingEnable()
+        {
+            _isMouseTracking = true;
+        }
+
+        public void MouseTrackingDisable()
+        {
+            _isMouseTracking = false;
         }
 
         /// <summary>
@@ -77,6 +87,11 @@ namespace GazeToMouse
             if (_config.Config.MouseControl && _config.Config.MouseHide)
             {
                 _hider.HideCursor();
+            }
+
+            if (_config.Config.MouseControl)
+            {
+                _isMouseTracking = true;
             }
 
             // intitialise the tracker device 
@@ -158,6 +173,18 @@ namespace GazeToMouse
                             {
                                 app?.Dispatcher.Invoke(() => {
                                     app?.GazeRecordingEnable();
+                                });
+                            }
+                            else if (msg.StartsWith("MOUSE_TRACKING_DISABLE"))
+                            {
+                                app?.Dispatcher.Invoke(() => {
+                                    app?.MouseTrackingDisable();
+                                });
+                            }
+                            else if (msg.StartsWith("MOUSE_TRACKING_ENABLE"))
+                            {
+                                app?.Dispatcher.Invoke(() => {
+                                    app?.MouseTrackingEnable();
                                 });
                             }
                         }
@@ -296,7 +323,7 @@ namespace GazeToMouse
                 tracking = true;
             }
             // set the cursor position to the gaze position
-            if (_config != null && _config.Config.MouseControl)
+            if (_isMouseTracking)
             {
                 if (double.IsNaN(data.XCoord) || double.IsNaN(data.YCoord)) return;
                 UpdateMousePosition(Convert.ToInt32(data.XCoord), Convert.ToInt32(data.YCoord));
