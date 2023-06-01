@@ -1,10 +1,7 @@
-﻿using System;
-using System.IO.Pipes;
-using System.IO;
+﻿using GazeUtilityLibrary;
 using System.Windows;
-using GazeUtilityLibrary;
 
-namespace GazeToMouseClose
+namespace GazeToMouseRecordingDisable
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -13,7 +10,7 @@ namespace GazeToMouseClose
     {
         public App()
         {
-            NamedPipeClient.SendSignal("TERMINATE");
+            NamedPipeClient.SendSignal("GAZE_RECORDING_DISABLE");
             Current.Shutdown();
         }
     }

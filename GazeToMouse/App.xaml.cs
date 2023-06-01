@@ -21,9 +21,22 @@ namespace GazeToMouse
         private MouseHider? _hider = null;
         private GazeDataError _error = new GazeDataError();
         private GazeConfiguration? _config = null;
+        private bool _isRecording = true;
+        private Dispatcher? _dispatcher = null;
+        public Dispatcher? CurrentDispatcher { get { return _dispatcher; } }
 
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
+
+        public void GazeRecordingEnable()
+        {
+            _isRecording = true;
+        }
+
+        public void GazeRecordingDisable()
+        {
+            _isRecording = false;
+        }
 
         /// <summary>
         /// Called when [application starts].
@@ -34,9 +47,11 @@ namespace GazeToMouse
         {
             _logger = new TrackerLogger();
 
-            Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
-            dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
-            new Thread(HandleTerminationSignal).Start(dispatcher);
+            _dispatcher = Dispatcher.CurrentDispatcher;
+            _dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
+            ThreadPool.QueueUserWorkItem(HandlePipeSignals, this);
+            //Thread server = new Thread(HandlePipeSignals);
+            //server.Start(this);
 
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
 
@@ -107,23 +122,46 @@ namespace GazeToMouse
         /// Handler passed to the thread which listens to the termination signal.
         /// </summary>
         /// <param name="data">The context passed to the handler.</param>
-        private void HandleTerminationSignal(object? data)
+        private void HandlePipeSignals(object? data)
         {
-            Dispatcher? dispatcher = (Dispatcher?)data;
+            App? app = (App?)data;
             string pipeName = "tobii_gaze";
-            using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In))
+
+            while(true)
             {
-                // Wait for a client to connect
-                pipeServer.WaitForConnection();
-                using (StreamReader sr = new StreamReader(pipeServer))
+                using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In))
                 {
-                    string? msg = null;
-                    do
+                    // Wait for a client to connect
+                    pipeServer.WaitForConnection();
+                    using (StreamReader sr = new StreamReader(pipeServer))
                     {
-                        msg = sr.ReadLine();
+                        string? msg = null;
+                        while (true)
+                        {
+                            msg = sr.ReadLine();
+                            if (msg == null)
+                            {
+                                break;
+                            }
+
+                            if (msg.StartsWith("TERMINATE"))
+                            {
+                                app?.Dispatcher.InvokeShutdown();
+                            }
+                            else if (msg.StartsWith("GAZE_RECORDING_DISABLE"))
+                            {
+                                app?.Dispatcher.Invoke(() => {
+                                    app?.GazeRecordingDisable();
+                                });
+                            }
+                            else if (msg.StartsWith("GAZE_RECORDING_ENABLE"))
+                            {
+                                app?.Dispatcher.Invoke(() => {
+                                    app?.GazeRecordingEnable();
+                                });
+                            }
+                        }
                     }
-                    while (msg == null || !msg.StartsWith("TERMINATE"));
-                    dispatcher?.InvokeShutdown();
                 }
             }
         }
@@ -225,9 +263,8 @@ namespace GazeToMouse
         /// <param name="data">The data.</param>
         private void OnGazeDataReceived(Object? sender, GazeDataArgs data)
         {
-
             // write the coordinates to the log file
-            if (_config != null && _config.Config.DataLogWriteOutput && IsDataValid(data, _config.Config.DataLogIgnoreInvalid))
+            if (_isRecording == true && _config != null && _config.Config.DataLogWriteOutput && IsDataValid(data, _config.Config.DataLogIgnoreInvalid))
             {
                 string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
                 formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetGazeDataValueString(data.Timestamp, _config.Config.DataLogFormatTimeStamp);

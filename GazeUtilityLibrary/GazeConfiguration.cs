@@ -321,11 +321,11 @@ namespace GazeUtilityLibrary
         /// <param name="formatted_values">The list of formatted values to be written to the file.</param>
         public void WriteToGazeOutput(string[] formatted_values)
         {
-            if (_config == null)
+            if (_config == null || _swGaze == null || _swGaze.BaseStream == null)
             {
                 return;
             }
-            _swGaze?.WriteLine(String.Format(_config.DataLogColumnOrder, formatted_values));
+            _swGaze.WriteLine(String.Format(_config.DataLogColumnOrder, formatted_values));
         }
 
         /// <summary>

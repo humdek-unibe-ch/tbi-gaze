@@ -33,6 +33,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShowMouse", "ShowMouse\Show
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TobiiCalibrate", "TobiiCalibrate\TobiiCalibrate.csproj", "{27521A82-9393-491A-A4BE-41EDC47E2F9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeToMouseRecordingEnable", "GazeToMouseRecordingEnable\GazeToMouseRecordingEnable.csproj", "{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeToMouseRecordingDisable", "GazeToMouseRecordingDisable\GazeToMouseRecordingDisable.csproj", "{7282D353-C749-4500-A2B5-BB1D7502AE61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +101,22 @@ Global
 		{27521A82-9393-491A-A4BE-41EDC47E2F9F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27521A82-9393-491A-A4BE-41EDC47E2F9F}.Release|x64.ActiveCfg = Release|x64
 		{27521A82-9393-491A-A4BE-41EDC47E2F9F}.Release|x64.Build.0 = Release|x64
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Debug|x64.ActiveCfg = Debug|x64
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Debug|x64.Build.0 = Debug|x64
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C856E80B-BF4E-4790-8D8D-D68A3C291AD5}.Release|x64.Build.0 = Release|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|x64.ActiveCfg = Debug|x64
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Debug|x64.Build.0 = Debug|x64
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|x64.ActiveCfg = Release|Any CPU
+		{7282D353-C749-4500-A2B5-BB1D7502AE61}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
