@@ -178,8 +178,9 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Prepare the gaze output file based on the configuration.
         /// </summary>
+        /// <param name="subjectCode">An optional subject code to be appended to the file name if set.</param>
         /// <returns>True on success, False on failure.</returns>
-        public bool PrepareGazeOutputFile()
+        public bool PrepareGazeOutputFile(string? subjectCode)
         {
             if (_config == null)
             {
@@ -190,8 +191,8 @@ namespace GazeUtilityLibrary
             {
                 return true;
             }
-
-            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}_{EOutputType.gaze.ToString()}";
+            string subjectCodeString = subjectCode != null ? $"_{subjectCode}" : "";
+            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}{subjectCodeString}_{EOutputType.gaze.ToString()}";
             string fileName = $"{_starttime}_{filePostfix}";
 
             // create gaze data file

@@ -6,6 +6,7 @@ using System.Windows;
 using GazeUtilityLibrary;
 using System.Threading;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace GazeToMouse
 {
@@ -57,13 +58,39 @@ namespace GazeToMouse
         {
             _logger = new TrackerLogger();
 
+            string? subjectCode = null;
+            for(int i =0; i < e.Args.Length; i++)
+            {
+                if (e.Args[i].StartsWith("/"))
+                {
+                    switch (e.Args[i].Substring(1))
+                    {
+                        case "subject":
+                            i++;
+                            subjectCode = e.Args[i];
+                            break;
+                    }
+                }
+            }
+            foreach (string arg in e.Args)
+            {
+                if (arg.StartsWith("/"))
+                {
+                    switch (arg.Substring(1))
+                    {
+                        case "subject":
+                            break;
+                    }
+                }
+            }
+
             _dispatcher = Dispatcher.CurrentDispatcher;
             _dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
             ThreadPool.QueueUserWorkItem(HandlePipeSignals, this);
             //Thread server = new Thread(HandlePipeSignals);
             //server.Start(this);
 
-            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\"");
+            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" {String.Join(" ", e.Args)}");
 
             _config = new GazeConfiguration(_logger);
             if (!_config.InitConfig())
@@ -71,7 +98,7 @@ namespace GazeToMouse
                 Current.Shutdown();
                 return;
             }
-            if (!_config.PrepareGazeOutputFile())
+            if (!_config.PrepareGazeOutputFile(subjectCode))
             {
                 Current.Shutdown();
                 return;
