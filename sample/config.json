@@ -1,186 +1,210 @@
 {
-    // Use this parameter to associate the configuration with an experiment. When "GazeToMouse.exe" is
-    // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
-    // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following
-    // file will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
-    // Note that the following characters are not allowed in a file name: <>:"/\|?*
-    "ConfigName": "experiment_x",
+  // Use this parameter to associate the configuration with an experiment. When "GazeToMouse.exe" is
+  // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
+  // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following
+  // file will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
+  // Note that the following characters are not allowed in a file name: <>:"/\|?*
+  "ConfigName": "experiment_x",
 
-    // Allows to define the order and the delimiters between the different values. The definition is
-    // of the form
-    //  {0}<delim>{1}<delim> ... <delim>{24}
-    // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
-    // replaced by the following values
-    //  - 0: timestamp of the gaze data item (uses DataLogFormatTimeStamp)
-    //  - 1: x-coordinate of the gaze point of both eyes (pixel value)
-    //  - 2: x-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
-    //  - 3: x-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
-    //  - 4: y-coordinate of the gaze point of both eyes (pixel value)
-    //  - 5: y-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
-    //  - 6: y-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
-    //  - 7: validity of the gaze data of the left eye [SDK Pro only]
-    //  - 8: validity of the gaze data of the right eye [SDK Pro only]
-    //  - 9: average pupil diameter of both eyes (uses DataLogFormatDiameter) [SDK Pro only]
-    //  - 10: pupil diameter of the left eye (uses DataLogFormatDiameter) [SDK Pro only]
-    //  - 11: pupil diameter of the right eye (uses DataLogFormatDiameter) [SDK Pro only]
-    //  - 12: validity of the pupil data of the left eye [SDK Pro only]
-    //  - 13: validity of the pupul data of the right eye [SDK Pro only]
-    //  - 14: x-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 15: y-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 16: z-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 17: x-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 18: y-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 19: z-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
-    //  - 20: average distance of the gaze origin of both eyes to the eyetracker (uses DataLogFormatOrigin)
-    //        [SDK Pro only]
-    //  - 21: distance of the gaze origin of the left eye to the eyetracker (uses DataLogFormatOrigin)
-    //        [SDK Pro only]
-    //  - 22: distance of the gaze origin of the right eye to the eyetracker (uses DataLogFormatOrigin)
-    //        [SDK Pro only]
-    //  - 23: validity of the gaze origin data of the left eye [SDK Pro only]
-    //  - 24: validity of the gaze origin data of the right eye [SDK Pro only]
-    // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
-    // "DataLogColumnOrder": "",
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    "DataLogColumnOrder": "{0}\t{1}\t{4}",
+  // Allows to define the order and the delimiters between the different values. The definition is
+  // of the form
+  //  {0}<delim>{1}<delim> ... <delim>{24}
+  // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
+  // replaced by the following values
+  //  - 0: timestamp of the gaze data item (uses DataLogFormatTimeStamp)
+  //  - 1: x-coordinate of the gaze point of both eyes (pixel value)
+  //  - 2: x-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
+  //  - 3: x-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
+  //  - 4: y-coordinate of the gaze point of both eyes (pixel value)
+  //  - 5: y-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
+  //  - 6: y-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
+  //  - 7: validity of the gaze data of the left eye [SDK Pro only]
+  //  - 8: validity of the gaze data of the right eye [SDK Pro only]
+  //  - 9: average pupil diameter of both eyes (uses DataLogFormatDiameter) [SDK Pro only]
+  //  - 10: pupil diameter of the left eye (uses DataLogFormatDiameter) [SDK Pro only]
+  //  - 11: pupil diameter of the right eye (uses DataLogFormatDiameter) [SDK Pro only]
+  //  - 12: validity of the pupil data of the left eye [SDK Pro only]
+  //  - 13: validity of the pupul data of the right eye [SDK Pro only]
+  //  - 14: x-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
+  //  - 15: y-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
+  //  - 16: z-coordinate of the gaze origin of the left eye (uses DataLogFormatOrigin) [SDK Pro only]
+  //  - 17: x-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
+  //  - 18: y-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
+  //  - 19: z-coordinate of the gaze origin of the right eye (uses DataLogFormatOrigin) [SDK Pro only]
+  //  - 20: average distance of the gaze origin of both eyes to the eyetracker (uses DataLogFormatOrigin)
+  //        [SDK Pro only]
+  //  - 21: distance of the gaze origin of the left eye to the eyetracker (uses DataLogFormatOrigin)
+  //        [SDK Pro only]
+  //  - 22: distance of the gaze origin of the right eye to the eyetracker (uses DataLogFormatOrigin)
+  //        [SDK Pro only]
+  //  - 23: validity of the gaze origin data of the left eye [SDK Pro only]
+  //  - 24: validity of the gaze origin data of the right eye [SDK Pro only]
+  // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+  // "DataLogColumnOrder": "",
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogColumnOrder": "",
 
-    // Defines the titles of the data log value columns. A title for all possible columns must be defined.
-    // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but
-    // must still be defined here. The index of a title must correspond to the value number of the
-    // configuration parameter "DataLogColumnOrder".
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    "DataLogColumnTitle": [
-        "Timestamp",
-        "coord-x",
-        "coord-x-left",
-        "coord-x-right",
-        "coord-y",
-        "coord-y-left",
-        "coord-y-right",
-        "coord-valid-left",
-        "coord-valid-right",
-        "pupil-dia",
-        "pupil-dia-left",
-        "pupil-dia-right",
-        "pupil-valid-left",
-        "pupil-valid-right",
-        "origin-x-left",
-        "origin-y-left",
-        "origin-z-left",
-        "origin-x-right",
-        "origin-y-right",
-        "origin-z-right",
-        "origin-dist",
-        "origin-dist-left",
-        "origin-dist-right",
-        "origin-valid-left",
-        "origin-valid-right"
-    ],
+  // Defines the titles of the data log value columns. A title for all possible columns must be defined.
+  // Titles for values that are removed from the "DataLogColumnOrder" parameter will not be logged but
+  // must still be defined here. The index of a title must correspond to the value number of the
+  // configuration parameter "DataLogColumnOrder".
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogColumnTitle": [
+    "Timestamp",
+    "coord-x",
+    "coord-x-left",
+    "coord-x-right",
+    "coord-y",
+    "coord-y-left",
+    "coord-y-right",
+    "coord-valid-left",
+    "coord-valid-right",
+    "pupil-dia",
+    "pupil-dia-left",
+    "pupil-dia-right",
+    "pupil-valid-left",
+    "pupil-valid-right",
+    "origin-x-left",
+    "origin-y-left",
+    "origin-z-left",
+    "origin-x-right",
+    "origin-y-right",
+    "origin-z-right",
+    "origin-dist",
+    "origin-dist-left",
+    "origin-dist-right",
+    "origin-valid-left",
+    "origin-valid-right"
+  ],
 
-    // Number of maximal allowed output data files in the output path. Oldest files are deleted first. To
-    // keep all files set the value to 0. A value of 1 means that only the output of the current execution
-    // is kept.
-    // Note that if multiple clients write to the same folder, this value should be set to at least the
-    // number of clients.
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    "DataLogCount": 200,
+  // Define the calibration points to be shown during calibration. Each point is given as a normalize
+  // coordinate where [0, 0] is the top left corner and [1, 1] the bottom right corner of the screen.
+  "CalibrationPoints": [
+    [ 0.7, 0.5 ],
+    [ 0.3, 0.5 ],
+    [ 0.9, 0.9 ],
+    [ 0.1, 0.9 ],
+    [ 0.5, 0.1 ],
+    [ 0.1, 0.1 ],
+    [ 0.9, 0.1 ],
+    [ 0.5, 0.9 ]
+  ],
 
-    // Allows to define the format of how the pupil diameter (in millimetres) will be logged. Use the .NET
-    // syntax to specify the format:
-    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Note that the numbers will be represented differently depending in the localisation settings of the
-    // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    "DataLogFormatDiameter": "0.000",
+  // Allows to define the order and the delimiters between the different values. The definition is
+  // of the form
+  //  {0}<delim>{1}<delim> ... <delim>{24}
+  // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
+  // replaced by the following values
+  //  - 0: x-coordinate of the calibration point (normalized value)
+  //  - 1: y-coordinate of the calibration point (normalized value)
+  //  - 2: x-coordinate of the gaze point of the left eye (normalized value)
+  //  - 3: y-coordinate of the gaze point of the left eye (normalized value)
+  //  - 4: validity of the gaze data of the left eye
+  //  - 5: x-coordinate of the gaze point of the right eye (normalized value)
+  //  - 6: y-coordinate of the gaze point of the right eye (normalized value)
+  //  - 7: validity of the gaze data of the right eye
+  // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+  // "CalibrationLogColumnOrder": "",
+  // This configuration value has no effect if "CalibrationLogWriteOutput" is set to false.
+  "CalibrationLogColumnOrder": "",
 
-    // Allows to define the format of how the gaze origin values (in millimetres) will be logged. Use the
-    // .NET syntax to specify the format:
-    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Note that the numbers will be represented differently depending in the localisation settings of the
-    // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    "DataLogFormatOrigin": "0.000",
+  // Defines the titles of the calibration log value columns. A title for all possible columns must be defined.
+  // Titles for values that are removed from the "CalibrationLogColumnOrder" parameter will not be logged but
+  // must still be defined here. The index of a title must correspond to the value number of the
+  // configuration parameter "CalibrationLogColumnOrder".
+  // This configuration value has no effect if "CalibrationLogWriteOutput" is set to false.
+  "CalibrationLogColumnTitle": [
+    "coord-x",
+    "coord-y",
+    "coord-x-left",
+    "coord-y-left",
+    "coord-valid-left",
+    "coord-x-right",
+    "coord-y-right",
+    "coord-valid-right"
+  ],
 
-    // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
-    //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-    // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
+  // Number of maximal allowed output data files in the output path. Oldest files are deleted first. To
+  // keep all files set the value to 0. A value of 1 means that only the output of the current execution
+  // is kept.
+  // Note that if multiple clients write to the same folder, this value should be set to at least the
+  // number of clients.
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogCount": 200,
 
-    // When set to true, invalid data will be ignored and not logged to the output file. When set to false
-    // invalid data will appear as "NaN" or "n. def" (depending on the language of the system) in the output
-    // file. A data set is invalid if the tracker is not able to detect the required features of the eye.
-    // This parameter might be useful to estimate the number of blinks of the subject or to track when the
-    // subject is not gazing at the screen.
-    // This configuration value has no effect for the Core SDK where invalid data is always ignored.
-    // Note that invlaid data is only removed if it affects all values associated to a timestamp.
-    "DataLogIgnoreInvalid": false,
+  // Allows to define the format of how the pupil diameter (in millimetres) will be logged. Use the .NET
+  // syntax to specify the format:
+  //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+  // Note that the numbers will be represented differently depending in the localisation settings of the
+  // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogFormatDiameter": "0.000",
 
-    // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
-    // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
-    // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-    // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
-    //  C:\\Users\\Subject\\Documents
-    "DataLogPath": "",
+  // Allows to define the format of how the gaze origin values (in millimetres) will be logged. Use the
+  // .NET syntax to specify the format:
+  //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+  // Note that the numbers will be represented differently depending in the localisation settings of the
+  // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogFormatOrigin": "0.00",
 
-    // Defines whether gaze data is written to a log file. If set to false, all the configuration items
-    // matching the pattern "DataLog*" are ignored.
-    "DataLogWriteOutput": true,
+  // Allows to define the format of how normalized data points will be logged. Use the
+  // .NET syntax to specify the format:
+  //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+  // Note that the numbers will be represented differently depending in the localisation settings of the
+  // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogFormatNormalizedPoint": "0.000",
 
-    // Defines filter settings for the eye tracker:
-    //  - 0: unfiltered, Tobii: "removal of invalid data points and the averaging of the gaze points from
-    //       both eyes".
-    //  - 1: lightly filtered, Tobii: "an adaptive filter which is weighted based on the age of the gaze
-    //       data points GazePointData and the velocity of the eye movements".
-    // also see https://tobii.github.io/CoreSDK/articles/streams.html
-    // Note that this parameter only has effect for Tobii SDK Core (see parameter "TobiiSDK").
-    "GazeFilterCore": 0,
+  // Allows to define the format of the timestamp. Use the .NET syntax to specify the format:
+  //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+  // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
 
-    // Defines the location of the license files. It must be the path to a folder (not a file).
-    // This is only required when Tobii SDK Pro is used (see parameter "TobiiSDK")
-    // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
-    //  C:\\Users\\Subject\\Documents\\tobii_licenses
-    "LicensePath": "tobii_licenses",
+  // When set to true, invalid data will be ignored and not logged to the output file. When set to false
+  // invalid data will appear as "NaN" or "n. def" (depending on the language of the system) in the output
+  // file. A data set is invalid if the tracker is not able to detect the required features of the eye.
+  // This parameter might be useful to estimate the number of blinks of the subject or to track when the
+  // subject is not gazing at the screen.
+  // This configuration value has no effect for the Core SDK where invalid data is always ignored.
+  // Note that invlaid data is only removed if it affects all values associated to a timestamp.
+  "DataLogIgnoreInvalid": false,
 
-    // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
-    // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
-    // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
-    "MouseControl": true,
+  // Defines whether gaze data is written to a log file. If set to false, all the configuration items
+  // matching the pattern "DataLog*" are ignored.
+  "DataLogWriteOutput": true,
 
-    // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
-    // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when GazeToMousClose.exe
-    // is executed.
-    // This parameter is ignored if "MouseControl" is set to false.
-    "MouseHide": false,
+  // Defines whether gaze calibration data is written to a log file. If set to false, all the configuration items
+  // matching the pattern "CalibrationLog*" are ignored.
+  "CalibrationLogWriteOutput": true,
 
-    // Defines the Path to the standard mouse pointer icon. This is used to restore the mouse pointer.
-    // This parameter is ignored if "MouseControl" or "MouseHide" is set to false.
-    "MouseStandardIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
+  // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
+  // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
+  // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
+  "MouseControl": false,
 
-    // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready while it
-    // is in any other state. If the eyetracker is not ready within the specified time the subject will
-    // be notified with a popup window.
-    "ReadyTimer": 5000,
+  // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
+  // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when GazeToMousClose.exe
+  // is executed.
+  // This parameter is ignored if "MouseControl" is set to false.
+  "MouseControlHide": false,
 
-    // Choose the tracker device (0: Tobii Core SDK, 1: Tobii Pro SDK, 2: Mouse Tracker).
-    // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
-    "TrackerDevice": 0,
+  // Defines whether the mouse cursor shall be hidden on the calibration window.
+  "MouseCalibrationHide": false,
 
-    // Defines the Tobii installation path. It must be the path to a folder (not a file).
-    "TobiiApplicationPath": "C:\\Program Files (x86)\\Tobii",
+  // Defines the location of the license files. It must be the path to a folder (not a file).
+  // This is only required when Tobii SDK Pro is used (see parameter "TobiiSDK")
+  // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
+  //  C:\\Users\\Subject\\Documents\\tobii_licenses
+  //"LicensePath": "tobii_licenses\\tobii-key\\%S",
 
-    // The Tobii EyeX command to run a calibration.
-    "TobiiCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
+  // Specifies the amount of time (in milliseconds) to wait for the eyetracker to become ready while it
+  // is in any other state. If the eyetracker is not ready within the specified time the subject will
+  // be notified with a popup window.
+  "ReadyTimer": 5000,
 
-    // The Tobii EyeX parameter to run a calibration.
-    "TobiiCalibrateArguments": "--calibrate",
-
-    // The Tobii EyeX command to run a guest calibration.
-    "TobiiGuestCalibrate": "Tobii EyeX Config\\Tobii.EyeX.Configuration.exe",
-
-    // The Tobii EyeX parameter to run a guest calibration.
-    "TobiiGuestCalibrateArguments": "--guest-calibration",
-
-    // The Tobii EyeX command to run calibration test.
-    "TobiiTest": "Tobii EyeX Interaction\\Tobii.EyeX.Interaction.TestEyeTracking.exe"
+  // Choose the tracker device (0: Tobii Core SDK, 1: Tobii Pro SDK, 2: Mouse Tracker).
+  // Note that Tobii SDK Pro requires a license file to work (see parameter "LicesePath").
+  "TrackerDevice": 1
 }

@@ -9,11 +9,15 @@ Specifically, this project aims at providing a set of executables that can be ca
 The complete toolset package can be downloaded from the [release folder](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
 The package contains the following executables:
 
- - **CustomCalibrate.exe** launches the custom calibration tool
- - **TobiiCalibrate.exe** launches the Tobii calibration tool
- - **GazeToMouse.exe** enables the control of the mouse with the gaze of the user
- - **GazeToMouseClose.exe** terminates `GazeToMouse.exe` gracefully
- - **ShowMouse.exe** restores to mouse pointer if something went wrong
+ - **CustomCalibrate.exe** launches the custom calibration tool.
+ - **TobiiCalibrate.exe** launches the Tobii calibration tool.
+ - **Gaze.exe** allows to record gaze data and control the mouse with the gaze of the user. The following executables provide some runtime control of a running `Gaze.exe` process:
+	 - **GazeClose.exe** terminates `Gaze.exe` gracefully.
+	 - **GazeRecordingDisable.exe** pauses the gaze recording.
+	 - **GazeRecordingEnable.exe** resumes the gaze recording.
+	 - **MouseTrackingDisable.exe** disables the link between the gaze and the mouse position.
+	 - **MouseTrackingEnable.exe** enables the link between the gaze and the mouse position.
+ - **ShowMouse.exe** restores a hidden mouse pointer if something went wrong
 
 In order to run the executables the following files need to be placed in the same directory as the executables:
 
@@ -44,9 +48,24 @@ To install the driver for the [Tobii Pro Spark](https://www.tobii.com/products/e
 
 This starts the service `Tobii Pro Spark Runtime`.
 
+## 3rd Party Applications
+
+This section provides some infromation on how to run the here provided executables from within 3rd party applications.
+
 ### ztree
 
 For quick starters, a simple [``ztree`` sample program](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/sample/template.ztt) is available.
+
+### Opensesame
+
+To start a process from within opensesame use a python script.
+The following example starts the custom calibartion program with the subject number passed as argument:
+
+```python
+import subprocess
+
+subprocess.run(["CustomCalibrate.exe", "/subject", var.get(u'subject_nr')])
+```
 
 ## Release Notes
 Information about the releases can be found in the [CHANGELOG](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/CHANGELOG.md)

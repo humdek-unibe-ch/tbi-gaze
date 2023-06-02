@@ -2,7 +2,9 @@
 ### New Features
  - A custom calibration application is added to the portfolio.
    This allows to calibrate a device without the need for a 3rd party application.
- - Proper shutdown handling of gazeToMouse through named pipes.
+ - Proper shutdown handling of `GazeToMouse` through named pipes.
+ - Allow to enable/disable gaze recording through named pipes.
+ - Allow to enable/disable mouse tracking through named pipes.
 
 ### Improvements
  - Update all projects to .NET version 6.0.
@@ -14,6 +16,7 @@
  - Remove all configuration options for Tobii Core (only Tobii Pro SDK is supported)
  - Remove Tobii Core application wrapper (TobiiTest, TobiiGuestCalibrate)
  - Use the Tobii pro eye tracker manager for device calibration instead of the Tobii Core software.
+ - Rename `GazeToMouse` to `Gaze` and `GazeToMouseClose` to `GazeClose`.
 
 # v2.3.0
 ### New Features
