@@ -16,15 +16,7 @@ namespace CustomCalibrationLibrary.Views
             InitializeComponent();
             _model = model;
             DataContext = new UserPositionGuideViewModel(_model);
-        }
-        private void OnCalibrationAbort(object sender, RoutedEventArgs e)
-        {
-            _model.OnCalibrationEvent(CalibrationEventType.Abort);
-        }
-
-        private void OnCalibrationStart(object sender, RoutedEventArgs e)
-        {
-            _model.OnCalibrationEvent(CalibrationEventType.Start);
+            Focus();
         }
     }
 }

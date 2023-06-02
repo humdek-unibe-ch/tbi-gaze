@@ -7,18 +7,25 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d"
       Title="CalibrationResult"
+      Focusable="True"
       >
     <Page.Resources>
         <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
-                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Templates/CalibrationPoint.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Styles/GazePoints.xaml" />
+                <ResourceDictionary Source="../Templates/CalibrationPoint.xaml" />
+                <ResourceDictionary Source="../Styles/GazePoints.xaml" />
                 <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
+    <Page.InputBindings>
+        <KeyBinding Command="{Binding CalibrationRestartCommand}" Key="R" />
+        <KeyBinding Command="{Binding GazeVisibilityCommand}" Key="G" />
+        <KeyBinding Command="{Binding CalibrationAcceptCommand}" Key="Space" />
+    </Page.InputBindings>
     <Grid>
         <Grid Background="Black">
             <Grid.RowDefinitions>
@@ -33,7 +40,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ui:ToggleSwitch ui:ThemeManager.RequestedTheme="Dark" Header="Gaze" OnContent="On" OffContent="Off" IsOn="False" Grid.Column="0" Toggled="OnGazeToggle"/>
+                    <ui:ToggleSwitch ui:ThemeManager.RequestedTheme="Dark" Header="Gaze (G)" OnContent="On" OffContent="Off" IsOn="{Binding GazePoint.Visibility}" Grid.Column="0"/>
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center">
                         <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                         Calibration Result
@@ -63,7 +70,7 @@
                                 Right Eye
                                 </TextBlock>
                             </DockPanel>
-                            <DockPanel Margin="15,0,0,0" Visibility="{Binding GazePoint.Visibility}">
+                            <DockPanel Margin="15,0,0,0" Visibility="{Binding GazePoint.Visibility, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <Ellipse Style="{StaticResource LiveGazePoint}" />
                                 <TextBlock Foreground="White" Margin="5,0,0,0">
                                 Gaze
@@ -89,22 +96,30 @@
             </Viewbox>
             <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
-                    <Button ui:ThemeManager.RequestedTheme="Dark" Click="OnCalibrationRestart">
-                        Restart Calibration
+                    <Button
+                        ui:ThemeManager.RequestedTheme="Dark"
+                        Command="{Binding CalibrationRestartCommand}"
+                    >
+                        Restart Calibration (R)
                     </Button>
-                    <Button ui:ThemeManager.RequestedTheme="Dark" Margin="10,0,0,0" Style="{ui:ThemeResource AccentButtonStyle}" Click="OnCalibrationAccept">
-                        Accept Calibration
+                    <Button
+                        ui:ThemeManager.RequestedTheme="Dark"
+                        Margin="10,0,0,0"
+                        Style="{ui:ThemeResource AccentButtonStyle}"
+                        Command="{Binding CalibrationAcceptCommand}"
+                    >
+                        Accept Calibration (SPACE)
                     </Button>
                 </DockPanel>
             </Grid>
         </Grid>
         <Grid>
             <Ellipse
-                Visibility="{Binding GazePoint.Visibility}"
+                Visibility="{Binding GazePoint.Visibility, Converter={StaticResource BooleanToVisibilityConverter}}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 RenderTransformOrigin="0.5, 0.5"
-                Style="{StaticResource LiveGazePoint}"
+                Style="{StaticResource LiveGazePointCentered}"
             >
             </Ellipse>
             <Grid.RenderTransform>

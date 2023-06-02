@@ -42,11 +42,15 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Always)]
         public bool CalibrationLogWriteOutput { get; set; }
         [JsonProperty(Required = Required.Default)]
+        public double[][] CalibrationPoints { get; set; }
+        [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty(Required = Required.Default)]
         public bool MouseControl { get; set; }
-        [JsonProperty(Required = Required.Always)]
-        public bool MouseHide { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public bool MouseControlHide { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public bool MouseCalibrationHide { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string MouseStandardIconPath { get; set; }
         [JsonProperty(Required = Required.Default)]
@@ -146,8 +150,18 @@ namespace GazeUtilityLibrary
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;
             CalibrationLogWriteOutput = true;
-            MouseControl = true;
-            MouseHide = false;
+            CalibrationPoints = new double[8][];
+            CalibrationPoints[0] = new double[2] { 0.7, 0.5 };
+            CalibrationPoints[1] = new double[2] { 0.3, 0.5 };
+            CalibrationPoints[2] = new double[2] { 0.9, 0.9 };
+            CalibrationPoints[3] = new double[2] { 0.1, 0.9 };
+            CalibrationPoints[4] = new double[2] { 0.5, 0.1 };
+            CalibrationPoints[5] = new double[2] { 0.1, 0.1 };
+            CalibrationPoints[6] = new double[2] { 0.9, 0.1 };
+            CalibrationPoints[7] = new double[2] { 0.5, 0.9 };
+            MouseControl = false;
+            MouseControlHide = false;
+            MouseCalibrationHide = false;
             MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur";
             ReadyTimer = 5000;
             TrackerDevice = 0;

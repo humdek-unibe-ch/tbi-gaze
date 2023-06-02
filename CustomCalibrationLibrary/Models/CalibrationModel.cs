@@ -8,30 +8,6 @@ using Tobii.Research;
 
 namespace CustomCalibrationLibrary.Models
 {
-    public class GazePoint
-    {
-        private double _x;
-        public double X { get { return _x; } }
-        private double _y;
-        public double Y { get { return _y; } }
-        private Visibility _visibility;
-        public Visibility Visibility { get { return _visibility; } }
-
-        public GazePoint()
-        {
-            _x = 0;
-            _y = 0;
-            _visibility = System.Windows.Visibility.Hidden;
-        }
-
-        public GazePoint(double x, double y, Visibility visibility)
-        {
-            _x = x;
-            _y = y;
-            _visibility = visibility;
-        }
-    }
-
     public class CalibrationPoint : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -137,13 +113,10 @@ namespace CustomCalibrationLibrary.Models
             get { return _calibrationPoints; }
         }
 
-        public event EventHandler<GazePoint>? GazePointChanged;
-        private GazePoint _gazePoint;
-        public GazePoint GazePoint
-        {
-            get { return _gazePoint;  }
-            set { _gazePoint = value; OnGazePointChanged(); }
-        }
+        public event EventHandler<Point>? GazePointChanged;
+        private Point _gazePoint;
+        public Point GazePoint { get { return _gazePoint; } }
+
         private void OnGazePointChanged([CallerMemberName] string? property_name = null)
         {
             GazePointChanged?.Invoke(this, _gazePoint);
@@ -167,27 +140,28 @@ namespace CustomCalibrationLibrary.Models
         private TrackerLogger _logger;
 
 
-        public CalibrationModel(TrackerLogger logger)
+        public CalibrationModel(TrackerLogger logger, double[][] points)
         {
             _logger = logger;
-            double XDelta = 0.1;
-            double YDelta = 0.1;
-            Point Center = new Point(0.5, 0.5);
-            _points = new Point[8];
-            _points[0] = new Point(Center.X + Center.X * 0.3, Center.Y); // center right
-            _points[1] = new Point(Center.X - Center.X * 0.3, Center.Y); // center left
-            _points[2] = new Point(1 - XDelta, 1 - YDelta); // bottom right
-            _points[3] = new Point(XDelta, 1 - YDelta); // bottom left
-            _points[4] = new Point(Center.X, YDelta);// top middle
-            _points[5] = new Point(XDelta, YDelta); // top left
-            _points[6] = new Point(1 - XDelta, YDelta); // top right
-            _points[7] = new Point(Center.X, 1 - YDelta); // bottom middle
+
+            _points = new Point[points.Length];
+            for (int i = 0; i < points.Length; i++ )
+            {
+                _points[i] = new Point(points[i][0], points[i][1]);
+            }
             _status = CalibrationStatus.DataCollection;
-            _gazePoint = new GazePoint();
+            _gazePoint = new Point(0, 0);
             _userPositionGuide = new UserPositionGuideEventArgs(
                 new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid),
                 new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid)
             );
+        }
+
+        public void UpdateGazePoint(double x, double y)
+        {
+            _gazePoint.X = x;
+            _gazePoint.Y = y;
+            OnGazePointChanged();
         }
 
         public void InitCalibration()

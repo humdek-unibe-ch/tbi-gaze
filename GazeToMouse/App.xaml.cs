@@ -111,7 +111,7 @@ namespace GazeToMouse
 
             // hide the mouse cursor
             _hider = new MouseHider(_logger);
-            if (_config.Config.MouseControl && _config.Config.MouseHide)
+            if (_config.Config.MouseControl && _config.Config.MouseControlHide)
             {
                 _hider.HideCursor();
             }
@@ -235,7 +235,7 @@ namespace GazeToMouse
         /// </summary>
         private void Cleanup()
         {
-            if (_config != null && _config.Config.MouseControl && _config.Config.MouseHide)
+            if (_config != null && _config.Config.MouseControl && _config.Config.MouseControlHide)
             {
                 _hider?.ShowCursor(_config.Config.MouseStandardIconPath);
             }
@@ -364,7 +364,7 @@ namespace GazeToMouse
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnTrackerEnabled(object? sender, EventArgs e)
         {
-            if (_config != null && _config.Config.MouseControl && _config.Config.MouseHide)
+            if (_config != null && _config.Config.MouseControl && _config.Config.MouseControlHide)
             {
                 _hider?.HideCursor();
             }
@@ -378,7 +378,7 @@ namespace GazeToMouse
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnTrackerDisabled(object? sender, EventArgs e)
         {
-            if (_config != null && _config.Config.MouseControl && _config.Config.MouseHide)
+            if (_config != null && _config.Config.MouseControl && _config.Config.MouseControlHide)
             {
                 _hider?.ShowCursor(_config.Config.MouseStandardIconPath);
             }

@@ -4,9 +4,9 @@ using GazeUtilityLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Tobii.Research;
 
 namespace CustomCalibrate
@@ -26,28 +26,32 @@ namespace CustomCalibrate
 
         public MainWindow()
         {
-            InitializeComponent();
             _logger = new TrackerLogger(EOutputType.calibration);
             _config = new GazeConfiguration(_logger);
-            _calibrationModel = new CalibrationModel(_logger);
-            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
-
-            foreach (Point point in _calibrationModel.Points)
-            {
-                _pointsToCalibrate.Add(new NormalizedPoint2D((float)point.X, (float)point.Y));
-            }
 
             Left = SystemParameters.PrimaryScreenWidth;
             Top = 0;
-
-            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibrate.exe\"");
-            this.Content = new CalibrationCollection(_calibrationModel);
 
             if (!Init())
             {
                 _logger.Error("Failed to initialise the calibration process, aborting");
                 Close();
             }
+
+            if (_config.Config.MouseCalibrationHide)
+            {
+                Cursor = Cursors.None;
+            }
+
+            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints);
+            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
+            foreach (Point point in _calibrationModel.Points)
+            {
+                _pointsToCalibrate.Add(new NormalizedPoint2D((float)point.X, (float)point.Y));
+            }
+
+            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}CustomCalibrate.exe\"");
+            this.Content = new CalibrationCollection(_calibrationModel);
         }
 
         /// <summary>
@@ -236,7 +240,7 @@ namespace CustomCalibrate
         {
             if((data.IsValidCoordLeft ?? false) || (data.IsValidCoordRight ?? false))
             {
-                _calibrationModel.GazePoint = new CustomCalibrationLibrary.Models.GazePoint(data.XCoord, data.YCoord, _calibrationModel.GazePoint.Visibility);
+                _calibrationModel.UpdateGazePoint(data.XCoord, data.YCoord);
             }
         }
 

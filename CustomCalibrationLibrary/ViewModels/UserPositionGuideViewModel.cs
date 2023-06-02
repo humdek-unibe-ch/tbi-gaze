@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Windows;
 using System.Runtime.CompilerServices;
 using Tobii.Research;
+using System.Windows.Input;
+using CustomCalibrationLibrary.Commands;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
@@ -23,6 +25,12 @@ namespace CustomCalibrationLibrary.ViewModels
             set { _right = value; OnPropertyChanged(); }
         }
 
+        private ICommand _calibrationStartCommand;
+        public ICommand CalibrationStartCommand { get { return _calibrationStartCommand; } }
+
+        private ICommand _calibrationAbortCommand;
+        public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
+
         /// <summary>
         /// Called when when the state property of EyeTracker is changing.
         /// </summary>
@@ -37,6 +45,8 @@ namespace CustomCalibrationLibrary.ViewModels
             _left = new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid);
             _right = new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid);
             model.UserPositionGuideChanged += OnUserPositionGuideChanged;
+            _calibrationStartCommand = new CalibrationCommand(model, CalibrationEventType.Start);
+            _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }
 
         private void OnUserPositionGuideChanged(object? sender, UserPositionGuideEventArgs position)

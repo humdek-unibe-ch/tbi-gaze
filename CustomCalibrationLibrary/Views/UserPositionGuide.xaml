@@ -8,10 +8,11 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="UserPositionGuide"
-      Background="Black">
+      Background="Black"
+      Focusable="True"
+>
     <Page.Resources>
         <ResourceDictionary>
-            <converter:CenterConverter x:Key="CenterConverter" />
             <converter:PositionConverter x:Key="PositionConverter" />
             <converter:PointPositionConverter x:Key="PointPositionConverter" />
             <converter:ProximityColorConverter x:Key="ProximityColorConverter" />
@@ -19,10 +20,13 @@
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
                 <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Styles/CenterTransform.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
+    <Page.InputBindings>
+        <KeyBinding Command="{Binding CalibrationStartCommand}" Key="Space" />
+        <KeyBinding Command="{Binding CalibrationAbortCommand}" Key="Esc" />
+    </Page.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -43,12 +47,15 @@
             <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
                 <Grid>
                     <Ellipse
-                        Style="{StaticResource CenterTransform}"
                         RenderTransformOrigin="0.5, 0.5"
                         Height="5cm"
                         Width="5cm"
                         Fill="{Binding Left.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
-                    />
+                    >
+                        <Ellipse.RenderTransform>
+                            <TranslateTransform X="-94.5" Y="-94.5" />
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
                     <Grid.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding Left.UserPosition.Z}" ScaleY="{Binding Left.UserPosition.Z}" />
@@ -61,12 +68,15 @@
                 </Grid>
                 <Grid>
                     <Ellipse
-                        Style="{StaticResource CenterTransform}"
                         RenderTransformOrigin="0.5, 0.5"
                         Fill="{Binding Right.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
                         Height="5cm"
                         Width="5cm"
-                    />
+                    >
+                        <Ellipse.RenderTransform>
+                            <TranslateTransform X="-94.5" Y="-94.5" />
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
                     <Grid.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding Right.UserPosition.Z}" ScaleY="{Binding Right.UserPosition.Z}" />
@@ -81,11 +91,19 @@
         </Viewbox>
         <Grid Grid.Row="2" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
             <DockPanel Margin="10" HorizontalAlignment="Right">
-                <Button ui:ThemeManager.RequestedTheme="Dark" Click="OnCalibrationAbort">
-                    Abort Calibration
+                <Button
+                    ui:ThemeManager.RequestedTheme="Dark"
+                    Command="{Binding CalibrationAbortCommand}"
+                >
+                    Abort Calibration (ESC)
                 </Button>
-                <Button ui:ThemeManager.RequestedTheme="Dark" Margin="10,0,0,0" Style="{ui:ThemeResource AccentButtonStyle}" Click="OnCalibrationStart">
-                    Start Calibration
+                <Button
+                    ui:ThemeManager.RequestedTheme="Dark"
+                    Margin="10,0,0,0"
+                    Style="{ui:ThemeResource AccentButtonStyle}"
+                    Command="{Binding CalibrationStartCommand}"
+                >
+                    Start Calibration (SPACE)
                 </Button>
             </DockPanel>
         </Grid>
