@@ -27,7 +27,7 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Timer to control the apperance of the dialog box
         /// </summary>
-        protected Timer dialogBoxTimer;
+        protected Timer? dialogBoxTimer;
         /// <summary>
         /// The logger
         /// </summary>
@@ -93,13 +93,16 @@ namespace GazeUtilityLibrary
             this.DeviceName = device_name;
             this.logger = logger;
             logger.Info($"Using {DeviceName}");
-            dialogBoxTimer = new Timer
+            if (ready_timer > 0)
             {
-                Interval = ready_timer,
-                AutoReset = false,
-                Enabled = true
-            };
-            dialogBoxTimer.Elapsed += OnTrackerDisabledTimeout;
+                dialogBoxTimer = new Timer
+                {
+                    Interval = ready_timer,
+                    AutoReset = false,
+                    Enabled = true
+                };
+                dialogBoxTimer.Elapsed += OnTrackerDisabledTimeout;
+            }
         }
 
         /// <summary>
@@ -126,7 +129,7 @@ namespace GazeUtilityLibrary
         {
             if (disposing)
             {
-                dialogBoxTimer.Dispose();
+                dialogBoxTimer?.Dispose();
             }
         }
 
@@ -177,7 +180,7 @@ namespace GazeUtilityLibrary
                         Application.Current.Shutdown();
                         break;
                     case false:
-                        if (!IsReady()) dialogBoxTimer.Start();
+                        if (!IsReady()) dialogBoxTimer?.Start();
                         break;
                 }
             }));
@@ -199,14 +202,21 @@ namespace GazeUtilityLibrary
             logger.Debug($"{DeviceName} changed state: {state}");
             if (IsReady() && (state != DeviceStatus.Tracking))
             {
-                dialogBoxTimer.Start();
                 logger.Info($"{DeviceName} stopped tracking: New state is \"{state}\"");
+                if (dialogBoxTimer == null)
+                {
+                    OnTrackerDisabled(new EventArgs());
+                }
+                else
+                {
+                    dialogBoxTimer?.Start();
+                }
             }
             this.state = state;
             if (IsReady())
             {
                 Application.Current.Dispatcher.Invoke(callback: () => { trackerMessageBox?.Close(); });
-                dialogBoxTimer.Stop();
+                dialogBoxTimer?.Stop();
                 logger.Info($"{DeviceName} is ready");
                 OnTrackerEnabled(new EventArgs());
             }

@@ -1,12 +1,13 @@
-﻿<Page x:Class="CustomCalibrationLibrary.Views.CalibrationFailed"
+﻿<Page x:Class="CustomCalibrationLibrary.Views.Disconnect"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CustomCalibrationLibrary.Views"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="CalibrationFailed"
+      Title="Disconnect"
       Focusable="True">
     <Page.Resources>
         <ResourceDictionary>
@@ -18,7 +19,6 @@
         </ResourceDictionary>
     </Page.Resources>
     <Page.InputBindings>
-        <KeyBinding Command="{Binding CalibrationRestartCommand}" Key="R" />
         <KeyBinding Command="{Binding CalibrationAbortCommand}" Key="Esc" />
     </Page.InputBindings>
     <Grid>
@@ -31,27 +31,33 @@
             <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="0">
                 <Grid Margin="10">
                     <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
-                        Calibration Failed
+                        Device Disconnected
                     </TextBlock>
                 </Grid>
             </Grid>
             <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Foreground="White" Text="{Binding Error}" FontSize="18"/>
+                <StackPanel>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Foreground="White"
+                        Text="The device has been disconnected." FontSize="18"
+                    />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        Foreground="White"
+                        Text="Make sure the device is plugged in properly into the computer."
+                        FontSize="18"
+                    />
+                </StackPanel>
             </Grid>
             <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                         ui:ThemeManager.RequestedTheme="Dark"
-                        Command="{Binding CalibrationRestartCommand}"
-                    >
-                        Restart Calibration (R)
-                    </Button>
-                    <Button
-                        ui:ThemeManager.RequestedTheme="Dark"
                         Margin="10,0,0,0"
                         Command="{Binding CalibrationAbortCommand}"
                     >
-                        Abort Calibration (ESC)
+                        Abort (ESC)
                     </Button>
                 </DockPanel>
             </Grid>

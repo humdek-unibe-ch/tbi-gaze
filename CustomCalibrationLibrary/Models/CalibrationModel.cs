@@ -92,13 +92,22 @@ namespace CustomCalibrationLibrary.Models
             DataCollection,
             Computing,
             DataResult,
-            Error
+            Error,
+            Disconnect
         }
         public CalibrationStatus Status
         {
             get { return _status; }
-            set { _status = value; OnPropertyChanged(); }
+            set
+            {
+                _lastStatus = _status;
+                _status = value;
+                OnPropertyChanged();
+            }
         }
+
+        private CalibrationStatus _lastStatus;
+        public CalibrationStatus LastStatus { get { return _lastStatus; } }
         private void OnPropertyChanged([CallerMemberName] string? property_name = null)
         {
             Application.Current.Dispatcher.Invoke(() => {
@@ -149,7 +158,8 @@ namespace CustomCalibrationLibrary.Models
             {
                 _points[i] = new Point(points[i][0], points[i][1]);
             }
-            _status = CalibrationStatus.DataCollection;
+            _lastStatus = CalibrationStatus.HeadPosition;
+            _status = CalibrationStatus.Computing;
             _gazePoint = new Point(0, 0);
             _userPositionGuide = new UserPositionGuideEventArgs(
                 new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid),

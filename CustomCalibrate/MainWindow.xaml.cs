@@ -83,7 +83,7 @@ namespace CustomCalibrate
 
             try
             {
-                _tracker = new EyeTrackerPro(_logger, _config.Config.ReadyTimer, _config.Config.LicensePath);
+                _tracker = new EyeTrackerPro(_logger, 0, _config.Config.LicensePath);
             }
             catch (Exception ex)
             {
@@ -262,8 +262,15 @@ namespace CustomCalibrate
         private void OnTrackerEnabled(object? sender, EventArgs e)
         {
             _logger.Info("Connection to the device enabled");
-            _calibrationModel.Error = "No Error";
-            _calibrationModel.Status = CalibrationModel.CalibrationStatus.HeadPosition;
+            switch (_calibrationModel.LastStatus)
+            {
+                case CalibrationModel.CalibrationStatus.DataCollection:
+                    _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                    break;
+                default:
+                    _calibrationModel.Status = _calibrationModel.LastStatus;
+                    break;
+            }
         }
 
         /// <summary>
@@ -274,7 +281,13 @@ namespace CustomCalibrate
         private void OnTrackerDisabled(object? sender, EventArgs e)
         {
             _logger.Warning("Connection to the device interrupted");
-            _calibrationModel.Error = "Connection to the device interrupted";
+            switch (_calibrationModel.Status)
+            {
+                case CalibrationModel.CalibrationStatus.DataCollection:
+                    _calibrationModel.Error = "Connection to the device interrupted, calibration aborted.";
+                    break;
+            }
+            _calibrationModel.Status = CalibrationModel.CalibrationStatus.Disconnect;
             _error.Error = EGazeDataError.DeviceInterrupt;
         }
 

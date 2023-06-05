@@ -46,6 +46,9 @@ namespace CustomCalibrationLibrary.Views
                 case CalibrationModel.CalibrationStatus.Error:
                     this.Content = new CalibrationFailed(_model);
                     break;
+                case CalibrationModel.CalibrationStatus.Disconnect:
+                    this.Content = new Disconnect(_model);
+                    break;
             }
         }
     }

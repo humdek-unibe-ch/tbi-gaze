@@ -1,8 +1,10 @@
-﻿using CustomCalibrationLibrary.Models;
+﻿using CustomCalibrationLibrary.Commands;
+using CustomCalibrationLibrary.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Views
 {
@@ -12,6 +14,12 @@ namespace CustomCalibrationLibrary.Views
     public partial class CalibrationFailed : Page, INotifyPropertyChanged
     {
         private CalibrationModel _model;
+
+        private ICommand _calibrationRestartCommand;
+        public ICommand CalibrationRestartCommand { get { return _calibrationRestartCommand; } }
+
+        private ICommand _calibrationAbortCommand;
+        public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private string _error;
@@ -31,16 +39,9 @@ namespace CustomCalibrationLibrary.Views
             _model.PropertyChanged += OnPropertyChanged;
             InitializeComponent();
             DataContext = this;
-        }
-
-        private void OnCalibrationRestart(object sender, RoutedEventArgs e)
-        {
-            _model.OnCalibrationEvent(CalibrationEventType.Restart);
-        }
-
-        private void OnCalibrationAbort(object sender, RoutedEventArgs e)
-        {
-            _model.OnCalibrationEvent(CalibrationEventType.Abort);
+            Focus();
+            _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
+            _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
