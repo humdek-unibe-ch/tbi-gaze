@@ -71,9 +71,9 @@
 \begin{center}
 \fontsize{20}{21}\selectfont
 
-\textbf{GazeToMouse}:\\
-Usage of the \textbf{Tobii Eye Tracker 4C}\\
-from within a \textbf{ztree} program\\
+\textbf{Gaze Recording with Tobii Eye Trackers}:\\
+Usage of \textbf{screen based Tobii Eye Trackers}\\
+from within a 3rd party program\\
 \vskip 6mm
 Tutorial
 \vskip 6mm
@@ -87,26 +87,24 @@ Simon Maurer - \texttt{simon.maurer@humdek.unibe.ch}\\
 
 %==============================================================================
 \chapter{Introduction}\label{sec.intro}
-This documents describes how to use the \href{https://tobiigaming.com/eye-tracker-4c/}{Tobii Eye Tracker 4C} in order to track the gaze of a subject and feed the gaze data to the mouse device.
+This documents describes how to use the \href{https://www.tobii.com/products/eye-trackers/screen-based/tobii-pro-spark}{Tobii Eye Tracker Spark} and the \href{https://tobiigaming.com/eye-tracker-4c/}{Tobii Eye Tracker 4C} to record gaze data of a subject and (optionally) feed the gaze data to the mouse device.
 This allows to use the eye tracker to control the mouse pointer position such that the mouse pointer is placed at the screen coordinates where the subject is gazing at.
 This documentation comes with a set of tools (executable .exe files) that provide this functionality as well as some auxiliary tools that help to calibrate and test the eye tracker.
 
-The project aims at providing a set of executables which allow to use the \href{https://tobiigaming.com/eye-tracker-4c/}{Tobii Eye Tracker 4C} in conjunction with \href{http://www.ztree.uzh.ch/en.html}{ztree} to perform economic experiments.
+The project aims at providing a set of executables which allow to use the Eye Trackers in conjunction with third party applications that allow to execute external programs.
+Specifically, \href{http://www.ztree.uzh.ch/en.html}{ztree} or \href{https://osdoc.cogsci.nl/3.3/}{openseame}.
 The following set of executables are provided:
 \begin{description}
+    \item[CustomCalibrate.exe] This program uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the unstable calibration software provided by Tobii.
     \item[TobiiCalibrate.exe] This program is a simple wrapper for the Tobii calibration tool.
         It launches the calibration GUI where the subject is led through the calibration process.
         The calibration data is stored in the current profile of the eye tracker engine.
-    \item[TobiiGuestCalibrate.exe] This program is a simple wrapper for the Tobii guest calibration tool.
-        Similar to \texttt{TobiiCalibrate.exe} it launches the calibration tool, however, the calibration data is stored in a guest profile.
-    \item[TobiiTest.exe] This program is a simple wrapper for the Tobii eye tracking testing tool.
-        It launches a GUI where the result of the calibration can be verified and a new calibration process can be started if required.
-    \item[GazeToMouse.exe] This program uses the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} (default) or the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} to get the position on the screen where the subject is looking at.
-        The mouse cursor position is updated to this position.
-        As a consequence, the mouse cursor is controlled by the gaze of the subject.
-        The gaze position on the screen (as well as pupil size or eye positions when using \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK}) are further logged to an output file.
+        \textbf{Attention:} At the time of this writing (05.06.2023) the calibration program reachable through the \href{https://www.tobii.com/products/software/applications-and-developer-kits/tobii-pro-eye-tracker-manager}{Tobii Pro Eye Tracker Manager} cannot be used due to an \href{https://connect.tobii.com/s/case/5004v000020xgMFAAY/tobii-pro-eye-tracker-manager-integration-problems}{issue} that is currently investigated by Tobii.
+    \item[Gaze.exe] This program uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} to extract the gaze position on the screen where the subject is looking at.
+        The extracted data is recorded and stored to a file.
+        Optionally, the mouse cursor position is updated to this position such that the mouse cursor is controlled by the gaze of the subject.
         Instead of using an eye tracker device it is also possible to simply log the mouse coordinates.
-        \texttt{GazeToMouse.exe} runs infinitely until it is terminated by an external command.
+        \texttt{Gaze.exe} runs infinitely until it is terminated by an external command.
         This should \textbf{not} be done with a forced kill (e.g.~by executing the command \texttt{taskkill /F /IM GazeToMouse.exe} or by killing the task with the task manager) because it prevents the program from terminating gracefully.
         This as several consequences:
         \begin{itemize}
@@ -114,35 +112,70 @@ The following set of executables are provided:
             \item if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
             \item memory is not freed properly.
         \end{itemize}
-        Instead \texttt{taskkill /IM GazeToMouse.exe} should be used.
-        This is done in the program \texttt{GazeToMouseClose.exe}.
-    \item[GazeToMouseClose.exe] This program requests GazeToMouse.exe to close gracefully and logs these events to the log file.
+        Instead the program \texttt{GazeClose.exe} shoudl be used.
+    \item[GazeClose.exe] This program requests Gaze.exe to close gracefully and logs these events to the log file.
+    \item[GazeRecordingDisable.exe] This program requests Gaze.exe to stop recording gaze data.
+        Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
+    \item[GazeRecordingEnable.exe] This program requests Gaze.exe to start recording gaze data.
+    \item[MouseTrackingDisable.exe] This program requests Gaze.exe to stop updating the mouse pointer by the gaze position.
+    \item[MouseTrackingEnable.exe] This program requests Gaze.exe to start updating the mouse pointer by the gaze position.
     \item[ShowMouse.exe] This program allows to restore the standard mouse pointer.
         It might be useful if the program \texttt{GazeToMouse.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
         The subject might end up with a hidden mouse pointer.
         A good solution for such a case is to install a shortcut to \texttt{ShowMouse.exe} on the desktop in order to execute it with the keyboard.
 \end{description}
 
+%------------------------------------------------------------------------------
+\section{Requesting a TPF GitLab Account}
+\label{sec.gitlab}
+The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the \href{http://phhum-g111-nns.unibe.ch:10012/}{TPF server}\footnote{http://phhum-g111-nns.unibe.ch:10012/}.
+
+Please send a mail to \href{tpf@humdek.unibe.ch}{TPF}\footnote{tpf@humdek.unibe.ch} with a request, specifying your name and the name of the TPF project you are interested in (e.g~\texttt{tobii\_eye\_tracker\_gaze}).
 
 %==============================================================================
 \chapter{Quick Start}
 \label{sec.quick}
+In order to get started with Tobii eye tracking the following installation steps need to be performed:
+\begin{itemize}
+    \item Install the \href{https://www.tobii.com/products/software/applications-and-developer-kits/tobii-pro-eye-tracker-manager}{Tobii Pro Eye Tracker Manager} application.
+    \item Setup the \emph{Tobii Pro Spark} device with the following steps:
+        \begin{itemize}
+            \item Connect the \emph{Tobii Pro Spark} device to the computer.
+                Make sure that the device is connected to a powered USB-type A port or, alternatively, use the provided USB-type A to USB-type C adapter and connect the device to a USB-type C port.
+            \item Launch the Tobii Pro Eye Tracker Manager application
+            \item Click on the button \emph{Install New Eye Tracker}
+            \item Select the device \emph{Tobii Pro Spark}
+            \item Click Install
+            \item Now the eye tracker device should appear in the list.
+                Click on the device and setup the screen calibration.
+            \item Perform the device calibration and verify the gaze accuracy through the built-in gaze visualization
+        \end{itemize}
+    \item Setup the \emph{Tobii Eye Tracker 4C} device with the following steps:
+        \begin{itemize}
+            \item Install the \href{https://files.update.tech.tobii.com/Tobii.IS4C.Offline.Installer_4.124.0.15937.msi}{Tobii Experience} software.
+                This software comes with the device driver for the \emph{Tobii Eye Tracker 4C}, however, it is only available as a beta version and is no longer maintained.
+            \item Connect the \emph{Tobii Eye Tracker 4C} device to the computer.
+            \item Now the eye tracker device should appear in the list of available devices in the \emph{Tobii Pro Eye TRacker Manager} application.
+                Click on the device and setup the screen calibration.
+            \item Perform the device calibration and verify the gaze accuracy through the built-in gaze visualization
+        \end{itemize}
+    \item Install the \href{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze}{Gaze toolset} provided by the TPF.
+        To install the toolset \href{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/tree/master/release}{download}\footnote{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii\_eye\_tracker\_gaze/tree/master/release} the latest version (requires a subscription, see Section~\ref{sec.gitlab}) and extract all files to an installation path of your choosing.
+        The Gaze toolset installation path will be referred to as \texttt{<Gaze toolset path>} throughout this document.
+\end{itemize}
+
+
+%------------------------------------------------------------------------------
+\section{Quick Start with ztree}
+\label{sec.quick.ztree}
 In order to get started with a quick experiment you need the following things (\emph{server} refers to the machine running \texttt{ztree} and \emph{client} refers to the machines running \texttt{zleaf}):
 \begin{itemize}
     \item a \href{http://www.ztree.uzh.ch/en.html}{ztree} installation with a server and one or more clients.
         To install \texttt{ztree} download the latest \texttt{ztree} version from the \href{https://www.uzh.ch/ztree/ssl-dir/index.php}{download secetion}\footnote{https://www.uzh.ch/ztree/ssl-dir/index.php} (requires a license and a login, see Section~\ref{sec.ztree}) and extract the server file \texttt{ztree.exe} to the chosen installation path on the server and the client file \texttt{zleaf.exe} to the chosen installation path on each client.
         Throughout this documentation the installation paths of the \texttt{ztree} client and server will be referred to as \texttt{<zleaf path>} and \texttt{<ztree path>}, respectively.
-    \item the \href{https://tobiigaming.com/getstarted/}{Tobii Eye Tracking Core Software} installed on each client.
-        To install the software \href{https://tobiigaming.com/downloadlatest/?bundle=tobii-core}{download}\footnote{https://tobiigaming.com/downloadlatest/?bundle=tobii-core} and execute the installation file.
-        The installation path of this software will be referred to as \texttt{<Tobii path>} throughout this documentation.
-    \item the \href{https://tobiigaming.com/eye-tracker-4c/}{Tobii Eye Tracker 4C} mounted and connected on each client.
-        When encountering connection problems follow \href{https://help.tobii.com/hc/en-us/articles/115000432589-Is-your-Eye-Tracker-4C-not-connecting-}{these}\footnote{https://help.tobii.com/hc/en-us/articles/115000432589-Is-your-Eye-Tracker-4C-not-connecting-} instructions which might help to solve the problem.
-    \item the \href{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze}{GazeToMouse toolset} installed on each client.
-        To install the toolset \href{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/tree/master/release}{download}\footnote{http://phhum-g111-nns.unibe.ch:10012/TBI/TBI-tobii\_eye\_tracker\_gaze/tree/master/release} the latest version (requires a subscription, see Section~\ref{sec.gitlab}) and extract all files to an installation path of your choosing.
-        The GazeToMouse installation path will be referred to as \texttt{<GazeToMouse path>} throughout this document.
     \item the ztree sample file.
-        The file is located in \texttt{<GazeToMouse path>\textbackslash sample\textbackslash template.ztt}.
-        Make sure to change the \texttt{Path} variable in \texttt{Background} of the sample file such that it points to \texttt{<GazeToMouse path>}.
+        The file is located in \texttt{<Gaze toolset path>\textbackslash sample\textbackslash template.ztt}.
+        Make sure to change the \texttt{Path} variable in \texttt{Background} of the sample file such that it points to \texttt{<Gaze toolset path>}.
 \end{itemize}
 
 The provided sample \texttt{ztree} program performs the following stages:
@@ -159,37 +192,63 @@ The provided sample \texttt{ztree} program performs the following stages:
         Terminates the gaze-to-mouse functionality and concludes this simple \texttt{ztree} program.
 \end{description}
 
-The behaviour of the GazeToMouse toolset can be configured with a configuration file (see Chapter~\ref{sec.config} for more details).
-A sample configuration file is provided in \texttt{<GazeToMouse path>\textbackslash sample\textbackslash config.json} that can be modified to suit different requirements.
-Copy the configuration file either to \texttt{<GazeToMouse path>} or \texttt{<zleaf path>} and modify it there.
+The behaviour of the Gaze toolset can be configured with a configuration file (see Chapter~\ref{sec.config} for more details).
+A sample configuration file is provided in \texttt{<Gaze toolset path>\textbackslash sample\textbackslash config.json} that can be modified to suit different requirements.
+Copy the configuration file either to \texttt{<Gaze toolset path>} or \texttt{<zleaf path>} and modify it there.
 
 %------------------------------------------------------------------------------
-\section{Requesting Access to the Latest \texttt{ztree} Release}
+\subsection{Requesting Access to the Latest \texttt{ztree} Release}
 \label{sec.ztree}
 To download the latest release of the \texttt{ztree} software a login must be requested \href{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}{here}\footnote{https://www.uzh.ch/ztree/ssl-dir/index.php?action=obtain}.
 Make a careful note of the terms and conditions.
 
 %------------------------------------------------------------------------------
-\section{Requesting a TPF GitLab Account}
-\label{sec.gitlab}
-The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the \href{http://phhum-g111-nns.unibe.ch:10012/}{TPF server}\footnote{http://phhum-g111-nns.unibe.ch:10012/}.
+\section{Quick Start with opensesame}
+\label{sec.quick.opensesame}
+In order to get started with a quick experiment the following steps are required:
+\begin{itemize}
+    \item Install the latest version of \href{https://osdoc.cogsci.nl/3.3/download/}{opensesame} with your preferred installation method.
+    \item As a starting point use the provided opensesame sample file.
+        The file is located in \texttt{<Gaze toolset path>\textbackslash sample\textbackslash template.osexp}.
+        Make sure to change the \texttt{gazeAppPath} variable in \texttt{gaze\_initialisation} of the sample file such that it points to \texttt{<Gaze toolset path>}.
+\end{itemize}
 
-Please send a mail to \href{tpf@humdek.unibe.ch}{TPF}\footnote{tpf@humdek.unibe.ch} with a request, specifying your name, the name of the TPF project you are interested in (e.g~\texttt{GazeToMouse}) and a user name which you would like to have on \texttt{GitLab}.
+The provided sample \texttt{opensesame} program includes the following python scripts:
+\begin{description}
+    \item[gaze\_initialisation]
+        Sets the \texttt{gazeAppPath} variable which will be used in all gaze python script to locate the gaze toolset.
+    \item[gaze\_calibration]
+        The custom calibration application is started to perform a gaze calibration.
+        Note that the \texttt{subject\_nr} variable is passed as argument to the application.
+        This is used to name the output file accordingly.
+    \item[gaze\_start]
+        The gaze application is started in the background and will run during the whole of the experiment.
+        Note that the \texttt{subject\_nr} variable is passed as argument to the application.
+        This is used to name the output file accordingly.
+    \item[gaze\_recording\_enable]
+        Communicates to the gaze application to start storing gaze data to the disk.
+    \item[gaze\_recording\_disable]
+        Communicates to the gaze application to stop storing gaze data to the disk.
+        The Tobii eye tracker test tool is started which allows the subject or experimenter to verify the accuracy of the eye tracker.
+    \item[gaze\_stop]
+        Instructs the gaze application to gracefully shutdown.
+\end{description}
+
+The behaviour of the Gaze toolset can be configured with a configuration file (see Chapter~\ref{sec.config} for more details).
+A sample configuration file is provided in \texttt{<Gaze toolset path>\textbackslash sample\textbackslash config.json} that can be modified to suit different requirements.
+Copy the configuration file either to \texttt{<Gaze toolset path>} or \texttt{<zleaf path>} and modify it there.
 
 
 %==============================================================================
-\chapter{Use GazeToMouse Toolset in Ztree}
+\chapter{Use Gaze Toolset in 3rd Applications}
 \label{sec.gazetomouse}
-This chapter provides instructions of how to use the Tobii Eye Tracker 4C in a \texttt{ztree} program.
-In order to do this there are two main points to understand:
-\begin{enumerate}
-    \item How does the Tobii Eye Tracker 4C work
-    \item How to execute 3rd party applications from within \texttt{ztree}
-\end{enumerate}
-The first point is addressed in Section~\ref{sec.eyetracker} and the second point in Section~\ref{sec.external}.
+This chapter provides instructions of how to use the Gaze toolest in a 3rd party application.
+The gaze toolest contains several executable applications which can be started from within 3rd party applications to add eye tracker support.
+The two main pieces is the \texttt{CustomCalibration} application which allows to calibrate the eye tracker and the \texttt{Gaze} application which allows to record gaze data.
+The applications \texttt{GazeClose}, \texttt{GazeRecordingDisable}, \texttt{GazeRecordingEnable}, \texttt{MouseTrackingDisable}, and \texttt{MouseTrackingEnable} only work in conjunction with the \texttt{Gaze} application and are used to control the \texttt{Gaze} application (refer to Section \ref{sec.intro} for an overview).
 
 %------------------------------------------------------------------------------
-\section{Basic Principles of the Tobii Eye Tracker 4C}
+\section{Basic Principles of a Screen Based Tobii Eye Tracker}
 \label{sec.eyetracker}
 The eye tracker is mounted on the bottom of the screen such that its cameras are able to capture the eyes of the subject.
 Several infrared LEDs are visible once the device is connected and properly working (see Figure~\ref{fig.eyetracker}).
@@ -201,17 +260,17 @@ This requires the Tobii software to be installed and running.
     \label{fig.eyetracker}
 \end{figure}
 
-In order for the eye tracker to being able to track the gaze of the subject it must be calibrated.
-A user-friendly calibration tool is included in the Tobii software package.
-For each person different calibration data must be stored.
-For this reason the Tobii software supports multiple user profiles which can be switched on the fly.
-Given that in an economic experiment a workstation is used by a subject only once it is suggested to use the \emph{Guest} profile to store the eye tracker calibration data.
-The guest calibration can be launched by executing the \texttt{TobiiGuestCalibrate.exe} program, provided in the toolset.
+In order for the eye tracker to being able to track the gaze of the subject it must be set up correctly and calibrated.
+The setup process must only be done once an can be done through the Tobii Pro Eye Tracker Manager application.
+However, the eye tracker must be calibrated for each individual the gaze data is measured.
+Hence, the experiment protocol needs to include a calibration step for each subject.
+A user-friendly calibration tool is included in the Tobii software package and a custom calibration tool \texttt{CustomCalibration} is provided in the gaze toolest.
 Once the eye tracker is calibrated for a subject, everything is ready.
 
 %------------------------------------------------------------------------------
 \section{Execute 3rd Party Applications in \texttt{ztree}}
-\label{sec.external}
+\label{sec.external.ztree}
+This section describes how to execute application from within \texttt{ztree}.
 In a first step, it is useful to define a global variable \texttt{Path} in a \texttt{ztree} program that points to the location of the toolset.
 
 In order to define a path
@@ -241,11 +300,56 @@ This can be achieved as follows:
     \label{fig.extcall}
 \end{figure}
 
+%------------------------------------------------------------------------------
+\section{Execute 3rd Party Applications in \texttt{opensesame}}
+\label{sec.external.opensesame}
+
+Opensesame allows to run python scripts within the experiment protocols and python can be used to start external applications.
+All python scripts within an opensesame experiment share the same workspace which means that a variable defined in one script will be accessible by all other scripts as well.
+This can be used to define the installation path of the gaze toolset in order to avoid typing the same path multiple times.
+To to this append a new item \emph{inline\_script} to the experiment and add the following lines (make sure to set the path to where the gaze toolset was installed):
+
+\begin{lstlisting}[language=Python]
+gazeToosetPath="C:\\GazeToolset"
+print(f"use gaze toolset path {gazeToolsetPath}")
+\end{lstlisting}
+
+For each application to execute from within the experiment use a separate \emph{inline\_script}.
+To run the \texttt{CustomCalibration} application use the following script (note that the subject number is passed as an argument to the application):
+
+\begin{lstlisting}[language=Python]
+import subprocess
+
+print("start custom calibration")
+subprocess.run([f"{gazeToolsetPath}\\CustomCalibrate.exe], "/subject", f"{var.get(u'subject_nr')}")
+print("custom calibration done")
+\end{lstlisting}
+
+To run the \texttt{Gaze} application use a command to run the application in the background instead of waiting for the application to terminate:
+
+\begin{lstlisting}[language=Python]
+import subprocess
+
+print("start gaze process")
+subprocess.Popen([f"{gazeToolsetPath}\\Gaze.exe], "/subject", f"{var.get(u'subject_nr')}")
+\end{lstlisting}
+
+To run any other application of the gaze toolset use \texttt{subprocess.run} without passing any arguments.
+For example, to gracefully terminate the \texttt{Gaze} application with \texttt{GazeClose}, use the following script:
+
+\begin{lstlisting}[language=Python]
+import subprocess
+
+print("stop gaze process")
+subprocess.run([f"{gazeToolsetPath}\\GazeClose.exe]")
+\end{lstlisting}
+
+
 %==============================================================================
-\chapter{Configuration of the \texttt{GazeToMouse} Toolset}
+\chapter{Configuration of the \texttt{Gaze} Toolset}
 \label{sec.config}
-The \texttt{GazeToMouse} toolset can be configured to work with different installations.
-It allows to specify installation paths and gives some control over implemented features (e.g.~mouse hiding, gaze filtering, or data logging).
+The \texttt{Gaze} toolset can be configured to work with different installations.
+It allows to specify installation paths and gives some control over implemented features (e.g.~mouse hiding or data logging).
 The Listing~\ref{lst.config} shows the default configuration values and provides an explanation for each value.
 The configuration file contains detailed descriptions for each parameter.
 It is recommended to go through all the configuration parameters and read the description in order to get an understanding of the available configuration options.
@@ -267,41 +371,43 @@ If the following points are respected, no problem should arise:
 Each executable of the toolset uses the same common configuration file.
 The configuration file must be named \texttt{config.json} and is read from the following places with the indicated priority:
 \begin{enumerate}
-    \item in the directory of the caller, i.e~in \texttt{<zleaf path>}
-    \item in the directory of the executables, i.e.~in \texttt{<GazeToMouse path>}
+    \item in the directory of the caller, i.e.~in the execution folder of the ztree client or the opensesame application
+    \item in the directory of the executables, i.e.~in \texttt{<Gaze toolset path>}
 \end{enumerate}
-If no configuration file can be found, the default values are used.
+If no configuration file can be found, the application fails.
 
 \begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Warning:}
     A word of warning when using the mouse hiding feature.
-    This feature hides the mouse when running \texttt{GazeToMouse.exe}.
-    If \texttt{GazeToMouse.exe} is forcefully closed or crashes, the mouse pointer stays hidden.
+    This feature hides the mouse when running \texttt{Gaze.exe}.
+    If \texttt{Gaze.exe} is forcefully closed or crashes, the mouse pointer stays hidden.
     For such cases the \texttt{ShowMouse.exe} utility can be used to restore the mouse pointer.
 \end{mdframed}
 
 %------------------------------------------------------------------------------
-\section{Output File}
-When running the program \texttt{gazeToMouse.exe} an output file can be generated which holds the gaze data provided by the Tobii engine.
+\section{Gaze Output File}
+\label{sec.output.gaze}
+When running the program \texttt{Gaze.exe} an output file can be generated which holds the gaze data provided by the Tobii engine.
 The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
 The name of the output file follows the form
 \begin{lstlisting}
-<yyyyMMddTHHmmss>_<hostName>_<ConfigName>_gaze[_err-<code>].txt
+<yyyyMMddTHHmmss>_<hostName>_<ConfigName>[_<SubjectNumber>]_gaze[_err-<code>].txt
 \end{lstlisting}
 where
 \begin{itemize}
     \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21).
     \item \texttt{<hostName>} is replaced by the name of the machine
     \item \texttt{<ConfigName>} is replaced by the configuration value \texttt{"ConfigName"} as specified in the configuration file (see Listing~\ref{lst.config} for more details)
+    \item \texttt{<SubjectNumber>} is replaced by the subject number passed by argument \texttt{/subject} to the application.
+        If no argument \texttt{/subject} is passed the subject number is omitted in the file name (as well as the prefixed underline character).
     \item \texttt{[\_err-<code>]} is either omitted if no error occurred during the experiment or indicates data errors where
         \begin{itemize}
             \item \texttt{<code>} is replaced by an error code which is a binary string where each character can either be 1, indicating an error or 0, indicating no error (see Section~\ref{sect.data.error})
         \end{itemize}
 \end{itemize}
 
-An output file is only generated if the parameter \texttt{"DataLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
-The presentation of the gaze data is configurable with the help of the parameters \texttt{"DataLogColumnOrder"}, \texttt{"DataLogColumnTitle"}, \texttt{"DataLogFormatDiameter"}, \texttt{"DataLogFormatOrigin"}, and \texttt{"DataLogFormatTimeStamp"} (see Listing~\ref{lst.config} for more details).
+A gaze data output file is only generated if the parameter \texttt{"DataLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
+The presentation of the data is configurable with the help of the parameters \texttt{"DataLogColumnOrder"}, \texttt{"DataLogColumnTitle"}, \texttt{"DataLogFormatDiameter"}, \texttt{"DataLogFormatOrigin"}, and \texttt{"DataLogFormatTimeStamp"} (see Listing~\ref{lst.config} for more details).
 
-By default the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK} is used (parameter \texttt{"TobiiSDK"} is set to 0) and only the timestamps and the x and the y coordinates of the gaze points are available.
 A gaze point describes a point on the screen in x and y coordinates (pixel values) the user is gazing at.
 This coordinate system is called \emph{Active Display Coordinate System (ADCS)} and is illustrated in Figure~\ref{fig.adcs}.
 \begin{figure}[ht]
@@ -311,8 +417,10 @@ This coordinate system is called \emph{Active Display Coordinate System (ADCS)} 
     \label{fig.adcs}
 \end{figure}
 
-By default, the system is configured to log the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 1 and 4, respectively).
-Hence, the parameter \texttt{"DataLogColumnOrder"} is set to the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"} in order to not bloat the output file with unnecessary header data.
+By default, the system is configured to log all available data points.
+However, this can easily be changed through the parameter \texttt{"DataLogColumnOrder"}.
+For example, to only store a minimalistic set of data points use the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"}.
+This will only store the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 1 and 4, respectively).
 This produces an output file that is similar to the following:
 \lstset{columns=flexible}
 \lstset{keepspaces=true}
@@ -353,7 +461,7 @@ When using the empty string, all possible data fields are logged:
 "DataLogColumnOrder": ""
 \end{lstlisting}
 
-\subsection{Data Fields}
+\subsection{Gaze Data Fields}
 The comments above the parameter \texttt{"DataLogColumnOrder"} in the configuration file (see Listing~\ref{lst.config}) provide a short description for each available data field.
 In the following some further information is provided.
 
@@ -365,11 +473,6 @@ The following five data field types with individual data fields are provided:
             \item[Mouse Tracker] \hfill
                 \begin{itemize}
                     \item the x and y coordinates of the mouse pointer\\
-                        (field numbers: 1 and 4)
-                \end{itemize}
-            \item[Tobii Core SDK] \hfill
-                \begin{itemize}
-                    \item the average x and y coordinates where filtering depends on parameter "GazeFilterCore"\\
                         (field numbers: 1 and 4)
                 \end{itemize}
             \item[Tobii Pro SDK] \hfill
@@ -393,7 +496,6 @@ The following five data field types with individual data fields are provided:
     \item gaze origin UCS coordinates (see Figure~\ref{fig.ucs}) in millimetres
         \begin{description}
             \item[Mouse Tracker] not applicable
-            \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item raw x, y, and z coordinates of the left and the right eye\\
@@ -411,7 +513,6 @@ The following five data field types with individual data fields are provided:
     \item pupil diameters in millimetres
         \begin{description}
             \item[Mouse Tracker] not applicable
-            \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item raw diameters of the left and the right eye\\
@@ -423,7 +524,6 @@ The following five data field types with individual data fields are provided:
     \item data validity indicators as true or false
         \begin{description}
             \item[Mouse Tracker] not supported
-            \item[Tobii Core SDK] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for the left and the right eye, respectively\\
@@ -437,7 +537,7 @@ The following five data field types with individual data fields are provided:
     Therefore it can happen that multiple mouse events are logged with the same timestamp.
 \end{mdframed}
 
-\subsection{Data Error Code}
+\subsection{Gaze Data Error Code}
 \label{sect.data.error}
 The data error code that is postfixed to the output file name is a binary string where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
 Multiple errors can occur at the same time, hence, the position of a \texttt{1} in the error code indicates the specific error.
@@ -451,14 +551,93 @@ The following list describes the individual errors that can occur during an expe
         This can be caused by a malfunctioning of the eye tracker device or simply because the device was disconnected.
         The exact time instances of such an occurrence is logged to the log file.
     \item[code \texttt{01}] \hfill \\
-        This code indicates that the system had to fall back to the \href{http://developer.tobii.com/tobii-core-sdk/}{Tobii Core SDK}.
+        This code indicates that the system had to fall back to the Mouse Tracker.
         This error occurs if the system was configured to use the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} but was not able to do so.
         This usually happens when the license file is not accessible.
         Check whether the license files are accessible by the system and whether the license path is correctly defined in parameter \texttt{"LicensePath"}.
 \end{description}
 
+%------------------------------------------------------------------------------
+\section{Calibration Output File}
+When running the program \texttt{CustomCalibration.exe} an output file can be generated which holds the calibration results provided by the Tobii engine.
+The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
+The name of the output file follows the form
+\begin{lstlisting}
+<yyyyMMddTHHmmss>_<hostName>_<ConfigName>[_<SubjectNumber>]_calibration[_err-<code>].txt
+\end{lstlisting}
+where
+\begin{itemize}
+    \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21).
+    \item \texttt{<hostName>} is replaced by the name of the machine
+    \item \texttt{<ConfigName>} is replaced by the configuration value \texttt{"ConfigName"} as specified in the configuration file (see Listing~\ref{lst.config} for more details)
+    \item \texttt{<SubjectNumber>} is replaced by the subject number passed by argument \texttt{/subject} to the application.
+        If no argument \texttt{/subject} is passed the subject number is omitted in the file name (as well as the prefixed underline character).
+    \item \texttt{[\_err-<code>]} is either omitted if no error occurred during the experiment or indicates data errors where
+        \begin{itemize}
+            \item \texttt{<code>} is replaced by an error code which is a binary string where each character can either be 1, indicating an error or 0, indicating no error (see Section~\ref{sect.calibration.error})
+        \end{itemize}
+\end{itemize}
+
+A calibration output file is only generated if the parameter \texttt{"CalibrationLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
+
+The configuration of the calibration data fields to be stored to the output file follows the same logic as described with the gaze output in Section \ref{sec.output.gaze}, except that the presentation of the data is defined through parameters \texttt{"CalibrationLogColumnOrder"}, \texttt{"CalibrationColumnTitle"}, \texttt{"DataLogFormatNormalizedPoint"}, and \texttt{"DataLogFormatTimeStamp"} (see Listing~\ref{lst.config} for more details).
+
+\subsection{Calibration Data Fields}
+The comments above the parameter \texttt{"CalibrationLogColumnOrder"} in the configuration file (see Listing~\ref{lst.config}) provide a short description for each available data field.
+In the following some further information is provided.
+
+The following three data field types with individual data fields are provided:
+\begin{enumerate}
+    \item calibration point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
+        \begin{description}
+            \item[Mouse Tracker] not applicable
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item x and y coordinates of the calibration point\\
+                        (field numbers: 0 and 1)
+                \end{itemize}
+        \end{description}
+    \item gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
+        \begin{description}
+            \item[Mouse Tracker] not applicable
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item x and y coordinates of the gaze point of the left and right eye\\
+                        (field numbers: 2, 3, 5, and 6)
+                \end{itemize}
+        \end{description}
+    \item data validity indicators as either \texttt{ValidAndUsed}, \texttt{ValidAndUnused}, and \texttt{Invalid}
+        \begin{description}
+            \item[Mouse Tracker] not supported
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item separate values that indicate whether gaze points are valid for the left and the right eye, respectively\\
+                        (field numbers: 4 and 7)
+                \end{itemize}
+        \end{description}
+\end{enumerate}
+
+\subsection{Calibration Data Error Code}
+\label{sect.calibration.error}
+The error code that is postfixed to the calibration output file name is a binary string where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
+Multiple errors can occur at the same time, hence, the position of a \texttt{1} in the error code indicates the specific error.
+If all positions of the error code are 0, the errors are not postfixed to the output file name.
+
+The following list describes the individual errors that can occur during an experiment:
+\begin{description}
+    \item[code \texttt{10}] \hfill \\
+        This code indicates that during the calibration the eye tracker device stopped tracking.
+        This means that the calibration had to be redone in order to be valid.
+        This can be caused by a malfunctioning of the eye tracker device or simply because the device was disconnected.
+        The exact time instances of such an occurrence is logged to the log file.
+    \item[code \texttt{01}] \hfill \\
+        This code indicates that the system was not able to start the calibration because the device does not support calibration.
+        This error occurs if the configuration option \texttt{TrackerDevice} was set to a device with no calibration support.
+\end{description}
+
+
 \section{Configuration File Dump}
-For each experiment where the utility \texttt{GazeToMouse.exe} is executed, a dump of the configuration file is produced.
+For each experiment where the utility \texttt{Gaze.exe} is executed, a dump of the configuration file is produced.
 This allows to associate a set of configuration values to an experiment, reuse the same configuration file should the experiment be repeated, and provides transparency of how the output data was produced.
 Note that in this configuration file all comments are omitted and the formatting (indentations, white spaces, carriage return) is removed.
 To reformat the file or display the file as a tree structure, online tools, such as the \href{http://jsonviewer.stack.hu/}{Online JSON Viewer}\footnote{http://jsonviewer.stack.hu/}, can be used.
@@ -496,40 +675,44 @@ The following list describes the individual errors of the first error code that 
         This happens if the provided path in the configuration file (parameter \texttt{"DataLogPath"}) is invalid or non-existent.
         Verify that the provided path exists and that no invalid characters are used (do not use \texttt{<>:"/\textbackslash |?}).
     \item[code \texttt{001}] \hfill \\
-        The system falls back to the default configuration name.
-        This happens if the provided name in the configuration file (parameter \texttt{"ConfigName"}) is invalid.
+        This happens if no name was provided or the provided name in the configuration file (parameter \texttt{"ConfigName"}) is invalid.
+        The configuration name is mandatory and the application failed due to this error.
         Verify that in the provided name no invalid characters are used (do not use \texttt{<>:"/\textbackslash |?}).
 \end{description}
 
 The following list describes the individual errors of the second error code that specifically addresses problems concerning the formatting of the output file:
 \begin{description}
-    \item[code \texttt{10000}] \hfill \\
+    \item[code \texttt{010000}] \hfill \\
         The system falls back to the default column order.
         This happens if the parameter \texttt{"DataLogColumnOrder"} is invalid.
         Make sure that only existing data filed numbers are used and that the format string is valid.
         More information on format strings is provided on the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting}{Composite Formatting}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting}.
-    \item[code \texttt{01000}] \hfill \\
+    \item[code \texttt{001000}] \hfill \\
         The column titles are not printed to the output file.
         This happens if the value of parameter \texttt{"DataLogColumnTitle"} is not valid.
         Make sure that a title is provided for all possible data fields (not only the ones that are displayed).
-    \item[code \texttt{00100}] \hfill \\
+    \item[code \texttt{000100}] \hfill \\
         The system falls back to the default format for the timestamp.
         This happens if the value provided for the parameter \texttt{"DataLogFormatTimeStamp"} is invalid.
         Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types} for more information.
-    \item[code \texttt{00010}] \hfill \\
+    \item[code \texttt{000010}] \hfill \\
         The system falls back to the default format for the gaze origin coordinates.
         This happens if the value provided for the parameter \texttt{"DataLogFormatOrigin"} is invalid.
         Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnotemark[\value{footnote}] for more information.
-    \item[code \texttt{00001}] \hfill \\
+    \item[code \texttt{000001}] \hfill \\
         The system falls back to the default format for the diameter of the pupil.
         This happens if the value provided for the parameter \texttt{"DataLogFormatDiameter"} is invalid.
+        Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types} for more information.
+    \item[code \texttt{100000}] \hfill \\
+        The system falls back to the default format for the normalized coordination point.
+        This happens if the value provided for the parameter \texttt{"DataLogNormalizedPoint"} is invalid.
         Refer to the MSDN page about \href{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types}{Formatting Types}\footnote{https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types} for more information.
 \end{description}
 
 %------------------------------------------------------------------------------
 \section{Log File}
 All executables write continuously to the same log file.
-This allows to track the eye tracker events that happened throughout a \texttt{ztree} session within one log file.
+This allows to track the eye tracker events that happened throughout a session within one log file.
 The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe: \texttt{<zleaf path>}).
 The name of the log file is of the form \texttt{<hostName>\_gaze.log} where \texttt{<hostName>} is replaced by the name of the machine.
 
