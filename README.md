@@ -3,7 +3,7 @@
 This repository contains the source code for multiple simple tools that allow to control a Tobii eye tracker from a 3rd party application.
 Specifically, this project aims at providing a set of executables that can be called from within [ztree](http://www.ztree.uzh.ch/en.html) to allow eye tracker support for economic experiments.
 
-[**needs update**] For more details please refer to the [documentation](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
+For more details please refer to the [documentation](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
 
 ## Installation
 The complete toolset package can be downloaded from the [release folder](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
