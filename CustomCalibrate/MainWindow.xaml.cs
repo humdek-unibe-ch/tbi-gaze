@@ -18,7 +18,7 @@ namespace CustomCalibrate
     {
         private TrackerLogger _logger;
         private GazeConfiguration _config;
-        private GazeDataError _error = new GazeDataError();
+        private CalibrationDataError _error = new CalibrationDataError();
         private CalibrationModel _calibrationModel;
         private EyeTrackerPro? _tracker;
         private List<NormalizedPoint2D> _pointsToCalibrate = new List<NormalizedPoint2D>();
@@ -26,7 +26,7 @@ namespace CustomCalibrate
 
         public MainWindow()
         {
-            _logger = new TrackerLogger(EOutputType.calibration);
+            _logger = new TrackerLogger();
             _config = new GazeConfiguration(_logger);
 
             Left = SystemParameters.PrimaryScreenWidth;
@@ -78,6 +78,7 @@ namespace CustomCalibrate
             if (_config.Config.TrackerDevice != 1)
             {
                 _logger.Warning("Custom calibration only works with Tobii Pro SDK");
+                _error.Error = ECalibrationDataError.DeviceNotSupported;
                 return false;
             }
 
@@ -228,7 +229,7 @@ namespace CustomCalibrate
 
             await screenBasedCalibration.LeaveCalibrationModeAsync();
 
-            _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
+            _config.CleanupCalibrationOutputFile(_error.GetCalibrationDataErrorString());
         }
 
         /// <summary>
@@ -288,7 +289,7 @@ namespace CustomCalibrate
                     break;
             }
             _calibrationModel.Status = CalibrationModel.CalibrationStatus.Disconnect;
-            _error.Error = EGazeDataError.DeviceInterrupt;
+            _error.Error = ECalibrationDataError.DeviceInterrupt;
         }
 
         /// <summary>
@@ -318,7 +319,7 @@ namespace CustomCalibrate
                     {
                         HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
                         _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
-                        _config.CleanupCalibrationOutputFile(_error.GetGazeDataErrorString());
+                        _config.CleanupCalibrationOutputFile(_error.GetCalibrationDataErrorString());
                     }
                     finally
                     {

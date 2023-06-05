@@ -44,6 +44,8 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public double[][] CalibrationPoints { get; set; }
         [JsonProperty(Required = Required.Default)]
+        public bool GazeRecordingDisabled { get; set; }
+        [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
         [JsonProperty(Required = Required.Default)]
         public bool MouseControl { get; set; }
@@ -66,6 +68,7 @@ namespace GazeUtilityLibrary
 
         public ConfigItem()
         {
+            GazeRecordingDisabled = false;
             DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff";
             DataLogFormatDiameter = "0.000";
             DataLogFormatOrigin = "0.000";
@@ -236,7 +239,7 @@ namespace GazeUtilityLibrary
         /// Parses the json configuration.
         /// </summary>
         /// <returns>the updated ConfigItem class.</returns>
-        public ConfigItem? ParseJsonConfig()
+        public ConfigItem? ParseJsonConfig(ref GazeConfigError error)
         {
             string json;
             ConfigItem? item = null;
@@ -268,6 +271,7 @@ namespace GazeUtilityLibrary
             else
             {
                 logger.Warning("No config file found, using default values");
+                error.Error = EGazeConfigError.FallbackToDefaultConfig;
                 item = item_default;
             }
             return item;

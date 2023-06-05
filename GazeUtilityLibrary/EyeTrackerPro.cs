@@ -39,7 +39,7 @@ namespace GazeUtilityLibrary
             eyeTracker.ConnectionLost += OnConnectionLost;
             eyeTracker.ConnectionRestored += OnConnectionRestored;
 
-            if (license_path != null)
+            if (license_path != null && license_path != "")
             {
                 ApplyLicense(eyeTracker, PatternReplace(license_path));
             }

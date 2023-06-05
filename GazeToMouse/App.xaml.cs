@@ -72,23 +72,10 @@ namespace GazeToMouse
                     }
                 }
             }
-            foreach (string arg in e.Args)
-            {
-                if (arg.StartsWith("/"))
-                {
-                    switch (arg.Substring(1))
-                    {
-                        case "subject":
-                            break;
-                    }
-                }
-            }
 
             _dispatcher = Dispatcher.CurrentDispatcher;
             _dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
             ThreadPool.QueueUserWorkItem(HandlePipeSignals, this);
-            //Thread server = new Thread(HandlePipeSignals);
-            //server.Start(this);
 
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" {String.Join(" ", e.Args)}");
 
@@ -119,6 +106,11 @@ namespace GazeToMouse
             if (_config.Config.MouseControl)
             {
                 _isMouseTracking = true;
+            }
+
+            if (_config.Config.GazeRecordingDisabled)
+            {
+                _isRecording = false;
             }
 
             // intitialise the tracker device 

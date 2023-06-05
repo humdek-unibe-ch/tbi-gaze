@@ -7,14 +7,15 @@ namespace GazeUtilityLibrary
     /// </summary>
     public enum EGazeConfigError
     {
-        FallbackToDefaultConfigName = 0x01,
-        FallbackToCurrentOutputDir = 0x02,
-        FallbackToDefualtConfig = 0x04,
-        FallbackToDefaultDiameterFormat = 0x08,
-        FallbackToDefaultOriginFormat = 0x10,
-        FallbackToDefaultTimestampFormat = 0x20,
-        OmitColumnTitles = 0x40,
-        FallbackToDefualtColumnOrder = 0x80
+        FallbackToDefaultConfigName = 0x001,
+        FallbackToCurrentOutputDir = 0x002,
+        FallbackToDefaultConfig = 0x004,
+        FallbackToDefaultDiameterFormat = 0x008,
+        FallbackToDefaultOriginFormat = 0x010,
+        FallbackToDefaultTimestampFormat = 0x020,
+        OmitColumnTitles = 0x040,
+        FallbackToDefualtColumnOrder = 0x080,
+        FallbackToDefaultNormalizedFormat = 0x100
     }
     /// <summary>
     /// Error values of the gaze output data
@@ -22,6 +23,14 @@ namespace GazeUtilityLibrary
     public enum EGazeDataError
     {
         FallbackToMouse = 0x01,
+        DeviceInterrupt = 0x02
+    }
+    /// <summary>
+    /// Error values of the gaze output data
+    /// </summary>
+    public enum ECalibrationDataError
+    {
+        DeviceNotSupported = 0x01,
         DeviceInterrupt = 0x02
     }
 
@@ -73,6 +82,24 @@ namespace GazeUtilityLibrary
         /// </summary>
         /// <returns>the error string with binary error values if errors ocurred, the empty srting otherwise</returns>
         public string GetGazeDataErrorString()
+        {
+            string confErrorStr = $"_err-{ConvertToBinString((int)_error, 2)}";
+            if (_error == 0) confErrorStr = "";
+            return confErrorStr;
+
+        }
+    }
+    public class CalibrationDataError : GazeError
+    {
+
+        private ECalibrationDataError _error = 0;
+        public ECalibrationDataError Error { set { _error |= value; } }
+
+        /// <summary>
+        /// Gets the gaze error string.
+        /// </summary>
+        /// <returns>the error string with binary error values if errors ocurred, the empty srting otherwise</returns>
+        public string GetCalibrationDataErrorString()
         {
             string confErrorStr = $"_err-{ConvertToBinString((int)_error, 2)}";
             if (_error == 0) confErrorStr = "";

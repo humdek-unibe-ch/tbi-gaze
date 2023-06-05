@@ -39,10 +39,10 @@ namespace GazeUtilityLibrary
         /// <returns>True on success, False on failure.</returns>
         public bool InitConfig()
         {
-            _config = _parser.ParseJsonConfig();
+            _config = _parser.ParseJsonConfig(ref _error);
             if (_config == null)
             {
-                return false;
+                return true;
             }
 
             // check configuration name
@@ -294,7 +294,7 @@ namespace GazeUtilityLibrary
             {
                 _config.DataLogFormatNormalizedPoint = _default_config.DataLogFormatNormalizedPoint;
                 _logger.Warning($"Using the default output format for normaliyed point values: \"{_config.DataLogFormatNormalizedPoint}\"");
-                _error.Error = EGazeConfigError.FallbackToDefaultOriginFormat;
+                _error.Error = EGazeConfigError.FallbackToDefaultNormalizedFormat;
             }
             if (!ConfigChecker.CheckLogColumnOrder<CalibrationOutputValue>(_config.CalibrationLogColumnOrder, _logger))
             {
