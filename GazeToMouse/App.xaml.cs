@@ -108,7 +108,7 @@ namespace GazeToMouse
                 _isMouseTracking = true;
             }
 
-            if (_config.Config.GazeRecordingDisabled)
+            if (_config.Config.DataLogDisabledOnStartup)
             {
                 _isRecording = false;
             }
