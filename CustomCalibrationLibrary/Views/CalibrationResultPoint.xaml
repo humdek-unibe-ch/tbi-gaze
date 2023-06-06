@@ -16,7 +16,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ContentControl Template="{StaticResource CalibrationPointCentered}">
+        <ContentControl Template="{StaticResource CalibrationPoint}">
             <ContentControl.RenderTransform>
                 <TranslateTransform
                     X="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
@@ -26,8 +26,7 @@
         </ContentControl>
         <Grid>
             <Ellipse
-                Style="{StaticResource AverageGazePointCentered}"
-                RenderTransformOrigin="0.5, 0.5"
+                Style="{StaticResource AverageGazePoint}"
             />
             <Grid.RenderTransform>
                 <TranslateTransform
@@ -38,8 +37,7 @@
         </Grid>
         <Grid>
             <Ellipse
-                RenderTransformOrigin="0.5, 0.5"
-                Style="{StaticResource LeftGazePointCentered}"
+                Style="{StaticResource LeftGazePoint}"
             />
             <Grid.RenderTransform>
                 <TranslateTransform
@@ -50,8 +48,7 @@
         </Grid>
         <Grid>
             <Ellipse
-                RenderTransformOrigin="0.5, 0.5"
-                Style="{StaticResource RightGazePointCentered}"
+                Style="{StaticResource RightGazePoint}"
             />
             <Grid.RenderTransform>
                 <TranslateTransform

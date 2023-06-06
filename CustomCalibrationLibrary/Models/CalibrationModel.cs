@@ -8,6 +8,9 @@ using Tobii.Research;
 
 namespace CustomCalibrationLibrary.Models
 {
+    /// <summary>
+    /// A calibration point class holding several metrics connected to a calibration point.
+    /// </summary>
     public class CalibrationPoint : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -58,6 +61,7 @@ namespace CustomCalibrationLibrary.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
         }
+
         public CalibrationPoint(Point position, int index)
         {
             _hasData = false;
@@ -74,6 +78,9 @@ namespace CustomCalibrationLibrary.Models
         Abort
     }
 
+    /// <summary>
+    /// The model for the calibration process.
+    /// </summary>
     public class CalibrationModel : INotifyPropertyChanged
     {
         private string _error = "No Error";

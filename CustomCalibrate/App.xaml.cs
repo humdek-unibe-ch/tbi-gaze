@@ -43,6 +43,11 @@ namespace CustomCalibrate
             }
         }
 
+        /// <summary>
+        /// Called on Application startup
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             for (int i = 0; i < e.Args.Length; i++)
