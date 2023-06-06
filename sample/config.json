@@ -195,22 +195,23 @@
   // Defines the location of the license files. It must be the path to a folder (not a file).
   // This is only required if the eye tracker device requires an external license file.
   // If an eye tracker does not require a license file either omit this configuration item or
-  // set the empty string.
+  // set the empty string. Use %S as a placeholder for the device serialnumber and %A as a
+  // placeholder for the device address. The placeholders will be replaced by the actual values
+  // of the first device found in the connection list.
   // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
   //  C:\\Users\\Subject\\Documents\\tobii_licenses
-  "LicensePath": "tobii_licenses\\tobii-key\\%S",
+  "LicensePath": "",
 
   // Defines whether the mouse cursor shall be hidden on the calibration window.
   "MouseCalibrationHide": false,
 
   // Defines wheter the mouse cursor shall be controlled by the gaze of the subject during the
   // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when
-  // GazeToMouse.exe is executed and control will be released when GazeToMouseClose.exe is executed.
+  // Gaze.exe is executed and control will be released when GazeClose.exe is executed.
   "MouseControl": false,
 
   // Defines whether the mouse cursor shall be hidden during the experiemnt. If set to true the
-  // mouse cursor will be hidden when GazeToMouse.exe is executed and restored when GazeToMousClose.exe
-  // is executed.
+  // mouse cursor will be hidden when Gaze.exe is executed and restored when GazeClose.exe is executed.
   // This parameter is ignored if "MouseControl" is set to false.
   "MouseControlHide": false,
 
