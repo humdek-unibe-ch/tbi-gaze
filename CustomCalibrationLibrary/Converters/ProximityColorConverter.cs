@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace CustomCalibrationLibrary.Converters
 {
+    /// <summary>
+    /// Converter class to convert the proximito of a normailezed coordinate to the center point
+    /// (0.5) into colors.
+    /// </summary>
     public class ProximityColorConverter : IValueConverter
     {
 

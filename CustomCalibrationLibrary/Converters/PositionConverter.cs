@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace CustomCalibrationLibrary.Converters
 {
+    /// <summary>
+    /// Converter class to convert a normalized coordinate to a pixel coordinate.
+    /// </summary>
     public class PositionConverter: IValueConverter
     {
 

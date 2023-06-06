@@ -4,6 +4,9 @@ using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Commands
 {
+    /// <summary>
+    /// Comand class to trigger calibration events.
+    /// </summary>
     public class CalibrationCommand : ICommand
     {
         private CalibrationEventType _eventType;

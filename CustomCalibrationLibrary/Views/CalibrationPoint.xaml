@@ -60,7 +60,12 @@
                                 <DoubleAnimation
                                     BeginTime="0:0:1"
                                     Storyboard.TargetProperty="(Ellipse.Height)"
-                                    To="15" Duration="0:0:0.1"
+                                    To="14" Duration="0:0:0.1"
+                                />
+                                <DoubleAnimation
+                                    BeginTime="0:0:1"
+                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.Y)"
+                                    To="-7" Duration="0:0:0.1"
                                 />
                                 <DoubleAnimation
                                     BeginTime="0:0:1"

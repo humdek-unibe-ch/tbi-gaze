@@ -255,8 +255,9 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Prepare the calibration output file based on the configuration.
         /// </summary>
+        /// <param name="subjectCode">An optional subject code to be appended to the file name if set.</param>
         /// <returns>True on success, False on failure.</returns>
-        public bool PrepareCalibrationOutputFile()
+        public bool PrepareCalibrationOutputFile(string? subjectCode)
         {
             if (_config == null)
             {
@@ -268,7 +269,8 @@ namespace GazeUtilityLibrary
                 return true;
             }
 
-            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}_{EOutputType.calibration.ToString()}";
+            string subjectCodeString = subjectCode != null ? $"_{subjectCode}" : "";
+            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}{subjectCodeString}_{EOutputType.calibration.ToString()}";
             string fileName = $"{_starttime}_{filePostfix}";
 
             // create gaze data file

@@ -6,13 +6,6 @@
         <Setter Property="Stroke" Value="White" />
         <Setter Property="StrokeDashArray" Value="1, 1.95" />
     </Style>
-    <Style x:Key="AverageGazePointCentered" TargetType="{x:Type Ellipse}" BasedOn="{StaticResource AverageGazePoint}">
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <TranslateTransform X="-8" Y="-8" />
-            </Setter.Value>
-        </Setter>
-    </Style>
     <Style x:Key="GazePoint" TargetType="{x:Type Ellipse}">
         <Setter Property="Width" Value="8" />
         <Setter Property="Height" Value="8" />
@@ -20,22 +13,8 @@
     <Style x:Key="LeftGazePoint" TargetType="{x:Type Ellipse}" BasedOn="{StaticResource GazePoint}">
         <Setter Property="Fill" Value="Yellow" />
     </Style>
-    <Style x:Key="LeftGazePointCentered" TargetType="{x:Type Ellipse}" BasedOn="{StaticResource LeftGazePoint}">
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <TranslateTransform X="-4" Y="-4" />
-            </Setter.Value>
-        </Setter>
-    </Style>
     <Style x:Key="RightGazePoint" TargetType="{x:Type Ellipse}" BasedOn="{StaticResource GazePoint}">
         <Setter Property="Fill" Value="Blue" />
-    </Style>
-    <Style x:Key="RightGazePointCentered" TargetType="{x:Type Ellipse}" BasedOn="{StaticResource RightGazePoint}">
-        <Setter Property="RenderTransform">
-            <Setter.Value>
-                <TranslateTransform X="-4" Y="-4" />
-            </Setter.Value>
-        </Setter>
     </Style>
     <Style x:Key="LiveGazePoint" TargetType="{x:Type Ellipse}">
         <Setter Property="Width" Value="21" />

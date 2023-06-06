@@ -141,7 +141,7 @@
   // data will be stored to the outupt gaze file as soon as the device connection is established.
   // If set to true data storing must be enabled manually through the application GazeRecordingEnable.
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-  "DataLogDisabledOnStartup": false
+  "DataLogDisabledOnStartup": false,
 
   // Allows to define the format of how the pupil diameter (in millimetres) will be logged. Use the .NET
   // syntax to specify the format:
@@ -186,7 +186,7 @@
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
   //  C:\\Users\\Subject\\Documents
-  "DataLogPath": ""
+  "DataLogPath": "",
 
   // Defines whether gaze data is written to a log file. If set to false, all the configuration items
   // matching the pattern "DataLog*" are ignored.
@@ -234,7 +234,7 @@
   // The arguments to pass to the calibration application. Use %S as a placeholder for the device
   // serialnumber and %A as a placeholder for the device address. The placeholders will be replaced
   // by the actual values of the first device found in the connection list.
-  "TobiiCalibrateArguments": "--device-sn=%S --mode=usercalibration"
+  "TobiiCalibrateArguments": "--device-sn=%S --mode=usercalibration",
 
   // Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
   // Note that for some eye trackers the Tobii SDK Pro requires a license file to work

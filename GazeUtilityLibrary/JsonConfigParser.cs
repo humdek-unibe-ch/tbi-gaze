@@ -44,7 +44,7 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public double[][] CalibrationPoints { get; set; }
         [JsonProperty(Required = Required.Default)]
-        public bool GazeRecordingDisabled { get; set; }
+        public bool DataLogDisabledOnStartup { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
         [JsonProperty(Required = Required.Default)]
@@ -68,7 +68,7 @@ namespace GazeUtilityLibrary
 
         public ConfigItem()
         {
-            GazeRecordingDisabled = false;
+            DataLogDisabledOnStartup = false;
             DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff";
             DataLogFormatDiameter = "0.000";
             DataLogFormatOrigin = "0.000";

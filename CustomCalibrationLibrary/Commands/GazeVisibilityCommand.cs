@@ -4,6 +4,9 @@ using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Commands
 {
+    /// <summary>
+    /// Command class to change the gaze visibility
+    /// </summary>
     internal class GazeVisibilityCommand : ICommand
     {
         private CalibrationResultViewModel _model;
