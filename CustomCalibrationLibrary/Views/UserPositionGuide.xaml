@@ -45,16 +45,17 @@
         <Viewbox Stretch="Uniform" Grid.Row="1">
             <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
                 <Grid>
-                    <Ellipse
-                        RenderTransformOrigin="0.5, 0.5"
-                        Height="5cm"
-                        Width="5cm"
-                        Fill="{Binding Left.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
-                    >
-                        <Ellipse.RenderTransform>
-                            <TranslateTransform X="-94.5" Y="-94.5" />
-                        </Ellipse.RenderTransform>
-                    </Ellipse>
+                    <Grid>
+                        <Ellipse
+                            RenderTransformOrigin="0.5, 0.5"
+                            Height="200"
+                            Width="200"
+                            Fill="{Binding Left.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
+                        />
+                        <Grid.RenderTransform>
+                            <TranslateTransform X="-100" Y="-100" />
+                        </Grid.RenderTransform>
+                    </Grid>
                     <Grid.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding Left.UserPosition.Z}" ScaleY="{Binding Left.UserPosition.Z}" />
@@ -69,11 +70,11 @@
                     <Ellipse
                         RenderTransformOrigin="0.5, 0.5"
                         Fill="{Binding Right.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
-                        Height="5cm"
-                        Width="5cm"
+                        Height="200"
+                        Width="200"
                     >
                         <Ellipse.RenderTransform>
-                            <TranslateTransform X="-94.5" Y="-94.5" />
+                            <TranslateTransform X="-100" Y="-100" />
                         </Ellipse.RenderTransform>
                     </Ellipse>
                     <Grid.RenderTransform>

@@ -9,6 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:PositionConverter x:Key="PositionConverter" />
+        <converter:HasDataToVisibilityConverter x:Key="HasDataToVisibilityConverter" />
         <Style x:Key="CalibrationPoint" TargetType="{x:Type Ellipse}">
             <Setter Property="Width" Value="20" />
             <Setter Property="Height" Value="20" />
@@ -23,10 +24,6 @@
                     <TransformGroup>
                         <RotateTransform Angle="0"/>
                         <ScaleTransform CenterX="0" CenterY="0" ScaleX="1.0" ScaleY="1.0" />
-                        <TranslateTransform
-                            X="-10"
-                            Y="-10"
-                        />
                     </TransformGroup>
                 </Setter.Value>
             </Setter>
@@ -61,11 +58,6 @@
                                     BeginTime="0:0:1"
                                     Storyboard.TargetProperty="(Ellipse.Height)"
                                     To="14" Duration="0:0:0.1"
-                                />
-                                <DoubleAnimation
-                                    BeginTime="0:0:1"
-                                    Storyboard.TargetProperty="(Ellipse.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.Y)"
-                                    To="-7" Duration="0:0:0.1"
                                 />
                                 <DoubleAnimation
                                     BeginTime="0:0:1"
@@ -121,8 +113,14 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid RenderTransformOrigin="0.5, 0.5">
-        <Ellipse Style="{StaticResource CalibrationPoint}" />
+    <Grid>
+        <Grid Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Ellipse Style="{StaticResource CalibrationPoint}" />
+            <Ellipse Fill="Red" Height="2" Width="2" Visibility="{Binding HasData, Converter={StaticResource HasDataToVisibilityConverter}}"/>
+            <Grid.RenderTransform>
+                <TranslateTransform X="-10" Y="-10" />
+            </Grid.RenderTransform>
+        </Grid>
         <Grid.RenderTransform>
             <TranslateTransform
                 X="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"

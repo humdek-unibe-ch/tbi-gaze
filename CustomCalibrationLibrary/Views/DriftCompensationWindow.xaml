@@ -8,7 +8,7 @@
         Title="DriftCompensation" Height="450" Width="800">
     <Grid>
         <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
-            <uc:CalibrationPoint DataContext="{Binding FixationPoint}" />
+            <uc:FixationPoint DataContext="{Binding FixationPoint}" />
         </Canvas>
     </Grid>
 </Window>

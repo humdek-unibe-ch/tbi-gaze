@@ -11,7 +11,7 @@ namespace CustomCalibrationLibrary.Views
         public DriftCompensationWindow()
         {
             InitializeComponent();
-            this.DataContext = new DriftCompensationViewModel();
+            DataContext = new DriftCompensationViewModel();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace GazeToMouse
         private Dispatcher? _dispatcher = null;
         public Dispatcher? CurrentDispatcher { get { return _dispatcher; } }
         private TaskCompletionSource<bool> _gazeCollection = new TaskCompletionSource<bool>();
-        private Window _window = new DriftCompensationWindow();
+        private DriftCompensationWindow _window = new DriftCompensationWindow();
 
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
@@ -61,10 +61,10 @@ namespace GazeToMouse
             await Task.Delay(1000);
             _isDriftCompensationOn = true;
             bool res = await _gazeCollection.Task;
+            _isDriftCompensationOn = false;
             Current.Dispatcher.Invoke(() => {
                 _window.Hide();
             });
-            _isDriftCompensationOn = false;
             _gazeCollection = new TaskCompletionSource<bool>();
             return res;
         }
@@ -398,6 +398,7 @@ namespace GazeToMouse
                     {
                         if( _tracker.UpdateDriftCompensation(data))
                         {
+                            _logger?.Info($"Add drift compensation [{_tracker.DriftCompensation.XCoordLeft}, {_tracker.DriftCompensation.YCoordLeft}], [{_tracker.DriftCompensation.XCoordRight}, {_tracker.DriftCompensation.YCoordRight}]");
                             _gazeCollection.SetResult(true);
                         }
                     }

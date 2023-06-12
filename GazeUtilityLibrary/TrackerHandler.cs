@@ -54,6 +54,10 @@ namespace GazeUtilityLibrary
         private DeviceStatus state;
 
         protected DriftCompensation driftCompensation;
+        public DriftCompensation DriftCompensation
+        {
+            get { return driftCompensation; }
+        }
 
         /// <summary>
         /// Timer to control the apperance of the dialog box
