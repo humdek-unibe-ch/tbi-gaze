@@ -3,10 +3,39 @@ using System.ComponentModel;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
+using System.Collections.Generic;
 using Tobii.Research;
+using System.Linq;
 
 namespace GazeUtilityLibrary
 {
+    public class DriftCompensation
+    {
+        private double _xCoordLeft;
+        public double XCoordLeft { get { return _xCoordLeft; } }
+
+        private double _yCoordLeft;
+        public double YCoordLeft { get { return _yCoordLeft; } }
+        private double _xCoordRight;
+        public double XCoordRight { get { return _xCoordRight; } }
+        private double _yCoordRight;
+        public double YCoordRight { get { return _yCoordRight; } }
+
+        public DriftCompensation()
+        {
+            _xCoordLeft = 0;
+            _yCoordLeft = 0;
+            _xCoordRight = 0;
+            _yCoordRight = 0;
+        }
+        public DriftCompensation(double xCoordLeft, double yCoordLeft, double xCoordRight, double yCoordRight)
+        {
+            _xCoordLeft = xCoordLeft;
+            _yCoordLeft = yCoordLeft;
+            _xCoordRight = xCoordRight;
+            _yCoordRight = yCoordRight;
+        }
+    }
     /// <summary>
     /// The common interface for the Tobii eyetracker Engines Core and Pro
     /// </summary>
@@ -23,6 +52,8 @@ namespace GazeUtilityLibrary
             Tracking
         }
         private DeviceStatus state;
+
+        protected DriftCompensation driftCompensation;
 
         /// <summary>
         /// Timer to control the apperance of the dialog box
@@ -58,12 +89,16 @@ namespace GazeUtilityLibrary
         /// </summary>
         public event GazeDataHandler? GazeDataReceived;
 
+        private List<GazeDataArgs> driftCompensationSamples;
+
         /// <summary>
         /// Event handler for gaze data events of the eyetracker
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
         public delegate void GazeDataHandler(Object sender, GazeDataArgs e);
+
+        private double normalizedDispersionThreshold;
 
         /// <summary>
         /// Gets or sets the state of the eyetracker device.
@@ -90,9 +125,12 @@ namespace GazeUtilityLibrary
         /// <param name="device_name">Name of the device.</param>
         public TrackerHandler(TrackerLogger logger, int ready_timer, string device_name)
         {
+            driftCompensationSamples = new List<GazeDataArgs>();
+            driftCompensation = new DriftCompensation();
             this.DeviceName = device_name;
             this.logger = logger;
             logger.Info($"Using {DeviceName}");
+            normalizedDispersionThreshold = AngleToDist(0.5);
             if (ready_timer > 0)
             {
                 dialogBoxTimer = new Timer
@@ -120,6 +158,35 @@ namespace GazeUtilityLibrary
         {
             return pattern;
         }
+
+        virtual public bool UpdateDriftCompensation(GazeDataArgs args)
+        {
+            driftCompensationSamples.Add(args);
+            if (IsFixation(ref driftCompensationSamples) && driftCompensationSamples.Count > GetFixationFrameCount())
+            {
+                driftCompensation = ComputeDriftCompensation(ref driftCompensationSamples);
+                driftCompensationSamples.Clear();
+                return true;
+            }
+            return false;
+        }
+
+        abstract protected double ComputeDispersion(ref List<GazeDataArgs> samples);
+        abstract protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold);
+        private bool IsFixation(ref List<GazeDataArgs> samples)
+        {
+            double dispersion = ComputeDispersion(ref samples);
+            double maxDeviation = ComputeMaxDeviation(ref samples, normalizedDispersionThreshold);
+            return dispersion > maxDeviation;
+        }
+        abstract protected int GetFixationFrameCount();
+
+        protected double AngleToDist(double angle)
+        {
+            return Math.Sqrt(2 * (1 - Math.Cos(angle * Math.PI / 180)));
+        }
+
+        abstract protected DriftCompensation ComputeDriftCompensation(ref List<GazeDataArgs> samples);
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -254,6 +321,7 @@ namespace GazeUtilityLibrary
         private double? distOriginRight = null;
         private bool? isValidOriginLeft = null;
         private bool? isValidOriginRight = null;
+        private GazeDataEventArgs? argsPro = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
@@ -298,7 +366,7 @@ namespace GazeUtilityLibrary
         public GazeDataArgs(TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
             bool isValidCoordLeft, bool isValidCoordRight, double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight,
             double xOriginLeft, double yOriginLeft, double zOriginLeft, double xOriginRight, double yOriginRight, double zOriginRight,
-            double distOrigin, double distOriginLeft, double distOriginRight, bool isValidOriginLeft, bool isValidOriginRight)
+            double distOrigin, double distOriginLeft, double distOriginRight, bool isValidOriginLeft, bool isValidOriginRight, GazeDataEventArgs argsPro)
         {
             this.timestamp = timestamp;
             this.xCoord = xCoord;
@@ -325,6 +393,7 @@ namespace GazeUtilityLibrary
             this.distOriginRight = distOriginRight;
             this.isValidOriginLeft = isValidOriginLeft;
             this.isValidOriginRight = isValidOriginRight;
+            this.argsPro = argsPro;
         }
         public TimeSpan Timestamp { get { return timestamp; } }
         public double XCoord { get { return xCoord; } }
@@ -351,6 +420,7 @@ namespace GazeUtilityLibrary
         public double? DistOriginRight { get { return distOriginRight; } }
         public bool? IsValidOriginLeft { get { return isValidOriginLeft; } }
         public bool? IsValidOriginRight { get { return isValidOriginRight; } }
+        public GazeDataEventArgs? ArgsPro { get { return argsPro;  } }
     }
 
     /// <summary>

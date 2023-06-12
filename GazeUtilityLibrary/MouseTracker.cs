@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -124,6 +125,31 @@ namespace GazeUtilityLibrary
                 Stop();
                 base.Dispose(true);
             }
+        }
+
+        protected override int GetFixationFrameCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override double ComputeDispersion(ref List<GazeDataArgs> samples)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override DriftCompensation ComputeDriftCompensation(ref List<GazeDataArgs> samples)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool UpdateDriftCompensation(GazeDataArgs args)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

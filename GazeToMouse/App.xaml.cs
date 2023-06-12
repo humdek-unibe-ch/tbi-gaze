@@ -6,7 +6,8 @@ using System.Windows;
 using GazeUtilityLibrary;
 using System.Threading;
 using System.Windows.Threading;
-using System.Linq;
+using System.Threading.Tasks;
+using CustomCalibrationLibrary.Views;
 
 namespace GazeToMouse
 {
@@ -15,7 +16,7 @@ namespace GazeToMouse
     /// </summary>
     public partial class App : Application
     {
-        private static bool tracking = false;
+        private static bool _isFirstSample = true;
         private TrackerHandler? _tracker = null;
         private static TimeSpan delta;
         private TrackerLogger? _logger = null;
@@ -24,8 +25,11 @@ namespace GazeToMouse
         private GazeConfiguration? _config = null;
         private bool _isRecording = true;
         private bool _isMouseTracking = false;
+        private bool _isDriftCompensationOn = false;
         private Dispatcher? _dispatcher = null;
         public Dispatcher? CurrentDispatcher { get { return _dispatcher; } }
+        private TaskCompletionSource<bool> _gazeCollection = new TaskCompletionSource<bool>();
+        private Window _window = new DriftCompensationWindow();
 
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
@@ -49,6 +53,22 @@ namespace GazeToMouse
             _isMouseTracking = false;
         }
 
+        public async Task<bool> CompensateDrift()
+        {
+            Current.Dispatcher.Invoke(() => {
+                _window.Show();
+            });
+            await Task.Delay(1000);
+            _isDriftCompensationOn = true;
+            bool res = await _gazeCollection.Task;
+            Current.Dispatcher.Invoke(() => {
+                _window.Hide();
+            });
+            _isDriftCompensationOn = false;
+            _gazeCollection = new TaskCompletionSource<bool>();
+            return res;
+        }
+
         /// <summary>
         /// Called when [application starts].
         /// </summary>
@@ -57,6 +77,10 @@ namespace GazeToMouse
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             _logger = new TrackerLogger();
+
+            _window.WindowStyle = WindowStyle.None;
+            _window.WindowState = WindowState.Maximized;
+            _window.ResizeMode = ResizeMode.NoResize;
 
             string? subjectCode = null;
             for(int i =0; i < e.Args.Length; i++)
@@ -156,56 +180,79 @@ namespace GazeToMouse
         /// Handler passed to the thread which listens to the termination signal.
         /// </summary>
         /// <param name="data">The context passed to the handler.</param>
-        private void HandlePipeSignals(object? data)
+        private async void HandlePipeSignals(object? data)
         {
-            App? app = (App?)data;
+            if (data == null)
+            {
+                return;
+            }
+            App app = (App)data;
             string pipeName = "tobii_gaze";
 
-            while(true)
+            while (true)
             {
-                using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.In))
+                using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut))
                 {
+                    StreamReader sr = new StreamReader(pipeServer);
+                    StreamWriter sw = new StreamWriter(pipeServer);
                     // Wait for a client to connect
                     pipeServer.WaitForConnection();
-                    using (StreamReader sr = new StreamReader(pipeServer))
+                    string? msg = null;
+                    while (pipeServer.IsConnected)
                     {
-                        string? msg = null;
-                        while (true)
+                        msg = sr.ReadLine();
+                        if (msg == null)
                         {
-                            msg = sr.ReadLine();
-                            if (msg == null)
-                            {
-                                break;
-                            }
+                            break;
+                        }
 
-                            if (msg.StartsWith("TERMINATE"))
+                        if (msg.StartsWith("TERMINATE"))
+                        {
+                            app.Dispatcher.InvokeShutdown();
+                        }
+                        else if (msg.StartsWith("GAZE_RECORDING_DISABLE"))
+                        {
+                            app.Dispatcher.Invoke(() =>
                             {
-                                app?.Dispatcher.InvokeShutdown();
-                            }
-                            else if (msg.StartsWith("GAZE_RECORDING_DISABLE"))
+                                app.GazeRecordingDisable();
+                            });
+                        }
+                        else if (msg.StartsWith("GAZE_RECORDING_ENABLE"))
+                        {
+                            app.Dispatcher.Invoke(() =>
                             {
-                                app?.Dispatcher.Invoke(() => {
-                                    app?.GazeRecordingDisable();
-                                });
-                            }
-                            else if (msg.StartsWith("GAZE_RECORDING_ENABLE"))
+                                app.GazeRecordingEnable();
+                            });
+                        }
+                        else if (msg.StartsWith("MOUSE_TRACKING_DISABLE"))
+                        {
+                            app.Dispatcher.Invoke(() =>
                             {
-                                app?.Dispatcher.Invoke(() => {
-                                    app?.GazeRecordingEnable();
-                                });
-                            }
-                            else if (msg.StartsWith("MOUSE_TRACKING_DISABLE"))
+                                app.MouseTrackingDisable();
+                            });
+                        }
+                        else if (msg.StartsWith("MOUSE_TRACKING_ENABLE"))
+                        {
+                            app.Dispatcher.Invoke(() =>
                             {
-                                app?.Dispatcher.Invoke(() => {
-                                    app?.MouseTrackingDisable();
-                                });
-                            }
-                            else if (msg.StartsWith("MOUSE_TRACKING_ENABLE"))
+                                app.MouseTrackingEnable();
+                            });
+                        }
+                        else if (msg.StartsWith("DRIFT_COMPENSATION"))
+                        {
+                            bool res = await app.Dispatcher.Invoke(() =>
                             {
-                                app?.Dispatcher.Invoke(() => {
-                                    app?.MouseTrackingEnable();
-                                });
+                                return app.CompensateDrift();
+                            });
+                            if (res)
+                            {
+                                sw.WriteLine("SUCCESS");
                             }
+                            else
+                            {
+                                sw.WriteLine("FAILED");
+                            }
+                            sw.Flush();
                         }
                     }
                 }
@@ -270,7 +317,11 @@ namespace GazeToMouse
         private string GetGazeDataValueString(TimeSpan ts, string format)
         {
             TimeSpan res = ts;
-            if (!tracking) delta = res - DateTime.Now.TimeOfDay; ;
+            if (_isFirstSample)
+            {
+                delta = res - DateTime.Now.TimeOfDay;
+                _isFirstSample = false;
+            }
             res -= delta;
             return res.ToString(format);
         }
@@ -310,7 +361,7 @@ namespace GazeToMouse
         private void OnGazeDataReceived(Object? sender, GazeDataArgs data)
         {
             // write the coordinates to the log file
-            if (_isRecording == true && _config != null && _config.Config.DataLogWriteOutput && IsDataValid(data, _config.Config.DataLogIgnoreInvalid))
+            if (_config != null && _config.Config.DataLogWriteOutput && IsDataValid(data, _config.Config.DataLogIgnoreInvalid))
             {
                 string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
                 formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetGazeDataValueString(data.Timestamp, _config.Config.DataLogFormatTimeStamp);
@@ -338,14 +389,29 @@ namespace GazeToMouse
                 formatted_values[(int)GazeOutputValue.DistOriginRight] = GetGazeDataValueString(data.DistOriginRight, _config.Config.DataLogFormatOrigin);
                 formatted_values[(int)GazeOutputValue.ValidOriginLeft] = GetGazeDataValueString(data.IsValidOriginLeft);
                 formatted_values[(int)GazeOutputValue.ValidOriginRight] = GetGazeDataValueString(data.IsValidOriginRight);
-                _config.WriteToGazeOutput(formatted_values);
-                tracking = true;
+                if (_isDriftCompensationOn)
+                {
+                    if (data.IsValidCoordLeft == true && data.IsValidCoordRight == true
+                        && data.XCoordLeft != null && data.YCoordLeft != null
+                        && data.XCoordRight != null && data.YCoordRight != null
+                        && _tracker != null)
+                    {
+                        if( _tracker.UpdateDriftCompensation(data))
+                        {
+                            _gazeCollection.SetResult(true);
+                        }
+                    }
+                }
+                if (_isRecording)
+                {
+                    _config.WriteToGazeOutput(formatted_values);
+                }
             }
             // set the cursor position to the gaze position
             if (_isMouseTracking)
             {
                 if (double.IsNaN(data.XCoord) || double.IsNaN(data.YCoord)) return;
-                UpdateMousePosition(Convert.ToInt32(data.XCoord), Convert.ToInt32(data.YCoord));
+                UpdateMousePosition(Convert.ToInt32(data.XCoord * SystemParameters.PrimaryScreenWidth), Convert.ToInt32(data.YCoord * SystemParameters.PrimaryScreenHeight));
             }
         }
 
@@ -360,7 +426,6 @@ namespace GazeToMouse
             {
                 _hider?.HideCursor();
             }
-            if (tracking) return;
         }
 
         /// <summary>

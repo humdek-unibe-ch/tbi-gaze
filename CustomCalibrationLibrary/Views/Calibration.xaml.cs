@@ -1,7 +1,5 @@
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
-using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace CustomCalibrationLibrary.Views

@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Transactions;
 using System.Windows;
 using Tobii.Research;
 
@@ -93,9 +97,96 @@ namespace GazeUtilityLibrary
         /// <param name="y">The y coordinate.</param>
         /// <param name="z">The z coordinate.</param>
         /// <returns></returns>
-        private double ComputeEyeDistance(double x, double y, double z)
+        private double ComputeEyeDistance(Point3D point)
         {
-            return Math.Sqrt(x * x + y * y + z * z);
+            return Math.Sqrt(point.X * point.X + point.Y * point.Y + point.Z * point.Z);
+        }
+        private double ComputeGazeDistance(Point3D gaze, Point3D origin)
+        {
+            Point3D distance = new Point3D(gaze.X - origin.X, gaze.Y - origin.Y, gaze.Z - origin.Z);
+            return ComputeEyeDistance(distance);
+        }
+
+        protected override int GetFixationFrameCount()
+        {
+            // 200ms at 60 Hz
+            return 12;
+        }
+
+        override public bool UpdateDriftCompensation(GazeDataArgs args)
+        {
+            if (args.ArgsPro == null)
+            {
+                return false;
+            }
+            if (args.ArgsPro.LeftEye.GazePoint.Validity == Validity.Invalid
+                || args.ArgsPro.LeftEye.GazeOrigin.Validity == Validity.Invalid
+                || args.ArgsPro.RightEye.GazePoint.Validity == Validity.Invalid
+                || args.ArgsPro.RightEye.GazeOrigin.Validity == Validity.Invalid)
+            {
+                return false;
+            }
+
+            return base.UpdateDriftCompensation(args);
+        }
+
+        override protected DriftCompensation ComputeDriftCompensation(ref List<GazeDataArgs> samples)
+        {
+            double xCoordLeft = samples.Average(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionOnDisplayArea.X ?? 0);
+            double yCoordLeft = samples.Average(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionOnDisplayArea.Y ?? 0);
+            double xCoordRight = samples.Average(sample => sample.ArgsPro?.RightEye.GazePoint.PositionOnDisplayArea.X ?? 0);
+            double yCoordRight = samples.Average(sample => sample.ArgsPro?.RightEye.GazePoint.PositionOnDisplayArea.Y ?? 0);
+
+            return new DriftCompensation(
+                0.5 - xCoordLeft,
+                0.5 - yCoordLeft,
+                0.5 - xCoordRight,
+                0.5 - yCoordRight
+            );
+        }
+
+        override protected double ComputeDispersion(ref List<GazeDataArgs> samples)
+        {
+            double xMax = samples.Max(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionInUserCoordinates.X ?? double.MinValue);
+            double yMax = samples.Max(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionInUserCoordinates.Y ?? double.MinValue);
+            double zMax = samples.Max(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionInUserCoordinates.Z ?? double.MinValue);
+            double xMin = samples.Min(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionInUserCoordinates.X ?? double.MaxValue);
+            double yMin = samples.Min(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionInUserCoordinates.Y ?? double.MaxValue);
+            double zMin = samples.Min(sample => sample.ArgsPro?.LeftEye.GazePoint.PositionInUserCoordinates.Z ?? double.MaxValue);
+            double dispersionLeft = xMax - xMin + yMax - yMin + zMax - zMin;
+            xMax = samples.Max(sample => sample.ArgsPro?.RightEye.GazePoint.PositionInUserCoordinates.X ?? double.MinValue);
+            yMax = samples.Max(sample => sample.ArgsPro?.RightEye.GazePoint.PositionInUserCoordinates.Y ?? double.MinValue);
+            zMax = samples.Max(sample => sample.ArgsPro?.RightEye.GazePoint.PositionInUserCoordinates.Z ?? double.MinValue);
+            xMin = samples.Min(sample => sample.ArgsPro?.RightEye.GazePoint.PositionInUserCoordinates.X ?? double.MaxValue);
+            yMin = samples.Min(sample => sample.ArgsPro?.RightEye.GazePoint.PositionInUserCoordinates.Y ?? double.MaxValue);
+            zMin = samples.Min(sample => sample.ArgsPro?.RightEye.GazePoint.PositionInUserCoordinates.Z ?? double.MaxValue);
+            double dispersionRight = xMax - xMin + yMax - yMin + zMax - zMin;
+            return Math.Max(dispersionLeft, dispersionRight);
+        }
+
+        override protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold)
+        {
+            double distLeft = samples.Average(sample => {
+                if (sample.ArgsPro == null)
+                {
+                    return 0;
+                }
+                return ComputeGazeDistance(
+                    sample.ArgsPro.LeftEye.GazePoint.PositionInUserCoordinates,
+                    sample.ArgsPro.LeftEye.GazeOrigin.PositionInUserCoordinates);
+            });
+            double distRight = samples.Average(sample => {
+                if (sample.ArgsPro == null)
+                {
+                    return 0;
+                }
+                return ComputeGazeDistance(
+                    sample.ArgsPro.RightEye.GazePoint.PositionInUserCoordinates,
+                    sample.ArgsPro.RightEye.GazeOrigin.PositionInUserCoordinates);
+            });
+            double dist = (distLeft + distRight) / 2;
+
+            return dist * normalizedDispersionThreshold;
         }
 
         /// <summary>
@@ -164,28 +255,24 @@ namespace GazeUtilityLibrary
         private void OnGazeDataReceivedPro(object? sender, GazeDataEventArgs data)
         {
             State = DeviceStatus.Tracking;
-            double left_gaze_x = data.LeftEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
-            double right_gaze_x = data.RightEye.GazePoint.PositionOnDisplayArea.X * SystemParameters.PrimaryScreenWidth;
-            double left_gaze_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
-            double right_gaze_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y * SystemParameters.PrimaryScreenHeight;
+            double left_gaze_x = data.LeftEye.GazePoint.PositionOnDisplayArea.X + driftCompensation.XCoordLeft;
+            double right_gaze_x = data.RightEye.GazePoint.PositionOnDisplayArea.X + driftCompensation.XCoordRight;
+            double left_gaze_y = data.LeftEye.GazePoint.PositionOnDisplayArea.Y + driftCompensation.YCoordLeft;
+            double right_gaze_y = data.RightEye.GazePoint.PositionOnDisplayArea.Y + driftCompensation.YCoordRight;
             double distance_left = ComputeEyeDistance(
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates.X,
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Y,
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Z
+                data.LeftEye.GazeOrigin.PositionInUserCoordinates
             );
             double distance_right = ComputeEyeDistance(
-                data.RightEye.GazeOrigin.PositionInUserCoordinates.X,
-                data.RightEye.GazeOrigin.PositionInUserCoordinates.Y,
-                data.RightEye.GazeOrigin.PositionInUserCoordinates.Z
+                data.RightEye.GazeOrigin.PositionInUserCoordinates
             );
             GazeDataArgs gazeData = new GazeDataArgs(
                 TimeSpan.FromMilliseconds(data.SystemTimeStamp/1000),
-                Math.Round(GazeFilter(left_gaze_x, right_gaze_x), 0),
-                Math.Round(left_gaze_x, 0),
-                Math.Round(right_gaze_x, 0),
-                Math.Round(GazeFilter(left_gaze_y, right_gaze_y), 0),
-                Math.Round(left_gaze_y, 0),
-                Math.Round(right_gaze_y, 0),
+                GazeFilter(left_gaze_x, right_gaze_x),
+                left_gaze_x,
+                right_gaze_x,
+                GazeFilter(left_gaze_y, right_gaze_y),
+                left_gaze_y,
+                right_gaze_y,
                 (data.LeftEye.GazePoint.Validity == Validity.Valid),
                 (data.RightEye.GazePoint.Validity == Validity.Valid),
                 GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter),
@@ -203,7 +290,8 @@ namespace GazeUtilityLibrary
                 distance_left,
                 distance_right,
                 (data.LeftEye.GazeOrigin.Validity == Validity.Valid),
-                (data.RightEye.GazeOrigin.Validity == Validity.Valid)
+                (data.RightEye.GazeOrigin.Validity == Validity.Valid),
+                data
             );
             OnGazeDataReceived(gazeData);
         }

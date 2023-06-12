@@ -99,7 +99,7 @@ namespace GazeUtilityLibrary
         /// <returns>True on success, False on failure.</returns>
         public bool CleanupGazeOutputFile(string error)
         {
-            if (_config == null)
+            if (_config == null || _swGaze == null)
             {
                 return false;
             }
