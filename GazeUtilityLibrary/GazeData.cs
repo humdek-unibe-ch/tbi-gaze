@@ -85,12 +85,12 @@ namespace GazeUtilityLibrary
             if (Config.DataLogWriteOutput && IsGazeDataValid(data, Config.DataLogIgnoreInvalid))
             {
                 formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetValueString(data.Timestamp, Config.DataLogFormatTimeStamp, ref delta);
-                formatted_values[(int)GazeOutputValue.XCoord] = GetValueString(data.XCoord);
-                formatted_values[(int)GazeOutputValue.XCoordLeft] = GetValueString(data.XCoordLeft);
-                formatted_values[(int)GazeOutputValue.XCoordRight] = GetValueString(data.XCoordRight);
-                formatted_values[(int)GazeOutputValue.YCoord] = GetValueString(data.YCoord);
-                formatted_values[(int)GazeOutputValue.YCoordLeft] = GetValueString(data.YCoordLeft);
-                formatted_values[(int)GazeOutputValue.YCoordRight] = GetValueString(data.YCoordRight);
+                formatted_values[(int)GazeOutputValue.XCoord] = GetValueString(data.XCoord, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.XCoordLeft] = GetValueString(data.XCoordLeft, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.XCoordRight] = GetValueString(data.XCoordRight, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.YCoord] = GetValueString(data.YCoord, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.YCoordLeft] = GetValueString(data.YCoordLeft, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.YCoordRight] = GetValueString(data.YCoordRight, Config.DataLogFormatNormalizedPoint);
                 formatted_values[(int)GazeOutputValue.ValidCoordLeft] = GetValueString(data.IsValidCoordLeft);
                 formatted_values[(int)GazeOutputValue.ValidCoordRight] = GetValueString(data.IsValidCoordRight);
                 formatted_values[(int)GazeOutputValue.PupilDia] = GetValueString(data.Dia, Config.DataLogFormatDiameter);

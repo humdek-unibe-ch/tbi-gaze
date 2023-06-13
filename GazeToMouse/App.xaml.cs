@@ -21,7 +21,7 @@ namespace GazeToMouse
     {
         private static bool _isFirstSample = true;
         private TrackerHandler? _tracker = null;
-        private static TimeSpan delta;
+        private static TimeSpan? _delta = null;
         private TrackerLogger _logger;
         private MouseHider? _hider = null;
         private GazeDataError _gazeError = new GazeDataError();
@@ -87,6 +87,7 @@ namespace GazeToMouse
             Current.Dispatcher.Invoke(() => {
                 _calibrationWindow.Show();
             });
+            _calibrationModel.Status = CalibrationModel.CalibrationStatus.HeadPosition;
             _tracker.UserPositionDataReceived += OnUserPositionGuideReceived;
             _isCalibrationOn = true;
             bool res = await _processCompletion.Task;
@@ -397,49 +398,6 @@ namespace GazeToMouse
         }
 
         /// <summary>
-        /// Gets the gaze data value string.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <returns>a string containing the gaze data value if the value is not null, the empty string otherwise</returns>
-        private string GetGazeDataValueString(bool? data)
-        {
-            return (data == null) ? "" : ((bool)data).ToString();
-        }
-
-        /// <summary>
-        /// Gets the gaze data value string.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <param name="format">The format of the data will be converted to.</param>
-        /// <returns>
-        /// a string containing the gaze data value if the value is not null, the empty string otherwise
-        /// </returns>
-        private string GetGazeDataValueString(double? data, string format = "")
-        {
-            return (data == null) ? "" : ((double)data).ToString(format);
-        }
-
-        /// <summary>
-        /// Computes the eye tracker timestamp.
-        /// </summary>
-        /// <param name="ts">The timestamp.</param>
-        /// <param name="format">The format the timestamp is converted to.</param>
-        /// <returns>
-        /// a string containing the timestamp 
-        /// </returns>
-        private string GetGazeDataValueString(TimeSpan ts, string format)
-        {
-            TimeSpan res = ts;
-            if (_isFirstSample)
-            {
-                delta = res - DateTime.Now.TimeOfDay;
-                _isFirstSample = false;
-            }
-            res -= delta;
-            return res.ToString(format);
-        }
-
-        /// <summary>
         /// Determines whether the gaze data set is valid.
         /// </summary>
         /// <param name="data">The data.</param>
@@ -568,49 +526,24 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (_config != null && _config.Config.DataLogWriteOutput && IsDataValid(data, _config.Config.DataLogIgnoreInvalid))
             {
-                string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
-                formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetGazeDataValueString(data.Timestamp, _config.Config.DataLogFormatTimeStamp);
-                formatted_values[(int)GazeOutputValue.XCoord] = GetGazeDataValueString(data.XCoord);
-                formatted_values[(int)GazeOutputValue.XCoordLeft] = GetGazeDataValueString(data.XCoordLeft);
-                formatted_values[(int)GazeOutputValue.XCoordRight] = GetGazeDataValueString(data.XCoordRight);
-                formatted_values[(int)GazeOutputValue.YCoord] = GetGazeDataValueString(data.YCoord);
-                formatted_values[(int)GazeOutputValue.YCoordLeft] = GetGazeDataValueString(data.YCoordLeft);
-                formatted_values[(int)GazeOutputValue.YCoordRight] = GetGazeDataValueString(data.YCoordRight);
-                formatted_values[(int)GazeOutputValue.ValidCoordLeft] = GetGazeDataValueString(data.IsValidCoordLeft);
-                formatted_values[(int)GazeOutputValue.ValidCoordRight] = GetGazeDataValueString(data.IsValidCoordRight);
-                formatted_values[(int)GazeOutputValue.PupilDia] = GetGazeDataValueString(data.Dia, _config.Config.DataLogFormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = GetGazeDataValueString(data.DiaLeft, _config.Config.DataLogFormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaRight] = GetGazeDataValueString(data.DiaRight, _config.Config.DataLogFormatDiameter);
-                formatted_values[(int)GazeOutputValue.ValidPupilLeft] = GetGazeDataValueString(data.IsValidDiaLeft);
-                formatted_values[(int)GazeOutputValue.ValidPupilRight] = GetGazeDataValueString(data.IsValidDiaRight);
-                formatted_values[(int)GazeOutputValue.XOriginLeft] = GetGazeDataValueString(data.XOriginLeft, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.XOriginRight] = GetGazeDataValueString(data.XOriginRight, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.YOriginLeft] = GetGazeDataValueString(data.YOriginLeft, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.YOriginRight] = GetGazeDataValueString(data.YOriginRight, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.ZOriginLeft] = GetGazeDataValueString(data.ZOriginLeft, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.ZOriginRight] = GetGazeDataValueString(data.ZOriginRight, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.DistOrigin] = GetGazeDataValueString(data.DistOrigin, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.DistOriginLeft] = GetGazeDataValueString(data.DistOriginLeft, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.DistOriginRight] = GetGazeDataValueString(data.DistOriginRight, _config.Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.ValidOriginLeft] = GetGazeDataValueString(data.IsValidOriginLeft);
-                formatted_values[(int)GazeOutputValue.ValidOriginRight] = GetGazeDataValueString(data.IsValidOriginRight);
-                if (_isDriftCompensationOn)
-                {
-                    if (data.IsValidCoordLeft == true && data.IsValidCoordRight == true
-                        && data.XCoordLeft != null && data.YCoordLeft != null
-                        && data.XCoordRight != null && data.YCoordRight != null
-                        && _tracker != null)
-                    {
-                        if( _tracker.UpdateDriftCompensation(data))
-                        {
-                            _logger?.Info($"Add drift compensation [{_tracker.DriftCompensation.XCoordLeft}, {_tracker.DriftCompensation.YCoordLeft}], [{_tracker.DriftCompensation.XCoordRight}, {_tracker.DriftCompensation.YCoordRight}]");
-                            _processCompletion.SetResult(true);
-                        }
-                    }
-                }
+                string[] formatted_values = GazeData.PrepareGazeData(data, _config.Config, ref _delta);
                 if (_isRecording)
                 {
                     _config.WriteToGazeOutput(formatted_values);
+                }
+            }
+            if (_isDriftCompensationOn)
+            {
+                if (data.IsValidCoordLeft == true && data.IsValidCoordRight == true
+                    && data.XCoordLeft != null && data.YCoordLeft != null
+                    && data.XCoordRight != null && data.YCoordRight != null
+                    && _tracker != null)
+                {
+                    if (_tracker.UpdateDriftCompensation(data))
+                    {
+                        _logger?.Info($"Add drift compensation [{_tracker.DriftCompensation.XCoordLeft}, {_tracker.DriftCompensation.YCoordLeft}], [{_tracker.DriftCompensation.XCoordRight}, {_tracker.DriftCompensation.YCoordRight}]");
+                        _processCompletion.SetResult(true);
+                    }
                 }
             }
             if (_isCalibrationOn && ((data.IsValidCoordLeft ?? false) || (data.IsValidCoordRight ?? false)))
