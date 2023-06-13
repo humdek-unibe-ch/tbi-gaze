@@ -77,7 +77,7 @@ namespace GazeToMouse
                 };
                 timer.Start();
             }
-            await Task.Delay(1000);
+            await Task.Delay(500);
             _isDriftCompensationOn = true;
             bool res = await _processCompletion.Task;
             _isDriftCompensationOn = false;
