@@ -18,7 +18,8 @@ namespace GazeToMouseRecordingEnable
     {
         public App()
         {
-            NamedPipeClient.SendSignal("GAZE_RECORDING_ENABLE");
+            TrackerLogger logger = new TrackerLogger();
+            NamedPipeClient.SendSignal("GAZE_RECORDING_ENABLE", logger);
             Current.Shutdown();
         }
     }

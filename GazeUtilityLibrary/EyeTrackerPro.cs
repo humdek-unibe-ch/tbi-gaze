@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Transactions;
+using System.Threading.Tasks;
 using System.Windows;
 using Tobii.Research;
 
@@ -14,9 +13,9 @@ namespace GazeUtilityLibrary
     /// <seealso cref="GazeHelper.TrackerHandler" />
     public class EyeTrackerPro : TrackerHandler
     {
-        private bool hasLicense = true;
-        private IEyeTracker? eyeTracker = null;
-        public IEyeTracker? Device { get { return eyeTracker; } }
+        private bool _hasLicense = true;
+        private IEyeTracker? _eyeTracker = null;
+        private ScreenBasedCalibration? _screenBasedCalibration = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
@@ -27,25 +26,26 @@ namespace GazeUtilityLibrary
         public EyeTrackerPro(TrackerLogger logger, int ready_timer, string? license_path) : base(logger, ready_timer, "Tobii SDK Pro")
         {
             State = DeviceStatus.Configuring;
-            foreach (IEyeTracker _eyeTracker in EyeTrackingOperations.FindAllEyeTrackers())
+            foreach (IEyeTracker eyeTracker in EyeTrackingOperations.FindAllEyeTrackers())
             {
-                logger.Debug($"Tracker: {_eyeTracker.Address}");
-                eyeTracker = _eyeTracker;
+                logger.Debug($"Tracker: {eyeTracker.Address}");
+                _eyeTracker = eyeTracker;
                 break;
             }
 
-            if (eyeTracker == null)
+            if (_eyeTracker == null)
             {
                 logger.Error("No eye tracker connected");
                 return;
             }
-            eyeTracker.GazeDataReceived += OnGazeDataReceivedPro;
-            eyeTracker.ConnectionLost += OnConnectionLost;
-            eyeTracker.ConnectionRestored += OnConnectionRestored;
+            _eyeTracker.GazeDataReceived += OnGazeDataReceivedPro;
+            _eyeTracker.ConnectionLost += OnConnectionLost;
+            _eyeTracker.ConnectionRestored += OnConnectionRestored;
+            _eyeTracker.UserPositionGuideReceived += OnUserPositionDataReceivedPro;
 
             if (license_path != null && license_path != "")
             {
-                ApplyLicense(eyeTracker, PatternReplace(license_path));
+                ApplyLicense(_eyeTracker, PatternReplace(license_path));
             }
         }
 
@@ -57,7 +57,7 @@ namespace GazeUtilityLibrary
         private void ApplyLicense(IEyeTracker eyeTracker, string licensePath)
         {
             logger.Info($"Applying license {licensePath}");
-            hasLicense = false;
+            _hasLicense = false;
             byte[] license_file;
             try
             {
@@ -80,7 +80,7 @@ namespace GazeUtilityLibrary
             if (eyeTracker.TryApplyLicenses(licenseCollection, out failedLicenses))
             {
                 State = DeviceStatus.Initializing;
-                hasLicense = true;
+                _hasLicense = true;
                 logger.Info("Successfully applied license");
             }
             else
@@ -88,6 +88,115 @@ namespace GazeUtilityLibrary
                 State = DeviceStatus.InvalidConfiguration;
                 logger.Error($"Failed to apply license. The validation result is {failedLicenses[0].ValidationResult}.");
             }
+        }
+
+        override public async Task InitCalibration()
+        {
+            _screenBasedCalibration = new ScreenBasedCalibration(_eyeTracker);
+            await _screenBasedCalibration.EnterCalibrationModeAsync();
+        }
+
+        override public async Task<bool> CollectData(Point point)
+        {
+            if (_screenBasedCalibration == null)
+            {
+                return false;
+            }
+
+            NormalizedPoint2D normalizedPoint = new NormalizedPoint2D((float)point.X, (float)point.Y);
+            int fail_count = 0;
+            CalibrationStatus status = CalibrationStatus.Failure;
+            status = await _screenBasedCalibration.CollectDataAsync(normalizedPoint);
+            while (status != CalibrationStatus.Success && fail_count < 3)
+            {
+                // Try again if it didn't go well the first time.
+                // Not all eye tracker models will fail at this point, but instead fail on ComputeAndApply.
+                logger.Warning($"Data collection failed, retry #{fail_count}");
+                fail_count++;
+                status = await _screenBasedCalibration.CollectDataAsync(normalizedPoint);
+            }
+
+            if (status != CalibrationStatus.Success)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        override public async Task FinishCalibration()
+        {
+            if (_screenBasedCalibration == null)
+            {
+                return;
+            }
+
+            await _screenBasedCalibration.LeaveCalibrationModeAsync();
+        }
+
+        override public async Task<List<CalibrationDataArgs>> ApplyCalibration()
+        {
+            List<CalibrationDataArgs> result = new List<CalibrationDataArgs>();
+            if (_screenBasedCalibration == null)
+            {
+                return result;
+            }
+
+            CalibrationResult calibrationResult;
+
+            calibrationResult = await _screenBasedCalibration.ComputeAndApplyAsync();
+
+            logger.Info($"Calibration returned {calibrationResult.Status} and collected {calibrationResult.CalibrationPoints.Count} points.");
+
+            foreach (CalibrationPoint point in calibrationResult.CalibrationPoints)
+            {
+                double xLeft = 0;
+                double yLeft = 0;
+                double xRight = 0;
+                double yRight = 0;
+                double xLeftSum = 0;
+                double yLeftSum = 0;
+                double xRightSum = 0;
+                double yRightSum = 0;
+                int leftCount = 0;
+                int rightCount = 0;
+                foreach (CalibrationSample sample in point.CalibrationSamples)
+                {
+                    if (sample.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed)
+                    {
+                        xLeftSum += sample.LeftEye.PositionOnDisplayArea.X;
+                        yLeftSum += sample.LeftEye.PositionOnDisplayArea.Y;
+                        leftCount++;
+                    }
+                    if (sample.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed)
+                    {
+                        xRightSum += sample.RightEye.PositionOnDisplayArea.X;
+                        yRightSum += sample.RightEye.PositionOnDisplayArea.Y;
+                        rightCount++;
+                    }
+                    if (leftCount > 0)
+                    {
+                        xLeft = xLeftSum / leftCount;
+                        yLeft = yLeftSum / leftCount;
+                    }
+                    if (rightCount > 0)
+                    {
+                        xRight = xRightSum / rightCount;
+                        yRight = yRightSum / rightCount;
+                    }
+                    result.Add(new CalibrationDataArgs(
+                        point.PositionOnDisplayArea.X,
+                        point.PositionOnDisplayArea.Y,
+                        xLeft,
+                        yLeft,
+                        sample.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed,
+                        xRight,
+                        yRight,
+                        sample.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed
+                    ));
+                }
+            }
+            return result;
         }
 
         /// <summary>
@@ -109,8 +218,8 @@ namespace GazeUtilityLibrary
 
         protected override int GetFixationFrameCount()
         {
-            // 200ms at 60 Hz
-            return 12;
+            // 500ms at 60 Hz
+            return 30;
         }
 
         override public bool UpdateDriftCompensation(GazeDataArgs args)
@@ -210,7 +319,12 @@ namespace GazeUtilityLibrary
         /// </returns>
         public bool IsLicenseOk()
         {
-            return hasLicense;
+            return _hasLicense;
+        }
+
+        public override bool IsInitialised()
+        {
+            return _eyeTracker != null;
         }
 
         /// <summary>
@@ -222,8 +336,8 @@ namespace GazeUtilityLibrary
         override public string PatternReplace(string pattern)
         {
             string res = pattern;
-            res = res.Replace("%S", eyeTracker?.SerialNumber);
-            res = res.Replace("%A", eyeTracker?.Address.ToString());
+            res = res.Replace("%S", _eyeTracker?.SerialNumber);
+            res = res.Replace("%A", _eyeTracker?.Address.ToString());
             return res;
         }
 
@@ -294,6 +408,19 @@ namespace GazeUtilityLibrary
                 data
             );
             OnGazeDataReceived(gazeData);
+        }
+
+        private void OnUserPositionDataReceivedPro(object? sender, UserPositionGuideEventArgs data)
+        {
+            UserPositionDataArgs userPositionData = new UserPositionDataArgs(
+                1 - data.LeftEye.UserPosition.X,
+                data.LeftEye.UserPosition.Y,
+                1 - data.LeftEye.UserPosition.Z,
+                1 - data.RightEye.UserPosition.X,
+                data.RightEye.UserPosition.Y,
+                1 - data.RightEye.UserPosition.Z
+            );
+            OnUserPositionDataReceived(userPositionData);
         }
     }
 }

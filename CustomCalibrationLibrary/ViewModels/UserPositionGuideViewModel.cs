@@ -5,24 +5,18 @@ using System.Runtime.CompilerServices;
 using Tobii.Research;
 using System.Windows.Input;
 using CustomCalibrationLibrary.Commands;
+using GazeUtilityLibrary;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
     class UserPositionGuideViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        private UserPositionGuide _left;
-        public UserPositionGuide Left
+        private UserPositionDataArgs _userPosition;
+        public UserPositionDataArgs UserPosition
         {
-            get { return _left; }
-            set { _left = value; OnPropertyChanged(); }
-        }
-
-        private UserPositionGuide _right;
-        public UserPositionGuide Right
-        {
-            get { return _right; }
-            set { _right = value; OnPropertyChanged(); }
+            get { return _userPosition; }
+            set { _userPosition = value; OnPropertyChanged(); }
         }
 
         private ICommand _calibrationStartCommand;
@@ -42,31 +36,19 @@ namespace CustomCalibrationLibrary.ViewModels
 
         public UserPositionGuideViewModel(CalibrationModel model)
         {
-            _left = new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid);
-            _right = new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid);
+            _userPosition = new UserPositionDataArgs();
             model.UserPositionGuideChanged += OnUserPositionGuideChanged;
             _calibrationStartCommand = new CalibrationCommand(model, CalibrationEventType.Start);
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }
 
-        private void OnUserPositionGuideChanged(object? sender, UserPositionGuideEventArgs position)
+        private void OnUserPositionGuideChanged(object? sender, UserPositionDataArgs position)
         {
             if (sender == null)
             {
                 return;
             }
-            NormalizedPoint3D left = new NormalizedPoint3D(
-                1 - position.LeftEye.UserPosition.X,
-                position.LeftEye.UserPosition.Y,
-                1 - position.LeftEye.UserPosition.Z
-            );
-            NormalizedPoint3D right = new NormalizedPoint3D(
-                1 - position.RightEye.UserPosition.X,
-                position.RightEye.UserPosition.Y,
-                1 - position.RightEye.UserPosition.Z
-            );
-            Left = new UserPositionGuide(left, position.LeftEye.Validity);
-            Right = new UserPositionGuide(right, position.RightEye.Validity);
+            UserPosition = position;
         }
     }
 }

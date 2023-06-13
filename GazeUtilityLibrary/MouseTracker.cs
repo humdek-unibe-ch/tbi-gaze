@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace GazeUtilityLibrary
 {
@@ -148,6 +150,26 @@ namespace GazeUtilityLibrary
         }
 
         public override bool UpdateDriftCompensation(GazeDataArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<List<CalibrationDataArgs>> ApplyCalibration()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> CollectData(Point point)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task FinishCalibration()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task InitCalibration()
         {
             throw new NotImplementedException();
         }

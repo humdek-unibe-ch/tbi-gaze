@@ -13,7 +13,8 @@ namespace GazeToMouseClose
     {
         public App()
         {
-            NamedPipeClient.SendSignal("TERMINATE");
+            TrackerLogger logger = new TrackerLogger();
+            NamedPipeClient.SendSignal("TERMINATE", logger);
             Current.Shutdown();
         }
     }

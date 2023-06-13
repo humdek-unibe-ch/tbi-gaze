@@ -1,10 +1,11 @@
 ﻿using GazeUtilityLibrary;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using Tobii.Research;
 
 namespace CustomCalibrationLibrary.Models
 {
@@ -138,9 +139,9 @@ namespace CustomCalibrationLibrary.Models
             GazePointChanged?.Invoke(this, _gazePoint);
         }
 
-        public event EventHandler<UserPositionGuideEventArgs>? UserPositionGuideChanged;
-        private UserPositionGuideEventArgs _userPositionGuide;
-        public UserPositionGuideEventArgs UserPositionGuide
+        public event EventHandler<UserPositionDataArgs>? UserPositionGuideChanged;
+        private UserPositionDataArgs _userPositionGuide;
+        public UserPositionDataArgs UserPositionGuide
         {
             get { return _userPositionGuide; }
             set { _userPositionGuide = value; OnUserPositionGuideChanged(); }
@@ -168,10 +169,7 @@ namespace CustomCalibrationLibrary.Models
             _lastStatus = CalibrationStatus.HeadPosition;
             _status = CalibrationStatus.Computing;
             _gazePoint = new Point(0, 0);
-            _userPositionGuide = new UserPositionGuideEventArgs(
-                new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid),
-                new UserPositionGuide(new NormalizedPoint3D((float)0.5, (float)0.5, (float)0.5), Validity.Invalid)
-            );
+            _userPositionGuide = new UserPositionDataArgs();
         }
 
         public void UpdateGazePoint(double x, double y)
@@ -204,51 +202,16 @@ namespace CustomCalibrationLibrary.Models
             CalibrationPoints[Index].HasData = true;
         }
 
-        public void SetCalibrationResult(CalibrationPointCollection points)
+        public void SetCalibrationResult(List<CalibrationDataArgs> points)
         {
             for (int i = 0; i < points.Count; i++)
             {
-                double xLeft = 0;
-                double yLeft = 0;
-                double xRight = 0;
-                double yRight = 0;
-                double xLeftSum = 0;
-                double yLeftSum = 0;
-                double xRightSum = 0;
-                double yRightSum = 0;
-                int leftCount = 0;
-                int rightCount = 0;
-                foreach (var point in points[i].CalibrationSamples)
-                {
-                    if (point.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed)
-                    {
-                        xLeftSum += point.LeftEye.PositionOnDisplayArea.X;
-                        yLeftSum += point.LeftEye.PositionOnDisplayArea.Y;
-                        leftCount++;
-                    }
-                    if (point.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed)
-                    {
-                        xRightSum += point.RightEye.PositionOnDisplayArea.X;
-                        yRightSum += point.RightEye.PositionOnDisplayArea.Y;
-                        rightCount++;
-                    }
-                }
-                if (leftCount > 0)
-                {
-                    xLeft = xLeftSum / leftCount;
-                    yLeft = yLeftSum / leftCount;
-                }
-                if (rightCount > 0)
-                {
-                    xRight = xRightSum / rightCount;
-                    yRight = yRightSum / rightCount;
-                }
-                double xAvg = (xLeft + xRight) / 2;
-                double yAvg = (yLeft + yRight) / 2;
+                double xAvg = (points[i].XCoordLeft + points[i].XCoordRight) / 2;
+                double yAvg = (points[i].YCoordLeft + points[i].YCoordRight) / 2;
                 CalibrationPoints[i].GazePositionAverage = new Point(xAvg, yAvg);
-                CalibrationPoints[i].GazePositionLeft = new Point(xLeft, yLeft);
-                CalibrationPoints[i].GazePositionRight = new Point(xRight, yRight);
-                _logger.Debug($"Calibration at [{points[i].PositionOnDisplayArea.X}, {points[i].PositionOnDisplayArea.Y}]: [{xLeft}, {yLeft}], [{xAvg}, {yAvg}], [{xRight}, {yRight}]");
+                CalibrationPoints[i].GazePositionLeft = new Point(points[i].XCoordLeft, points[i].YCoordLeft);
+                CalibrationPoints[i].GazePositionRight = new Point(points[i].XCoordRight, points[i].YCoordRight);
+                _logger.Debug($"Calibration at [{points[i].XCoord}, {points[i].YCoord}]: [{points[i].XCoordLeft}, {points[i].YCoordLeft}], [{xAvg}, {yAvg}], [{points[i].XCoordRight}, {points[i].YCoordRight}]");
             }
         }
     }

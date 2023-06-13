@@ -5,12 +5,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:uc="clr-namespace:CustomCalibrationLibrary.Views"
       xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
       mc:Ignorable="d"
       Title="CalibrationResult"
       Focusable="True"
       >
     <Page.Resources>
         <ResourceDictionary>
+            <converter:PositionConverter x:Key="PositionConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
@@ -133,8 +135,8 @@
             </Ellipse>
             <Grid.RenderTransform>
                 <TranslateTransform
-                    X="{Binding GazePoint.X}"
-                    Y="{Binding GazePoint.Y}"
+                    X="{Binding GazePoint.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                    Y="{Binding GazePoint.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
             </Grid.RenderTransform>
         </Grid>

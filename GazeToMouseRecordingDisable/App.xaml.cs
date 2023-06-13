@@ -10,7 +10,8 @@ namespace GazeToMouseRecordingDisable
     {
         public App()
         {
-            NamedPipeClient.SendSignal("GAZE_RECORDING_DISABLE");
+            TrackerLogger logger = new TrackerLogger();
+            NamedPipeClient.SendSignal("GAZE_RECORDING_DISABLE", logger);
             Current.Shutdown();
         }
     }

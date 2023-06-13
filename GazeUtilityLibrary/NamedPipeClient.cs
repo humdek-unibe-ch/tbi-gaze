@@ -11,10 +11,9 @@ namespace GazeUtilityLibrary
         /// Sends a signal through the named gaze pipe.
         /// </summary>
         /// <param name="signal">The signal to be sent.</param>
-        public static void SendSignal(string signal)
+        public static void SendSignal(string signal, TrackerLogger logger)
         {
             string pipeName = "tobii_gaze";
-            TrackerLogger logger = new TrackerLogger();
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
                 logger.Debug($"Attempting to connect to pipe {pipeName}...");

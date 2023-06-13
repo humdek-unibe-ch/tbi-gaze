@@ -50,7 +50,7 @@
                             RenderTransformOrigin="0.5, 0.5"
                             Height="200"
                             Width="200"
-                            Fill="{Binding Left.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
+                            Fill="{Binding UserPosition.ZCoordLeft, Converter={StaticResource ProximityColorConverter}}"
                         />
                         <Grid.RenderTransform>
                             <TranslateTransform X="-100" Y="-100" />
@@ -58,10 +58,10 @@
                     </Grid>
                     <Grid.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding Left.UserPosition.Z}" ScaleY="{Binding Left.UserPosition.Z}" />
+                            <ScaleTransform ScaleX="{Binding UserPosition.ZCoordLeft}" ScaleY="{Binding UserPosition.ZCoordLeft}" />
                             <TranslateTransform
-                                X="{Binding Left.UserPosition.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                Y="{Binding Left.UserPosition.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                                X="{Binding UserPosition.XCoordLeft, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding UserPosition.YCoordLeft, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                             />
                         </TransformGroup>
                     </Grid.RenderTransform>
@@ -69,7 +69,7 @@
                 <Grid>
                     <Ellipse
                         RenderTransformOrigin="0.5, 0.5"
-                        Fill="{Binding Right.UserPosition.Z, Converter={StaticResource ProximityColorConverter}}"
+                        Fill="{Binding UserPosition.ZCoordRight, Converter={StaticResource ProximityColorConverter}}"
                         Height="200"
                         Width="200"
                     >
@@ -79,10 +79,10 @@
                     </Ellipse>
                     <Grid.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform ScaleX="{Binding Right.UserPosition.Z}" ScaleY="{Binding Right.UserPosition.Z}" />
+                            <ScaleTransform ScaleX="{Binding UserPosition.ZCoordRight}" ScaleY="{Binding UserPosition.ZCoordRight}" />
                             <TranslateTransform
-                                X="{Binding Right.UserPosition.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                Y="{Binding Right.UserPosition.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                                X="{Binding UserPosition.XCoordRight, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding UserPosition.YCoordRight, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                             />
                         </TransformGroup>
                     </Grid.RenderTransform>

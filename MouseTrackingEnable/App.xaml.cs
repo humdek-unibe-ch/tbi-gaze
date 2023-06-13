@@ -10,7 +10,8 @@ namespace MouseTrackingEnable
     {
         public App()
         {
-            NamedPipeClient.SendSignal("MOUSE_TRACKING_ENABLE");
+            TrackerLogger logger = new TrackerLogger();
+            NamedPipeClient.SendSignal("MOUSE_TRACKING_ENABLE", logger);
             Current.Shutdown();
         }
     }

@@ -43,6 +43,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MouseTrackingDisable", "Mou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriftCompensation", "DriftCompensation\DriftCompensation.csproj", "{533BEFD3-A60D-471E-9D1F-BA7C9110132D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TobiiProSdkAddons", "TobiiProSdkAddons\TobiiProSdkAddons.csproj", "{2DA927EE-04D4-43FD-A625-4E2F75459182}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeControl", "GazeControl\GazeControl.csproj", "{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +151,22 @@ Global
 		{533BEFD3-A60D-471E-9D1F-BA7C9110132D}.Release|Any CPU.Build.0 = Release|x64
 		{533BEFD3-A60D-471E-9D1F-BA7C9110132D}.Release|x64.ActiveCfg = Release|x64
 		{533BEFD3-A60D-471E-9D1F-BA7C9110132D}.Release|x64.Build.0 = Release|x64
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Debug|x64.ActiveCfg = Debug|x64
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Debug|x64.Build.0 = Debug|x64
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Release|x64.ActiveCfg = Release|x64
+		{2DA927EE-04D4-43FD-A625-4E2F75459182}.Release|x64.Build.0 = Release|x64
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Debug|x64.ActiveCfg = Debug|x64
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Debug|x64.Build.0 = Debug|x64
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|x64.ActiveCfg = Release|x64
+		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

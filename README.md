@@ -12,6 +12,7 @@ The package contains the following executables:
  - **CustomCalibrate.exe** launches the custom calibration tool.
  - **TobiiCalibrate.exe** launches the Tobii calibration tool.
  - **Gaze.exe** allows to record gaze data and control the mouse with the gaze of the user. The following executables provide some runtime control of a running `Gaze.exe` process:
+	 - **DriftCompensation** opens a fixation point window, waits for a fixation, computes the drift offest and applies the computed offset to the gaze data.
 	 - **GazeClose.exe** terminates `Gaze.exe` gracefully.
 	 - **GazeRecordingDisable.exe** pauses the gaze recording.
 	 - **GazeRecordingEnable.exe** resumes the gaze recording.

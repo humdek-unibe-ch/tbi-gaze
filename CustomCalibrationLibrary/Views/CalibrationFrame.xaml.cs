@@ -9,12 +9,12 @@ namespace CustomCalibrationLibrary.Views
     /// <summary>
     /// Interaction logic for CalibrationCollection.xaml
     /// </summary>
-    public partial class CalibrationCollection : Frame
+    public partial class CalibrationFrame : Frame
     {
         private CalibrationModel _model;
         private Computing _computingView;
 
-        public CalibrationCollection(CalibrationModel model)
+        public CalibrationFrame(CalibrationModel model)
         {
             _computingView = new Computing();
             InitializeComponent();

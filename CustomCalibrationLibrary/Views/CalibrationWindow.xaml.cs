@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace CustomCalibrate
+namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

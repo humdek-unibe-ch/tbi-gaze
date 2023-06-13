@@ -4,8 +4,8 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tobii.Research;
-using System.Linq;
 
 namespace GazeUtilityLibrary
 {
@@ -92,6 +92,10 @@ namespace GazeUtilityLibrary
         /// Occurs when [gaze data received].
         /// </summary>
         public event GazeDataHandler? GazeDataReceived;
+        /// <summary>
+        /// Occurs when [user position data received].
+        /// </summary>
+        public event UserPositionDataHandler? UserPositionDataReceived;
 
         private List<GazeDataArgs> driftCompensationSamples;
 
@@ -101,6 +105,13 @@ namespace GazeUtilityLibrary
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
         public delegate void GazeDataHandler(Object sender, GazeDataArgs e);
+
+        /// <summary>
+        /// Event handler for user position data events of the eyetracker
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
+        public delegate void UserPositionDataHandler(Object sender, UserPositionDataArgs e);
 
         private double normalizedDispersionThreshold;
 
@@ -134,7 +145,7 @@ namespace GazeUtilityLibrary
             this.DeviceName = device_name;
             this.logger = logger;
             logger.Info($"Using {DeviceName}");
-            normalizedDispersionThreshold = AngleToDist(0.5);
+            normalizedDispersionThreshold = AngleToDist(1);
             if (ready_timer > 0)
             {
                 dialogBoxTimer = new Timer
@@ -166,14 +177,26 @@ namespace GazeUtilityLibrary
         virtual public bool UpdateDriftCompensation(GazeDataArgs args)
         {
             driftCompensationSamples.Add(args);
-            if (IsFixation(ref driftCompensationSamples) && driftCompensationSamples.Count > GetFixationFrameCount())
+            if (driftCompensationSamples.Count > GetFixationFrameCount())
             {
-                driftCompensation = ComputeDriftCompensation(ref driftCompensationSamples);
-                driftCompensationSamples.Clear();
-                return true;
+                if (IsFixation(ref driftCompensationSamples))
+                {
+                    driftCompensation = ComputeDriftCompensation(ref driftCompensationSamples);
+                    driftCompensationSamples.Clear();
+                    return true;
+                }
+                else
+                {
+                    driftCompensationSamples.RemoveAt(0);    
+                }
             }
             return false;
         }
+
+        abstract public Task InitCalibration();
+        abstract public Task FinishCalibration();
+        abstract public Task<List<CalibrationDataArgs>> ApplyCalibration();
+        abstract public Task<bool> CollectData(Point point);
 
         abstract protected double ComputeDispersion(ref List<GazeDataArgs> samples);
         abstract protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold);
@@ -181,7 +204,7 @@ namespace GazeUtilityLibrary
         {
             double dispersion = ComputeDispersion(ref samples);
             double maxDeviation = ComputeMaxDeviation(ref samples, normalizedDispersionThreshold);
-            return dispersion > maxDeviation;
+            return dispersion <= maxDeviation;
         }
         abstract protected int GetFixationFrameCount();
 
@@ -212,11 +235,19 @@ namespace GazeUtilityLibrary
         /// </returns>
         protected bool IsReady() { return (State == DeviceStatus.Tracking); }
 
+        virtual public bool IsInitialised() { return true; }
+
         /// <summary>
         /// Called when [gaze data received].
         /// </summary>
         /// <param name="e">The gaze data event data.</param>
         protected virtual void OnGazeDataReceived(GazeDataArgs e) { GazeDataReceived?.Invoke(this, e); }
+
+        /// <summary>
+        /// Called when [user position data received].
+        /// </summary>
+        /// <param name="e">The gaze data event data.</param>
+        protected virtual void OnUserPositionDataReceived(UserPositionDataArgs e) { UserPositionDataReceived?.Invoke(this, e); }
 
         /// <summary>
         /// Called when when the state property of EyeTracker is changing.
@@ -441,14 +472,14 @@ namespace GazeUtilityLibrary
         public double XCoordLeft { get { return _xCoordLeft; } }
         private double _yCoordLeft;
         public double YCoordLeft { get { return _yCoordLeft; } }
-        private CalibrationEyeValidity _validityLeft;
-        public CalibrationEyeValidity ValidityLeft { get { return _validityLeft; } }
+        private bool _validityLeft;
+        public bool ValidityLeft { get { return _validityLeft; } }
         private double _xCoordRight;
         public double XCoordRight { get { return _xCoordRight; } }
         private double _yCoordRight;
         public double YCoordRight { get { return _yCoordRight; } }
-        private CalibrationEyeValidity _validityRight;
-        public CalibrationEyeValidity ValidityRight { get { return _validityRight; } }
+        private bool _validityRight;
+        public bool ValidityRight { get { return _validityRight; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
@@ -461,7 +492,7 @@ namespace GazeUtilityLibrary
         /// <param name="xCoordRight">The x coord of the gaze point of the right eye.</param>
         /// <param name="yCoordRight">The y coord of the gaze point of the right eye.</param>
         /// <param name="validityRight">the validity of gaze point coordinate of the right eye.</param>
-        public CalibrationDataArgs(double xCoord, double yCoord, double xCoordLeft, double yCoordLeft, CalibrationEyeValidity validityLeft, double xCoordRight, double yCoordRight, CalibrationEyeValidity validityRight)
+        public CalibrationDataArgs(double xCoord, double yCoord, double xCoordLeft, double yCoordLeft, bool validityLeft, double xCoordRight, double yCoordRight, bool validityRight)
         {
             _xCoord = xCoord;
             _yCoord = yCoord;
@@ -471,6 +502,40 @@ namespace GazeUtilityLibrary
             _xCoordRight = xCoordRight;
             _yCoordRight = yCoordRight;
             _validityRight = validityRight;
+        }
+    }
+
+    public class UserPositionDataArgs: EventArgs
+    {
+        private double _xCoordLeft;
+        public double XCoordLeft { get { return _xCoordLeft; } }
+        private double _yCoordLeft;
+        public double YCoordLeft { get { return _yCoordLeft; } }
+        private double _zCoordLeft;
+        public double ZCoordLeft { get { return _zCoordLeft; } }
+        private double _xCoordRight;
+        public double XCoordRight { get { return _xCoordRight; } }
+        private double _yCoordRight;
+        public double YCoordRight { get { return _yCoordRight; } }
+        private double _zCoordRight;
+        public double ZCoordRight { get { return _zCoordRight; } }
+        public UserPositionDataArgs()
+        {
+            _xCoordLeft = 0.5;
+            _yCoordLeft = 0.5;
+            _zCoordLeft = 0.5;
+            _xCoordRight = 0.5;
+            _yCoordRight = 0.5;
+            _zCoordRight = 0.5;
+        }
+        public UserPositionDataArgs(double xCoordLeft, double yCoordLeft, double zCoordLeft, double xCoordRight, double yCoordRight, double zCoordRight)
+        {
+            _xCoordLeft = xCoordLeft;
+            _yCoordLeft = yCoordLeft;
+            _zCoordLeft = zCoordLeft;
+            _xCoordRight = xCoordRight;
+            _yCoordRight = yCoordRight;
+            _zCoordRight = zCoordRight;
         }
     }
 }
