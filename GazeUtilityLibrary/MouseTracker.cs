@@ -134,32 +134,12 @@ namespace GazeUtilityLibrary
             throw new NotImplementedException();
         }
 
-        protected override double ComputeDispersion(ref List<GazeDataArgs> samples)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override DriftCompensation ComputeDriftCompensation(ref List<GazeDataArgs> samples)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool UpdateDriftCompensation(GazeDataArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task<List<CalibrationDataArgs>> ApplyCalibration()
         {
             throw new NotImplementedException();
         }
 
-        public override Task<bool> CollectData(Point point)
+        public override Task<bool> CollectCalibrationData(Point point)
         {
             throw new NotImplementedException();
         }

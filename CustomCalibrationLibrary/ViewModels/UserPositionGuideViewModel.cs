@@ -1,8 +1,6 @@
 ﻿using CustomCalibrationLibrary.Models;
 using System.ComponentModel;
-using System.Windows;
 using System.Runtime.CompilerServices;
-using Tobii.Research;
 using System.Windows.Input;
 using CustomCalibrationLibrary.Commands;
 using GazeUtilityLibrary;

@@ -339,7 +339,7 @@ namespace GazeToMouse
                 // Wait a little for user to focus.
                 await Task.Delay(1000);
 
-                bool res = await _tracker.CollectData(point);
+                bool res = await _tracker.CollectCalibrationData(point);
                 _calibrationModel.GazeDataCollected();
 
                 if (!res)

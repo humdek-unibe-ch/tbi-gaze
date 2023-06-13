@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Tobii.Research;
+using System.Linq;
 
 namespace GazeUtilityLibrary
 {
@@ -174,8 +174,13 @@ namespace GazeUtilityLibrary
             return pattern;
         }
 
-        virtual public bool UpdateDriftCompensation(GazeDataArgs args)
+        public bool UpdateDriftCompensation(GazeDataArgs args)
         {
+            if (args.IsValidOriginLeft != true || args.IsValidOriginRight != true || args.IsValidCoordLeft != true || args.IsValidCoordRight != true )
+            {
+                return false;
+            }
+
             driftCompensationSamples.Add(args);
             if (driftCompensationSamples.Count > GetFixationFrameCount())
             {
@@ -196,10 +201,42 @@ namespace GazeUtilityLibrary
         abstract public Task InitCalibration();
         abstract public Task FinishCalibration();
         abstract public Task<List<CalibrationDataArgs>> ApplyCalibration();
-        abstract public Task<bool> CollectData(Point point);
+        abstract public Task<bool> CollectCalibrationData(Point point);
 
-        abstract protected double ComputeDispersion(ref List<GazeDataArgs> samples);
-        abstract protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold);
+        private double ComputeDispersion(ref List<GazeDataArgs> samples)
+        {
+            double xMax = samples.Max(sample => sample.XGazeLeft ?? double.MinValue);
+            double yMax = samples.Max(sample => sample.YGazeLeft ?? double.MinValue);
+            double zMax = samples.Max(sample => sample.ZGazeLeft ?? double.MinValue);
+            double xMin = samples.Min(sample => sample.XGazeLeft ?? double.MaxValue);
+            double yMin = samples.Min(sample => sample.YGazeLeft ?? double.MaxValue);
+            double zMin = samples.Min(sample => sample.ZGazeLeft ?? double.MaxValue);
+            double dispersionLeft = xMax - xMin + yMax - yMin + zMax - zMin;
+            xMax = samples.Max(sample => sample.XGazeRight ?? double.MinValue);
+            yMax = samples.Max(sample => sample.YGazeRight ?? double.MinValue);
+            zMax = samples.Max(sample => sample.ZGazeRight ?? double.MinValue);
+            xMin = samples.Min(sample => sample.XGazeRight ?? double.MaxValue);
+            yMin = samples.Min(sample => sample.YGazeRight ?? double.MaxValue);
+            zMin = samples.Min(sample => sample.ZGazeRight ?? double.MaxValue);
+            double dispersionRight = xMax - xMin + yMax - yMin + zMax - zMin;
+            return Math.Max(dispersionLeft, dispersionRight);
+        }
+        private DriftCompensation ComputeDriftCompensation(ref List<GazeDataArgs> samples)
+        {
+            return new DriftCompensation(
+                0.5 - samples.Average(sample => sample.XCoordLeftRaw ?? 0),
+                0.5 - samples.Average(sample => sample.YCoordLeftRaw ?? 0),
+                0.5 - samples.Average(sample => sample.XCoordRightRaw ?? 0),
+                0.5 - samples.Average(sample => sample.YCoordRightRaw ?? 0)
+            );
+        }
+
+        protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold)
+        {
+            double dist = samples.Average(sample => sample.DistGaze ?? 0);
+            return dist * normalizedDispersionThreshold;
+        }
+
         private bool IsFixation(ref List<GazeDataArgs> samples)
         {
             double dispersion = ComputeDispersion(ref samples);
@@ -208,12 +245,10 @@ namespace GazeUtilityLibrary
         }
         abstract protected int GetFixationFrameCount();
 
-        protected double AngleToDist(double angle)
+        private double AngleToDist(double angle)
         {
             return Math.Sqrt(2 * (1 - Math.Cos(angle * Math.PI / 180)));
         }
-
-        abstract protected DriftCompensation ComputeDriftCompensation(ref List<GazeDataArgs> samples);
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -331,32 +366,119 @@ namespace GazeUtilityLibrary
     /// <seealso cref="System.EventArgs" />
     public class GazeDataArgs : EventArgs
     {
-        private TimeSpan timestamp;
-        private double xCoord;
-        private double? xCoordLeft = null;
-        private double? xCoordRight = null;
-        private double yCoord;
-        private double? yCoordLeft = null;
-        private double? yCoordRight = null;
-        private bool? isValidCoordLeft = null;
-        private bool? isValidCoordRight = null;
-        private double? dia = null;
-        private double? diaLeft = null;
-        private double? diaRight = null;
-        private bool? isValidDiaLeft = null;
-        private bool? isValidDiaRight = null;
-        private double? xOriginLeft = null;
-        private double? xOriginRight = null;
-        private double? yOriginLeft = null;
-        private double? yOriginRight = null;
-        private double? zOriginLeft = null;
-        private double? zOriginRight = null;
-        private double? distOrigin = null;
-        private double? distOriginLeft = null;
-        private double? distOriginRight = null;
-        private bool? isValidOriginLeft = null;
-        private bool? isValidOriginRight = null;
-        private GazeDataEventArgs? argsPro = null;
+        private TimeSpan _timestamp;
+        public TimeSpan Timestamp { get { return _timestamp; } }
+
+        private double _xCoord;
+        public double XCoord { get { return _xCoord; } }
+
+        private double? _xCoordLeft = null;
+        public double? XCoordLeft { get { return _xCoordLeft; } }
+
+        private double? _xCoordLeftRaw = null;
+        public double? XCoordLeftRaw { get { return _xCoordLeftRaw; } }
+
+        private double? _xCoordRight = null;
+        public double? XCoordRight { get { return _xCoordRight; } }
+
+        private double? _xCoordRightRaw = null;
+        public double? XCoordRightRaw { get { return _xCoordRightRaw; } }
+
+        private double _yCoord;
+        public double YCoord { get { return _yCoord; } }
+
+        private double? _yCoordLeft = null;
+        public double? YCoordLeft { get { return _yCoordLeft; } }
+
+        private double? _yCoordLeftRaw = null;
+        public double? YCoordLeftRaw { get { return _yCoordLeftRaw; } }
+
+        private double? _yCoordRight = null;
+        public double? YCoordRight { get { return _yCoordRight; } }
+
+        private double? _yCoordRightRaw = null;
+        public double? YCoordRightRaw { get { return _yCoordRightRaw; } }
+
+        private bool? _isValidCoordLeft = null;
+        public bool? IsValidCoordLeft { get { return _isValidCoordLeft; } }
+
+        private bool? _isValidCoordRight = null;
+        public bool? IsValidCoordRight { get { return _isValidCoordRight; } }
+
+        private double? _dia = null;
+        public double? Dia { get { return _dia; } }
+
+        private double? _diaLeft = null;
+        public double? DiaLeft { get { return _diaLeft; } }
+
+        private double? _diaRight = null;
+        public double? DiaRight { get { return _diaRight; } }
+
+        private bool? _isValidDiaLeft = null;
+        public bool? IsValidDiaLeft { get { return _isValidDiaLeft; } }
+
+        private bool? _isValidDiaRight = null;
+        public bool? IsValidDiaRight { get { return _isValidDiaRight; } }
+
+        private double? _xGazeLeft = null;
+        public double? XGazeLeft { get { return _xGazeLeft; } }
+
+        private double? _xGazeRight = null;
+        public double? XGazeRight { get { return _xGazeRight; } }
+
+        private double? _yGazeLeft = null;
+        public double? YGazeLeft { get { return _yGazeLeft; } }
+
+        private double? _yGazeRight = null;
+        public double? YGazeRight { get { return _yGazeRight; } }
+
+        private double? _zGazeLeft = null;
+        public double? ZGazeLeft { get { return _zGazeLeft; } }
+
+        private double? _zGazeRight = null;
+        public double? ZGazeRight { get { return _zGazeRight; } }
+
+        private double? _distGaze = null;
+        public double? DistGaze { get { return _distGaze; } }
+
+        private double? _distGazeLeft = null;
+        public double? DistGazeLeft { get { return _distGazeLeft; } }
+
+        private double? _distGazeRight = null;
+        public double? DistGazeRight { get { return _distGazeRight; } }
+
+        private double? _xOriginLeft = null;
+        public double? XOriginLeft { get { return _xOriginLeft; } }
+
+        private double? _xOriginRight = null;
+        public double? XOriginRight { get { return _xOriginRight; } }
+
+        private double? _yOriginLeft = null;
+        public double? YOriginLeft { get { return _yOriginLeft; } }
+
+        private double? _yOriginRight = null;
+        public double? YOriginRight { get { return _yOriginRight; } }
+
+        private double? _zOriginLeft = null;
+        public double? ZOriginLeft { get { return _zOriginLeft; } }
+
+        private double? _zOriginRight = null;
+        public double? ZOriginRight { get { return _zOriginRight; } }
+
+        private double? _distOrigin = null;
+        public double? DistOrigin { get { return _distOrigin; } }
+
+        private double? _distOriginLeft = null;
+        public double? DistOriginLeft { get { return _distOriginLeft; } }
+
+        private double? _distOriginRight = null;
+        public double? DistOriginRight { get { return _distOriginRight; } }
+
+        private bool? _isValidOriginLeft = null;
+        public bool? IsValidOriginLeft { get { return _isValidOriginLeft; } }
+
+        private bool? _isValidOriginRight = null;
+        public bool? IsValidOriginRight { get { return _isValidOriginRight; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
@@ -366,20 +488,24 @@ namespace GazeUtilityLibrary
         /// <param name="yCoord">The y coord of the gaze point.</param>
         public GazeDataArgs(TimeSpan timestamp, double xCoord, double yCoord)
         {
-            this.timestamp = timestamp;
-            this.xCoord = xCoord;
-            this.yCoord = yCoord;
+            this._timestamp = timestamp;
+            this._xCoord = xCoord;
+            this._yCoord = yCoord;
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
         /// </summary>
         /// <param name="timestamp">The timestamp.</param>
         /// <param name="xCoord">The x coord of the gaze point.</param>
-        /// <param name="xCoordLeft">The x coord of the gaze point of the left eye.</param>
-        /// <param name="xCoordRight">The x coord of the gaze point of the right eye.</param>
+        /// <param name="xCoordLeft">The x coord of the gaze point of the left eye, drift corrected</param>
+        /// <param name="xCoordLeftRaw">The x coord of the gaze point of the left eye.</param>
+        /// <param name="xCoordRight">The x coord of the gaze point of the right eye, drif corrected.</param>
+        /// <param name="xCoordRightRaw">The x coord of the gaze point of the right eye.</param>
         /// <param name="yCoord">The y coord of the gaze point.</param>
-        /// <param name="yCoordLeft">The y coord of the gaze point of the left eye.</param>
-        /// <param name="yCoordRight">The y coord of the gaze point of the right eye.</param>
+        /// <param name="yCoordLeft">The y coord of the gaze point of the left eye, drift corrected.</param>
+        /// <param name="yCoordLeftRaw">The y coord of the gaze point of the left eye.</param>
+        /// <param name="yCoordRight">The y coord of the gaze point of the right eye, drift corrected.</param>
+        /// <param name="yCoordRightRaw">The y coord of the gaze point of the right eye.</param>
         /// <param name="isValidCoordLeft">if set to <c>true</c> the gaze point coordinate of the left eye is valid.</param>
         /// <param name="isValidCoordRight">if set to <c>true</c> the gaze point coordinate of the right eye is valid.</param>
         /// <param name="dia">The average diameter of the pupils.</param>
@@ -387,6 +513,15 @@ namespace GazeUtilityLibrary
         /// <param name="diaRight">The diameter of the right pupil.</param>
         /// <param name="isValidDiaLeft">if set to <c>true</c> the diameter of the left pupil is valid.</param>
         /// <param name="isValidDiaRight">if set to <c>true</c> the diameter of the right pupil is valid.</param>
+        /// <param name="xGazeLeft">The x coord of the gaze position of the left eye.</param>
+        /// <param name="yGazeLeft">The y coord of the gaze position of the left eye.</param>
+        /// <param name="zGazeLeft">The z coord of the gaze position of the left eye.</param>
+        /// <param name="xGazeRight">The x coord of the gaze position of the right eye.</param>
+        /// <param name="yGazeRight">The y coord of the gaze position of the right eye.</param>
+        /// <param name="zGazeRight">The z coord of the gaze position of the right eye.</param>
+        /// <param name="distGaze">The distance of the eye origin to the gaze point.</param>
+        /// <param name="distGazeLeft">The distance of the left eye origin to the gaze point.</param>
+        /// <param name="distGazeRight">The distance of the right eye origin to the gaze point.</param>
         /// <param name="xOriginLeft">The x coord of the origin position of the left eye.</param>
         /// <param name="yOriginLeft">The y coord of the origin position of the left eye.</param>
         /// <param name="zOriginLeft">The z coord of the origin position of the left eye.</param>
@@ -398,64 +533,54 @@ namespace GazeUtilityLibrary
         /// <param name="distOriginRight">The distance of the right eye origin to the tracker.</param>
         /// <param name="isValidOriginLeft">if set to <c>true</c> the origin point of the left eye is valid.</param>
         /// <param name="isValidOriginRight">if set to <c>true</c> the origin point of the right eye is valid.</param>
-        public GazeDataArgs(TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordRight, double yCoord, double yCoordLeft, double yCoordRight,
-            bool isValidCoordLeft, bool isValidCoordRight, double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight,
+        public GazeDataArgs(TimeSpan timestamp, double xCoord, double xCoordLeft, double xCoordLeftRaw, double xCoordRight, double xCoordRightRaw,
+            double yCoord, double yCoordLeft, double yCoordLeftRaw, double yCoordRight, double yCoordRightRaw,
+            bool isValidCoordLeft, bool isValidCoordRight,
+            double dia, double diaLeft, double diaRight, bool isValidDiaLeft, bool isValidDiaRight,
+            double xGazeLeft, double yGazeLeft, double zGazeLeft, double xGazeRight, double yGazeRight, double zGazeRight,
+            double distGaze, double distGazeLeft, double distGazeRight,
             double xOriginLeft, double yOriginLeft, double zOriginLeft, double xOriginRight, double yOriginRight, double zOriginRight,
-            double distOrigin, double distOriginLeft, double distOriginRight, bool isValidOriginLeft, bool isValidOriginRight, GazeDataEventArgs argsPro)
+            double distOrigin, double distOriginLeft, double distOriginRight, bool isValidOriginLeft, bool isValidOriginRight)
         {
-            this.timestamp = timestamp;
-            this.xCoord = xCoord;
-            this.xCoordLeft = xCoordLeft;
-            this.xCoordRight = xCoordRight;
-            this.yCoord = yCoord;
-            this.yCoordLeft = yCoordLeft;
-            this.yCoordRight = yCoordRight;
-            this.isValidCoordLeft = isValidCoordLeft;
-            this.isValidCoordRight = isValidCoordRight;
-            this.dia = dia;
-            this.diaLeft = diaLeft;
-            this.diaRight = diaRight;
-            this.isValidDiaLeft = isValidDiaLeft;
-            this.isValidDiaRight = isValidDiaRight;
-            this.xOriginLeft = xOriginLeft;
-            this.xOriginRight = xOriginRight;
-            this.yOriginLeft = yOriginLeft;
-            this.yOriginRight = yOriginRight;
-            this.zOriginLeft = zOriginLeft;
-            this.zOriginRight = zOriginRight;
-            this.distOrigin = distOrigin;
-            this.distOriginLeft = distOriginLeft;
-            this.distOriginRight = distOriginRight;
-            this.isValidOriginLeft = isValidOriginLeft;
-            this.isValidOriginRight = isValidOriginRight;
-            this.argsPro = argsPro;
+            this._timestamp = timestamp;
+            this._xCoord = xCoord;
+            this._xCoordLeft = xCoordLeft;
+            this._xCoordLeftRaw = xCoordLeftRaw;
+            this._xCoordRight = xCoordRight;
+            this._xCoordRightRaw = xCoordRightRaw;
+            this._yCoord = yCoord;
+            this._yCoordLeft = yCoordLeft;
+            this._yCoordLeftRaw = yCoordLeftRaw;
+            this._yCoordRight = yCoordRight;
+            this._yCoordRightRaw = yCoordRightRaw;
+            this._isValidCoordLeft = isValidCoordLeft;
+            this._isValidCoordRight = isValidCoordRight;
+            this._dia = dia;
+            this._diaLeft = diaLeft;
+            this._diaRight = diaRight;
+            this._isValidDiaLeft = isValidDiaLeft;
+            this._isValidDiaRight = isValidDiaRight;
+            this._xGazeLeft = xGazeLeft;
+            this._xGazeRight = xGazeRight;
+            this._yGazeLeft = yGazeLeft;
+            this._yGazeRight = yGazeRight;
+            this._zGazeLeft = zGazeLeft;
+            this._zGazeRight = zGazeRight;
+            this._distGaze = distGaze;
+            this._distGazeLeft = distGazeLeft;
+            this._distGazeRight = distGazeRight;
+            this._xOriginLeft = xOriginLeft;
+            this._xOriginRight = xOriginRight;
+            this._yOriginLeft = yOriginLeft;
+            this._yOriginRight = yOriginRight;
+            this._zOriginLeft = zOriginLeft;
+            this._zOriginRight = zOriginRight;
+            this._distOrigin = distOrigin;
+            this._distOriginLeft = distOriginLeft;
+            this._distOriginRight = distOriginRight;
+            this._isValidOriginLeft = isValidOriginLeft;
+            this._isValidOriginRight = isValidOriginRight;
         }
-        public TimeSpan Timestamp { get { return timestamp; } }
-        public double XCoord { get { return xCoord; } }
-        public double? XCoordLeft { get { return xCoordLeft; } }
-        public double? XCoordRight { get { return xCoordRight; } }
-        public double YCoord { get { return yCoord; } }
-        public double? YCoordLeft { get { return yCoordLeft; } }
-        public double? YCoordRight { get { return yCoordRight; } }
-        public bool? IsValidCoordLeft { get { return isValidCoordLeft; } }
-        public bool? IsValidCoordRight { get { return isValidCoordRight; } }
-        public double? Dia { get { return dia; } }
-        public double? DiaLeft { get { return diaLeft; } }
-        public double? DiaRight { get { return diaRight; } }
-        public bool? IsValidDiaLeft { get { return isValidDiaLeft; } }
-        public bool? IsValidDiaRight { get { return isValidDiaRight; } }
-        public double? XOriginLeft { get { return xOriginLeft; } }
-        public double? XOriginRight { get { return xOriginRight; } }
-        public double? YOriginLeft { get { return yOriginLeft; } }
-        public double? YOriginRight { get { return yOriginRight; } }
-        public double? ZOriginLeft { get { return zOriginLeft; } }
-        public double? ZOriginRight { get { return zOriginRight; } }
-        public double? DistOrigin { get { return distOrigin; } }
-        public double? DistOriginLeft { get { return distOriginLeft; } }
-        public double? DistOriginRight { get { return distOriginRight; } }
-        public bool? IsValidOriginLeft { get { return isValidOriginLeft; } }
-        public bool? IsValidOriginRight { get { return isValidOriginRight; } }
-        public GazeDataEventArgs? ArgsPro { get { return argsPro;  } }
     }
 
     /// <summary>

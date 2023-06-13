@@ -1,5 +1,4 @@
 ﻿using System;
-using Tobii.Research;
 
 namespace GazeUtilityLibrary
 {
@@ -13,16 +12,6 @@ namespace GazeUtilityLibrary
         static private string GetValueString(bool? data)
         {
             return (data == null) ? "" : ((bool)data).ToString();
-        }
-
-        /// <summary>
-        /// Gets the gaze data value string.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <returns>a string containing the gaze data value if the value is not null, the empty string otherwise</returns>
-        static private string GetValueString(CalibrationEyeValidity data)
-        {
-            return data.ToString();
         }
 
         /// <summary>
