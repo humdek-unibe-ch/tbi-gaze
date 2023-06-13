@@ -17,9 +17,15 @@ namespace CustomCalibrationLibrary.Models
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private int _index;
+        /// <summary>
+        /// The index of the calibration point.
+        /// </summary>
         public int Index { get { return _index; } }
 
         private bool _hasData;
+        /// <summary>
+        /// Flag to indicate whether data has been collected for this calibration point.
+        /// </summary>
         public bool HasData
         {
             get { return _hasData; }
@@ -27,6 +33,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         private Point _position;
+        /// <summary>
+        /// The position of the calibration point.
+        /// </summary>
         public Point Position
         {
             get { return _position; }
@@ -34,6 +43,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         private Point _gazePositionAverage;
+        /// <summary>
+        /// The average between the left and the right gaze point.
+        /// </summary>
         public Point GazePositionAverage
         {
             get { return _gazePositionAverage; }
@@ -41,6 +53,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         private Point _gazePositionLeft;
+        /// <summary>
+        /// The left gaze point.
+        /// </summary>
         public Point GazePositionLeft
         {
             get { return _gazePositionLeft; }
@@ -48,6 +63,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         private Point _gazePositionRight;
+        /// <summary>
+        /// The right gaze point.
+        /// </summary>
         public Point GazePositionRight
         {
             get { return _gazePositionRight; }
@@ -71,12 +89,28 @@ namespace CustomCalibrationLibrary.Models
         }
     }
 
+    /// <summary>
+    /// Events to trigger changes in the calibration process.
+    /// </summary>
     public enum CalibrationEventType
     {
         Start,
         Accept,
         Restart,
         Abort
+    }        
+    
+    /// <summary>
+    /// The status of the calibarion process.
+    /// </summary>
+    public enum CalibrationStatus
+    {
+        HeadPosition,
+        DataCollection,
+        Computing,
+        DataResult,
+        Error,
+        Disconnect
     }
 
     /// <summary>
@@ -85,7 +119,14 @@ namespace CustomCalibrationLibrary.Models
     public class CalibrationModel : INotifyPropertyChanged
     {
         private string _error = "No Error";
+        /// <summary>
+        /// The error message of the calibration process.
+        /// </summary>
         public string Error { get { return _error; } set { _error = value; OnPropertyChanged(); } }
+
+        /// <summary>
+        /// Events to trigger changes in the calibration process.
+        /// </summary>
         public event EventHandler<CalibrationEventType>? CalibrationEvent;
         public void OnCalibrationEvent(CalibrationEventType type)
         {
@@ -93,16 +134,12 @@ namespace CustomCalibrationLibrary.Models
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         private CalibrationStatus _status;
-        public enum CalibrationStatus
-        {
-            HeadPosition,
-            DataCollection,
-            Computing,
-            DataResult,
-            Error,
-            Disconnect
-        }
+
+        /// <summary>
+        /// The status of the calibarion process.
+        /// </summary>
         public CalibrationStatus Status
         {
             get { return _status; }
@@ -115,6 +152,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         private CalibrationStatus _lastStatus;
+        /// <summary>
+        /// The calibration status before an error occured.
+        /// </summary>
         public CalibrationStatus LastStatus { get { return _lastStatus; } }
         private void OnPropertyChanged([CallerMemberName] string? property_name = null)
         {
@@ -123,8 +163,14 @@ namespace CustomCalibrationLibrary.Models
             });
         }
         private Point[] _points;
+        /// <summary>
+        /// All calibration points.
+        /// </summary>
         public Point[] Points { get { return _points; } }
         private ObservableCollection<CalibrationPoint> _calibrationPoints = new ObservableCollection<CalibrationPoint>();
+        /// <summary>
+        /// The calibration points to be added during the calibration process.
+        /// </summary>
         public ObservableCollection<CalibrationPoint> CalibrationPoints
         {
             get { return _calibrationPoints; }
@@ -132,6 +178,9 @@ namespace CustomCalibrationLibrary.Models
 
         public event EventHandler<Point>? GazePointChanged;
         private Point _gazePoint;
+        /// <summary>
+        /// The gaze point position.
+        /// </summary>
         public Point GazePoint { get { return _gazePoint; } }
 
         private void OnGazePointChanged([CallerMemberName] string? property_name = null)
@@ -141,6 +190,9 @@ namespace CustomCalibrationLibrary.Models
 
         public event EventHandler<UserPositionDataArgs>? UserPositionGuideChanged;
         private UserPositionDataArgs _userPositionGuide;
+        /// <summary>
+        /// The user position giude values.
+        /// </summary>
         public UserPositionDataArgs UserPositionGuide
         {
             get { return _userPositionGuide; }
@@ -152,6 +204,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         private int _index = -1;
+        /// <summary>
+        /// The index of the current calibration point
+        /// </summary>
         public int Index { get { return _index; } }
 
         private TrackerLogger _logger;
@@ -172,6 +227,11 @@ namespace CustomCalibrationLibrary.Models
             _userPositionGuide = new UserPositionDataArgs();
         }
 
+        /// <summary>
+        /// Update the normalized gaze point on the screen.
+        /// </summary>
+        /// <param name="x">The x coordinate</param>
+        /// <param name="y">The y coordinate</param>
         public void UpdateGazePoint(double x, double y)
         {
             _gazePoint.X = x;
@@ -179,29 +239,45 @@ namespace CustomCalibrationLibrary.Models
             OnGazePointChanged();
         }
 
+        /// <summary>
+        /// Initialise the calibration.
+        /// </summary>
         public void InitCalibration()
         {
             _index = -1;
             _calibrationPoints.Clear();
         }
 
+        /// <summary>
+        /// Trigger the next calibration point.
+        /// </summary>
         public void NextCalibrationPoint()
         {
             _index++;
             _calibrationPoints.Add(new CalibrationPoint(_points[_index], _index));
         }
 
+        /// <summary>
+        /// Remove and re-add the current calibration point
+        /// </summary>
         public void RedoCalibrationPoint()
         {
             _calibrationPoints.RemoveAt(_index);
             _calibrationPoints.Add(new CalibrationPoint(_points[_index], _index));
         }
 
+        /// <summary>
+        /// Trigger the data collected events.
+        /// </summary>
         public void GazeDataCollected()
         {
             CalibrationPoints[Index].HasData = true;
         }
 
+        /// <summary>
+        /// Updates the calibration results on the screen.
+        /// </summary>
+        /// <param name="points"></param>
         public void SetCalibrationResult(List<CalibrationDataArgs> points)
         {
             for (int i = 0; i < points.Count; i++)

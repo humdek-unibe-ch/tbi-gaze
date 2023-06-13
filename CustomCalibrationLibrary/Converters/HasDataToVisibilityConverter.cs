@@ -8,6 +8,9 @@ using System.Windows.Data;
 
 namespace CustomCalibrationLibrary.Converters
 {
+    /// <summary>
+    /// Converts True to Hidden and False to Visible
+    /// </summary>
     public class HasDataToVisibilityConverter: IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter,
