@@ -46,6 +46,10 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public bool DataLogDisabledOnStartup { get; set; }
         [JsonProperty(Required = Required.Default)]
+        public double DispersionThreshold { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public double DriftCompensationTimer { get; set; }
+        [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
         [JsonProperty(Required = Required.Default)]
         public bool MouseControl { get; set; }
@@ -73,6 +77,8 @@ namespace GazeUtilityLibrary
             DataLogFormatDiameter = "0.000";
             DataLogFormatOrigin = "0.000";
             DataLogFormatNormalizedPoint = "0.000";
+            DispersionThreshold = 1;
+            DriftCompensationTimer = 5000;
             TobiiApplicationPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\TobiiProEyeTrackerManager";
             TobiiCalibrate = "TobiiProEyeTrackerManager.exe";
             TobiiCalibrateArguments = "--device-sn=%S --mode=usercalibration";

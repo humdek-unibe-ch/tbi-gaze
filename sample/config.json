@@ -192,6 +192,15 @@
   // matching the pattern "DataLog*" are ignored.
   "DataLogWriteOutput": true,
 
+  // In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
+  // Provide an angle in degrees. The fixation detection is only used for drift compensation (for
+  // calibration and validation the functions provided by the manufactor are used).
+  "DispersionThreshold": 1,
+
+  // Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
+  // If the timer elapses drift compensation will be aborted. Use a value of zero for infinite timout.
+  "DriftCpompensationTimer": 5000,
+
   // Defines the location of the license files. It must be the path to a folder (not a file).
   // This is only required if the eye tracker device requires an external license file.
   // If an eye tracker does not require a license file either omit this configuration item or
@@ -223,6 +232,7 @@
   // is in any other state. If the eyetracker is not ready within the specified time the subject will
   // be notified with a popup window. This is only relevant for Gaze.exe as the CustomCalibration.exe
   // reacts immediately to lost connections and uses its own GUI to display an error message.
+  // Use 0 for immediate reaction.
   "ReadyTimer": 5000,
 
   // Defines the Tobii installation path. It must be the path to a folder (not a file).

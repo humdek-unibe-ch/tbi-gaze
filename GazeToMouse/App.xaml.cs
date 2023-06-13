@@ -67,6 +67,16 @@ namespace GazeToMouse
             Current.Dispatcher.Invoke(() => {
                 _fixationWindow.Show();
             });
+            System.Timers.Timer? timer = null;
+            if (_config.Config.DriftCompensationTimer > 0)
+            {
+                timer = new System.Timers.Timer(_config.Config.ReadyTimer);
+                timer.Elapsed += (sender, e) =>
+                {
+                    _processCompletion.SetResult(false);
+                };
+                timer.Start();
+            }
             await Task.Delay(1000);
             _isDriftCompensationOn = true;
             bool res = await _processCompletion.Task;
@@ -74,6 +84,7 @@ namespace GazeToMouse
             Current.Dispatcher.Invoke(() => {
                 _fixationWindow.Hide();
             });
+            timer?.Dispose();
             _processCompletion = new TaskCompletionSource<bool>();
             return res;
         }
@@ -189,6 +200,7 @@ namespace GazeToMouse
                 return false;
             }
 
+            _tracker.NormalDispersionThreshold = _config.Config.DispersionThreshold;
             _tracker.GazeDataReceived += OnGazeDataReceived;
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;

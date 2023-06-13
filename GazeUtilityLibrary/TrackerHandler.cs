@@ -114,6 +114,10 @@ namespace GazeUtilityLibrary
         public delegate void UserPositionDataHandler(Object sender, UserPositionDataArgs e);
 
         private double normalizedDispersionThreshold;
+        public double NormalDispersionThreshold
+        {
+            get { return normalizedDispersionThreshold; }
+            set { normalizedDispersionThreshold = AngleToDist(value); }}
 
         /// <summary>
         /// Gets or sets the state of the eyetracker device.
