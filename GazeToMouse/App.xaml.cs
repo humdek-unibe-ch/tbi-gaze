@@ -62,6 +62,11 @@ namespace GazeToMouse
             _isMouseTracking = false;
         }
 
+        public void ResetDriftCompensation()
+        {
+            _tracker?.ResetDriftCompensation();
+        }
+
         public async Task<bool> CompensateDrift()
         {
             Current.Dispatcher.Invoke(() => {
@@ -98,7 +103,7 @@ namespace GazeToMouse
             Current.Dispatcher.Invoke(() => {
                 _calibrationWindow.Show();
             });
-            _calibrationModel.Status = CalibrationModel.CalibrationStatus.HeadPosition;
+            _calibrationModel.Status = CalibrationStatus.HeadPosition;
             _tracker.UserPositionDataReceived += OnUserPositionGuideReceived;
             _isCalibrationOn = true;
             bool res = await _processCompletion.Task;
@@ -310,6 +315,13 @@ namespace GazeToMouse
                             }
                             sw.Flush();
                         }
+                        else if (msg.StartsWith("RESET_DRIFT_COMPENSATION"))
+                        {
+                            app.CustomDispatcher.Invoke(() =>
+                            {
+                                app.ResetDriftCompensation();
+                            });
+                        }
                         else if (msg.StartsWith("CUSTOM_CALIBRATE"))
                         {
                             bool res = await app.CustomDispatcher.Invoke(() =>
@@ -386,13 +398,13 @@ namespace GazeToMouse
             }
 
             _calibrationModel.InitCalibration();
-            _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataCollection;
+            _calibrationModel.Status = CalibrationStatus.DataCollection;
 
             await _tracker.InitCalibration();
 
             await CollectCalibrationData();
 
-            _calibrationModel.Status = CalibrationModel.CalibrationStatus.Computing;
+            _calibrationModel.Status = CalibrationStatus.Computing;
 
             List<CalibrationDataArgs> calibrationResult = await _tracker.ApplyCalibration();
             foreach(CalibrationDataArgs item in calibrationResult)
@@ -402,38 +414,11 @@ namespace GazeToMouse
             }
 
             _calibrationModel.SetCalibrationResult(calibrationResult);
-            _calibrationModel.Status = CalibrationModel.CalibrationStatus.DataResult;
+            _calibrationModel.Status = CalibrationStatus.DataResult;
 
             await _tracker.FinishCalibration();
 
             _config.CleanupCalibrationOutputFile(_calibrationError.GetCalibrationDataErrorString());
-        }
-
-        /// <summary>
-        /// Determines whether the gaze data set is valid.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <param name="ignore_invalid">if set to <c>true</c> [ignore invalid].</param>
-        /// <returns>
-        ///   <c>true</c> if at least one value of the gaze data is valid; otherwise, <c>false</c>.
-        /// </returns>
-        private bool IsDataValid(GazeDataArgs data, bool ignore_invalid)
-        {
-            if (!ignore_invalid) return true; // don't check, log everything
-            if ((data.IsValidCoordLeft == true)
-                || (data.IsValidCoordRight == true)
-                || (data.IsValidDiaLeft == true)
-                || (data.IsValidDiaRight == true)
-                || (data.IsValidOriginLeft == true)
-                || (data.IsValidOriginRight == true)
-                || ((data.IsValidCoordLeft == null)
-                    && (data.IsValidCoordRight == null)
-                    && (data.IsValidDiaLeft == null)
-                    && (data.IsValidDiaRight == null)
-                    && (data.IsValidOriginLeft == null)
-                    && (data.IsValidOriginRight == null)))
-                return true; // at least one value is valid or Core SDK is used
-            else return false; // all vaules of this data set are invalid
         }
 
         /// <summary>
@@ -517,7 +502,7 @@ namespace GazeToMouse
                     catch (Exception ex)
                     {
                         HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
-                        _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                        _calibrationModel.Status = CalibrationStatus.Error;
                         _config.CleanupCalibrationOutputFile(_calibrationError.GetCalibrationDataErrorString());
                     }
                     finally
@@ -536,8 +521,12 @@ namespace GazeToMouse
         private void OnGazeDataReceived(Object? sender, GazeDataArgs data)
         {
             // write the coordinates to the log file
-            if (_config != null && _config.Config.DataLogWriteOutput && IsDataValid(data, _config.Config.DataLogIgnoreInvalid))
+            if (_config != null && _config.Config.DataLogWriteOutput)
             {
+                if (_tracker != null && _tracker.ScreenArea != null && data.Combined.GazeData3d != null)
+                {
+                    data.DriftCompensation = new DriftCompensation(_tracker.ScreenArea, _tracker.DriftCompensation, data.Combined.GazeData3d);
+                }
                 string[] formatted_values = GazeData.PrepareGazeData(data, _config.Config, ref _delta);
                 if (_isRecording)
                 {
@@ -546,27 +535,28 @@ namespace GazeToMouse
             }
             if (_isDriftCompensationOn)
             {
-                if (data.IsValidCoordLeft == true && data.IsValidCoordRight == true
-                    && data.XCoordLeft != null && data.YCoordLeft != null
-                    && data.XCoordRight != null && data.YCoordRight != null
-                    && _tracker != null)
+                if ((data.Combined.GazeData3d?.IsGazePointValid ?? false) && (data.Combined.GazeData3d?.IsGazeOriginValid ?? false))
                 {
-                    if (_tracker.UpdateDriftCompensation(data))
+                    if (_tracker != null && _tracker.UpdateDriftCompensation(data))
                     {
-                        _logger?.Info($"Add drift compensation [{_tracker.DriftCompensation.XCoordLeft}, {_tracker.DriftCompensation.YCoordLeft}], [{_tracker.DriftCompensation.XCoordRight}, {_tracker.DriftCompensation.YCoordRight}]");
+                        _logger?.Info($"Add drift compensation [{_tracker.DriftCompensation.X}, {_tracker.DriftCompensation.Y}, {_tracker.DriftCompensation.Z}, {_tracker.DriftCompensation.W}]");
                         _processCompletion.SetResult(true);
                     }
                 }
             }
-            if (_isCalibrationOn && ((data.IsValidCoordLeft ?? false) || (data.IsValidCoordRight ?? false)))
+            if (_isCalibrationOn && data.Combined.GazeData2d.IsGazePointValid == true)
             {
-                _calibrationModel.UpdateGazePoint(data.XCoord, data.YCoord);
+                _calibrationModel.UpdateGazePoint(data.Combined.GazeData2d.GazePoint.X, data.Combined.GazeData2d.GazePoint.Y);
             }
             // set the cursor position to the gaze position
             if (_isMouseTracking)
             {
-                if (double.IsNaN(data.XCoord) || double.IsNaN(data.YCoord)) return;
-                UpdateMousePosition(Convert.ToInt32(data.XCoord * SystemParameters.PrimaryScreenWidth), Convert.ToInt32(data.YCoord * SystemParameters.PrimaryScreenHeight));
+                if (double.IsNaN(data.Combined.GazeData2d.GazePoint.X) || double.IsNaN(data.Combined.GazeData2d.GazePoint.Y))
+                {
+                    return;
+                }
+                UpdateMousePosition(Convert.ToInt32((data.DriftCompensation?.GazePosition2d.X ?? data.Combined.GazeData2d.GazePoint.X) * SystemParameters.PrimaryScreenWidth),
+                    Convert.ToInt32((data.DriftCompensation?.GazePosition2d.Y ?? data.Combined.GazeData2d.GazePoint.Y) * SystemParameters.PrimaryScreenHeight));
             }
         }
 
@@ -592,8 +582,8 @@ namespace GazeToMouse
             {
                 switch (_calibrationModel.LastStatus)
                 {
-                    case CalibrationModel.CalibrationStatus.DataCollection:
-                        _calibrationModel.Status = CalibrationModel.CalibrationStatus.Error;
+                    case CalibrationStatus.DataCollection:
+                        _calibrationModel.Status = CalibrationStatus.Error;
                         break;
                     default:
                         _calibrationModel.Status = _calibrationModel.LastStatus;
@@ -623,11 +613,11 @@ namespace GazeToMouse
             {
                 switch (_calibrationModel.Status)
                 {
-                    case CalibrationModel.CalibrationStatus.DataCollection:
+                    case CalibrationStatus.DataCollection:
                         _calibrationModel.Error = "Connection to the device interrupted, calibration aborted.";
                         break;
                 }
-                _calibrationModel.Status = CalibrationModel.CalibrationStatus.Disconnect;
+                _calibrationModel.Status = CalibrationStatus.Disconnect;
                 _calibrationError.Error = ECalibrationDataError.DeviceInterrupt;
             }
         }

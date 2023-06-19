@@ -102,31 +102,57 @@
   // of the configuration parameter "DataLogColumnOrder".
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogColumnTitle": [
-    "Timestamp",
-    "coord-x",
-    "coord-x-left",
-    "coord-x-right",
-    "coord-y",
-    "coord-y-left",
-    "coord-y-right",
-    "coord-valid-left",
-    "coord-valid-right",
-    "pupil-dia",
-    "pupil-dia-left",
-    "pupil-dia-right",
-    "pupil-valid-left",
-    "pupil-valid-right",
-    "origin-x-left",
-    "origin-y-left",
-    "origin-z-left",
-    "origin-x-right",
-    "origin-y-right",
-    "origin-z-right",
-    "origin-dist",
-    "origin-dist-left",
-    "origin-dist-right",
-    "origin-valid-left",
-    "origin-valid-right"
+    "timestamp",
+
+    "combined_gazePoint2dCompensated_x",
+    "combined_gazePoint2dCompensated_y",
+    "combined_gazePoint2d_x",
+    "combined_gazePoint2d_y",
+    "combined_gazePoint2d_isValid",
+    "combined_gazePoint3dCompensated_x",
+    "combined_gazePoint3dCompensated_y",
+    "combined_gazePoint3dCompensated_z",
+    "combined_gazePoint3d_x",
+    "combined_gazePoint3d_y",
+    "combined_gazePoint3d_z",
+    "combined_gazePoint3d_isValid",
+    "combined_originPoint3d_x",
+    "combined_originPoint3d_y",
+    "combined_originPoint3d_z",
+    "combined_originPoint3d_isValid",
+    "combined_gazeDistance",
+    "combined_pupilDiameter",
+    "combined_pupilDiameter_isValid",
+
+    "left_gazePoint2d_x",
+    "left_gazePoint2d_y",
+    "left_gazePoint2d_isValid",
+    "left_gazePoint3d_x",
+    "left_gazePoint3d_y",
+    "left_gazePoint3d_z",
+    "left_gazePoint3d_isValid",
+    "left_gazeOrigin3d_x",
+    "left_gazeOrigin3d_y",
+    "left_gazeOrigin3d_z",
+    "left_gazeOrigin3d_isValid",
+    "left_gazeDistance",
+    "left_pupilDiameter",
+    "left_pupilDiameter_isValid",
+
+    "right_gazePoint2d_x",
+    "right_gazePoint2d_y",
+    "right_gazePoint2d_isValid",
+    "right_gazePoint3d_x",
+    "right_gazePoint3d_y",
+    "right_gazePoint3d_z",
+    "right_gazePoint3d_isValid",
+    "right_gazeOrigin3d_x",
+    "right_gazeOrigin3d_y",
+    "right_gazeOrigin3d_z",
+    "right_gazeOrigin3d_isValid",
+    "right_gazeDistance",
+    "right_pupilDiameter",
+    "right_pupilDiameter_isValid"
   ],
 
   // Number of maximal allowed output data files in the output path. Oldest files are deleted first. To
@@ -172,14 +198,6 @@
   // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
-
-  // When set to true, invalid data will be ignored and not logged to the output file. When set to false
-  // invalid data will appear as "NaN" or "n. def" (depending on the language of the system) in the output
-  // file. A data set is invalid if the tracker is not able to detect the required features of the eye.
-  // This parameter might be useful to estimate the number of blinks of the subject or to track when the
-  // subject is not gazing at the screen.
-  // Note that invlaid data is only removed if it affects all values associated to a timestamp.
-  "DataLogIgnoreInvalid": false,
 
   // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
   // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).

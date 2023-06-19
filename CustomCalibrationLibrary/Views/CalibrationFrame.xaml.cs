@@ -31,22 +31,22 @@ namespace CustomCalibrationLibrary.Views
             }
             switch (((CalibrationModel)sender).Status)
             {
-                case CalibrationModel.CalibrationStatus.HeadPosition:
+                case CalibrationStatus.HeadPosition:
                     this.Content = new UserPositionGuide(_model);
                     break;
-                case CalibrationModel.CalibrationStatus.DataCollection:
+                case CalibrationStatus.DataCollection:
                     this.Content = new Calibration(_model);
                     break;
-                case CalibrationModel.CalibrationStatus.Computing:
+                case CalibrationStatus.Computing:
                     this.Content = _computingView;
                     break;
-                case CalibrationModel.CalibrationStatus.DataResult:
+                case CalibrationStatus.DataResult:
                     this.Content = new CalibrationResult(_model);
                     break;
-                case CalibrationModel.CalibrationStatus.Error:
+                case CalibrationStatus.Error:
                     this.Content = new CalibrationFailed(_model);
                     break;
-                case CalibrationModel.CalibrationStatus.Disconnect:
+                case CalibrationStatus.Disconnect:
                     this.Content = new Disconnect(_model);
                     break;
             }

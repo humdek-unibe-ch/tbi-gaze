@@ -1,5 +1,7 @@
-﻿using System;
+﻿using GazeUtilityLibrary;
+using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 using Tobii.Research;
@@ -41,11 +43,32 @@ namespace GazeUtilityLibrary
             _eyeTracker.ConnectionLost += OnConnectionLost;
             _eyeTracker.ConnectionRestored += OnConnectionRestored;
             _eyeTracker.UserPositionGuideReceived += OnUserPositionDataReceivedPro;
+            if (_eyeTracker.DeviceCapabilities.HasFlag(Capabilities.CanSetDisplayArea))
+            {
+                _eyeTracker.DisplayAreaChanged += (s, e) => {
+                    UpdateScreenArea(e.DisplayArea);
+                };
+            }
+            UpdateScreenArea(_eyeTracker.GetDisplayArea());
 
             if (license_path != null && license_path != "")
             {
                 ApplyLicense(_eyeTracker, PatternReplace(license_path));
             }
+
+            logger.Info($"device capabilities: {_eyeTracker.DeviceCapabilities}");
+        }
+
+        private void UpdateScreenArea(DisplayArea displayArea)
+        {
+            screenArea = new ScreenArea(
+                new Vector3(displayArea.BottomLeft.X, displayArea.BottomLeft.Y, displayArea.BottomLeft.Z),
+                new Vector3(displayArea.BottomRight.X, displayArea.BottomRight.Y, displayArea.BottomRight.Z),
+                new Vector3(displayArea.TopLeft.X, displayArea.TopLeft.Y, displayArea.TopLeft.Z),
+                new Vector3(displayArea.TopRight.X, displayArea.TopRight.Y, displayArea.TopRight.Z),
+                displayArea.Width,
+                displayArea.Height
+            );
         }
 
         /// <summary>
@@ -221,6 +244,11 @@ namespace GazeUtilityLibrary
             return 30;
         }
 
+        protected override Vector3 GetUnitDirection()
+        {
+            return new Vector3(0, 0, -1);
+        }
+
         /// <summary>
         /// Combines the data values form the left and the right eye.
         /// </summary>
@@ -292,67 +320,24 @@ namespace GazeUtilityLibrary
         private void OnGazeDataReceivedPro(object? sender, GazeDataEventArgs data)
         {
             State = DeviceStatus.Tracking;
-            double left_gaze_x_raw = data.LeftEye.GazePoint.PositionOnDisplayArea.X;
-            double right_gaze_x_raw = data.RightEye.GazePoint.PositionOnDisplayArea.X;
-            double left_gaze_y_raw = data.LeftEye.GazePoint.PositionOnDisplayArea.Y;
-            double right_gaze_y_raw = data.RightEye.GazePoint.PositionOnDisplayArea.Y;
-            double left_gaze_x = left_gaze_x_raw + driftCompensation.XCoordLeft;
-            double right_gaze_x = right_gaze_x_raw + driftCompensation.XCoordRight;
-            double left_gaze_y = left_gaze_y_raw + driftCompensation.YCoordLeft;
-            double right_gaze_y = right_gaze_y_raw + driftCompensation.YCoordRight;
-            double origin_distance_left = ComputeEyeDistance(
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates
-            );
-            double origin_distance_right = ComputeEyeDistance(
-                data.RightEye.GazeOrigin.PositionInUserCoordinates
-            );
-            double gaze_distance_left = ComputeGazeDistance(
-                data.LeftEye.GazePoint.PositionInUserCoordinates,
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates
-            );
-            double gaze_distance_right = ComputeGazeDistance(
-                data.RightEye.GazePoint.PositionInUserCoordinates,
-                data.RightEye.GazeOrigin.PositionInUserCoordinates
-            );
             GazeDataArgs gazeData = new GazeDataArgs(
-                TimeSpan.FromMilliseconds(data.SystemTimeStamp/1000),
-                GazeFilter(left_gaze_x, right_gaze_x),
-                left_gaze_x,
-                left_gaze_x_raw,
-                right_gaze_x,
-                right_gaze_x_raw,
-                GazeFilter(left_gaze_y, right_gaze_y),
-                left_gaze_y,
-                left_gaze_y_raw,
-                right_gaze_y,
-                right_gaze_y_raw,
-                (data.LeftEye.GazePoint.Validity == Validity.Valid),
-                (data.RightEye.GazePoint.Validity == Validity.Valid),
-                GazeFilter(data.LeftEye.Pupil.PupilDiameter, data.RightEye.Pupil.PupilDiameter),
+                TimeSpan.FromMilliseconds(data.SystemTimeStamp / 1000),
+                new Vector2(data.LeftEye.GazePoint.PositionOnDisplayArea.X, data.LeftEye.GazePoint.PositionOnDisplayArea.Y),
+                data.LeftEye.GazePoint.Validity == Validity.Valid,
+                new Vector2(data.RightEye.GazePoint.PositionOnDisplayArea.X, data.RightEye.GazePoint.PositionOnDisplayArea.Y),
+                data.RightEye.GazePoint.Validity == Validity.Valid,
+                new Vector3(data.LeftEye.GazePoint.PositionInUserCoordinates.X, data.LeftEye.GazePoint.PositionInUserCoordinates.Y, data.LeftEye.GazePoint.PositionInUserCoordinates.Z),
+                data.LeftEye.GazeOrigin.Validity == Validity.Valid,
+                new Vector3(data.RightEye.GazePoint.PositionInUserCoordinates.X, data.RightEye.GazePoint.PositionInUserCoordinates.Y, data.RightEye.GazePoint.PositionInUserCoordinates.Z),
+                data.RightEye.GazeOrigin.Validity == Validity.Valid,
+                new Vector3(data.LeftEye.GazeOrigin.PositionInUserCoordinates.X, data.LeftEye.GazeOrigin.PositionInUserCoordinates.Y, data.LeftEye.GazeOrigin.PositionInUserCoordinates.Z),
+                data.LeftEye.GazeOrigin.Validity == Validity.Valid,
+                new Vector3(data.RightEye.GazeOrigin.PositionInUserCoordinates.X, data.RightEye.GazeOrigin.PositionInUserCoordinates.Y, data.RightEye.GazeOrigin.PositionInUserCoordinates.Z),
+                data.RightEye.GazeOrigin.Validity == Validity.Valid,
                 data.LeftEye.Pupil.PupilDiameter,
+                data.LeftEye.Pupil.Validity == Validity.Valid,
                 data.RightEye.Pupil.PupilDiameter,
-                (data.LeftEye.Pupil.Validity == Validity.Valid),
-                (data.RightEye.Pupil.Validity == Validity.Valid),
-                data.LeftEye.GazePoint.PositionInUserCoordinates.X,
-                data.LeftEye.GazePoint.PositionInUserCoordinates.Y,
-                data.LeftEye.GazePoint.PositionInUserCoordinates.Z,
-                data.RightEye.GazePoint.PositionInUserCoordinates.X,
-                data.RightEye.GazePoint.PositionInUserCoordinates.Y,
-                data.RightEye.GazePoint.PositionInUserCoordinates.Z,
-                GazeFilter(gaze_distance_left, gaze_distance_right),
-                gaze_distance_left,
-                gaze_distance_right,
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates.X,
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Y,
-                data.LeftEye.GazeOrigin.PositionInUserCoordinates.Z,
-                data.RightEye.GazeOrigin.PositionInUserCoordinates.X,
-                data.RightEye.GazeOrigin.PositionInUserCoordinates.Y,
-                data.RightEye.GazeOrigin.PositionInUserCoordinates.Z,
-                GazeFilter(origin_distance_left, origin_distance_right),
-                origin_distance_left,
-                origin_distance_right,
-                (data.LeftEye.GazeOrigin.Validity == Validity.Valid),
-                (data.RightEye.GazeOrigin.Validity == Validity.Valid)
+                data.RightEye.Pupil.Validity == Validity.Valid
             );
             OnGazeDataReceived(gazeData);
         }

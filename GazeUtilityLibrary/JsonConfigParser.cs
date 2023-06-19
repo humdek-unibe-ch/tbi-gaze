@@ -34,8 +34,6 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatTimeStamp { get; set; }
         [JsonProperty(Required = Required.Default)]
-        public bool DataLogIgnoreInvalid { get; set; }
-        [JsonProperty(Required = Required.Default)]
         public string DataLogPath { get; set; }
         [JsonProperty(Required = Required.Always)]
         public bool DataLogWriteOutput { get; set; }
@@ -84,56 +82,108 @@ namespace GazeUtilityLibrary
             TobiiCalibrateArguments = "--device-sn=%S --mode=usercalibration";
             DataLogColumnOrder =
                 $"{{{(int)GazeOutputValue.DataTimeStamp}}}\t" +
-                $"{{{(int)GazeOutputValue.XCoord}}}\t" +
-                $"{{{(int)GazeOutputValue.XCoordLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.XCoordRight}}}\t" +
-                $"{{{(int)GazeOutputValue.YCoord}}}\t" +
-                $"{{{(int)GazeOutputValue.YCoordLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.YCoordRight}}}\t" +
-                $"{{{(int)GazeOutputValue.ValidCoordLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.ValidCoordRight}}}\t" +
-                $"{{{(int)GazeOutputValue.PupilDia}}}\t" +
-                $"{{{(int)GazeOutputValue.PupilDiaLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.PupilDiaRight}}}\t" +
-                $"{{{(int)GazeOutputValue.ValidPupilLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.ValidPupilRight}}}\t" +
-                $"{{{(int)GazeOutputValue.XOriginLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.YOriginLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.ZOriginLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.XOriginRight}}}\t" +
-                $"{{{(int)GazeOutputValue.YOriginRight}}}\t" +
-                $"{{{(int)GazeOutputValue.ZOriginRight}}}\t" +
-                $"{{{(int)GazeOutputValue.DistOrigin}}}\t" +
-                $"{{{(int)GazeOutputValue.DistOriginLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.DistOriginRight}}}\t" +
-                $"{{{(int)GazeOutputValue.ValidOriginLeft}}}\t" +
-                $"{{{(int)GazeOutputValue.ValidOriginRight}}}";
+
+                $"{{{(int)GazeOutputValue.CombinedGazePoint2dCompensatedX}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint2dCompensatedY}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint2dX}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint2dY}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint2dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dCompensatedX}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dCompensatedY}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dCompensatedZ}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dX}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dY}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dZ}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazePoint3dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazeOrigin3dX}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazeOrigin3dY}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazeOrigin3dZ}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazeOrigin3dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedGazeDistance}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedPupilDiameter}}}\t" +
+                $"{{{(int)GazeOutputValue.CombinedPupilDiameterIsValid}}}\t" +
+
+                $"{{{(int)GazeOutputValue.LeftGazePoint2dX}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazePoint2dY}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazePoint2dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazePoint3dX}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazePoint3dY}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazePoint3dZ}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazePoint3dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazeOrigin3dX}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazeOrigin3dY}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazeOrigin3dZ}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazeOrigin3dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftGazeDistance}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftPupilDiameter}}}\t" +
+                $"{{{(int)GazeOutputValue.LeftPupilDiameterIsValid}}}\t" +
+
+                $"{{{(int)GazeOutputValue.RightGazePoint2dX}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazePoint2dY}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazePoint2dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazePoint3dX}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazePoint3dY}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazePoint3dZ}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazePoint3dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazeOrigin3dX}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazeOrigin3dY}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazeOrigin3dZ}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazeOrigin3dIsValid}}}\t" +
+                $"{{{(int)GazeOutputValue.RightGazeDistance}}}\t" +
+                $"{{{(int)GazeOutputValue.RightPupilDiameter}}}\t" +
+                $"{{{(int)GazeOutputValue.RightPupilDiameterIsValid}}}";
             DataLogColumnTitle = new string[] {
-                "Timestamp",
-                "coord-x",
-                "coord-x-left",
-                "coord-x-right",
-                "coord-y",
-                "coord-y-left",
-                "coord-y-right",
-                "coord-valid-left",
-                "coord-valid-right",
-                "pupil-dia",
-                "pupil-dia-left",
-                "pupil-dia-right",
-                "pupil-valid-left",
-                "pupil-valid-right",
-                "origin-x-left",
-                "origin-y-left",
-                "origin-z-left",
-                "origin-x-right",
-                "origin-y-right",
-                "origin-z-right",
-                "origin-dist",
-                "origin-dist-left",
-                "origin-dist-right",
-                "origin-valid-left",
-                "origin-valid-right"
+                "timestamp",
+
+                "combined_gazePoint2dCompensated_x",
+                "combined_gazePoint2dCompensated_y",
+                "combined_gazePoint2d_x",
+                "combined_gazePoint2d_y",
+                "combined_gazePoint2d_isValid",
+                "combined_gazePoint3dCompensated_x",
+                "combined_gazePoint3dCompensated_y",
+                "combined_gazePoint3dCompensated_z",
+                "combined_gazePoint3d_x",
+                "combined_gazePoint3d_y",
+                "combined_gazePoint3d_z",
+                "combined_gazePoint3d_isValid",
+                "combined_originPoint3d_x",
+                "combined_originPoint3d_y",
+                "combined_originPoint3d_z",
+                "combined_originPoint3d_isValid",
+                "combined_gazeDistance",
+                "combined_pupilDiameter",
+                "combined_pupilDiameter_isValid",
+
+                "left_gazePoint2d_x",
+                "left_gazePoint2d_y",
+                "left_gazePoint2d_isValid",
+                "left_gazePoint3d_x",
+                "left_gazePoint3d_y",
+                "left_gazePoint3d_z",
+                "left_gazePoint3d_isValid",
+                "left_gazeOrigin3d_x",
+                "left_gazeOrigin3d_y",
+                "left_gazeOrigin3d_z",
+                "left_gazeOrigin3d_isValid",
+                "left_gazeDistance",
+                "left_pupilDiameter",
+                "left_pupilDiameter_isValid",
+
+                "right_gazePoint2d_x",
+                "right_gazePoint2d_y",
+                "right_gazePoint2d_isValid",
+                "right_gazePoint3d_x",
+                "right_gazePoint3d_y",
+                "right_gazePoint3d_z",
+                "right_gazePoint3d_isValid",
+                "right_gazeOrigin3d_x",
+                "right_gazeOrigin3d_y",
+                "right_gazeOrigin3d_z",
+                "right_gazeOrigin3d_isValid",
+                "right_gazeDistance",
+                "right_pupilDiameter",
+                "right_pupilDiameter_isValid",
             };
             CalibrationLogColumnOrder =
                 $"{{{(int)CalibrationOutputValue.XCoord}}}\t" +
@@ -155,7 +205,6 @@ namespace GazeUtilityLibrary
                 "coord-valid-right"
             };
             DataLogCount = 200;
-            DataLogIgnoreInvalid = false;
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;
             CalibrationLogWriteOutput = true;
@@ -183,30 +232,56 @@ namespace GazeUtilityLibrary
     public enum GazeOutputValue
     {
         DataTimeStamp = 0, // timestamp of the gaze data item (uses ValueFormat.TimeStamp)
-        XCoord, // x-coordinate of the gaze point of both eyes (pixel value)
-        XCoordLeft, // x-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
-        XCoordRight, // x-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
-        YCoord, // y-coordinate of the gaze point of both eyes (pixel value)
-        YCoordLeft, // y-coordinate of the gaze point of the left eye (pixel value) [SDK Pro only]
-        YCoordRight, // y-coordinate of the gaze point of the right eye (pixel value) [SDK Pro only]
-        ValidCoordLeft, // validity of the gaze data of the left eye [SDK Pro only]
-        ValidCoordRight, // validity of the gaze data of the right eye [SDK Pro only]
-        PupilDia, // average pupil diameter of both eyes (uses ValueFormat.Diameter) [SDK Pro only]
-        PupilDiaLeft, // pupil diameter of the left eye (uses ValueFormat.Diameter) [SDK Pro only]
-        PupilDiaRight, // pupil diameter of the right eye (uses ValueFormat.Diameter) [SDK Pro only]
-        ValidPupilLeft, // validity of the pupil data of the left eye [SDK Pro only]
-        ValidPupilRight, // validity of the pupil data of the right eye [SDK Pro only]
-        XOriginLeft, // x-coordinate of the gaze origin of the left eye (pixel value) [SDK Pro only]
-        XOriginRight, // x-coordinate of the gaze origin of the right eye (pixel value) [SDK Pro only]
-        YOriginLeft, // y-coordinate of the gaze origin of the left eye (pixel value) [SDK Pro only]
-        YOriginRight, // y-coordinate of the gaze origin of the right eye (pixel value) [SDK Pro only]
-        ZOriginLeft, // z-coordinate of the gaze origin of the left eye (pixel value) [SDK Pro only]
-        ZOriginRight, // z-coordinate of the gaze origin of the right eye (pixel value) [SDK Pro only]
-        DistOrigin, // distance of the gaze origin of the average of both eyes to the eyetracker [SDK Pro only]
-        DistOriginLeft, // distance of the gaze origin of the left eye to the eyetracker [SDK Pro only]
-        DistOriginRight, // distance of the gaze origin of the right eye to the eyetracker [SDK Pro only]
-        ValidOriginLeft, // validity of the gaze origin data of the left eye [SDK Pro only]
-        ValidOriginRight // validity of the gaze origin data of the right eye [SDK Pro only]
+
+        CombinedGazePoint2dCompensatedX,
+        CombinedGazePoint2dCompensatedY,
+        CombinedGazePoint2dX,
+        CombinedGazePoint2dY,
+        CombinedGazePoint2dIsValid,
+        CombinedGazePoint3dCompensatedX,
+        CombinedGazePoint3dCompensatedY,
+        CombinedGazePoint3dCompensatedZ,
+        CombinedGazePoint3dX,
+        CombinedGazePoint3dY,
+        CombinedGazePoint3dZ,
+        CombinedGazePoint3dIsValid,
+        CombinedGazeOrigin3dX,
+        CombinedGazeOrigin3dY,
+        CombinedGazeOrigin3dZ,
+        CombinedGazeOrigin3dIsValid,
+        CombinedGazeDistance,
+        CombinedPupilDiameter,
+        CombinedPupilDiameterIsValid,
+
+        LeftGazePoint2dX,
+        LeftGazePoint2dY,
+        LeftGazePoint2dIsValid,
+        LeftGazePoint3dX,
+        LeftGazePoint3dY,
+        LeftGazePoint3dZ,
+        LeftGazePoint3dIsValid,
+        LeftGazeOrigin3dX,
+        LeftGazeOrigin3dY,
+        LeftGazeOrigin3dZ,
+        LeftGazeOrigin3dIsValid,
+        LeftGazeDistance,
+        LeftPupilDiameter,
+        LeftPupilDiameterIsValid,
+
+        RightGazePoint2dX,
+        RightGazePoint2dY,
+        RightGazePoint2dIsValid,
+        RightGazePoint3dX,
+        RightGazePoint3dY,
+        RightGazePoint3dZ,
+        RightGazePoint3dIsValid,
+        RightGazeOrigin3dX,
+        RightGazeOrigin3dY,
+        RightGazeOrigin3dZ,
+        RightGazeOrigin3dIsValid,
+        RightGazeDistance,
+        RightPupilDiameter,
+        RightPupilDiameterIsValid
     }
 
     /// <summary>

@@ -34,6 +34,7 @@ namespace GazeControl
                 case "GAZE_RECORDING_ENABLE":
                 case "MOUSE_TRACKING_DISABLE":
                 case "MOUSE_TRACKING_ENABLE":
+                case "RESET_DRIFT_COMPENSATION":
                 case "TERMINATE":
                     try
                     {

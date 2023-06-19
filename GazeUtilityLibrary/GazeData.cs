@@ -47,33 +47,6 @@ namespace GazeUtilityLibrary
         }
 
         /// <summary>
-        /// Determines whether the gaze data set is valid.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <param name="ignore_invalid">if set to <c>true</c> [ignore invalid].</param>
-        /// <returns>
-        ///   <c>true</c> if at least one value of the gaze data is valid; otherwise, <c>false</c>.
-        /// </returns>
-        static private bool IsGazeDataValid(GazeDataArgs data, bool ignore_invalid)
-        {
-            if (!ignore_invalid) return true; // don't check, log everything
-            if ((data.IsValidCoordLeft == true)
-                || (data.IsValidCoordRight == true)
-                || (data.IsValidDiaLeft == true)
-                || (data.IsValidDiaRight == true)
-                || (data.IsValidOriginLeft == true)
-                || (data.IsValidOriginRight == true)
-                || ((data.IsValidCoordLeft == null)
-                    && (data.IsValidCoordRight == null)
-                    && (data.IsValidDiaLeft == null)
-                    && (data.IsValidDiaRight == null)
-                    && (data.IsValidOriginLeft == null)
-                    && (data.IsValidOriginRight == null)))
-                return true; // at least one value is valid or Core SDK is used
-            else return false; // all vaules of this data set are invalid
-        }
-
-        /// <summary>
         /// Called when [gaze data received].
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -82,33 +55,59 @@ namespace GazeUtilityLibrary
         {
             string[] formatted_values = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
             // write the coordinates to the log file
-            if (Config.DataLogWriteOutput && IsGazeDataValid(data, Config.DataLogIgnoreInvalid))
+            if (Config.DataLogWriteOutput)
             {
                 formatted_values[(int)GazeOutputValue.DataTimeStamp] = GetValueString(data.Timestamp, Config.DataLogFormatTimeStamp, ref delta);
-                formatted_values[(int)GazeOutputValue.XCoord] = GetValueString(data.XCoord, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)GazeOutputValue.XCoordLeft] = GetValueString(data.XCoordLeft, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)GazeOutputValue.XCoordRight] = GetValueString(data.XCoordRight, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)GazeOutputValue.YCoord] = GetValueString(data.YCoord, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)GazeOutputValue.YCoordLeft] = GetValueString(data.YCoordLeft, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)GazeOutputValue.YCoordRight] = GetValueString(data.YCoordRight, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)GazeOutputValue.ValidCoordLeft] = GetValueString(data.IsValidCoordLeft);
-                formatted_values[(int)GazeOutputValue.ValidCoordRight] = GetValueString(data.IsValidCoordRight);
-                formatted_values[(int)GazeOutputValue.PupilDia] = GetValueString(data.Dia, Config.DataLogFormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaLeft] = GetValueString(data.DiaLeft, Config.DataLogFormatDiameter);
-                formatted_values[(int)GazeOutputValue.PupilDiaRight] = GetValueString(data.DiaRight, Config.DataLogFormatDiameter);
-                formatted_values[(int)GazeOutputValue.ValidPupilLeft] = GetValueString(data.IsValidDiaLeft);
-                formatted_values[(int)GazeOutputValue.ValidPupilRight] = GetValueString(data.IsValidDiaRight);
-                formatted_values[(int)GazeOutputValue.XOriginLeft] = GetValueString(data.XOriginLeft, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.XOriginRight] = GetValueString(data.XOriginRight, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.YOriginLeft] = GetValueString(data.YOriginLeft, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.YOriginRight] = GetValueString(data.YOriginRight, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.ZOriginLeft] = GetValueString(data.ZOriginLeft, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.ZOriginRight] = GetValueString(data.ZOriginRight, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.DistOrigin] = GetValueString(data.DistOrigin, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.DistOriginLeft] = GetValueString(data.DistOriginLeft, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.DistOriginRight] = GetValueString(data.DistOriginRight, Config.DataLogFormatOrigin);
-                formatted_values[(int)GazeOutputValue.ValidOriginLeft] = GetValueString(data.IsValidOriginLeft);
-                formatted_values[(int)GazeOutputValue.ValidOriginRight] = GetValueString(data.IsValidOriginRight);
+
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint2dCompensatedX] = GetValueString(data.DriftCompensation?.GazePosition2d.X, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint2dCompensatedY] = GetValueString(data.DriftCompensation?.GazePosition2d.Y, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint2dX] = GetValueString(data.Combined.GazeData2d.GazePoint.X, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint2dY] = GetValueString(data.Combined.GazeData2d.GazePoint.Y, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint2dIsValid] = GetValueString(data.Combined.GazeData2d.IsGazePointValid);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dCompensatedX] = GetValueString(data.DriftCompensation?.GazePosition3d.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dCompensatedY] = GetValueString(data.DriftCompensation?.GazePosition3d.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dCompensatedZ] = GetValueString(data.DriftCompensation?.GazePosition3d.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dX] = GetValueString(data.Combined.GazeData3d?.GazePoint.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dY] = GetValueString(data.Combined.GazeData3d?.GazePoint.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dZ] = GetValueString(data.Combined.GazeData3d?.GazePoint.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazePoint3dIsValid] = GetValueString(data.Combined.GazeData3d?.IsGazePointValid);
+                formatted_values[(int)GazeOutputValue.CombinedGazeOrigin3dX] = GetValueString(data.Combined.GazeData3d?.GazeOrigin.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazeOrigin3dY] = GetValueString(data.Combined.GazeData3d?.GazeOrigin.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazeOrigin3dZ] = GetValueString(data.Combined.GazeData3d?.GazeOrigin.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedGazeOrigin3dIsValid] = GetValueString(data.Combined.GazeData3d?.IsGazeOriginValid);
+                formatted_values[(int)GazeOutputValue.CombinedGazeDistance] = GetValueString(data.Combined.GazeData3d?.GazeDistance, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.CombinedPupilDiameter] = GetValueString(data.Combined.EyeData?.PupilDiameter, Config.DataLogFormatDiameter);
+                formatted_values[(int)GazeOutputValue.CombinedPupilDiameterIsValid] = GetValueString(data.Combined.EyeData?.IsPupilDiameterValid);
+
+                formatted_values[(int)GazeOutputValue.LeftGazePoint2dX] = GetValueString(data.Left?.GazeData2d.GazePoint.X, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.LeftGazePoint2dY] = GetValueString(data.Left?.GazeData2d.GazePoint.Y, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.LeftGazePoint2dIsValid] = GetValueString(data.Left?.GazeData2d.IsGazePointValid);
+                formatted_values[(int)GazeOutputValue.LeftGazePoint3dX] = GetValueString(data.Left?.GazeData3d?.GazeOrigin.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftGazePoint3dY] = GetValueString(data.Left?.GazeData3d?.GazeOrigin.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftGazePoint3dZ] = GetValueString(data.Left?.GazeData3d?.GazeOrigin.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftGazePoint3dIsValid] = GetValueString(data.Left?.GazeData3d?.IsGazePointValid);
+                formatted_values[(int)GazeOutputValue.LeftGazeOrigin3dX] = GetValueString(data.Left?.GazeData3d?.GazeOrigin.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftGazeOrigin3dY] = GetValueString(data.Left?.GazeData3d?.GazeOrigin.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftGazeOrigin3dZ] = GetValueString(data.Left?.GazeData3d?.GazeOrigin.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftGazeOrigin3dIsValid] = GetValueString(data.Left?.GazeData3d?.IsGazeOriginValid);
+                formatted_values[(int)GazeOutputValue.LeftGazeDistance] = GetValueString(data.Left?.GazeData3d?.GazeDistance, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.LeftPupilDiameter] = GetValueString(data.Left?.EyeData?.PupilDiameter, Config.DataLogFormatDiameter);
+                formatted_values[(int)GazeOutputValue.LeftPupilDiameterIsValid] = GetValueString(data.Left?.EyeData?.IsPupilDiameterValid);
+
+                formatted_values[(int)GazeOutputValue.RightGazePoint2dX] = GetValueString(data.Right?.GazeData2d.GazePoint.X, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.RightGazePoint2dY] = GetValueString(data.Right?.GazeData2d.GazePoint.Y, Config.DataLogFormatNormalizedPoint);
+                formatted_values[(int)GazeOutputValue.RightGazePoint2dIsValid] = GetValueString(data.Right?.GazeData2d.IsGazePointValid);
+                formatted_values[(int)GazeOutputValue.RightGazePoint3dX] = GetValueString(data.Right?.GazeData3d?.GazeOrigin.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightGazePoint3dY] = GetValueString(data.Right?.GazeData3d?.GazeOrigin.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightGazePoint3dZ] = GetValueString(data.Right?.GazeData3d?.GazeOrigin.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightGazePoint3dIsValid] = GetValueString(data.Right?.GazeData3d?.IsGazePointValid);
+                formatted_values[(int)GazeOutputValue.RightGazeOrigin3dX] = GetValueString(data.Right?.GazeData3d?.GazeOrigin.X, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightGazeOrigin3dY] = GetValueString(data.Right?.GazeData3d?.GazeOrigin.Y, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightGazeOrigin3dZ] = GetValueString(data.Right?.GazeData3d?.GazeOrigin.Z, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightGazeOrigin3dIsValid] = GetValueString(data.Right?.GazeData3d?.IsGazeOriginValid);
+                formatted_values[(int)GazeOutputValue.RightGazeDistance] = GetValueString(data.Right?.GazeData3d?.GazeDistance, Config.DataLogFormatOrigin);
+                formatted_values[(int)GazeOutputValue.RightPupilDiameter] = GetValueString(data.Right?.EyeData?.PupilDiameter, Config.DataLogFormatDiameter);
+                formatted_values[(int)GazeOutputValue.RightPupilDiameterIsValid] = GetValueString(data.Right?.EyeData?.IsPupilDiameterValid);
             }
             return formatted_values;
         }

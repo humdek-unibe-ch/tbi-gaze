@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -134,6 +135,11 @@ namespace GazeUtilityLibrary
             throw new NotImplementedException();
         }
 
+        protected override Vector3 GetUnitDirection()
+        {
+            throw new NotImplementedException();
+        }
+
         public override Task<List<CalibrationDataArgs>> ApplyCalibration()
         {
             throw new NotImplementedException();
@@ -202,7 +208,7 @@ namespace GazeUtilityLibrary
             if ((nCode >= 0) && ((MouseMessages)wParam == MouseMessages.WM_MOUSEMOVE))
             {
                 MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                GazeDataArgs gaze_data = new GazeDataArgs(TimeSpan.FromMilliseconds(hookStruct.time), hookStruct.pt.x, hookStruct.pt.y);
+                GazeDataArgs gaze_data = new GazeDataArgs(TimeSpan.FromMilliseconds(hookStruct.time), new Vector2(hookStruct.pt.x, hookStruct.pt.y), true);
                 OnGazeDataReceived(gaze_data);
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
