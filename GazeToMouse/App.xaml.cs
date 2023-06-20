@@ -523,10 +523,6 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (_config != null && _config.Config.DataLogWriteOutput)
             {
-                if (_tracker != null && _tracker.ScreenArea != null && data.Combined.GazeData3d != null)
-                {
-                    data.DriftCompensation = new DriftCompensation(_tracker.ScreenArea, _tracker.DriftCompensation, data.Combined.GazeData3d);
-                }
                 string[] formatted_values = GazeData.PrepareGazeData(data, _config.Config, ref _delta);
                 if (_isRecording)
                 {
@@ -539,7 +535,6 @@ namespace GazeToMouse
                 {
                     if (_tracker != null && _tracker.UpdateDriftCompensation(data))
                     {
-                        _logger?.Info($"Add drift compensation [{_tracker.DriftCompensation.X}, {_tracker.DriftCompensation.Y}, {_tracker.DriftCompensation.Z}, {_tracker.DriftCompensation.W}]");
                         _processCompletion.SetResult(true);
                     }
                 }

@@ -91,10 +91,8 @@ namespace GazeUtilityLibrary
         }
 
         protected ScreenArea? screenArea;
-        public ScreenArea? ScreenArea { get { return screenArea; } }
 
         protected Quaternion driftCompensation;
-        public Quaternion DriftCompensation { get { return driftCompensation; } }
 
         public void ResetDriftCompensation()
         {
@@ -172,8 +170,10 @@ namespace GazeUtilityLibrary
             {
                 if (IsFixation(ref driftCompensationSamples))
                 {
-                    driftCompensation = ComputeDriftCompensation(driftCompensationSamples);
+                    ComputeDriftCompensation(driftCompensationSamples);
                     driftCompensationSamples.Clear();
+
+                    logger?.Info($"Add drift compensation [{driftCompensation.X}, {driftCompensation.Y}, {driftCompensation.Z}, {driftCompensation.W}]");
                     return true;
                 }
                 else
@@ -201,16 +201,17 @@ namespace GazeUtilityLibrary
             return dispersion;
         }
 
-        private Quaternion ComputeDriftCompensation(List<GazeDataArgs> samples)
+        private void ComputeDriftCompensation(List<GazeDataArgs> samples)
         {
             if (screenArea == null)
             {
-                return Quaternion.Identity;
+                driftCompensation = Quaternion.Identity;
+                return;
             }
 
-            Quaternion q1Avg = new Quaternion(0, 0, 0, 0);
-            Quaternion qRef = Quaternion.Identity;
-            Quaternion q2Avg = new Quaternion(0, 0, 0, 0);
+            Vector3 oAvg = Vector3.Zero;
+            Vector3 gAvg = Vector3.Zero;
+
             int count = 0;
             for (int i = 0; i < samples.Count; i++)
             {
@@ -218,17 +219,17 @@ namespace GazeUtilityLibrary
                 {
                     continue;
                 }
-                Quaternion q1 = CreateQuaternionFromDirection(samples[i].Combined.GazeData3d!.GazeDirection);
-                Quaternion q2 = CreateQuaternionFromDirection(screenArea.Center - samples[i].Combined.GazeData3d!.GazeOrigin);
 
-                q1Avg += q1;
-                q2Avg += q2;
+                oAvg += samples[i].Combined.GazeData3d!.GazeOrigin;
+                gAvg += samples[i].Combined.GazeData3d!.GazePoint;
                 count++;
             }
-            q1Avg = Quaternion.Normalize(q1Avg);
-            q2Avg = Quaternion.Normalize(q2Avg);
 
-            return q2Avg * Quaternion.Inverse(q1Avg);
+            gAvg /= count;
+            oAvg /= count;
+            Vector3 gDir = Vector3.Normalize(gAvg - oAvg);
+            Vector3 cDir = Vector3.Normalize(screenArea.Center - oAvg);
+            driftCompensation = CreateQuaternionFromVectors(gDir, cDir);
         }
 
         protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold)
@@ -361,12 +362,19 @@ namespace GazeUtilityLibrary
             }
         }
 
-        public Quaternion CreateQuaternionFromDirection(Vector3 direction)
+        public Quaternion CreateQuaternionFromVectors(Vector3 v1, Vector3 v2)
         {
-            Vector3 reference = GetUnitDirection();
-            Vector3 axis = Vector3.Cross(reference, direction);
-            double angle = Math.Acos(Vector3.Dot(reference, direction) / (reference.Length() * direction.Length()));
-            return Quaternion.CreateFromAxisAngle(axis, (float)angle);
+            float dot = Vector3.Dot(v1, v2);
+            if (dot > 0.999999)
+            {
+                return Quaternion.Identity;
+            }
+            else
+            {
+                Vector3 axis = Vector3.Cross(v1, v2);
+                return Quaternion.Normalize(new Quaternion(axis, 1 + dot));
+
+            }
         }
     }
 
@@ -773,8 +781,6 @@ namespace GazeUtilityLibrary
 
     public class ScreenArea
     {
-        private ScreenTriangle _topLeftTrinagle;
-        private ScreenTriangle _bottomRightTrinagle;
 
         private float _width;
         public float Width { get { return _width; } }
@@ -782,15 +788,23 @@ namespace GazeUtilityLibrary
         private float _height;
         public float Height { get { return _height; } }
 
-        public Vector3 BottomLeft { get { return _topLeftTrinagle.V3; } }
-        public Vector3 BottomRight { get { return _bottomRightTrinagle.V1; } }
-        public Vector3 TopLeft { get { return _topLeftTrinagle.V1; } }
-        public Vector3 TopRight { get { return _bottomRightTrinagle.V3; } }
+        private Vector3 _bottomLeft;
+        public Vector3 BottomLeft { get { return _bottomLeft; } }
+
+        private Vector3 _bottomRight;
+        public Vector3 BottomRight { get { return _bottomRight; } }
+
+        private Vector3 _topLeft;
+        public Vector3 TopLeft { get { return _topLeft; } }
+
+        private Vector3 _topRight;
+        public Vector3 TopRight { get { return _topRight; } }
 
         private Vector3 _center;
         public Vector3 Center { get { return _center; } }
 
         private Vector2 _origin;
+        private Vector3 _norm;
 
         private Matrix4x4 _m;
 
@@ -799,20 +813,22 @@ namespace GazeUtilityLibrary
             Vector3 bottomCenter = Vector3.Lerp(bottomLeft, bottomRight, 0.5f);
             Vector3 topCenter = Vector3.Lerp(topLeft, topRight, 0.5f);
             _center = Vector3.Lerp(bottomCenter, topCenter, 0.5f);
-            _topLeftTrinagle = new ScreenTriangle(topLeft, topRight, bottomLeft);
-            _bottomRightTrinagle = new ScreenTriangle(bottomRight, bottomLeft, topRight);
+            _bottomLeft = bottomLeft;
+            _topLeft = topLeft;
+            _bottomRight = bottomRight;
+            _topRight = topRight;
             _width = width;
             _height = height;
-            Vector3 uU = Vector3.Normalize(_topLeftTrinagle.E1);
-            Vector3 uV = Vector3.Normalize(_topLeftTrinagle.E2);
-            Vector3 uN = Vector3.Cross(uU, uV);
-            Vector3 u = _topLeftTrinagle.V1 + uU;
-            Vector3 v = _topLeftTrinagle.V1 + uV;
-            Vector3 n = _topLeftTrinagle.V1 + uN;
+            Vector3 e1 = topRight - topLeft;
+            Vector3 e2 = bottomLeft - topLeft;
+            _norm = Vector3.Cross(e1, e2);
+            Vector3 u = topLeft + Vector3.Normalize(e1);
+            Vector3 v = topLeft + Vector3.Normalize(e2);
+            Vector3 n = topLeft + Vector3.Normalize(_norm);
             Matrix4x4 s = new Matrix4x4(
-                _topLeftTrinagle.V1.X, u.X, v.X, n.X,
-                _topLeftTrinagle.V1.Y, u.Y, v.Y, n.Y,
-                _topLeftTrinagle.V1.Z, u.Z, v.Z, n.Z,
+                topLeft.X, u.X, v.X, n.X,
+                topLeft.Y, u.Y, v.Y, n.Y,
+                topLeft.Z, u.Z, v.Z, n.Z,
                 1, 1, 1, 1
             );
             Matrix4x4 d = new Matrix4x4(
@@ -827,23 +843,17 @@ namespace GazeUtilityLibrary
             _origin = GetPoint2d(topLeft);
         }
 
-        public Vector3? GetIntersectionPoint(Vector3 origin, Vector3 direction)
+        public Vector3? GetIntersectionPoint(Vector3 gazeOrigin, Vector3 gazeDirection)
         {
-            Vector3 norm = Vector3.Cross(_topLeftTrinagle.E1, _topLeftTrinagle.E2);
-            float d = Vector3.Dot(norm, origin - _topLeftTrinagle.V1);
-            float n = Vector3.Dot(-direction, norm);
+            float d = Vector3.Dot(_norm, gazeOrigin - _topLeft);
+            float n = Vector3.Dot(-gazeDirection, _norm);
 
-            return origin + d/n * direction;
-        }
-
-        public Vector3? GetIntersectionPointMT(Vector3 origin, Vector3 direction)
-        {
-            Vector3? hit = _topLeftTrinagle.GetIntersectionPoint(origin, direction);
-            if (hit == null)
+            if (n == 0)
             {
-                hit = _bottomRightTrinagle.GetIntersectionPoint(origin, direction);
+                return null;
             }
-            return hit;
+
+            return gazeOrigin + d/n * gazeDirection;
         }
 
         public Vector2 GetPoint2d(Vector3 point)

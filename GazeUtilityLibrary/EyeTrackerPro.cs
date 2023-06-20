@@ -221,27 +221,10 @@ namespace GazeUtilityLibrary
             return result;
         }
 
-        /// <summary>
-        /// Computes the distance of an eye to the tracker device.
-        /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        /// <param name="z">The z coordinate.</param>
-        /// <returns></returns>
-        private double ComputeEyeDistance(Point3D point)
-        {
-            return Math.Sqrt(point.X * point.X + point.Y * point.Y + point.Z * point.Z);
-        }
-        private double ComputeGazeDistance(Point3D gaze, Point3D origin)
-        {
-            Point3D distance = new Point3D(gaze.X - origin.X, gaze.Y - origin.Y, gaze.Z - origin.Z);
-            return ComputeEyeDistance(distance);
-        }
-
         protected override int GetFixationFrameCount()
         {
-            // 500ms at 60 Hz
-            return 30;
+            // 1000ms at 60 Hz
+            return 60;
         }
 
         protected override Vector3 GetUnitDirection()
@@ -339,6 +322,10 @@ namespace GazeUtilityLibrary
                 data.RightEye.Pupil.PupilDiameter,
                 data.RightEye.Pupil.Validity == Validity.Valid
             );
+            if (screenArea != null && gazeData.Combined.GazeData3d != null)
+            {
+                gazeData.DriftCompensation = new DriftCompensation(screenArea, driftCompensation, gazeData.Combined.GazeData3d);
+            }
             OnGazeDataReceived(gazeData);
         }
 
