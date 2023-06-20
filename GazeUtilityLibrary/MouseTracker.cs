@@ -111,7 +111,7 @@ namespace GazeUtilityLibrary
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
-        public MouseTracker(TrackerLogger logger, int ready_timer) : base(logger, ready_timer, "Mouse Tracker")
+        public MouseTracker(TrackerLogger logger, ConfigItem config) : base(logger, config, "Mouse Tracker")
         {
             State = DeviceStatus.Initializing;
             _proc = HookCallback;
@@ -212,6 +212,11 @@ namespace GazeUtilityLibrary
                 OnGazeDataReceived(gaze_data);
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        protected override void InitDriftCompensation()
+        {
+            throw new NotImplementedException();
         }
     }
 }

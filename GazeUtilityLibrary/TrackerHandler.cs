@@ -6,17 +6,17 @@ using System.Windows.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using System.ComponentModel.DataAnnotations;
 using System.Numerics;
-using Tobii.Research;
+using static GazeUtilityLibrary.TrackerHandler;
+using System.Windows.Markup;
 
 namespace GazeUtilityLibrary
 {
     /// <summary>
     /// The common interface for the Tobii eyetracker Engines Core and Pro
     /// </summary>
-    /// <seealso cref="System.ComponentModel.INotifyPropertyChanged" />
-    /// <seealso cref="System.IDisposable" />
+    /// <seealso cref="INotifyPropertyChanged" />
+    /// <seealso cref="IDisposable" />
     public abstract class TrackerHandler : INotifyPropertyChanged, IDisposable
     {
         public enum DeviceStatus
@@ -46,6 +46,12 @@ namespace GazeUtilityLibrary
         /// </summary>
         public readonly string DeviceName;
 
+        protected DriftCompensation? driftCompensation;
+
+        protected ScreenArea? screenArea = null;
+
+        protected ConfigItem config;
+
         /// <summary>
         /// Occurs when [tracker enabled].
         /// </summary>
@@ -63,11 +69,13 @@ namespace GazeUtilityLibrary
         /// </summary>
         public event GazeDataHandler? GazeDataReceived;
         /// <summary>
+        /// Occurs when drift compensation was computed.
+        /// </summary>
+        public event DriftCompensationEventHandler? DriftCompensationComputed;
+        /// <summary>
         /// Occurs when [user position data received].
         /// </summary>
         public event UserPositionDataHandler? UserPositionDataReceived;
-
-        private List<GazeDataArgs> driftCompensationSamples;
 
         /// <summary>
         /// Event handler for gaze data events of the eyetracker
@@ -77,27 +85,18 @@ namespace GazeUtilityLibrary
         public delegate void GazeDataHandler(Object sender, GazeDataArgs e);
 
         /// <summary>
+        /// Event handler for drift compensation events
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="driftCompensation">The drift compensation quaternion</param>
+        public delegate void DriftCompensationEventHandler(Object sender, Quaternion driftCompensation);
+
+        /// <summary>
         /// Event handler for user position data events of the eyetracker
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
         public delegate void UserPositionDataHandler(Object sender, UserPositionDataArgs e);
-
-        private double normalizedDispersionThreshold;
-        public double NormalDispersionThreshold
-        {
-            get { return normalizedDispersionThreshold; }
-            set { normalizedDispersionThreshold = AngleToDist(value); }
-        }
-
-        protected ScreenArea? screenArea;
-
-        protected Quaternion driftCompensation;
-
-        public void ResetDriftCompensation()
-        {
-            driftCompensation = Quaternion.Identity;
-        }
 
         /// <summary>
         /// Gets or sets the state of the eyetracker device.
@@ -122,19 +121,17 @@ namespace GazeUtilityLibrary
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
         /// <param name="device_name">Name of the device.</param>
-        public TrackerHandler(TrackerLogger logger, int ready_timer, string device_name)
+        public TrackerHandler(TrackerLogger logger, ConfigItem config, string deviceName)
         {
-            driftCompensationSamples = new List<GazeDataArgs>();
-            driftCompensation = Quaternion.Identity;
-            this.DeviceName = device_name;
+            this.config = config;
+            this.DeviceName = deviceName;
             this.logger = logger;
             logger.Info($"Using {DeviceName}");
-            normalizedDispersionThreshold = AngleToDist(0.5);
-            if (ready_timer > 0)
+            if (config.ReadyTimer > 0)
             {
                 dialogBoxTimer = new Timer
                 {
-                    Interval = ready_timer,
+                    Interval = config.ReadyTimer,
                     AutoReset = false,
                     Enabled = true
                 };
@@ -158,100 +155,23 @@ namespace GazeUtilityLibrary
             return pattern;
         }
 
-        public bool UpdateDriftCompensation(GazeDataArgs args)
-        {
-            if (args.Combined.GazeData3d == null || !args.Combined.GazeData3d.IsGazePointValid || !args.Combined.GazeData3d.IsGazeOriginValid )
-            {
-                return false;
-            }
-
-            driftCompensationSamples.Add(args);
-            if (driftCompensationSamples.Count > GetFixationFrameCount())
-            {
-                if (IsFixation(ref driftCompensationSamples))
-                {
-                    ComputeDriftCompensation(driftCompensationSamples);
-                    driftCompensationSamples.Clear();
-
-                    logger?.Info($"Add drift compensation [{driftCompensation.X}, {driftCompensation.Y}, {driftCompensation.Z}, {driftCompensation.W}]");
-                    return true;
-                }
-                else
-                {
-                    driftCompensationSamples.RemoveAt(0);    
-                }
-            }
-            return false;
-        }
-
         abstract public Task InitCalibration();
         abstract public Task FinishCalibration();
         abstract public Task<List<CalibrationDataArgs>> ApplyCalibration();
         abstract public Task<bool> CollectCalibrationData(Point point);
 
-        private double ComputeDispersion(ref List<GazeDataArgs> samples)
+
+        abstract protected void InitDriftCompensation();
+        public void StartDriftCompensation()
         {
-            float xMax = samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.X ?? 0);
-            float yMax = samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? 0);
-            float zMax = samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? 0);
-            float xMin = samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.X ?? 0);
-            float yMin = samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? 0);
-            float zMin = samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? 0);
-            float dispersion = xMax - xMin + yMax - yMin + zMax - zMin;
-            return dispersion;
+            driftCompensation?.Start();
         }
-
-        private void ComputeDriftCompensation(List<GazeDataArgs> samples)
+        public void ResetDriftCompensation()
         {
-            if (screenArea == null)
-            {
-                driftCompensation = Quaternion.Identity;
-                return;
-            }
-
-            Vector3 oAvg = Vector3.Zero;
-            Vector3 gAvg = Vector3.Zero;
-
-            int count = 0;
-            for (int i = 0; i < samples.Count; i++)
-            {
-                if (samples[i].Combined.GazeData3d == null)
-                {
-                    continue;
-                }
-
-                oAvg += samples[i].Combined.GazeData3d!.GazeOrigin;
-                gAvg += samples[i].Combined.GazeData3d!.GazePoint;
-                count++;
-            }
-
-            gAvg /= count;
-            oAvg /= count;
-            Vector3 gDir = Vector3.Normalize(gAvg - oAvg);
-            Vector3 cDir = Vector3.Normalize(screenArea.Center - oAvg);
-            driftCompensation = CreateQuaternionFromVectors(gDir, cDir);
+            driftCompensation?.Reset();
         }
-
-        protected double ComputeMaxDeviation(ref List<GazeDataArgs> samples, double normalizedDispersionThreshold)
-        {
-            double dist = samples.Average(sample => sample.Combined?.GazeData3d?.GazeDistance ?? 0);
-            return dist * normalizedDispersionThreshold;
-        }
-
-        private bool IsFixation(ref List<GazeDataArgs> samples)
-        {
-            double dispersion = ComputeDispersion(ref samples);
-            double maxDeviation = ComputeMaxDeviation(ref samples, normalizedDispersionThreshold);
-            return dispersion <= maxDeviation;
-        }
-
         abstract protected int GetFixationFrameCount();
         abstract protected Vector3 GetUnitDirection();
-
-        private double AngleToDist(double angle)
-        {
-            return Math.Sqrt(2 * (1 - Math.Cos(angle * Math.PI / 180)));
-        }
 
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
@@ -278,8 +198,27 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Called when [gaze data received].
         /// </summary>
-        /// <param name="e">The gaze data event data.</param>
-        protected virtual void OnGazeDataReceived(GazeDataArgs e) { GazeDataReceived?.Invoke(this, e); }
+        /// <param name="data">The gaze data event data.</param>
+        protected virtual void OnGazeDataReceived(GazeDataArgs gazeData)
+        {
+            if (driftCompensation != null)
+            {
+                if ((gazeData.Combined.GazeData3d?.IsGazePointValid ?? false) && (gazeData.Combined.GazeData3d?.IsGazeOriginValid ?? false))
+                {
+                    if (driftCompensation.Update(gazeData))
+                    {
+                        DriftCompensationComputed?.Invoke(this, driftCompensation.Q);
+                        logger?.Info($"Add drift compensation [{driftCompensation.Q.X}, {driftCompensation.Q.Y}, {driftCompensation.Q.Z}, {driftCompensation.Q.W}]");
+                    }
+                }
+
+                if (screenArea != null && gazeData.Combined.GazeData3d != null)
+                {
+                    gazeData.DriftCompensation = new DriftCompensationSample(screenArea, driftCompensation.Q, gazeData.Combined.GazeData3d);
+                }
+            }
+            GazeDataReceived?.Invoke(this, gazeData);
+        }
 
         /// <summary>
         /// Called when [user position data received].
@@ -359,21 +298,6 @@ namespace GazeUtilityLibrary
                 dialogBoxTimer?.Stop();
                 logger.Info($"{DeviceName} is ready");
                 OnTrackerEnabled(new EventArgs());
-            }
-        }
-
-        public Quaternion CreateQuaternionFromVectors(Vector3 v1, Vector3 v2)
-        {
-            float dot = Vector3.Dot(v1, v2);
-            if (dot > 0.999999)
-            {
-                return Quaternion.Identity;
-            }
-            else
-            {
-                Vector3 axis = Vector3.Cross(v1, v2);
-                return Quaternion.Normalize(new Quaternion(axis, 1 + dot));
-
             }
         }
     }
@@ -509,7 +433,10 @@ namespace GazeUtilityLibrary
         }
     }
 
-    public class DriftCompensation
+    /// <summary>
+    /// 
+    /// </summary>
+    public class DriftCompensationSample
     {
         private Vector2 _gazePosition2d;
         public Vector2 GazePosition2d { get { return _gazePosition2d; } }
@@ -520,7 +447,7 @@ namespace GazeUtilityLibrary
         private Quaternion _compensation;
         public Quaternion Compensation { get { return _compensation; } }
 
-        public DriftCompensation(ScreenArea screen, Quaternion driftCompensation, GazeData3d gazeData)
+        public DriftCompensationSample(ScreenArea screen, Quaternion driftCompensation, GazeData3d gazeData)
         {
             _compensation = driftCompensation;
             Vector3 newGazeDirection = Vector3.Transform(gazeData.GazeDirection, _compensation);
@@ -546,7 +473,7 @@ namespace GazeUtilityLibrary
 
         private GazeDataItem _combined;
         public GazeDataItem Combined { get { return _combined; } }
-        public DriftCompensation? DriftCompensation { get; set; }
+        public DriftCompensationSample? DriftCompensation { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
@@ -868,5 +795,120 @@ namespace GazeUtilityLibrary
             Vector2 point2d = point2dOffset - _origin;
             return new Vector2(point2d.X / _width, point2d.Y / _height);
         }
+    }
+
+    public class DriftCompensation
+    {
+        private bool _isCollecting = false;
+        private Vector3 _fixationPoint;
+        private int _fixationFrameCount;
+        private double _normalizedDispersionThreshold;
+        private Quaternion _q;
+        public Quaternion Q { get { return _q; } }
+
+        private List<GazeDataArgs> _samples;
+
+        public DriftCompensation(Vector3 fixationPoint, int fixationFrameCount, double dispersionThreashold)
+        {
+            _q = Quaternion.Identity;
+            _samples = new List<GazeDataArgs>();
+            _normalizedDispersionThreshold = AngleToDist(dispersionThreashold);
+            _fixationPoint = fixationPoint;
+            _fixationFrameCount = fixationFrameCount;
+        }
+
+        public void Reset()
+        {
+            _samples.Clear();
+            _q = Quaternion.Identity;
+        }
+
+        public void Start()
+        {
+            _isCollecting = true;
+        }
+
+        public bool Update(GazeDataArgs args)
+        {
+            if (args.Combined.GazeData3d == null || !args.Combined.GazeData3d.IsGazePointValid || !args.Combined.GazeData3d.IsGazeOriginValid || !_isCollecting)
+            {
+                return false;
+            }
+
+            _samples.Add(args);
+            if (_samples.Count >= _fixationFrameCount)
+            {
+                if (Dispersion() <= MaxDeviation())
+                {
+                    _q = Compute();
+                    _samples.Clear();
+                    _isCollecting = false;
+                    return true;
+                }
+                else
+                {
+                    _samples.RemoveAt(0);
+                }
+            }
+            return false;
+        }
+
+        private Quaternion Compute()
+        {
+            Vector3 oAvg = Vector3.Zero;
+            Vector3 gAvg = Vector3.Zero;
+
+            foreach (GazeDataArgs sample in _samples)
+            {
+                oAvg += sample.Combined.GazeData3d!.GazeOrigin;
+                gAvg += sample.Combined.GazeData3d!.GazePoint;
+            }
+            gAvg /= _fixationFrameCount;
+            oAvg /= _fixationFrameCount;
+
+            Vector3 gDir = Vector3.Normalize(gAvg - oAvg);
+            Vector3 cDir = Vector3.Normalize(_fixationPoint - oAvg);
+
+            return CreateQuaternionFromVectors(gDir, cDir);
+        }
+
+        private double MaxDeviation()
+        {
+            double dist = _samples.Average(sample => sample.Combined?.GazeData3d?.GazeDistance ?? 0);
+            return dist * _normalizedDispersionThreshold;
+        }
+
+        private double Dispersion()
+        {
+            float xMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.X ?? 0);
+            float yMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? 0);
+            float zMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? 0);
+            float xMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.X ?? 0);
+            float yMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? 0);
+            float zMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? 0);
+            float dispersion = xMax - xMin + yMax - yMin + zMax - zMin;
+            return dispersion;
+        }
+
+        private Quaternion CreateQuaternionFromVectors(Vector3 v1, Vector3 v2)
+        {
+            float dot = Vector3.Dot(v1, v2);
+            if (dot > 0.999999)
+            {
+                return Quaternion.Identity;
+            }
+            else
+            {
+                Vector3 axis = Vector3.Cross(v1, v2);
+                return Quaternion.Normalize(new Quaternion(axis, 1 + dot));
+
+            }
+        }
+
+        private double AngleToDist(double angle)
+        {
+            return Math.Sqrt(2 * (1 - Math.Cos(angle * Math.PI / 180)));
+        }
+
     }
 }

@@ -21,7 +21,7 @@ namespace TobiiCalibrate
 
             _logger = new TrackerLogger();
             _config = new GazeConfiguration(_logger);
-            _tracker = new EyeTrackerPro(_logger, _config.Config.ReadyTimer, _config.Config.LicensePath);
+            _tracker = new EyeTrackerPro(_logger, _config.Config);
             _tracker.TrackerEnabled += OnTrackerEnabled;
         }
 

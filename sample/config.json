@@ -213,7 +213,7 @@
   // In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
   // Provide an angle in degrees. The fixation detection is only used for drift compensation (for
   // calibration and validation the functions provided by the manufactor are used).
-  "DispersionThreshold": 1,
+  "DispersionThreshold": 0.5,
 
   // Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
   // If the timer elapses drift compensation will be aborted. Use a value of zero for infinite timout.

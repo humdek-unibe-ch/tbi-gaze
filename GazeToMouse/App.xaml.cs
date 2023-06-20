@@ -19,7 +19,6 @@ namespace GazeToMouse
     /// </summary>
     public partial class App : Application
     {
-        private static bool _isFirstSample = true;
         private TrackerHandler? _tracker = null;
         private static TimeSpan? _delta = null;
         private TrackerLogger _logger;
@@ -29,7 +28,6 @@ namespace GazeToMouse
         private GazeConfiguration _config;
         private bool _isRecording = true;
         private bool _isMouseTracking = false;
-        private bool _isDriftCompensationOn = false;
         private bool _isCalibrationOn = false;
         private Dispatcher _dispatcher;
         private Dispatcher CustomDispatcher { get { return _dispatcher; } }
@@ -83,9 +81,8 @@ namespace GazeToMouse
                 timer.Start();
             }
             await Task.Delay(500);
-            _isDriftCompensationOn = true;
+            _tracker?.StartDriftCompensation();
             bool res = await _processCompletion.Task;
-            _isDriftCompensationOn = false;
             Current.Dispatcher.Invoke(() => {
                 _fixationWindow.Hide();
             });
@@ -177,7 +174,7 @@ namespace GazeToMouse
             // intitialise the tracker device 
             if (_config.Config.TrackerDevice == 1)
             {
-                EyeTrackerPro tracker_pro = new EyeTrackerPro(_logger, _config.Config.ReadyTimer, _config.Config.LicensePath);
+                EyeTrackerPro tracker_pro = new EyeTrackerPro(_logger, _config.Config);
                 if (tracker_pro.IsLicenseOk())
                 {
                     _tracker = tracker_pro;
@@ -186,12 +183,12 @@ namespace GazeToMouse
                 {
                     tracker_pro.Dispose();
                     _gazeError.Error = EGazeDataError.FallbackToMouse;
-                    _tracker = new MouseTracker(_logger, _config.Config.ReadyTimer);
+                    _tracker = new MouseTracker(_logger, _config.Config);
                 }
             }
             else if (_config.Config.TrackerDevice == 2)
             {
-                _tracker = new MouseTracker(_logger, _config.Config.ReadyTimer);
+                _tracker = new MouseTracker(_logger, _config.Config);
             }
             else
             {
@@ -205,10 +202,10 @@ namespace GazeToMouse
                 return false;
             }
 
-            _tracker.NormalDispersionThreshold = _config.Config.DispersionThreshold;
             _tracker.GazeDataReceived += OnGazeDataReceived;
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;
+            _tracker.DriftCompensationComputed += (sender, e) => { _processCompletion.SetResult(true); };
 
             return true;
         }
@@ -527,16 +524,6 @@ namespace GazeToMouse
                 if (_isRecording)
                 {
                     _config.WriteToGazeOutput(formatted_values);
-                }
-            }
-            if (_isDriftCompensationOn)
-            {
-                if ((data.Combined.GazeData3d?.IsGazePointValid ?? false) && (data.Combined.GazeData3d?.IsGazeOriginValid ?? false))
-                {
-                    if (_tracker != null && _tracker.UpdateDriftCompensation(data))
-                    {
-                        _processCompletion.SetResult(true);
-                    }
                 }
             }
             if (_isCalibrationOn && data.Combined.GazeData2d.IsGazePointValid == true)

@@ -24,7 +24,7 @@ namespace GazeUtilityLibrary
         /// <param name="logger">The logger.</param>
         /// <param name="ready_timer">The ready timer.</param>
         /// <param name="license_path">The license path.</param>
-        public EyeTrackerPro(TrackerLogger logger, int ready_timer, string? license_path) : base(logger, ready_timer, "Tobii SDK Pro")
+        public EyeTrackerPro(TrackerLogger logger, ConfigItem config) : base(logger, config, "Tobii SDK Pro")
         {
             State = DeviceStatus.Configuring;
             foreach (IEyeTracker eyeTracker in EyeTrackingOperations.FindAllEyeTrackers())
@@ -50,10 +50,11 @@ namespace GazeUtilityLibrary
                 };
             }
             UpdateScreenArea(_eyeTracker.GetDisplayArea());
+            InitDriftCompensation();
 
-            if (license_path != null && license_path != "")
+            if (config.LicensePath != null && config.LicensePath != "")
             {
-                ApplyLicense(_eyeTracker, PatternReplace(license_path));
+                ApplyLicense(_eyeTracker, PatternReplace(config.LicensePath));
             }
 
             logger.Info($"device capabilities: {_eyeTracker.DeviceCapabilities}");
@@ -116,6 +117,16 @@ namespace GazeUtilityLibrary
         {
             _screenBasedCalibration = new ScreenBasedCalibration(_eyeTracker);
             await _screenBasedCalibration.EnterCalibrationModeAsync();
+        }
+
+        protected override void InitDriftCompensation()
+        {
+            if (screenArea == null)
+            {
+                logger.Warning("Failed to initialise drift compensation: screenArea is not defined");
+                return;
+            }
+            driftCompensation = new DriftCompensation(screenArea.Center, GetFixationFrameCount(), config.DispersionThreshold);
         }
 
         override public async Task<bool> CollectCalibrationData(Point point)
@@ -322,10 +333,6 @@ namespace GazeUtilityLibrary
                 data.RightEye.Pupil.PupilDiameter,
                 data.RightEye.Pupil.Validity == Validity.Valid
             );
-            if (screenArea != null && gazeData.Combined.GazeData3d != null)
-            {
-                gazeData.DriftCompensation = new DriftCompensation(screenArea, driftCompensation, gazeData.Combined.GazeData3d);
-            }
             OnGazeDataReceived(gazeData);
         }
 
