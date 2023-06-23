@@ -34,16 +34,16 @@ set background black
 define sketchpad ThankYou
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=True text="Thank You!" x=0.0 y=0.0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=True text="Thank You!" x=0 y=0 z_index=0
 
 define sequence experiment
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run welcome always
-	run gaze_initialisation always
-	run gaze_calibration always
 	run gaze_start always
+	run gaze_calibration always
 	run gaze_recording_enable always
+	run gaze_drift_compensation True
 	run new_advanced_delay always
 	run gaze_recording_disable always
 	run gaze_stop always
@@ -55,16 +55,24 @@ define inline_script gaze_calibration
 	import subprocess
 	
 	print("running custom calibration")
-	subprocess.run([f"{gazeAppPath}\\CustomCalibrate.exe", "/subject", f"{var.get(u'subject_nr')}"])
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "CUSTOM_CALIBRATE"])
 	print("custom calibration done")
+	__end__
+	set _prepare ""
+
+define inline_script gaze_drift_compensation
+	set description "Executes Python code"
+	___run__
+	import subprocess
+	
+	print("enable gaze recording")
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "DRIFT_COMPENSATION"])
 	__end__
 	set _prepare ""
 
 define inline_script gaze_initialisation
 	set description "Executes Python code"
 	___run__
-	gazeAppPath = "C:\\Users\\tpf\\TBI-tobii_eye_tracker_gaze\\build"
-	print(f"use path {gazeAppPath}")
 	__end__
 	set _prepare ""
 
@@ -74,7 +82,7 @@ define inline_script gaze_recording_disable
 	import subprocess
 	
 	print("disable gaze recording")
-	subprocess.run([f"{gazeAppPath}\\GazeRecordingDisable.exe"])
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "GAZE_RECORDING_ENABLE"])
 	__end__
 	set _prepare ""
 
@@ -84,19 +92,23 @@ define inline_script gaze_recording_enable
 	import subprocess
 	
 	print("enable gaze recording")
-	subprocess.run([f"{gazeAppPath}\\GazeRecordingEnable.exe"])
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "GAZE_RECORDING_ENABLE"])
 	__end__
 	set _prepare ""
 
 define inline_script gaze_start
 	set description "Executes Python code"
 	___run__
-	import subprocess
+	import subprocess, time
 	
 	print("start gaze process")
-	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}"])
+	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}", "/outputPath", f"{var.get(u'experiment_path')}"])
+	time.sleep(3)
 	__end__
-	set _prepare ""
+	___prepare__
+	gazeAppPath = "C:\\Users\\tpf\\TBI-tobii_eye_tracker_gaze\\build"
+	print(f"use path {gazeAppPath}")
+	__end__
 
 define inline_script gaze_stop
 	set description "Executes Python code"
@@ -104,11 +116,17 @@ define inline_script gaze_stop
 	import subprocess
 	
 	print("stop gaze process")
-	subprocess.run([f"{gazeAppPath}\\GazeClose.exe"])
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "TERMINATE"])
 	__end__
 	set _prepare ""
 
 define advanced_delay new_advanced_delay
+	set jitter_mode Uniform
+	set jitter 0
+	set duration 5000
+	set description "Waits for a specified duration"
+
+define advanced_delay new_advanced_delay_1
 	set jitter_mode Uniform
 	set jitter 0
 	set duration 5000
