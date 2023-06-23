@@ -1,21 +1,16 @@
 ﻿using CustomCalibrationLibrary.Models;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CustomCalibrationLibrary.Commands;
-using GazeUtilityLibrary.Tracker;
 using GazeUtilityLibrary.DataStructs;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
-    class UserPositionGuideViewModel : INotifyPropertyChanged
+    class UserPositionGuideViewModel
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
         private UserPositionData _userPosition;
         public UserPositionData UserPosition
         {
             get { return _userPosition; }
-            set { _userPosition = value; OnPropertyChanged(); }
         }
 
         private ICommand _calibrationStartCommand;
@@ -23,15 +18,6 @@ namespace CustomCalibrationLibrary.ViewModels
 
         private ICommand _calibrationAbortCommand;
         public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
-
-        /// <summary>
-        /// Called when when the state property of EyeTracker is changing.
-        /// </summary>
-        /// <param name="property_name">Name of the property in WPF.</param>
-        private void OnPropertyChanged([CallerMemberName] string? property_name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
-        }
 
         public UserPositionGuideViewModel(CalibrationModel model)
         {
@@ -47,7 +33,12 @@ namespace CustomCalibrationLibrary.ViewModels
             {
                 return;
             }
-            UserPosition = position;
+            _userPosition.XCoordLeft = position.XCoordLeft;
+            _userPosition.YCoordLeft = position.YCoordLeft;
+            _userPosition.ZCoordLeft = position.ZCoordLeft;
+            _userPosition.XCoordRight = position.XCoordRight;
+            _userPosition.YCoordRight = position.YCoordRight;
+            _userPosition.ZCoordRight = position.ZCoordRight;
         }
     }
 }

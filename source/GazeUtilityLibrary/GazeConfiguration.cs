@@ -489,14 +489,14 @@ namespace GazeUtilityLibrary
                 $"{{{(int)CalibrationOutputValue.YCoordRight}}}\t" +
                 $"{{{(int)CalibrationOutputValue.ValidCoordRight}}}";
             CalibrationLogColumnTitle = new string[] {
-                "coord-x",
-                "coord-y",
-                "coord-x-left",
-                "coord-y-left",
-                "coord-valid-left",
-                "coord-x-right",
-                "coord-y-right",
-                "coord-valid-right"
+                "calibrationPoint_x",
+                "calibrationPoint_y",
+                "left_gazePoint_x",
+                "left_gazePoint_y",
+                "left_gazePoint_isValid",
+                "right_gazePoint_x",
+                "right_gazePoint_y",
+                "right_gazePoint_isValid"
             };
             DataLogCount = 200;
             DataLogPath = Directory.GetCurrentDirectory();

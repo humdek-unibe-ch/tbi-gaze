@@ -8,33 +8,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <converter:PositionConverter x:Key="PositionConverter" />
-        <Style x:Key="CalibrationPoint" TargetType="{x:Type Ellipse}">
-            <Setter Property="Width" Value="10" />
-            <Setter Property="Height" Value="10" />
-            <Setter Property="Fill">
-                <Setter.Value>
-                    <SolidColorBrush Color="White" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <TranslateTransform
-                            X="-5"
-                            Y="-5"
-                        />
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <converter:PositionConverter x:Key="PositionConverter" Offset="10"/>
     </UserControl.Resources>
     <Grid>
-        <Grid>
-            <Ellipse Fill="White" Width="20" Height="20" />
-            <Ellipse Fill="Red" Width="2" Height="2" />
-            <Grid.RenderTransform>
-                <TranslateTransform X="-10" Y="-10" />
-            </Grid.RenderTransform>
-        </Grid>
+        <Ellipse Fill="White" Width="20" Height="20" />
+        <Ellipse Fill="Red" Width="2" Height="2" />
         <Grid.RenderTransform>
             <TranslateTransform
                 X="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"

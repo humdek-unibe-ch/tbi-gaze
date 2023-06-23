@@ -38,7 +38,6 @@ namespace GazeToMouse
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
         private CalibrationModel _calibrationModel;
         string? _subjectCode = null;
-        private bool _restartCalibration = true;
 
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
@@ -71,6 +70,7 @@ namespace GazeToMouse
         {
             Current.Dispatcher.Invoke(() => {
                 _fixationWindow.Show();
+                _fixationWindow.Activate();
             });
             System.Timers.Timer? timer = null;
             if (_config.Config.DriftCompensationTimer > 0)
@@ -78,6 +78,7 @@ namespace GazeToMouse
                 timer = new System.Timers.Timer(_config.Config.ReadyTimer);
                 timer.Elapsed += (sender, e) =>
                 {
+                    _logger.Warning("drift compensation timed out");
                     _processCompletion.SetResult(false);
                 };
                 timer.Start();
@@ -145,10 +146,14 @@ namespace GazeToMouse
             _fixationWindow.WindowStyle = WindowStyle.None;
             _fixationWindow.WindowState = WindowState.Maximized;
             _fixationWindow.ResizeMode = ResizeMode.NoResize;
+            _fixationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            _fixationWindow.Title = "FixationWindow";
 
             _calibrationWindow.WindowStyle = WindowStyle.None;
             _calibrationWindow.WindowState = WindowState.Maximized;
             _calibrationWindow.ResizeMode = ResizeMode.NoResize;
+            _calibrationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            _calibrationWindow.Title = "CalibrationWindow";
 
             // hide the mouse cursor on calibration window
             if (_config.Config.MouseCalibrationHide)
@@ -386,7 +391,7 @@ namespace GazeToMouse
         /// <exception cref="Exception"></exception>
         private async Task Calibrate()
         {
-            if (!_restartCalibration || _tracker == null)
+            if (_tracker == null)
             {
                 return;
             }
@@ -490,7 +495,6 @@ namespace GazeToMouse
                     _processCompletion.SetResult(false);
                     break;
                 case CalibrationEventType.Restart:
-                    _restartCalibration = true;
                     goto case CalibrationEventType.Start;
                 case CalibrationEventType.Start:
                     _calibrationModel.Error = "No Error";
@@ -503,10 +507,6 @@ namespace GazeToMouse
                         HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
                         _calibrationModel.Status = CalibrationStatus.Error;
                         _config.CleanupCalibrationOutputFile(_calibrationError.GetCalibrationDataErrorString());
-                    }
-                    finally
-                    {
-                        _restartCalibration = false;
                     }
                     break;
             }

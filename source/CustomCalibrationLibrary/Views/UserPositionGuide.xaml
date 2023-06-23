@@ -13,7 +13,7 @@
 >
     <Page.Resources>
         <ResourceDictionary>
-            <converter:PositionConverter x:Key="PositionConverter" />
+            <converter:PositionConverter x:Key="PositionConverterOffset" Offset="100"/>
             <converter:ProximityColorConverter x:Key="ProximityColorConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
@@ -44,49 +44,36 @@
         </Grid>
         <Viewbox Stretch="Uniform" Grid.Row="1">
             <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
-                <Grid>
-                    <Grid>
-                        <Ellipse
-                            RenderTransformOrigin="0.5, 0.5"
-                            Height="200"
-                            Width="200"
-                            Fill="{Binding UserPosition.ZCoordLeft, Converter={StaticResource ProximityColorConverter}}"
-                        />
-                        <Grid.RenderTransform>
-                            <TranslateTransform X="-100" Y="-100" />
-                        </Grid.RenderTransform>
-                    </Grid>
-                    <Grid.RenderTransform>
+                <Ellipse
+                    Height="200"
+                    Width="200"
+                    Fill="{Binding UserPosition.ZCoordLeft, Converter={StaticResource ProximityColorConverter}}"
+                >
+                    <Ellipse.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding UserPosition.ZCoordLeft}" ScaleY="{Binding UserPosition.ZCoordLeft}" />
                             <TranslateTransform
-                                X="{Binding UserPosition.XCoordLeft, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                Y="{Binding UserPosition.YCoordLeft, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                                X="{Binding UserPosition.XCoordLeft, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding UserPosition.YCoordLeft, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                             />
                         </TransformGroup>
-                    </Grid.RenderTransform>
-                </Grid>
-                <Grid>
-                    <Ellipse
-                        RenderTransformOrigin="0.5, 0.5"
-                        Fill="{Binding UserPosition.ZCoordRight, Converter={StaticResource ProximityColorConverter}}"
-                        Height="200"
-                        Width="200"
-                    >
-                        <Ellipse.RenderTransform>
-                            <TranslateTransform X="-100" Y="-100" />
-                        </Ellipse.RenderTransform>
-                    </Ellipse>
-                    <Grid.RenderTransform>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse
+                    Fill="{Binding UserPosition.ZCoordRight, Converter={StaticResource ProximityColorConverter}}"
+                    Height="200"
+                    Width="200"
+                >
+                    <Ellipse.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding UserPosition.ZCoordRight}" ScaleY="{Binding UserPosition.ZCoordRight}" />
                             <TranslateTransform
-                                X="{Binding UserPosition.XCoordRight, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                Y="{Binding UserPosition.YCoordRight, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                            />
+                            X="{Binding UserPosition.XCoordRight, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                            Y="{Binding UserPosition.YCoordRight, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                        />
                         </TransformGroup>
-                    </Grid.RenderTransform>
-                </Grid>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
             </Canvas>
         </Viewbox>
         <Grid Grid.Row="2" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">

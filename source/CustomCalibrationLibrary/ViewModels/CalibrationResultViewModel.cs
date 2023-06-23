@@ -7,14 +7,43 @@ using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
-    public class GazePoint
+    public class GazePoint : INotifyPropertyChanged
     {
-        public double X { get; set; } = 0;
-        public double Y { get; set; } = 0;
-        public bool Visibility { get; set; } = false;
+        private double _x = 0;
+        public double X
+        {
+            get { return _x; }
+            set { _x = value; OnPropertyChanged(); }
+        }
+
+        private double _y = 0;
+        public double Y
+        {
+            get { return _y; }
+            set { _y = value; OnPropertyChanged(); }
+        }
+
+        private bool _visibility = false;
+        public bool Visibility
+        {
+            get { return _visibility; }
+            set { _visibility = value; OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+
+        /// <summary>
+        /// Called when when the state property of EyeTracker is changing.
+        /// </summary>
+        /// <param name="property_name">Name of the property in WPF.</param>
+        private void OnPropertyChanged([CallerMemberName] string? property_name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
+        }
     }
 
-    class CalibrationResultViewModel : CalibrationViewModel, INotifyPropertyChanged
+    class CalibrationResultViewModel : CalibrationViewModel
     {
         private ICommand _calibrationRestartCommand;
         public ICommand CalibrationRestartCommand { get { return _calibrationRestartCommand; } }
@@ -25,19 +54,10 @@ namespace CustomCalibrationLibrary.ViewModels
         private ICommand _gazeVisibilityCommand;
         public ICommand GazeVisibilityCommand { get { return _gazeVisibilityCommand; } }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
         private GazePoint _gazePoint;
         public GazePoint GazePoint
         {
             get { return _gazePoint; }
-        }
-        /// <summary>
-        /// Called when when the state property of EyeTracker is changing.
-        /// </summary>
-        /// <param name="property_name">Name of the property in WPF.</param>
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public CalibrationResultViewModel(CalibrationModel model) : base(model)
@@ -57,13 +77,11 @@ namespace CustomCalibrationLibrary.ViewModels
             }
             _gazePoint.X = point.X;
             _gazePoint.Y = point.Y;
-            OnPropertyChanged("GazePoint");
         }
 
         public void OnGazeToggle()
         {
             _gazePoint.Visibility = !_gazePoint.Visibility;
-            OnPropertyChanged("GazePoint");
         }
     }
 }
