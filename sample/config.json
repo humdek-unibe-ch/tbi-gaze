@@ -242,7 +242,7 @@
 
   // Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
   // If the timer elapses drift compensation will be aborted. Use a value of zero for infinite timout.
-  "DriftCpompensationTimer": 5000,
+  "DriftCompensationTimer": 5000,
 
   // Defines the location of the license files. It must be the path to a folder (not a file).
   // This is only required if the eye tracker device requires an external license file.
