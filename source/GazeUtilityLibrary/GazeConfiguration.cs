@@ -176,8 +176,9 @@ namespace GazeUtilityLibrary
         /// Prepare the gaze output file based on the configuration.
         /// </summary>
         /// <param name="subjectCode">An optional subject code to be appended to the file name if set.</param>
+        /// <param name="outputPath">An optional output path where the file will be stored.</param>
         /// <returns>True on success, False on failure.</returns>
-        public bool PrepareGazeOutputFile(string? subjectCode)
+        public bool PrepareGazeOutputFile(string? subjectCode, string? outputPath)
         {
             if (_config == null)
             {
@@ -195,7 +196,7 @@ namespace GazeUtilityLibrary
             // create gaze data file
             if (_config.DataLogPath == "")
             {
-                _config.DataLogPath = Directory.GetCurrentDirectory();
+                _config.DataLogPath = outputPath ?? Directory.GetCurrentDirectory();
             }
 
             string outputFilePath = $"{_config.DataLogPath}\\{fileName}";

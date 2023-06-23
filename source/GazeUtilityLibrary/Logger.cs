@@ -8,11 +8,11 @@ namespace GazeUtilityLibrary
     /// </summary>
     public class TrackerLogger
     {
-        private string logPath = Directory.GetCurrentDirectory();
-        private string logFile;
-        private string logFileBak;
-        private string dateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
-        private const int max_log_size = 1000000; // 1 MB
+        private string _logPath;
+        private string _logFile;
+        private string _logFileBak;
+        private string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
+        private const int _maxLogSize = 1000000; // 1 MB
         private readonly object _syncObject = new object();
         private enum LogLevel
         {
@@ -25,10 +25,11 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackerLogger"/> class.
         /// </summary>
-        public TrackerLogger(EOutputType type = EOutputType.gaze)
+        public TrackerLogger(string? logPath, EOutputType type = EOutputType.gaze)
         {
-            logFile = $"{logPath}\\{Environment.MachineName}_{type.ToString()}.log";
-            logFileBak = $"{logFile}.0";
+            _logPath = logPath ?? AppDomain.CurrentDomain.BaseDirectory;
+            _logFile = $"{_logPath}\\{Environment.MachineName}_{type.ToString()}.log";
+            _logFileBak = $"{_logFile}.0";
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace GazeUtilityLibrary
         /// <param name="message">The message.</param>
         private void WriteLog(LogLevel level, string message)
         {
-            string prefix = DateTime.Now.ToString(dateTimeFormat);
+            string prefix = DateTime.Now.ToString(_dateTimeFormat);
             switch (level)
             {
                 case LogLevel.Debug: prefix += " [DEBUG]   "; break;
@@ -50,18 +51,18 @@ namespace GazeUtilityLibrary
             // use a file rotation of two files. If a log file gets too big, a
             // new log file is created whil the existing one is moved to the
             // backup file (overwriting an existing one)
-            FileInfo fi = new FileInfo(logFile);
-            if (fi.Exists && fi.Length > max_log_size)
+            FileInfo fi = new FileInfo(_logFile);
+            if (fi.Exists && fi.Length > _maxLogSize)
             {
-                File.Delete(logFileBak);
-                File.Move(logFile, logFileBak);
+                File.Delete(_logFileBak);
+                File.Move(_logFile, _logFileBak);
             }
 
             try
             {
                 lock(_syncObject)
                 {
-                    StreamWriter sw = new StreamWriter(logFile, true);
+                    StreamWriter sw = new StreamWriter(_logFile, true);
                     sw.WriteLine(prefix + message);
                     sw.Flush();
                     sw.Close();
@@ -79,7 +80,7 @@ namespace GazeUtilityLibrary
         /// <param name="e">The exception.</param>
         public void DumpFatal(Exception e)
         {
-            StreamWriter sw = new StreamWriter($"{logPath}\\{DateTime.Now.ToString("yyyyMMddTHHmmss")}_{Environment.MachineName}_fatal.log", true);
+            StreamWriter sw = new StreamWriter($"{_logPath}\\{DateTime.Now.ToString("yyyyMMddTHHmmss")}_{Environment.MachineName}_fatal.log", true);
             sw.WriteLine(e.ToString());
             sw.Close();
         }

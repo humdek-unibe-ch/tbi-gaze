@@ -38,6 +38,7 @@ namespace GazeToMouse
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
         private CalibrationModel _calibrationModel;
         string? _subjectCode = null;
+        string? _outputPath = null;
 
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
@@ -145,7 +146,7 @@ namespace GazeToMouse
         /// </summary>
         public App()
         {
-            _logger = new TrackerLogger();
+            _logger = new TrackerLogger(null);
             _config = new GazeConfiguration(_logger);
 
             if (!Init())
@@ -473,11 +474,15 @@ namespace GazeToMouse
                             i++;
                             _subjectCode = e.Args[i];
                             break;
+                        case "outputPath":
+                            i++;
+                            _outputPath = e.Args[i];
+                            break;
                     }
                 }
             }
 
-            if (!_config.PrepareGazeOutputFile(_subjectCode))
+            if (!_config.PrepareGazeOutputFile(_subjectCode, _outputPath))
             {
                 Current.Shutdown();
             }
