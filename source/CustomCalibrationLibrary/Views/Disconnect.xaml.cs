@@ -11,6 +11,9 @@ namespace CustomCalibrationLibrary.Views
     public partial class Disconnect : Page
     {
         private ICommand _calibrationAbortCommand;
+        /// <summary>
+        /// Command to abort the calibration
+        /// </summary>
         public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
         public Disconnect(CalibrationModel model)
         {

@@ -61,6 +61,10 @@ namespace GazeUtilityLibrary.Tracker
             logger.Info($"device capabilities: {_eyeTracker.DeviceCapabilities}");
         }
 
+        /// <summary>
+        /// Transforms the Tobii display structure into the screenArea structure.
+        /// </summary>
+        /// <param name="displayArea">The display area structure</param>
         private void UpdateScreenArea(DisplayArea displayArea)
         {
             screenArea = new ScreenArea(
@@ -114,12 +118,19 @@ namespace GazeUtilityLibrary.Tracker
             }
         }
 
+        /// <summary>
+        /// Initialise the screen based calibration.
+        /// </summary>
+        /// <returns>An async handler</returns>
         override public async Task InitCalibration()
         {
             _screenBasedCalibration = new ScreenBasedCalibration(_eyeTracker);
             await _screenBasedCalibration.EnterCalibrationModeAsync();
         }
 
+        /// <summary>
+        /// Initialise the drift compensation.
+        /// </summary>
         protected override void InitDriftCompensation()
         {
             if (screenArea == null)
@@ -130,6 +141,11 @@ namespace GazeUtilityLibrary.Tracker
             driftCompensation = new DriftCompensation(screenArea.Center, GetFixationFrameCount(), config.DispersionThreshold);
         }
 
+        /// <summary>
+        /// Collects gaze data of a calibration point.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
         override public async Task<bool> CollectCalibrationData(Point point)
         {
             if (_screenBasedCalibration == null)
@@ -158,6 +174,10 @@ namespace GazeUtilityLibrary.Tracker
             return true;
         }
 
+        /// <summary>
+        /// Finish the screen based calibration process.
+        /// </summary>
+        /// <returns>An async handler</returns>
         override public async Task FinishCalibration()
         {
             if (_screenBasedCalibration == null)
@@ -168,6 +188,10 @@ namespace GazeUtilityLibrary.Tracker
             await _screenBasedCalibration.LeaveCalibrationModeAsync();
         }
 
+        /// <summary>
+        /// Compute and apply the calibration data. Transform the Tobi calibration result into the GazeCalibrationData structure.
+        /// </summary>
+        /// <returns>The calibration data result wrapped by an async handler.</returns>
         override public async Task<List<GazeCalibrationData>> ApplyCalibration()
         {
             List<GazeCalibrationData> result = new List<GazeCalibrationData>();
@@ -182,7 +206,7 @@ namespace GazeUtilityLibrary.Tracker
 
             logger.Info($"Calibration returned {calibrationResult.Status} and collected {calibrationResult.CalibrationPoints.Count} points.");
 
-            foreach (CalibrationPoint point in calibrationResult.CalibrationPoints)
+            foreach (Tobii.Research.CalibrationPoint point in calibrationResult.CalibrationPoints)
             {
                 double xLeft = 0;
                 double yLeft = 0;
@@ -233,12 +257,20 @@ namespace GazeUtilityLibrary.Tracker
             return result;
         }
 
+        /// <summary>
+        /// Get the number of required gaze samples to compute a fixation.
+        /// </summary>
+        /// <returns>60</returns>
         protected override int GetFixationFrameCount()
         {
             // 1000ms at 60 Hz
             return 60;
         }
 
+        /// <summary>
+        /// Get the unit vector pointing in the direction of the gaze vector.
+        /// </summary>
+        /// <returns>The unit vector pointing in the negative z direction.</returns>
         protected override Vector3 GetUnitDirection()
         {
             return new Vector3(0, 0, -1);
@@ -268,13 +300,18 @@ namespace GazeUtilityLibrary.Tracker
             return _hasLicense;
         }
 
+        /// <summary>
+        /// Checks if the tracker device exists.
+        /// </summary>
+        /// <returns>True if the tracker device exists, false otherwise.</returns>
         public override bool IsInitialised()
         {
             return _eyeTracker != null;
         }
 
         /// <summary>
-        /// Replaces a patten string with information from the eye tracker. 
+        /// Replaces a patten string with information from the eye tracker.
+        /// Supported patterns are %S for the serial number and %A for the address.
         /// </summary>
         /// <returns>
         ///   The string where patterns were replaced.
@@ -308,7 +345,7 @@ namespace GazeUtilityLibrary.Tracker
         }
 
         /// <summary>
-        /// Called when [gaze data received].
+        /// Called when gaze data is received.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="data">The <see cref="GazeDataEventArgs"/> instance containing the event data.</param>
@@ -337,6 +374,11 @@ namespace GazeUtilityLibrary.Tracker
             OnGazeDataReceived(gazeData);
         }
 
+        /// <summary>
+        /// Called when user position data is received.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="data">The <see cref="UserPositionGuideEventArgs"/> instance containing the event data.</param>
         private void OnUserPositionDataReceivedPro(object? sender, UserPositionGuideEventArgs data)
         {
             UserPositionData userPositionData = new UserPositionData(

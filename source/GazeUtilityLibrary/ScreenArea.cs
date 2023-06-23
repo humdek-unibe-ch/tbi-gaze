@@ -2,6 +2,9 @@
 
 namespace GazeUtilityLibrary
 {
+    /// <summary>
+    /// The class describing the Screen area in 3d and 2d space.
+    /// </summary>
     public class ScreenArea
     {
 
@@ -31,6 +34,15 @@ namespace GazeUtilityLibrary
 
         private Matrix4x4 _m;
 
+        /// <summary>
+        /// Constructor. Assigns parameters ann computes the transformation matrix to transform a 3d point into a 2d point.
+        /// </summary>
+        /// <param name="bottomLeft">The bottom left 3d coordinate of the screen.</param>
+        /// <param name="bottomRight">The bottom right 3d coordinate of the screen.</param>
+        /// <param name="topLeft">The top left 3d coordinate of the screen.</param>
+        /// <param name="topRight">The top right 3d coordinate of the screen</param>
+        /// <param name="width">The width of the screen</param>
+        /// <param name="height">The heigth of the screen</param>
         public ScreenArea(Vector3 bottomLeft, Vector3 bottomRight, Vector3 topLeft, Vector3 topRight, float width, float height)
         {
             Vector3 bottomCenter = Vector3.Lerp(bottomLeft, bottomRight, 0.5f);
@@ -66,6 +78,14 @@ namespace GazeUtilityLibrary
             _origin = GetPoint2d(topLeft);
         }
 
+        /// <summary>
+        /// Compute the intersection point with the screen plane given a gaze origin and a gaze direction.
+        /// Note that this does not compute the intersection with the screen area but with the infinite plane which is co-aligned with the screen.
+        /// Pass the here computed intersection point to the method GetPoint2dNormalized to get the normalized intersection point on the sreen area.
+        /// </summary>
+        /// <param name="gazeOrigin">The origin of the gaze.</param>
+        /// <param name="gazeDirection">The direction of the gaze.</param>
+        /// <returns>The intersection point with the screen or null if no intersection point exists.</returns>
         public Vector3? GetIntersectionPoint(Vector3 gazeOrigin, Vector3 gazeDirection)
         {
             float d = Vector3.Dot(_norm, gazeOrigin - _topLeft);
@@ -79,12 +99,23 @@ namespace GazeUtilityLibrary
             return gazeOrigin + d / n * gazeDirection;
         }
 
+        /// <summary>
+        /// Get the 2d point on the sreen given given a 3d point on the screen plane.
+        /// </summary>
+        /// <param name="point">The 3d point on the screen plane to convert.</param>
+        /// <returns>The 2d point on the screen plane</returns>
         public Vector2 GetPoint2d(Vector3 point)
         {
             Vector4 v = Vector4.Transform(point, _m);
             return new Vector2(v.X, v.Y);
         }
 
+        /// <summary>
+        /// Get the normalized 2d point on the sreen given given a 3d point on the screen plane.
+        /// Note that values outside of the interval [0, 1] indicate an intersection point outsate of the screen area.
+        /// </summary>
+        /// <param name="point">The 3d point on the screen plane to convert.</param>
+        /// <returns>The normalized 2d point on the screen plane</returns>
         public Vector2 GetPoint2dNormalized(Vector3 point3d)
         {
             Vector2 point2dOffset = GetPoint2d(point3d);

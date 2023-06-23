@@ -54,28 +54,25 @@ namespace GazeUtilityLibrary.DataStructs
             _validityRight = validityRight;
         }
 
-
         /// <summary>
-        /// Called when [gaze data received].
+        /// Prepare a list of formatted calibration data values
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="data">The data.</param>
-        public string[] Prepare(ConfigItem Config)
+        /// <param name="config">The gaze configuration structure</param>
+        /// <returns>A list of formatted values. Each index corresponds to a specific value. This allows to reorder the list according to a format string.</returns>
+        public string[] Prepare(ConfigItem config)
         {
-            string[] formatted_values = new string[Enum.GetNames(typeof(CalibrationOutputValue)).Length];
-            // write the coordinates to the log file
-            if (Config.DataLogWriteOutput)
-            {
-                formatted_values[(int)CalibrationOutputValue.XCoord] = GazeDataConverter.GetValueString(_xCoord, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)CalibrationOutputValue.YCoord] = GazeDataConverter.GetValueString(_yCoord, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)CalibrationOutputValue.XCoordLeft] = GazeDataConverter.GetValueString(_xCoordLeft, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)CalibrationOutputValue.YCoordLeft] = GazeDataConverter.GetValueString(_yCoordLeft, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)CalibrationOutputValue.ValidCoordLeft] = GazeDataConverter.GetValueString(_validityLeft);
-                formatted_values[(int)CalibrationOutputValue.XCoordRight] = GazeDataConverter.GetValueString(_xCoordRight, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)CalibrationOutputValue.YCoordRight] = GazeDataConverter.GetValueString(_yCoordRight, Config.DataLogFormatNormalizedPoint);
-                formatted_values[(int)CalibrationOutputValue.ValidCoordRight] = GazeDataConverter.GetValueString(_validityRight);
-            }
-            return formatted_values;
+            string[] formattedValues = new string[Enum.GetNames(typeof(CalibrationOutputValue)).Length];
+
+            formattedValues[(int)CalibrationOutputValue.XCoord] = GazeDataConverter.GetValueString(_xCoord, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.YCoord] = GazeDataConverter.GetValueString(_yCoord, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.XCoordLeft] = GazeDataConverter.GetValueString(_xCoordLeft, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.YCoordLeft] = GazeDataConverter.GetValueString(_yCoordLeft, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.ValidCoordLeft] = GazeDataConverter.GetValueString(_validityLeft);
+            formattedValues[(int)CalibrationOutputValue.XCoordRight] = GazeDataConverter.GetValueString(_xCoordRight, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.YCoordRight] = GazeDataConverter.GetValueString(_yCoordRight, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.ValidCoordRight] = GazeDataConverter.GetValueString(_validityRight);
+
+            return formattedValues;
         }
     }
 }

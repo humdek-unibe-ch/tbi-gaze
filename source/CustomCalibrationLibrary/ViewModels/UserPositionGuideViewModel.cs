@@ -5,20 +5,36 @@ using GazeUtilityLibrary.DataStructs;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
+    /// <summary>
+    /// The view model class for the user position guide view.
+    /// </summary>
     class UserPositionGuideViewModel
     {
         private UserPositionData _userPosition;
+        /// <summary>
+        /// The user position to be represented on the view
+        /// </summary>
         public UserPositionData UserPosition
         {
             get { return _userPosition; }
         }
 
         private ICommand _calibrationStartCommand;
+        /// <summary>
+        /// Command to start the calibration
+        /// </summary>
         public ICommand CalibrationStartCommand { get { return _calibrationStartCommand; } }
 
         private ICommand _calibrationAbortCommand;
+        /// <summary>
+        /// Command to abort the calibration
+        /// </summary>
         public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="model">The calibartion model</param>
         public UserPositionGuideViewModel(CalibrationModel model)
         {
             _userPosition = new UserPositionData();

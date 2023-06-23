@@ -4,19 +4,30 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using CustomCalibrationLibrary.Models;
+using GazeUtilityLibrary.DataStructs;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
+    /// <summary>
+    /// The view model class of the calibration view
+    /// </summary>
     class CalibrationViewModel
     {
         protected CalibrationModel _model;
 
         private ObservableCollection<CalibrationPointViewModel> _calibrationPoints = new ObservableCollection<CalibrationPointViewModel>();
+        /// <summary>
+        /// The collection of calibration points to be shown on the view
+        /// </summary>
         public ObservableCollection<CalibrationPointViewModel> CalibrationPoints
         {
             get { return _calibrationPoints; }
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="model">The calibration model</param>
         public CalibrationViewModel(CalibrationModel model)
         {
             _model = model;

@@ -42,30 +42,50 @@ namespace GazeToMouse
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
 
+        /// <summary>
+        /// Enable gaze recordings to disk.
+        /// </summary>
         public void GazeRecordingEnable()
         {
             _isRecording = true;
         }
 
+        /// <summary>
+        /// Disable gaze recordings.
+        /// </summary>
         public void GazeRecordingDisable()
         {
             _isRecording = false;
         }
+
+        /// <summary>
+        /// Enable mouse tracking which updates the mouse position to the current gaze point.
+        /// </summary>
         public void MouseTrackingEnable()
         {
             _isMouseTracking = true;
         }
 
+        /// <summary>
+        /// Disable mouse tracking.
+        /// </summary>
         public void MouseTrackingDisable()
         {
             _isMouseTracking = false;
         }
 
+        /// <summary>
+        /// Reset the current drift compensation offset to zero.
+        /// </summary>
         public void ResetDriftCompensation()
         {
             _tracker?.ResetDriftCompensation();
         }
 
+        /// <summary>
+        /// Start the drift compensation process
+        /// </summary>
+        /// <returns>True on success, false on failure</returns>
         public async Task<bool> CompensateDrift()
         {
             Current.Dispatcher.Invoke(() => {
@@ -94,6 +114,10 @@ namespace GazeToMouse
             return res;
         }
 
+        /// <summary>
+        /// Start the gaze calibration process
+        /// </summary>
+        /// <returns>True on success, false on failure</returns>
         public async Task<bool> CustomCalibrate()
         {
             if (_tracker == null)
@@ -116,6 +140,9 @@ namespace GazeToMouse
             return res;
         }
 
+        /// <summary>
+        /// Constructor: initialised logger, gaze configuration, pipe server, and calibration model
+        /// </summary>
         public App()
         {
             _logger = new TrackerLogger();
@@ -136,6 +163,10 @@ namespace GazeToMouse
             _calibrationWindow.Content = new CalibrationFrame(_calibrationModel);
         }
 
+        /// <summary>
+        /// Initialise the application: configure windows, apply gaze configurations, connect to tracking device 
+        /// </summary>
+        /// <returns>True on success, false on failure</returns>
         private bool Init()
         {
             if (!_config.InitConfig())

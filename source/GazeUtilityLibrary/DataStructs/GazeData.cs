@@ -103,68 +103,70 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         /// <summary>
-        /// Called when [gaze data received].
+        /// Prepare a list of formatted gaze data values
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="data">The data.</param>
+        /// <param name="config">The gaze configuration structure</param>
+        /// <param name="delta">
+        ///     A reference to a time delta value. This value will be set once the first gaze data set and used from there on.
+        ///     It represents the time difference between the system time and the tracker time.
+        /// </param>
+        /// <returns>A list of formatted values. Each index corresponds to a specific value. This allows to reorder the list according to a format string.</returns>
         public string[] Prepare(ConfigItem config, ref TimeSpan? delta)
         {
             string[] formattedValues = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
-            // write the coordinates to the log file
-            if (config.DataLogWriteOutput)
-            {
-                formattedValues[(int)GazeOutputValue.DataTimeStamp] = GazeDataConverter.GetValueString(_timestamp, config.DataLogFormatTimeStamp, ref delta);
 
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedX] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition2d.X, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedY] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition2d.Y, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint2dX] = GazeDataConverter.GetValueString(_combined.GazeData2d.GazePoint.X, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint2dY] = GazeDataConverter.GetValueString(_combined.GazeData2d.GazePoint.Y, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint2dIsValid] = GazeDataConverter.GetValueString(_combined.GazeData2d.IsGazePointValid);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dCompensatedX] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition3d.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dCompensatedY] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition3d.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dCompensatedZ] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition3d.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dX] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazePoint.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dY] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazePoint.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dZ] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazePoint.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazePoint3dIsValid] = GazeDataConverter.GetValueString(_combined.GazeData3d?.IsGazePointValid);
-                formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dX] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dY] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dZ] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dIsValid] = GazeDataConverter.GetValueString(_combined.GazeData3d?.IsGazeOriginValid);
-                formattedValues[(int)GazeOutputValue.CombinedGazeDistance] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.CombinedPupilDiameter] = GazeDataConverter.GetValueString(_combined.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
-                formattedValues[(int)GazeOutputValue.CombinedPupilDiameterIsValid] = GazeDataConverter.GetValueString(_combined.EyeData?.IsPupilDiameterValid);
+            formattedValues[(int)GazeOutputValue.DataTimeStamp] = GazeDataConverter.GetValueString(_timestamp, config.DataLogFormatTimeStamp, ref delta);
 
-                formattedValues[(int)GazeOutputValue.LeftGazePoint2dX] = GazeDataConverter.GetValueString(_left?.GazeData2d.GazePoint.X, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.LeftGazePoint2dY] = GazeDataConverter.GetValueString(_left?.GazeData2d.GazePoint.Y, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.LeftGazePoint2dIsValid] = GazeDataConverter.GetValueString(_left?.GazeData2d.IsGazePointValid);
-                formattedValues[(int)GazeOutputValue.LeftGazePoint3dX] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftGazePoint3dY] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftGazePoint3dZ] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftGazePoint3dIsValid] = GazeDataConverter.GetValueString(_left?.GazeData3d?.IsGazePointValid);
-                formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dX] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dY] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dZ] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dIsValid] = GazeDataConverter.GetValueString(_left?.GazeData3d?.IsGazeOriginValid);
-                formattedValues[(int)GazeOutputValue.LeftGazeDistance] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.LeftPupilDiameter] = GazeDataConverter.GetValueString(_left?.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
-                formattedValues[(int)GazeOutputValue.LeftPupilDiameterIsValid] = GazeDataConverter.GetValueString(_left?.EyeData?.IsPupilDiameterValid);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedX] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition2d.X, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedY] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition2d.Y, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint2dX] = GazeDataConverter.GetValueString(_combined.GazeData2d.GazePoint.X, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint2dY] = GazeDataConverter.GetValueString(_combined.GazeData2d.GazePoint.Y, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint2dIsValid] = GazeDataConverter.GetValueString(_combined.GazeData2d.IsGazePointValid);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dCompensatedX] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition3d.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dCompensatedY] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition3d.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dCompensatedZ] = GazeDataConverter.GetValueString(DriftCompensation?.GazePosition3d.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dX] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazePoint.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dY] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazePoint.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dZ] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazePoint.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazePoint3dIsValid] = GazeDataConverter.GetValueString(_combined.GazeData3d?.IsGazePointValid);
+            formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dX] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dY] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dZ] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedGazeOrigin3dIsValid] = GazeDataConverter.GetValueString(_combined.GazeData3d?.IsGazeOriginValid);
+            formattedValues[(int)GazeOutputValue.CombinedGazeDistance] = GazeDataConverter.GetValueString(_combined.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.CombinedPupilDiameter] = GazeDataConverter.GetValueString(_combined.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
+            formattedValues[(int)GazeOutputValue.CombinedPupilDiameterIsValid] = GazeDataConverter.GetValueString(_combined.EyeData?.IsPupilDiameterValid);
 
-                formattedValues[(int)GazeOutputValue.RightGazePoint2dX] = GazeDataConverter.GetValueString(_right?.GazeData2d.GazePoint.X, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.RightGazePoint2dY] = GazeDataConverter.GetValueString(_right?.GazeData2d.GazePoint.Y, config.DataLogFormatNormalizedPoint);
-                formattedValues[(int)GazeOutputValue.RightGazePoint2dIsValid] = GazeDataConverter.GetValueString(_right?.GazeData2d.IsGazePointValid);
-                formattedValues[(int)GazeOutputValue.RightGazePoint3dX] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightGazePoint3dY] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightGazePoint3dZ] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightGazePoint3dIsValid] = GazeDataConverter.GetValueString(_right?.GazeData3d?.IsGazePointValid);
-                formattedValues[(int)GazeOutputValue.RightGazeOrigin3dX] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightGazeOrigin3dY] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightGazeOrigin3dZ] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightGazeOrigin3dIsValid] = GazeDataConverter.GetValueString(_right?.GazeData3d?.IsGazeOriginValid);
-                formattedValues[(int)GazeOutputValue.RightGazeDistance] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
-                formattedValues[(int)GazeOutputValue.RightPupilDiameter] = GazeDataConverter.GetValueString(_right?.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
-                formattedValues[(int)GazeOutputValue.RightPupilDiameterIsValid] = GazeDataConverter.GetValueString(_right?.EyeData?.IsPupilDiameterValid);
-            }
+            formattedValues[(int)GazeOutputValue.LeftGazePoint2dX] = GazeDataConverter.GetValueString(_left?.GazeData2d.GazePoint.X, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.LeftGazePoint2dY] = GazeDataConverter.GetValueString(_left?.GazeData2d.GazePoint.Y, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.LeftGazePoint2dIsValid] = GazeDataConverter.GetValueString(_left?.GazeData2d.IsGazePointValid);
+            formattedValues[(int)GazeOutputValue.LeftGazePoint3dX] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftGazePoint3dY] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftGazePoint3dZ] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftGazePoint3dIsValid] = GazeDataConverter.GetValueString(_left?.GazeData3d?.IsGazePointValid);
+            formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dX] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dY] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dZ] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftGazeOrigin3dIsValid] = GazeDataConverter.GetValueString(_left?.GazeData3d?.IsGazeOriginValid);
+            formattedValues[(int)GazeOutputValue.LeftGazeDistance] = GazeDataConverter.GetValueString(_left?.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.LeftPupilDiameter] = GazeDataConverter.GetValueString(_left?.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
+            formattedValues[(int)GazeOutputValue.LeftPupilDiameterIsValid] = GazeDataConverter.GetValueString(_left?.EyeData?.IsPupilDiameterValid);
+
+            formattedValues[(int)GazeOutputValue.RightGazePoint2dX] = GazeDataConverter.GetValueString(_right?.GazeData2d.GazePoint.X, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.RightGazePoint2dY] = GazeDataConverter.GetValueString(_right?.GazeData2d.GazePoint.Y, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)GazeOutputValue.RightGazePoint2dIsValid] = GazeDataConverter.GetValueString(_right?.GazeData2d.IsGazePointValid);
+            formattedValues[(int)GazeOutputValue.RightGazePoint3dX] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightGazePoint3dY] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightGazePoint3dZ] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightGazePoint3dIsValid] = GazeDataConverter.GetValueString(_right?.GazeData3d?.IsGazePointValid);
+            formattedValues[(int)GazeOutputValue.RightGazeOrigin3dX] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.X, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightGazeOrigin3dY] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Y, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightGazeOrigin3dZ] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeOrigin.Z, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightGazeOrigin3dIsValid] = GazeDataConverter.GetValueString(_right?.GazeData3d?.IsGazeOriginValid);
+            formattedValues[(int)GazeOutputValue.RightGazeDistance] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
+            formattedValues[(int)GazeOutputValue.RightPupilDiameter] = GazeDataConverter.GetValueString(_right?.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
+            formattedValues[(int)GazeOutputValue.RightPupilDiameterIsValid] = GazeDataConverter.GetValueString(_right?.EyeData?.IsPupilDiameterValid);
+
             return formattedValues;
         }
     }

@@ -44,11 +44,17 @@ namespace GazeUtilityLibrary.Tracker
         /// The name of the tracker device
         /// </summary>
         public readonly string DeviceName;
-
+        /// <summary>
+        /// drift compensation handler
+        /// </summary>
         protected DriftCompensation? driftCompensation;
-
+        /// <summary>
+        /// The scrren area structure holding the metrics of the screen in 3d space.
+        /// </summary>
         protected ScreenArea? screenArea = null;
-
+        /// <summary>
+        /// The gaze configuration item
+        /// </summary>
         protected ConfigItem config;
 
         /// <summary>
@@ -149,27 +155,77 @@ namespace GazeUtilityLibrary.Tracker
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Replaces a patten string with information from the eye tracker.
+        /// This is device specific and may be overwritten by the device class.
+        /// </summary>
+        /// <returns>
+        ///   The string where patterns were replaced.
+        /// </returns>
         public virtual string PatternReplace(string pattern)
         {
             return pattern;
         }
 
+        /// <summary>
+        /// Initialise the calibartion process. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <returns>An async handler</returns>
         abstract public Task InitCalibration();
+
+        /// <summary>
+        /// Finish the calibartion process. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <returns>An async handler</returns>
         abstract public Task FinishCalibration();
+
+        /// <summary>
+        /// Apply the calibration data. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <returns>The calibration data result wrapped by an async handler.</returns>
         abstract public Task<List<GazeCalibrationData>> ApplyCalibration();
+
+        /// <summary>
+        /// Collect calibration data on a calibration point. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <param name="point">The calibration point for which to collect data</param>
+        /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
         abstract public Task<bool> CollectCalibrationData(Point point);
 
-
-        abstract protected void InitDriftCompensation();
+        /// <summary>
+        /// Start the drift compensation process.
+        /// </summary>
         public void StartDriftCompensation()
         {
             driftCompensation?.Start();
         }
+
+        /// <summary>
+        /// Reset the drift compensation value
+        /// </summary>
         public void ResetDriftCompensation()
         {
             driftCompensation?.Reset();
         }
+
+        /// <summary>
+        /// Initialise the drift compensation. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        abstract protected void InitDriftCompensation();
+
+        /// <summary>
+        /// Get the number of required gaze samples to compute a fixation.
+        /// This is device specific and must be overwritten by the device because the duration of fixation point
+        /// detection depends on the frame rate of the device.
+        /// </summary>
+        /// <returns>The number of gaze samples to require for fixation detection.</returns>
         abstract protected int GetFixationFrameCount();
+
+        /// <summary>
+        /// Get the unit vector pointing in the direction of the gaze vector.
+        /// This is device specific as the gaze data are represented in a coordinate system as defined by the device.
+        /// </summary>
+        /// <returns>The unit vector</returns>
         abstract protected Vector3 GetUnitDirection();
 
         /// <summary>
@@ -192,6 +248,11 @@ namespace GazeUtilityLibrary.Tracker
         /// </returns>
         protected bool IsReady() { return State == DeviceStatus.Tracking; }
 
+        /// <summary>
+        /// Checks wheter the device is connected and initialised.
+        /// This is device specific and may be overwritten. Otherwise true is always returned.
+        /// </summary>
+        /// <returns>True</returns>
         virtual public bool IsInitialised() { return true; }
 
         /// <summary>

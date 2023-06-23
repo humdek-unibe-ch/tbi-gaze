@@ -7,9 +7,15 @@ namespace GazeUtilityLibrary.DataStructs
     public class EyeData
     {
         private float _pupilDiameter;
+        /// <summary>
+        /// The diameter of the pupil
+        /// </summary>
         public float PupilDiameter { get { return _pupilDiameter; } }
 
         private bool _isPupilDiameterValid;
+        /// <summary>
+        /// The validity flag of th epupil diameter
+        /// </summary>
         public bool IsPupilDiameterValid { get { return _isPupilDiameterValid; } }
 
         /// <summary>

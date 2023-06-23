@@ -3,6 +3,12 @@ using System.Numerics;
 
 namespace GazeUtilityLibrary
 {
+    /// <summary>
+    /// A class to describe a triangle.
+    /// This was supposed to be used to construct the ScreenArea but it turned out that it is
+    /// simpler to work with the screen plane and use the normalised intersection points to check
+    /// wheter the gaze point is outside the screen area.
+    /// </summary>
     public class ScreenTriangle
     {
         private Vector3 _v1;
@@ -29,6 +35,12 @@ namespace GazeUtilityLibrary
             _e2 = v3 - v1;
         }
 
+        /// <summary>
+        /// Compute the intersection point with the triangle with the Moller-Trumbore algorithm.
+        /// </summary>
+        /// <param name="origin">The origin of the gaze point</param>
+        /// <param name="direction">The direction of the gaze point</param>
+        /// <returns>The intersection point or null if no intersection point could be computed.</returns>
         public Vector3? GetIntersectionPoint(Vector3 origin, Vector3 direction)
         {
             Vector3 p, t, q, directionScaled;

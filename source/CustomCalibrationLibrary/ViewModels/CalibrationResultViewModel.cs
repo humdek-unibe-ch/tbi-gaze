@@ -1,68 +1,50 @@
 ﻿using CustomCalibrationLibrary.Commands;
 using CustomCalibrationLibrary.Models;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using GazeUtilityLibrary.DataStructs;
 using System.Windows;
 using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
-    public class GazePoint : INotifyPropertyChanged
-    {
-        private double _x = 0;
-        public double X
-        {
-            get { return _x; }
-            set { _x = value; OnPropertyChanged(); }
-        }
-
-        private double _y = 0;
-        public double Y
-        {
-            get { return _y; }
-            set { _y = value; OnPropertyChanged(); }
-        }
-
-        private bool _visibility = false;
-        public bool Visibility
-        {
-            get { return _visibility; }
-            set { _visibility = value; OnPropertyChanged(); }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-
-        /// <summary>
-        /// Called when when the state property of EyeTracker is changing.
-        /// </summary>
-        /// <param name="property_name">Name of the property in WPF.</param>
-        private void OnPropertyChanged([CallerMemberName] string? property_name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
-        }
-    }
-
+    /// <summary>
+    /// View model class of the gaze calibration result.
+    /// </summary>
     class CalibrationResultViewModel : CalibrationViewModel
     {
         private ICommand _calibrationRestartCommand;
+        /// <summary>
+        /// Command to restart the calibration
+        /// </summary>
         public ICommand CalibrationRestartCommand { get { return _calibrationRestartCommand; } }
 
         private ICommand _calibrationAcceptCommand;
+        /// <summary>
+        /// Command to accept the calibration
+        /// </summary>
         public ICommand CalibrationAcceptCommand { get { return _calibrationAcceptCommand; } }
 
         private ICommand _gazeVisibilityCommand;
+        /// <summary>
+        /// Command to toggle the visibility of the live gaze point
+        /// </summary>
         public ICommand GazeVisibilityCommand { get { return _gazeVisibilityCommand; } }
 
-        private GazePoint _gazePoint;
-        public GazePoint GazePoint
+        private LiveGazePoint _gazePoint;
+        /// <summary>
+        /// The position of the live gaze point
+        /// </summary>
+        public LiveGazePoint GazePoint
         {
             get { return _gazePoint; }
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="model">The claibration model</param>
         public CalibrationResultViewModel(CalibrationModel model) : base(model)
         {
-            _gazePoint = new GazePoint();
+            _gazePoint = new LiveGazePoint();
             _model.GazePointChanged += OnGazePointChanged;
             _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
             _calibrationAcceptCommand = new CalibrationCommand(model, CalibrationEventType.Accept);
@@ -79,6 +61,9 @@ namespace CustomCalibrationLibrary.ViewModels
             _gazePoint.Y = point.Y;
         }
 
+        /// <summary>
+        /// Toggle the visibility of the live gaze point.
+        /// </summary>
         public void OnGazeToggle()
         {
             _gazePoint.Visibility = !_gazePoint.Visibility;

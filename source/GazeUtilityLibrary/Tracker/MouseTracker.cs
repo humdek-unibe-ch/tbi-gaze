@@ -161,6 +161,11 @@ namespace GazeUtilityLibrary.Tracker
             throw new NotImplementedException();
         }
 
+        protected override void InitDriftCompensation()
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Hooks the callback function <see cref="HookCallback(int, IntPtr, IntPtr)"/> to mouse events.
         /// </summary>
@@ -213,11 +218,6 @@ namespace GazeUtilityLibrary.Tracker
                 OnGazeDataReceived(gaze_data);
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
-        }
-
-        protected override void InitDriftCompensation()
-        {
-            throw new NotImplementedException();
         }
     }
 }
