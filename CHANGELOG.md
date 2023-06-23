@@ -1,3 +1,12 @@
+# v3.1.0
+### New Features
+ - Add a custom drift compensation process
+
+### Improvements
+ - Integrate calibration into `Gaze.exe`
+ - Remove Tobii research dependencies from everywhere except the eye tracker device class
+ - Cleanup and rearrangement of code to improve readability
+
 # v3.0.0
 ### New Features
  - A custom calibration application is added to the portfolio.

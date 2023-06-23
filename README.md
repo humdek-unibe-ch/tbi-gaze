@@ -9,16 +9,34 @@ For more details please refer to the [documentation](http://phhum-a209-cp.unibe.
 The complete toolset package can be downloaded from the [release folder](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
 The package contains the following executables:
 
- - **CustomCalibrate.exe** launches the custom calibration tool.
- - **TobiiCalibrate.exe** launches the Tobii calibration tool.
- - **Gaze.exe** allows to record gaze data and control the mouse with the gaze of the user. The following executables provide some runtime control of a running `Gaze.exe` process:
-	 - **DriftCompensation** opens a fixation point window, waits for a fixation, computes the drift offest and applies the computed offset to the gaze data.
-	 - **GazeClose.exe** terminates `Gaze.exe` gracefully.
-	 - **GazeRecordingDisable.exe** pauses the gaze recording.
-	 - **GazeRecordingEnable.exe** resumes the gaze recording.
-	 - **MouseTrackingDisable.exe** disables the link between the gaze and the mouse position.
-	 - **MouseTrackingEnable.exe** enables the link between the gaze and the mouse position.
- - **ShowMouse.exe** restores a hidden mouse pointer if something went wrong
+- **`Gaze.exe`** This program uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) to extract the gaze position on the screen where the subject is looking at.
+  The extracted data is recorded and stored to a file.
+  Optionally, the mouse cursor position is updated to this position such that the mouse cursor is controlled by the gaze of the subject.
+  Instead of using an eye tracker device it is also possible to simply log the mouse coordinates.
+  **`Gaze.exe`** runs infinitely until it is terminated by an external command.
+  This should **not** be done with a forced kill (e.g. by executing the command `taskkill /F /IM Gaze.exe` or by killing the task with the task manager) because it prevents the program from terminating gracefully.
+  This as several consequences:
+    - open files are not closed properly and the data stream is cut off. This can lead to corrupt files.
+    - if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
+    - memory is not freed properly.
+  Instead the program **`GazeControls.exe /command TERMINATE`** should be used.
+- **`GazeControl.ext`** This program allows to interact with **`Gaze.exe`** by passing the argument `/command <COMMAND>` to the application.
+  Passing an argument to an application can be done in command line or by crating a shortcut to the program.
+  Corresponding shortcuts for all available `<COMMAND>`s are provided in the release package.
+  The following `<COMMAND>`s are available:
+    - `CUSTOM_CALIBRATE` uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
+    - `DRIFT_COMPENSATION` launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
+    - `GAZE_RECORDING_DISABLE` requests **`Gaze.exe`** to stop recording gaze data.
+      Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
+    - `GAZE_RECORDING_ENABLE` requests **`Gaze.exe`** to start recording gaze data.
+    - `MOUSE_TRACKING_DISABLE` requests **`Gaze.exe`** to stop updating the mouse pointer by the gaze position.
+    - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
+    - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
+    - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
+- **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
+  It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
+  The subject might end up with a hidden mouse pointer.
+  A good solution for such a case is to install a shortcut to \texttt{ShowMouse.exe} on the desktop in order to execute it with the keyboard.
 
 In order to run the executables the following files need to be placed in the same directory as the executables:
 
