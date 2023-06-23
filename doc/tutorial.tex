@@ -112,13 +112,22 @@ The following set of executables are provided:
             \item if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
             \item memory is not freed properly.
         \end{itemize}
-        Instead the program \texttt{GazeClose.exe} shoudl be used.
-    \item[GazeClose.exe] This program requests Gaze.exe to close gracefully and logs these events to the log file.
-    \item[GazeRecordingDisable.exe] This program requests Gaze.exe to stop recording gaze data.
-        Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
-    \item[GazeRecordingEnable.exe] This program requests Gaze.exe to start recording gaze data.
-    \item[MouseTrackingDisable.exe] This program requests Gaze.exe to stop updating the mouse pointer by the gaze position.
-    \item[MouseTrackingEnable.exe] This program requests Gaze.exe to start updating the mouse pointer by the gaze position.
+        Instead the program \texttt{GazeControls.exe /command TERMINATE} should be used.
+    \item[GazeControl.ext] This program allows to interact with Gaze.exe by passing the argument \texttt{/command <COMMAND>} to the application.
+        Passing an argument to an application can be done in command line or by crating a shortcut to the program.
+        Corresponding shortcuts for all available \texttt{<COMMAND>}s are provided in the release package.
+        The following \texttt{<COMMAND>}s are available:
+        \begin{description}
+            \item{\texttt{CUSTOM\_CALIBRATE}} uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
+            \item{\texttt{DRIFT\_COMPENSATION}} launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
+            \item{\texttt{GAZE\_RECORDING\_DISABLE}} requests Gaze.exe to stop recording gaze data.
+                Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
+            \item{\texttt{GAZE\_RECORDING\_ENABLE}} requests Gaze.exe to start recording gaze data.
+            \item{\texttt{MOUSE\_TRACKING\_DISABLE}}requests Gaze.exe to stop updating the mouse pointer by the gaze position.
+            \item{\texttt{MOUSE\_TRACKING\_ENABLE}} requests Gaze.exe to start updating the mouse pointer by the gaze position.
+            \item{\texttt{RESET\_DRIFT\_COMPENSATION}} resets the drift compensation computed with the command \texttt{DRIFT\_COMPENSATION}.
+            \item{\texttt{TERMINATE}} requests Gaze.exe to close gracefully and logs these events to the log file.
+        \end{description}
     \item[ShowMouse.exe] This program allows to restore the standard mouse pointer.
         It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
         The subject might end up with a hidden mouse pointer.
@@ -419,13 +428,13 @@ This coordinate system is called \emph{Active Display Coordinate System (ADCS)} 
 
 By default, the system is configured to log all available data points.
 However, this can easily be changed through the parameter \texttt{"DataLogColumnOrder"}.
-For example, to only store a minimalistic set of data points use the value \texttt{"\{0\}\textbackslash t\{1\}\textbackslash t\{4\}"}.
-This will only store the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 1 and 4, respectively).
+For example, to only store a minimalistic set of data points use the value \texttt{"\{0\}\textbackslash t\{3\}\textbackslash t\{4\}"}.
+This will only store the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 3 and 4, respectively).
 This produces an output file that is similar to the following:
 \lstset{columns=flexible}
 \lstset{keepspaces=true}
 \begin{lstlisting}
-Timestamp   coord-x coord-y
+Timestamp   combined_gazePoint2d_x  combined_gazePoint2d_y
 12:51:55.409    426 342
 12:51:55.420    430 341
 12:51:55.431    431 341
@@ -451,10 +460,6 @@ The UCS is illustrated in Figure~\ref{fig.ucs}.
 \end{figure}
 
 In order to log additional data fields, the parameter \texttt{"DataLogColumnOrder"} must be modified by adding the required numbers, representing different data fields.
-For example, to log all raw data fields (omitting any data field that is computed from raw data) the following string can be used:
-\begin{lstlisting}
-"DataLogColumnOrder": "{0}\t{2}\t{3}\t{5}\t{6}\t{7}\t{8}\t{10}\t{11}\t{12}\t{13}\t{14}\t{15}\t{16}\t{17}\t{18}\t{19}\t{23}\t{24}"
-\end{lstlisting}
 
 When using the empty string, all possible data fields are logged:
 \begin{lstlisting}
@@ -468,19 +473,21 @@ In the following some further information is provided.
 The following five data field types with individual data fields are provided:
 \begin{enumerate}
     \item timestamps indicating when the data was sampled by the eye tracker (field number: 0)
-    \item gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as pixel values
+    \item 2D gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
         \begin{description}
             \item[Mouse Tracker] \hfill
                 \begin{itemize}
                     \item the x and y coordinates of the mouse pointer\\
-                        (field numbers: 1 and 4)
+                        (field numbers: 3 and 4)
                 \end{itemize}
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item raw x and y coordinates of the left and the right eye\\
-                        (field numbers: 2, 3, 5, and 6)
+                        (field numbers: 20, 21, 34, and 35)
+                    \item the drift compensated x and y coordinates which are computed by the drift compensation process using the I-DT algorithm for fixation detection and then comparing the averaged gaze samples to an oracle gaze to computing the drift of the gaze\\
+                        (field numbers: 1 and 2)
                     \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
-                        (field numbers: 1 and 4)
+                        (field numbers: 3 and 4)
 \begin{equation}
     \label{eq.average}
     \text{val} =
@@ -493,21 +500,36 @@ The following five data field types with individual data fields are provided:
 \end{equation}
                 \end{itemize}
         \end{description}
+    \item 3D gaze point UCS coordinates (see Figure~\ref{fig.ucs}) in millimeters
+        \begin{description}
+            \item[Mouse Tracker] not applicable
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item raw x, y, and z coordinates of the left and the right eye\\
+                        (field numbers: 23, 24, 25, 37, 38, and 39)
+                    \item the drift compensated x, y, and z coordinates which are computed by the drift compensation process using the I-DT algorithm for fixation detection and then comparing the averaged gaze samples to an oracle gaze to computing the drift of the gaze\\
+                        (field numbers: 6, 7, and 8)
+                    \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
+                        (field numbers: 9, 10, and 11)
+                \end{itemize}
+        \end{description}
     \item gaze origin UCS coordinates (see Figure~\ref{fig.ucs}) in millimetres
         \begin{description}
             \item[Mouse Tracker] not applicable
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item raw x, y, and z coordinates of the left and the right eye\\
-                        (field numbers: 14 - 19)
-                    \item the distance from the eye tracker to the left and the right eye, respectively which are computed from raw data as defined by Equation~\ref{eq.dist}\\
-                        (field numbers: 21 and 22)
+                        (field numbers: 27, 28, 29, 41, 42, and 43)
+                    \item the average x, y, and z coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
+                        (field numbers: 13, 14, and 15)
+                    \item the distance from the gaze origin to the left and the right gaze point, respectively which are computed from raw data as defined by Equation~\ref{eq.dist}\\
+                        (field numbers: 31 and 45)
 \begin{equation}
     \label{eq.dist}
     \text{dist} = \sqrt{x^2 + y^2 + z^2}
 \end{equation}
                     \item the average distance which is computed from the distance of the left and the right eye as defined by Equation~\ref{eq.average}\\
-                        (field number: 20)
+                        (field number: 17)
                 \end{itemize}
         \end{description}
     \item pupil diameters in millimetres
@@ -516,9 +538,9 @@ The following five data field types with individual data fields are provided:
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item raw diameters of the left and the right eye\\
-                        (field numbers: 10 and 11)
+                        (field numbers: 32 and 46)
                     \item the average diameter which is computed from raw data as defined by Equation~\ref{eq.average}\\
-                        (field number: 9)
+                        (field number: 18)
                 \end{itemize}
         \end{description}
     \item data validity indicators as true or false
@@ -526,8 +548,8 @@ The following five data field types with individual data fields are provided:
             \item[Mouse Tracker] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for the left and the right eye, respectively\\
-                        (field numbers: 7, 8, 12, 13, 23, 24)
+                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for combined values, the left and the right eye, respectively\\
+                        (field numbers: 5, 12, 16, 19, 22, 26, 30, 33, 36, 40, 44, and 47)
                 \end{itemize}
         \end{description}
 \end{enumerate}
