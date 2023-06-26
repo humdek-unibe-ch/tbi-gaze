@@ -95,15 +95,15 @@ The project aims at providing a set of executables which allow to use the Eye Tr
 Specifically, \href{http://www.ztree.uzh.ch/en.html}{ztree} or \href{https://osdoc.cogsci.nl/3.3/}{openseame}.
 The following set of executables are provided:
 \begin{description}
-    \item[CustomCalibrate.exe] This program uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the unstable calibration software provided by Tobii.
     \item[TobiiCalibrate.exe] This program is a simple wrapper for the Tobii calibration tool.
         It launches the calibration GUI where the subject is led through the calibration process.
         The calibration data is stored in the current profile of the eye tracker engine.
-        \textbf{Attention:} At the time of this writing (05.06.2023) the calibration program reachable through the \href{https://www.tobii.com/products/software/applications-and-developer-kits/tobii-pro-eye-tracker-manager}{Tobii Pro Eye Tracker Manager} cannot be used due to an \href{https://connect.tobii.com/s/case/5004v000020xgMFAAY/tobii-pro-eye-tracker-manager-integration-problems}{issue} that is currently investigated by Tobii.
+        \textbf{Attention:} Make sure to to have the \href{https://www.tobii.com/products/software/applications-and-developer-kits/tobii-pro-eye-tracker-manager}{Tobii Pro Eye Tracker Manager} of version 2.6 or later installed.
     \item[Gaze.exe] This program uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} to extract the gaze position on the screen where the subject is looking at.
         The extracted data is recorded and stored to a file.
         Optionally, the mouse cursor position is updated to this position such that the mouse cursor is controlled by the gaze of the subject.
         Instead of using an eye tracker device it is also possible to simply log the mouse coordinates.
+
         \texttt{Gaze.exe} runs infinitely until it is terminated by an external command.
         This should \textbf{not} be done with a forced kill (e.g.~by executing the command \texttt{taskkill /F /IM Gaze.exe} or by killing the task with the task manager) because it prevents the program from terminating gracefully.
         This as several consequences:
@@ -113,7 +113,17 @@ The following set of executables are provided:
             \item memory is not freed properly.
         \end{itemize}
         Instead the program \texttt{GazeControls.exe /command TERMINATE} should be used.
-    \item[GazeControl.ext] This program allows to interact with Gaze.exe by passing the argument \texttt{/command <COMMAND>} to the application.
+
+        The application takes the following two input arguments:
+        \begin{description}
+            \item[subject]
+                A subject code which will be used to prefix the output files.
+            \item[outputPath]
+                The location where the output files will be stored.
+                Note that this can also be configured through the configuration option \texttt{DataLogPath} (see Chapter \ref{sec.config}).
+        \end{description}
+    \item[GazeControl.exe] This program allows to interact with Gaze.exe.
+        Run GazeControl.exe with the argument \texttt{/command <COMMAND>} to perform the command in Gaze.exe.
         Passing an argument to an application can be done in command line or by crating a shortcut to the program.
         Corresponding shortcuts for all available \texttt{<COMMAND>}s are provided in the release package.
         The following \texttt{<COMMAND>}s are available:
@@ -123,7 +133,7 @@ The following set of executables are provided:
             \item{\texttt{GAZE\_RECORDING\_DISABLE}} requests Gaze.exe to stop recording gaze data.
                 Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
             \item{\texttt{GAZE\_RECORDING\_ENABLE}} requests Gaze.exe to start recording gaze data.
-            \item{\texttt{MOUSE\_TRACKING\_DISABLE}}requests Gaze.exe to stop updating the mouse pointer by the gaze position.
+            \item{\texttt{MOUSE\_TRACKING\_DISABLE}} requests Gaze.exe to stop updating the mouse pointer by the gaze position.
             \item{\texttt{MOUSE\_TRACKING\_ENABLE}} requests Gaze.exe to start updating the mouse pointer by the gaze position.
             \item{\texttt{RESET\_DRIFT\_COMPENSATION}} resets the drift compensation computed with the command \texttt{DRIFT\_COMPENSATION}.
             \item{\texttt{TERMINATE}} requests Gaze.exe to close gracefully and logs these events to the log file.
@@ -224,23 +234,23 @@ In order to get started with a quick experiment the following steps are required
 
 The provided sample \texttt{opensesame} program includes the following python scripts:
 \begin{description}
-    \item[gaze\_initialisation]
-        Sets the \texttt{gazeAppPath} variable which will be used in all gaze python script to locate the gaze toolset.
-    \item[gaze\_calibration]
-        The custom calibration application is started to perform a gaze calibration.
-        Note that the \texttt{subject\_nr} variable is passed as argument to the application.
-        This is used to name the output file accordingly.
     \item[gaze\_start]
-        The gaze application is started in the background and will run during the whole of the experiment.
-        Note that the \texttt{subject\_nr} variable is passed as argument to the application.
-        This is used to name the output file accordingly.
+        Sets the \texttt{gazeAppPath} variable during prepare stage and then starts the gaze application.
+        The application will run in the background during the experiment.
+        Note that the \texttt{subject\_nr} variable and the \texttt{experiment\_path} variable are passed as arguments to the application.
+        The former is used to prefix the output file names with the subject number and the latter is used as location to store the output files.
+        Also, note that the log files are stored at the \texttt{gazeAppPath}.
+        Further, note that a sleep of three seconds is introduced here to give the eye tracker time to initialize.
+    \item[gaze\_calibration]
+        Runs the command \texttt{GazeControl.exe /command CUSTOM\_CALIBRATE} to start the custom calibration.
+    \item[gaze\_drift\_compensation]
+        Runs the command \texttt{GazeControl.exe /command DRIFT\_COMPENSATION} to start the drift compensation process.
     \item[gaze\_recording\_enable]
-        Communicates to the gaze application to start storing gaze data to the disk.
+        Runs the command \texttt{GazeControl.exe /command GAZE\_RECORDING\_ENABLE} to start storing gaze data to the disk.
     \item[gaze\_recording\_disable]
-        Communicates to the gaze application to stop storing gaze data to the disk.
-        The Tobii eye tracker test tool is started which allows the subject or experimenter to verify the accuracy of the eye tracker.
+        Runs the command \texttt{GazeControl.exe /command GAZE\_RECORDING\_DISABLE} to stop storing gaze data to the disk.
     \item[gaze\_stop]
-        Instructs the gaze application to gracefully shutdown.
+        Runs the command \texttt{GazeControl.exe /command TERMINATE} to gracefully shutdown the gaze application.
 \end{description}
 
 The behaviour of the Gaze toolset can be configured with a configuration file (see Chapter~\ref{sec.config} for more details).
