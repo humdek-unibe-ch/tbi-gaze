@@ -15,7 +15,7 @@ namespace ShowMouse
         {
             InitializeComponent();
 
-            _logger = new TrackerLogger();
+            _logger = new TrackerLogger(null);
             _config = new GazeConfiguration(_logger);
         }
 

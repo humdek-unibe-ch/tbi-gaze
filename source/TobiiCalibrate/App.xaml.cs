@@ -20,7 +20,7 @@ namespace TobiiCalibrate
         {
             InitializeComponent();
 
-            _logger = new TrackerLogger();
+            _logger = new TrackerLogger(null);
             _config = new GazeConfiguration(_logger);
             _tracker = new EyeTrackerPro(_logger, _config.Config);
             _tracker.TrackerEnabled += OnTrackerEnabled;

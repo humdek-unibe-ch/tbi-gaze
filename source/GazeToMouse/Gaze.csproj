@@ -8,7 +8,12 @@
 	<PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
 	<ServerGarbageCollection>true</ServerGarbageCollection>
+	<ApplicationIcon>butterfly.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="butterfly.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CustomCalibrationLibrary\CustomCalibrationLibrary.csproj" />

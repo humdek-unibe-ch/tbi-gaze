@@ -11,7 +11,7 @@ namespace GazeControl
     {
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
-            TrackerLogger logger = new TrackerLogger();
+            TrackerLogger logger = new TrackerLogger(null);
 
             string? command = null;
             for (int i = 0; i < e.Args.Length; i++)
