@@ -199,16 +199,16 @@ In order to get started with a quick experiment you need the following things (\
 
 The provided sample \texttt{ztree} program performs the following stages:
 \begin{description}
+    \item[Initialise Eye Tracker]
+        Starts the Gaze.exe application to run in the background during the experiment.
+        Note that a sleep of five seconds is introduced here to give the eye tracker time to initialize.
     \item[Calibrate Eye Tracker]
-        A guest calibration is performed where the Tobii calibration tool is started and the calibration data is stored in a guest profile within the Tobii eye tracker software.
-        The calibration is very intuitive and has a game-like feel to it.
-    \item[Test Eye Tracker]
-        The Tobii eye tracker test tool is started which allows the subject or experimenter to verify the accuracy of the eye tracker.
-        If the accuracy is not sufficient a recalibration can be started from within the test tool.
-    \item[Gaze To Mouse]
+        Runs the command \texttt{GazeControl.exe /command CUSTOM\_CALIBRATE} to start the custom calibration.
+    \item[Enable Mouse Tracking]
+        Runs the command \texttt{GazeControl.exe /command MOUSE\_TRACKING\_ENABLE}.
         The gaze of the subject is tracked and transformed to mouse coordinates which allows to control the mouse pointer with the gaze of the subject.
     \item[Terminate]
-        Terminates the gaze-to-mouse functionality and concludes this simple \texttt{ztree} program.
+        Runs the command \texttt{GazeControl.exe /command TERMINATE} to gracefully shutdown the gaze application and conclude this simple \texttt{ztree} program.
 \end{description}
 
 The behaviour of the Gaze toolset can be configured with a configuration file (see Chapter~\ref{sec.config} for more details).
@@ -308,9 +308,9 @@ This can be achieved as follows:
     \item choose the menu \texttt{Treatment} $\rightarrow$ \texttt{New External Program...}
     \item choose \texttt{Run on z-Leaf}
     \item add the call to the external program to the field \texttt{Command Line} \\
-        (e.g~a call to the guest calibration tool: \texttt{<><Path|-1>TobiiGuestCalibrate.exe}\\
+        (e.g~a call to the Tobii calibration tool: \texttt{<><Path|-1>TobiiCalibrate.exe}\\
         Note that the \texttt{Path} variable is used to indicate the location of the program.
-        Figure~\ref{fig.extcall} shows an example of calling the Tobii guest calibration tool.
+        Figure~\ref{fig.extcall} shows an example of calling the Tobii calibration tool.
 \end{enumerate}
 \begin{figure}[ht]
     \centering
@@ -334,17 +334,17 @@ print(f"use gaze toolset path {gazeToolsetPath}")
 \end{lstlisting}
 
 For each application to execute from within the experiment use a separate \emph{inline\_script}.
-To run the \texttt{CustomCalibration} application use the following script (note that the subject number is passed as an argument to the application):
+To run the \texttt{TobiiCalibration} application use the following script:
 
 \begin{lstlisting}[language=Python]
 import subprocess
 
 print("start custom calibration")
-subprocess.run([f"{gazeToolsetPath}\\CustomCalibrate.exe], "/subject", f"{var.get(u'subject_nr')}")
-print("custom calibration done")
+subprocess.run([f"{gazeToolsetPath}\\TobiiCalibrate.exe]}")
+print("Tobii calibration done")
 \end{lstlisting}
 
-To run the \texttt{Gaze} application use a command to run the application in the background instead of waiting for the application to terminate:
+To run the \texttt{Gaze} application use a command to run the application in the background instead of waiting for the application to terminate (note that the subject number variable is passed as an argument to the application):
 
 \begin{lstlisting}[language=Python]
 import subprocess
@@ -353,14 +353,14 @@ print("start gaze process")
 subprocess.Popen([f"{gazeToolsetPath}\\Gaze.exe], "/subject", f"{var.get(u'subject_nr')}")
 \end{lstlisting}
 
-To run any other application of the gaze toolset use \texttt{subprocess.run} without passing any arguments.
-For example, to gracefully terminate the \texttt{Gaze} application with \texttt{GazeClose}, use the following script:
+To run the GazeControl.exe of the gaze toolset use \texttt{subprocess.run} with the corresponding command argument.
+For example, to gracefully terminate the \texttt{Gaze} application with \texttt{GazeControl} and the command argument \texttt{TERMINATE}, use the following script:
 
 \begin{lstlisting}[language=Python]
 import subprocess
 
 print("stop gaze process")
-subprocess.run([f"{gazeToolsetPath}\\GazeClose.exe]")
+subprocess.run([f"{gazeToolsetPath}\\GazeControl.exe], "/command", "TERMINATE")
 \end{lstlisting}
 
 
