@@ -5,6 +5,7 @@
 - Add pipe command `SET_TAG` to allow annotate data samples.
 - Add pipe command `RESET_START_TIMER` to reste the relative timestamp.
 - Add a log entry of the version of the gaze application.
+- Add helper scripts to generate shortcuts to `GazeControl.exe`.
 
 # v3.1.0
 ### New Features

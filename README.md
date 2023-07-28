@@ -69,6 +69,17 @@ To install the driver for the [Tobii Pro Spark](https://www.tobii.com/products/e
 
 This starts the service `Tobii Pro Spark Runtime`.
 
+### Scripts
+
+The folder `scripts` contains two files `CreateShortcut.ps1` and `CreateShortcuts.bat` which allow to create shortcuts to the application `GazeControl.exe` with predefined command arguments.
+In order to generate the shortcut files perform the following steps:
+
+1. copy the two script files into the installation folder
+1. execute the script `CreateShortcuts.bat`
+
+Nothe that the generated shortcuts are tied to the installation folder.
+Copying the installation folder to another location will break the links.
+
 ## 3rd Party Applications
 
 This section provides some infromation on how to run the here provided executables from within 3rd party applications.
