@@ -521,6 +521,7 @@ namespace GazeToMouse
             }
 
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}Gaze.exe\" {String.Join(" ", e.Args)}");
+            _logger.Info($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
         }
 
         /// <summary>
