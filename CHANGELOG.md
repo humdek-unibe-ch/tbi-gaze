@@ -1,3 +1,11 @@
+# v3.2.0
+### New Features
+- Add relative timestamp to output data.
+- Add annotation tag to ouput data.
+- Add pipe command `SET_TAG` to allow annotate data samples.
+- Add pipe command `RESET_START_TIMER` to reste the relative timestamp.
+- Add a log entry of the version of the gaze application.
+
 # v3.1.0
 ### New Features
  - Add a custom drift compensation process
