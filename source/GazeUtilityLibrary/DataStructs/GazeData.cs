@@ -106,12 +106,13 @@ namespace GazeUtilityLibrary.DataStructs
         /// Prepare a list of formatted gaze data values
         /// </summary>
         /// <param name="config">The gaze configuration structure</param>
+        /// <param name="tag">An arbitrary tag to associate with the data sample.</param>
         /// <param name="delta">
         ///     A reference to a time delta value. This value will be set once the first gaze data set and used from there on.
         ///     It represents the time difference between the system time and the tracker time.
         /// </param>
         /// <returns>A list of formatted values. Each index corresponds to a specific value. This allows to reorder the list according to a format string.</returns>
-        public string[] Prepare(ConfigItem config, ref TimeSpan? delta)
+        public string[] Prepare(ConfigItem config, string tag, ref TimeSpan? delta)
         {
             string[] formattedValues = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
 
@@ -166,6 +167,8 @@ namespace GazeUtilityLibrary.DataStructs
             formattedValues[(int)GazeOutputValue.RightGazeDistance] = GazeDataConverter.GetValueString(_right?.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
             formattedValues[(int)GazeOutputValue.RightPupilDiameter] = GazeDataConverter.GetValueString(_right?.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
             formattedValues[(int)GazeOutputValue.RightPupilDiameterIsValid] = GazeDataConverter.GetValueString(_right?.EyeData?.IsPupilDiameterValid);
+
+            formattedValues[(int)GazeOutputValue.Tag] = tag;
 
             return formattedValues;
         }

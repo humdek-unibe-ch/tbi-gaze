@@ -57,7 +57,9 @@ namespace GazeUtilityLibrary.DataStructs
         RightGazeOrigin3dIsValid,
         RightGazeDistance,
         RightPupilDiameter,
-        RightPupilDiameterIsValid
+        RightPupilDiameterIsValid,
+
+        Tag
     }
 
     /// <summary>

@@ -479,6 +479,8 @@ namespace GazeUtilityLibrary
                 "right_gazeDistance",
                 "right_pupilDiameter",
                 "right_pupilDiameter_isValid",
+
+                "tag"
             };
             CalibrationLogColumnOrder =
                 $"{{{(int)CalibrationOutputValue.XCoord}}}\t" +

@@ -13,6 +13,8 @@ using CustomCalibrationLibrary.Models;
 using System.Collections.Generic;
 using GazeUtilityLibrary.Tracker;
 using GazeUtilityLibrary.DataStructs;
+using Newtonsoft.Json;
+using System.Reflection;
 
 namespace GazeToMouse
 {
@@ -37,8 +39,20 @@ namespace GazeToMouse
         private DriftCompensationWindow _fixationWindow = new DriftCompensationWindow();
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
         private CalibrationModel _calibrationModel;
-        string? _subjectCode = null;
-        string? _outputPath = null;
+        private string? _subjectCode = null;
+        private string _tag = "";
+        public string Tag
+        {
+            get { return _tag; }
+            set
+            {
+                lock (_tag)
+                {
+                    _tag = value;
+                }
+            }
+        }
+        private string? _outputPath = null;
 
         [DllImport("User32.dll")]
         private static extern bool SetCursorPos(int x, int y);
@@ -294,48 +308,63 @@ namespace GazeToMouse
                     StreamWriter sw = new StreamWriter(pipeServer);
                     // Wait for a client to connect
                     pipeServer.WaitForConnection();
-                    string? msg = null;
+                    string? line = null;
                     while (pipeServer.IsConnected)
                     {
-                        msg = sr.ReadLine();
+                        line = sr.ReadLine();
+                        if (line == null)
+                        {
+                            break;
+                        }
+                        PipeCommand? msg = JsonConvert.DeserializeObject<PipeCommand>(line);
                         if (msg == null)
                         {
                             break;
                         }
 
-                        if (msg.StartsWith("TERMINATE"))
+                        if (msg.Command.StartsWith("TERMINATE"))
                         {
                             app.CustomDispatcher.InvokeShutdown();
                         }
-                        else if (msg.StartsWith("GAZE_RECORDING_DISABLE"))
+                        else if (msg.Command.StartsWith("GAZE_RECORDING_DISABLE"))
                         {
                             app.CustomDispatcher.Invoke(() =>
                             {
                                 app.GazeRecordingDisable();
                             });
                         }
-                        else if (msg.StartsWith("GAZE_RECORDING_ENABLE"))
+                        else if (msg.Command.StartsWith("GAZE_RECORDING_ENABLE"))
                         {
                             app.CustomDispatcher.Invoke(() =>
                             {
                                 app.GazeRecordingEnable();
                             });
                         }
-                        else if (msg.StartsWith("MOUSE_TRACKING_DISABLE"))
+                        else if (msg.Command.StartsWith("MOUSE_TRACKING_DISABLE"))
                         {
                             app.CustomDispatcher.Invoke(() =>
                             {
                                 app.MouseTrackingDisable();
                             });
                         }
-                        else if (msg.StartsWith("MOUSE_TRACKING_ENABLE"))
+                        else if (msg.Command.StartsWith("MOUSE_TRACKING_ENABLE"))
                         {
                             app.CustomDispatcher.Invoke(() =>
                             {
                                 app.MouseTrackingEnable();
                             });
                         }
-                        else if (msg.StartsWith("DRIFT_COMPENSATION"))
+                        else if (msg.Command.StartsWith("SET_TAG"))
+                        {
+                            app.CustomDispatcher.Invoke(() =>
+                            {
+                                if ( msg.Value != null)
+                                {
+                                    app.Tag = msg.Value;
+                                }
+                            });
+                        }
+                        else if (msg.Command.StartsWith("DRIFT_COMPENSATION"))
                         {
                             bool res = await app.CustomDispatcher.Invoke(() =>
                             {
@@ -351,14 +380,14 @@ namespace GazeToMouse
                             }
                             sw.Flush();
                         }
-                        else if (msg.StartsWith("RESET_DRIFT_COMPENSATION"))
+                        else if (msg.Command.StartsWith("RESET_DRIFT_COMPENSATION"))
                         {
                             app.CustomDispatcher.Invoke(() =>
                             {
                                 app.ResetDriftCompensation();
                             });
                         }
-                        else if (msg.StartsWith("CUSTOM_CALIBRATE"))
+                        else if (msg.Command.StartsWith("CUSTOM_CALIBRATE"))
                         {
                             bool res = await app.CustomDispatcher.Invoke(() =>
                             {
@@ -491,7 +520,7 @@ namespace GazeToMouse
                 Current.Shutdown();
             }
 
-            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}GazeToMouse.exe\" {String.Join(" ", e.Args)}");
+            _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}Gaze.exe\" {String.Join(" ", e.Args)}");
         }
 
         /// <summary>
@@ -558,7 +587,7 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (_config != null && _config.Config.DataLogWriteOutput)
             {
-                string[] formatted_values = data.Prepare(_config.Config, ref _delta);
+                string[] formatted_values = data.Prepare(_config.Config, this.Tag, ref _delta);
                 if (_isRecording)
                 {
                     _config.WriteToGazeOutput(formatted_values);

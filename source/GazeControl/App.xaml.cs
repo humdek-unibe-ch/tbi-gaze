@@ -14,6 +14,7 @@ namespace GazeControl
             TrackerLogger logger = new TrackerLogger(null);
 
             string? command = null;
+            string? value = null;
             for (int i = 0; i < e.Args.Length; i++)
             {
                 if (e.Args[i].StartsWith("/"))
@@ -23,6 +24,10 @@ namespace GazeControl
                         case "command":
                             i++;
                             command = e.Args[i];
+                            break;
+                        case "value":
+                            i++;
+                            value = e.Args[i];
                             break;
                     }
                 }
@@ -35,10 +40,11 @@ namespace GazeControl
                 case "MOUSE_TRACKING_DISABLE":
                 case "MOUSE_TRACKING_ENABLE":
                 case "RESET_DRIFT_COMPENSATION":
+                case "SET_TAG":
                 case "TERMINATE":
                     try
                     {
-                        NamedPipeClient.SendSignal(command, logger);
+                        NamedPipeClient.SendSignal(command, value, logger);
                     }
                     catch (Exception error)
                     {
@@ -49,7 +55,7 @@ namespace GazeControl
                 case "CUSTOM_CALIBRATE":
                     try
                     {
-                        NamedPipeClient.SendRequest(command, logger);
+                        NamedPipeClient.SendRequest(command, value, logger);
                     }
                     catch (Exception error)
                     {

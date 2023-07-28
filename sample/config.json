@@ -116,6 +116,8 @@
   //  - 46: the pupil diameter of the right eyes (mm)
   //  - 47: flag indicating whether the pupil diameter is valid
 
+  //  - 48: an arbitrary tag to annotate the data sample
+
   // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
   // "DataLogColumnOrder": "",
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
@@ -177,7 +179,9 @@
     "right_gazeOrigin3d_isValid",
     "right_gazeDistance",
     "right_pupilDiameter",
-    "right_pupilDiameter_isValid"
+    "right_pupilDiameter_isValid",
+
+    "tag"
   ],
 
   // Number of maximal allowed output data files in the output path. Oldest files are deleted first. To

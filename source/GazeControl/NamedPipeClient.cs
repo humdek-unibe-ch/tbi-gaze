@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO.Pipes;
 using System.IO;
-using System.Text;
+using GazeUtilityLibrary;
+using Newtonsoft.Json;
+using GazeUtilityLibrary.DataStructs;
 
-namespace GazeUtilityLibrary
+namespace GazeControl
 {
     public static class NamedPipeClient
     {
@@ -11,7 +13,7 @@ namespace GazeUtilityLibrary
         /// Sends a signal through the named gaze pipe.
         /// </summary>
         /// <param name="signal">The signal to be sent.</param>
-        public static void SendSignal(string signal, TrackerLogger logger)
+        public static void SendSignal(string signal, string? value, TrackerLogger logger)
         {
             string pipeName = "tobii_gaze";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
@@ -32,7 +34,7 @@ namespace GazeUtilityLibrary
                 using (StreamWriter sw = new StreamWriter(pipeClient))
                 {
                     logger.Info($"Sending {signal} signal to pipe {pipeName}");
-                    sw.WriteLine(signal);
+                    sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, value)));
                 }
             }
         }
@@ -41,7 +43,7 @@ namespace GazeUtilityLibrary
         /// Sends a signal through the named gaze pipe and awaits a reply.
         /// </summary>
         /// <param name="signal">The request to be sent.</param>
-        public static void SendRequest(string signal, TrackerLogger logger)
+        public static void SendRequest(string signal, string? value, TrackerLogger logger)
         {
             string pipeName = "tobii_gaze";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(pipeName))
@@ -62,7 +64,7 @@ namespace GazeUtilityLibrary
                 logger.Debug($"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
 
                 logger.Info($"Sending {signal} request to pipe {pipeName}");
-                sw.WriteLine(signal);
+                sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, value)));
                 sw.Flush();
 
                 logger.Debug($"Awaiting {signal} reply from {pipeName}");
