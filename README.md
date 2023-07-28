@@ -33,6 +33,7 @@ The package contains the following executables:
     - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
     - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
     - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
+    - `SET_TAG <TAG>` sets a custom tag `<TAG>` which will be added to each data sample in the output file.
 - **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
   It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
   The subject might end up with a hidden mouse pointer.
