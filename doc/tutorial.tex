@@ -438,8 +438,8 @@ This coordinate system is called \emph{Active Display Coordinate System (ADCS)} 
 
 By default, the system is configured to log all available data points.
 However, this can easily be changed through the parameter \texttt{"DataLogColumnOrder"}.
-For example, to only store a minimalistic set of data points use the value \texttt{"\{0\}\textbackslash t\{3\}\textbackslash t\{4\}"}.
-This will only store the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 3 and 4, respectively).
+For example, to only store a minimalistic set of data points use the value \texttt{"\{0\}\textbackslash t\{5\}\textbackslash t\{6\}"}.
+This will only store the timestamp of when the gaze point was captured by the eye tracker (data field number 0) and the x and y coordinates of the gaze point (data field numbers 5 and 6, respectively).
 This produces an output file that is similar to the following:
 \lstset{columns=flexible}
 \lstset{keepspaces=true}
@@ -480,24 +480,21 @@ When using the empty string, all possible data fields are logged:
 The comments above the parameter \texttt{"DataLogColumnOrder"} in the configuration file (see Listing~\ref{lst.config}) provide a short description for each available data field.
 In the following some further information is provided.
 
-The following five data field types with individual data fields are provided:
+The following data field types with individual data fields are provided:
 \begin{enumerate}
-    \item timestamps indicating when the data was sampled by the eye tracker (field number: 0)
+    \item timestamps indicating when the data was sampled by the eye tracker
+    \item an arbitrary tag to annotate each data sample
     \item 2D gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
         \begin{description}
             \item[Mouse Tracker] \hfill
                 \begin{itemize}
-                    \item the x and y coordinates of the mouse pointer\\
-                        (field numbers: 3 and 4)
+                    \item the x and y coordinates of the mouse pointer
                 \end{itemize}
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item raw x and y coordinates of the left and the right eye\\
-                        (field numbers: 20, 21, 34, and 35)
-                    \item the drift compensated x and y coordinates which are computed by the drift compensation process using the I-DT algorithm for fixation detection and then comparing the averaged gaze samples to an oracle gaze to computing the drift of the gaze\\
-                        (field numbers: 1 and 2)
-                    \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
-                        (field numbers: 3 and 4)
+                    \item raw x and y coordinates of the left and the right eye
+                    \item the drift compensated x and y coordinates which are computed by the drift compensation process using the I-DT algorithm for fixation detection and then comparing the averaged gaze samples to an oracle gaze to computing the drift of the gaze
+                    \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}
 \begin{equation}
     \label{eq.average}
     \text{val} =
@@ -515,12 +512,9 @@ The following five data field types with individual data fields are provided:
             \item[Mouse Tracker] not applicable
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item raw x, y, and z coordinates of the left and the right eye\\
-                        (field numbers: 23, 24, 25, 37, 38, and 39)
-                    \item the drift compensated x, y, and z coordinates which are computed by the drift compensation process using the I-DT algorithm for fixation detection and then comparing the averaged gaze samples to an oracle gaze to computing the drift of the gaze\\
-                        (field numbers: 6, 7, and 8)
-                    \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
-                        (field numbers: 9, 10, and 11)
+                    \item raw x, y, and z coordinates of the left and the right eye
+                    \item the drift compensated x, y, and z coordinates which are computed by the drift compensation process using the I-DT algorithm for fixation detection and then comparing the averaged gaze samples to an oracle gaze to computing the drift of the gaze
+                    \item the average x and y coordinates which are computed from raw data as defined by Equation~\ref{eq.average}
                 \end{itemize}
         \end{description}
     \item gaze origin UCS coordinates (see Figure~\ref{fig.ucs}) in millimetres
@@ -528,18 +522,14 @@ The following five data field types with individual data fields are provided:
             \item[Mouse Tracker] not applicable
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item raw x, y, and z coordinates of the left and the right eye\\
-                        (field numbers: 27, 28, 29, 41, 42, and 43)
-                    \item the average x, y, and z coordinates which are computed from raw data as defined by Equation~\ref{eq.average}\\
-                        (field numbers: 13, 14, and 15)
-                    \item the distance from the gaze origin to the left and the right gaze point, respectively which are computed from raw data as defined by Equation~\ref{eq.dist}\\
-                        (field numbers: 31 and 45)
+                    \item raw x, y, and z coordinates of the left and the right eye
+                    \item the average x, y, and z coordinates which are computed from raw data as defined by Equation~\ref{eq.average}
+                    \item the distance from the gaze origin to the left and the right gaze point, respectively which are computed from raw data as defined by Equation~\ref{eq.dist}
 \begin{equation}
     \label{eq.dist}
     \text{dist} = \sqrt{x^2 + y^2 + z^2}
 \end{equation}
-                    \item the average distance which is computed from the distance of the left and the right eye as defined by Equation~\ref{eq.average}\\
-                        (field number: 17)
+                    \item the average distance which is computed from the distance of the left and the right eye as defined by Equation~\ref{eq.average}
                 \end{itemize}
         \end{description}
     \item pupil diameters in millimetres
@@ -547,10 +537,8 @@ The following five data field types with individual data fields are provided:
             \item[Mouse Tracker] not applicable
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item raw diameters of the left and the right eye\\
-                        (field numbers: 32 and 46)
-                    \item the average diameter which is computed from raw data as defined by Equation~\ref{eq.average}\\
-                        (field number: 18)
+                    \item raw diameters of the left and the right eye
+                    \item the average diameter which is computed from raw data as defined by Equation~\ref{eq.average}
                 \end{itemize}
         \end{description}
     \item data validity indicators as true or false
@@ -558,8 +546,7 @@ The following five data field types with individual data fields are provided:
             \item[Mouse Tracker] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for combined values, the left and the right eye, respectively\\
-                        (field numbers: 5, 12, 16, 19, 22, 26, 30, 33, 36, 40, 44, and 47)
+                    \item separate values that indicate whether gaze points, gaze origins, and pupil diameters are valid for combined values, the left and the right eye, respectively
                 \end{itemize}
         \end{description}
 \end{enumerate}
@@ -625,8 +612,7 @@ The following three data field types with individual data fields are provided:
             \item[Mouse Tracker] not applicable
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item x and y coordinates of the calibration point\\
-                        (field numbers: 0 and 1)
+                    \item x and y coordinates of the calibration point
                 \end{itemize}
         \end{description}
     \item gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
@@ -634,8 +620,7 @@ The following three data field types with individual data fields are provided:
             \item[Mouse Tracker] not applicable
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item x and y coordinates of the gaze point of the left and right eye\\
-                        (field numbers: 2, 3, 5, and 6)
+                    \item x and y coordinates of the gaze point of the left and right eye
                 \end{itemize}
         \end{description}
     \item data validity indicators as either \texttt{ValidAndUsed}, \texttt{ValidAndUnused}, and \texttt{Invalid}
@@ -643,8 +628,7 @@ The following three data field types with individual data fields are provided:
             \item[Mouse Tracker] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
-                    \item separate values that indicate whether gaze points are valid for the left and the right eye, respectively\\
-                        (field numbers: 4 and 7)
+                    \item separate values that indicate whether gaze points are valid for the left and the right eye, respectively
                 \end{itemize}
         \end{description}
 \end{enumerate}
