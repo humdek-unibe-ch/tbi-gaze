@@ -8,6 +8,8 @@ namespace GazeUtilityLibrary.DataStructs
     public enum GazeOutputValue
     {
         DataTimeStamp = 0, // timestamp of the gaze data item (uses ValueFormat.TimeStamp)
+        DataTimeStampRelative,
+        Tag,
 
         CombinedGazePoint2dCompensatedX,
         CombinedGazePoint2dCompensatedY,
@@ -57,9 +59,7 @@ namespace GazeUtilityLibrary.DataStructs
         RightGazeOrigin3dIsValid,
         RightGazeDistance,
         RightPupilDiameter,
-        RightPupilDiameterIsValid,
-
-        Tag
+        RightPupilDiameterIsValid
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ namespace GazeUtilityLibrary.DataStructs
         /// </summary>
         /// <param name="data">The data.</param>
         /// <returns>a string containing the gaze data value if the value is not null, the empty string otherwise</returns>
-        static public string GetValueString(bool? data)
+        static public string FormatBoolean(bool? data)
         {
             return data == null ? "" : ((bool)data).ToString();
         }
@@ -97,7 +97,7 @@ namespace GazeUtilityLibrary.DataStructs
         /// <returns>
         /// a string containing the gaze data value if the value is not null, the empty string otherwise
         /// </returns>
-        static public string GetValueString(double? data, string format = "")
+        static public string FormatDouble(double? data, string format = "")
         {
             return data == null ? "" : ((double)data).ToString(format);
         }
@@ -110,15 +110,9 @@ namespace GazeUtilityLibrary.DataStructs
         /// <returns>
         /// a string containing the timestamp 
         /// </returns>
-        static public string GetValueString(TimeSpan ts, string format, ref TimeSpan? delta)
+        static public string FormatTimestamp(TimeSpan ts, string format)
         {
-            TimeSpan res = ts;
-            if (delta == null)
-            {
-                delta = res - DateTime.Now.TimeOfDay;
-            }
-            res -= (TimeSpan)delta;
-            return res.ToString(format);
+            return ts.ToString(format);
         }
     }
 }

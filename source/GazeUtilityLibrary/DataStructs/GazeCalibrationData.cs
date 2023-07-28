@@ -63,14 +63,14 @@ namespace GazeUtilityLibrary.DataStructs
         {
             string[] formattedValues = new string[Enum.GetNames(typeof(CalibrationOutputValue)).Length];
 
-            formattedValues[(int)CalibrationOutputValue.XCoord] = GazeDataConverter.GetValueString(_xCoord, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)CalibrationOutputValue.YCoord] = GazeDataConverter.GetValueString(_yCoord, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)CalibrationOutputValue.XCoordLeft] = GazeDataConverter.GetValueString(_xCoordLeft, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)CalibrationOutputValue.YCoordLeft] = GazeDataConverter.GetValueString(_yCoordLeft, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)CalibrationOutputValue.ValidCoordLeft] = GazeDataConverter.GetValueString(_validityLeft);
-            formattedValues[(int)CalibrationOutputValue.XCoordRight] = GazeDataConverter.GetValueString(_xCoordRight, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)CalibrationOutputValue.YCoordRight] = GazeDataConverter.GetValueString(_yCoordRight, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)CalibrationOutputValue.ValidCoordRight] = GazeDataConverter.GetValueString(_validityRight);
+            formattedValues[(int)CalibrationOutputValue.XCoord] = GazeDataConverter.FormatDouble(_xCoord, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.YCoord] = GazeDataConverter.FormatDouble(_yCoord, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.XCoordLeft] = GazeDataConverter.FormatDouble(_xCoordLeft, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.YCoordLeft] = GazeDataConverter.FormatDouble(_yCoordLeft, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.ValidCoordLeft] = GazeDataConverter.FormatBoolean(_validityLeft);
+            formattedValues[(int)CalibrationOutputValue.XCoordRight] = GazeDataConverter.FormatDouble(_xCoordRight, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.YCoordRight] = GazeDataConverter.FormatDouble(_yCoordRight, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)CalibrationOutputValue.ValidCoordRight] = GazeDataConverter.FormatBoolean(_validityRight);
 
             return formattedValues;
         }

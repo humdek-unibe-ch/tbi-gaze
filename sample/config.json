@@ -65,58 +65,58 @@
   // replaced by the following values
 
   //  - 0: timestamp of the gaze data item (uses DataLogFormatTimeStamp)
+  //  - 1: relative timestamp of the gaze data item (uses DataLogFormatTimeStamp)
+  //  - 2: an arbitrary tag to annotate the data sample
 
-  //  - 1: x-coordinate of the drift compensated combined 2d gaze point (normalized value)
-  //  - 2: y-coordinate of the drift compensated combined 2d gaze point (normalized value)
-  //  - 3: x-coordinate of the raw combined 2d gaze point (normalized value)
-  //  - 4: y-coordinate of the raw combined 2d gaze point (normalized value)
-  //  - 5: flag indicating whether the combined 2d gaze point values are valid
-  //  - 6: x-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
-  //  - 7: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
-  //  - 8: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
-  //  - 9: x-coordinate of the raw combined 3d gaze point (mm in UCS)
-  //  - 10: y-coordinate of the raw combined 3d gaze point (mm in UCS)
-  //  - 11: z-coordinate of the raw combined 3d gaze point (mm in UCS)
-  //  - 12: flag indicating whether the combined 3d gaze point values are valid
-  //  - 13: x-coordinate of the combined 3d gaze origin (mm in UCS)
-  //  - 14: y-coordinate of the combined 3d gaze origin (mm in UCS)
-  //  - 15: z-coordinate of the combined 3d gaze origin (mm in UCS)
-  //  - 16: flag indicating whether the combined 3d gaze origin values are valid
-  //  - 17: the distance of the gaze origin to the gaze point (mm)
-  //  - 18: the average pupil diameter of both eyes (mm)
-  //  - 19: flag indicating whether the averaged pupil diameter is valid
+  //  - 3: x-coordinate of the drift compensated combined 2d gaze point (normalized value)
+  //  - 4: y-coordinate of the drift compensated combined 2d gaze point (normalized value)
+  //  - 5: x-coordinate of the raw combined 2d gaze point (normalized value)
+  //  - 6: y-coordinate of the raw combined 2d gaze point (normalized value)
+  //  - 7: flag indicating whether the combined 2d gaze point values are valid
+  //  - 8: x-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
+  //  - 9: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
+  //  - 10: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
+  //  - 11: x-coordinate of the raw combined 3d gaze point (mm in UCS)
+  //  - 12: y-coordinate of the raw combined 3d gaze point (mm in UCS)
+  //  - 13: z-coordinate of the raw combined 3d gaze point (mm in UCS)
+  //  - 14: flag indicating whether the combined 3d gaze point values are valid
+  //  - 15: x-coordinate of the combined 3d gaze origin (mm in UCS)
+  //  - 16: y-coordinate of the combined 3d gaze origin (mm in UCS)
+  //  - 17: z-coordinate of the combined 3d gaze origin (mm in UCS)
+  //  - 18: flag indicating whether the combined 3d gaze origin values are valid
+  //  - 19: the distance of the gaze origin to the gaze point (mm)
+  //  - 20: the average pupil diameter of both eyes (mm)
+  //  - 21: flag indicating whether the averaged pupil diameter is valid
 
-  //  - 20: x-coordinate of the raw left 2d gaze point (normalized value)
-  //  - 21: y-coordinate of the raw left 2d gaze point (normalized value)
-  //  - 22: flag indicating whether the left 2d gaze point values are valid
-  //  - 23: x-coordinate of the raw left 3d gaze point (mm in UCS)
-  //  - 24: y-coordinate of the raw left 3d gaze point (mm in UCS)
-  //  - 25: z-coordinate of the raw left 3d gaze point (mm in UCS)
-  //  - 26: flag indicating whether the left 3d gaze point values are valid
-  //  - 27: x-coordinate of the left 3d gaze origin (mm in UCS)
-  //  - 28: y-coordinate of the left 3d gaze origin (mm in UCS)
-  //  - 29: z-coordinate of the left 3d gaze origin (mm in UCS)
-  //  - 30: flag indicating whether the left 3d gaze origin values are valid
-  //  - 31: the distance of the gaze origin to the gaze point (mm)
-  //  - 32: the pupil diameter of the left eyes (mm)
-  //  - 33: flag indicating whether the pupil diameter is valid
+  //  - 22: x-coordinate of the raw left 2d gaze point (normalized value)
+  //  - 23: y-coordinate of the raw left 2d gaze point (normalized value)
+  //  - 24: flag indicating whether the left 2d gaze point values are valid
+  //  - 25: x-coordinate of the raw left 3d gaze point (mm in UCS)
+  //  - 26: y-coordinate of the raw left 3d gaze point (mm in UCS)
+  //  - 27: z-coordinate of the raw left 3d gaze point (mm in UCS)
+  //  - 28: flag indicating whether the left 3d gaze point values are valid
+  //  - 29: x-coordinate of the left 3d gaze origin (mm in UCS)
+  //  - 30: y-coordinate of the left 3d gaze origin (mm in UCS)
+  //  - 31: z-coordinate of the left 3d gaze origin (mm in UCS)
+  //  - 32: flag indicating whether the left 3d gaze origin values are valid
+  //  - 33: the distance of the left gaze origin to the gaze point (mm)
+  //  - 34: the pupil diameter of the left eyes (mm)
+  //  - 35: flag indicating whether the left pupil diameter is valid
 
-  //  - 34: x-coordinate of the raw right 2d gaze point (normalized value)
-  //  - 35: y-coordinate of the raw right 2d gaze point (normalized value)
-  //  - 36: flag indicating whether the right 2d gaze point values are valid
-  //  - 37: x-coordinate of the raw right 3d gaze point (mm in UCS)
-  //  - 38: y-coordinate of the raw right 3d gaze point (mm in UCS)
-  //  - 39: z-coordinate of the raw right 3d gaze point (mm in UCS)
-  //  - 40: flag indicating whether the right 3d gaze point values are valid
-  //  - 41: x-coordinate of the right 3d gaze origin (mm in UCS)
-  //  - 42: y-coordinate of the right 3d gaze origin (mm in UCS)
-  //  - 43: z-coordinate of the right 3d gaze origin (mm in UCS)
-  //  - 44: flag indicating whether the right 3d gaze origin values are valid
-  //  - 45: the distance of the gaze origin to the gaze point (mm)
-  //  - 46: the pupil diameter of the right eyes (mm)
-  //  - 47: flag indicating whether the pupil diameter is valid
-
-  //  - 48: an arbitrary tag to annotate the data sample
+  //  - 36: x-coordinate of the raw right 2d gaze point (normalized value)
+  //  - 37: y-coordinate of the raw right 2d gaze point (normalized value)
+  //  - 38: flag indicating whether the right 2d gaze point values are valid
+  //  - 39: x-coordinate of the raw right 3d gaze point (mm in UCS)
+  //  - 40: y-coordinate of the raw right 3d gaze point (mm in UCS)
+  //  - 41: z-coordinate of the raw right 3d gaze point (mm in UCS)
+  //  - 42: flag indicating whether the right 3d gaze point values are valid
+  //  - 43: x-coordinate of the right 3d gaze origin (mm in UCS)
+  //  - 44: y-coordinate of the right 3d gaze origin (mm in UCS)
+  //  - 45: z-coordinate of the right 3d gaze origin (mm in UCS)
+  //  - 46: flag indicating whether the right 3d gaze origin values are valid
+  //  - 47: the distance of the right gaze origin to the gaze point (mm)
+  //  - 48: the pupil diameter of the right eyes (mm)
+  //  - 49: flag indicating whether the right pupil diameter is valid
 
   // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
   // "DataLogColumnOrder": "",
@@ -130,6 +130,8 @@
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogColumnTitle": [
     "timestamp",
+    "timestamp_relative",
+    "tag",
 
     "combined_gazePoint2dCompensated_x",
     "combined_gazePoint2dCompensated_y",
@@ -179,9 +181,7 @@
     "right_gazeOrigin3d_isValid",
     "right_gazeDistance",
     "right_pupilDiameter",
-    "right_pupilDiameter_isValid",
-
-    "tag"
+    "right_pupilDiameter_isValid"
   ],
 
   // Number of maximal allowed output data files in the output path. Oldest files are deleted first. To
@@ -227,6 +227,12 @@
   // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
+
+  // Allows to define the format of the relative timestamp. Use the .NET syntax to specify the format:
+  //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+  // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
+  // This configuration value has no effect if "DataLogWriteOutput" is set to false.
+  "DataLogFormatTimeStampRelative": "ss\\.fff",
 
   // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
   // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).

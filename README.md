@@ -20,10 +20,10 @@ The package contains the following executables:
     - if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
     - memory is not freed properly.
   Instead the program **`GazeControls.exe /command TERMINATE`** should be used.
-- **`GazeControl.ext`** This program allows to interact with **`Gaze.exe`** by passing the argument `/command <COMMAND>` to the application.
+- **`GazeControl.exe`** This program allows to interact with **`Gaze.exe`** by passing the arguments `/command <COMMAND>`, `/value <VALUE>`, and `/reset` to the application.
   Passing an argument to an application can be done in command line or by crating a shortcut to the program.
   Corresponding shortcuts for all available `<COMMAND>`s are provided in the release package.
-  The following `<COMMAND>`s are available:
+  The following `<COMMAND>`s are available (use argument `/value <VALUE>` whenever a command accepts a value):
     - `CUSTOM_CALIBRATE` uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
     - `DRIFT_COMPENSATION` launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
     - `GAZE_RECORDING_DISABLE` requests **`Gaze.exe`** to stop recording gaze data.
@@ -33,7 +33,8 @@ The package contains the following executables:
     - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
     - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
     - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
-    - `SET_TAG <TAG>` sets a custom tag `<TAG>` which will be added to each data sample in the output file.
+    - `SET_TAG <TAG>` sets a custom tag `<TAG>` which will be added to each data sample in the output file (use argument `/value` to define the `<TAG>`).
+    - `RESET_START_TIME` allows to reset the relative timestamp. The relative timestamp can also be reset by passing the argument `/reset` to th eapplication with any of the above commands.
 - **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
   It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
   The subject might end up with a hidden mouse pointer.

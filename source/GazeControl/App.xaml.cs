@@ -1,5 +1,6 @@
 ﻿using GazeUtilityLibrary;
 using System;
+using System.Threading;
 using System.Windows;
 
 namespace GazeControl
@@ -15,6 +16,7 @@ namespace GazeControl
 
             string? command = null;
             string? value = null;
+            bool reset = false;
             for (int i = 0; i < e.Args.Length; i++)
             {
                 if (e.Args[i].StartsWith("/"))
@@ -29,12 +31,19 @@ namespace GazeControl
                             i++;
                             value = e.Args[i];
                             break;
+                        case "reset":
+                            reset = true;
+                            break;
+
                     }
                 }
             }
 
             switch (command)
             {
+                case "RESET_START_TIME":
+                    reset = true;
+                    goto send_signal;
                 case "GAZE_RECORDING_DISABLE":
                 case "GAZE_RECORDING_ENABLE":
                 case "MOUSE_TRACKING_DISABLE":
@@ -42,9 +51,10 @@ namespace GazeControl
                 case "RESET_DRIFT_COMPENSATION":
                 case "SET_TAG":
                 case "TERMINATE":
+                send_signal:
                     try
                     {
-                        NamedPipeClient.SendSignal(command, value, logger);
+                        NamedPipeClient.SendSignal(command, reset, value, logger);
                     }
                     catch (Exception error)
                     {
@@ -55,7 +65,7 @@ namespace GazeControl
                 case "CUSTOM_CALIBRATE":
                     try
                     {
-                        NamedPipeClient.SendRequest(command, value, logger);
+                        NamedPipeClient.SendRequest(command, reset, value, logger);
                     }
                     catch (Exception error)
                     {

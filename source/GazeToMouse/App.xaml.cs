@@ -15,6 +15,7 @@ using GazeUtilityLibrary.Tracker;
 using GazeUtilityLibrary.DataStructs;
 using Newtonsoft.Json;
 using System.Reflection;
+using System.Windows.Shapes;
 
 namespace GazeToMouse
 {
@@ -23,8 +24,24 @@ namespace GazeToMouse
     /// </summary>
     public partial class App : Application
     {
+        private object _lock = new object();
+        private TimeSpan _startTime;
+        public TimeSpan StartTime
+        {
+            get {
+                lock(_lock)
+                {
+                    return _startTime;
+                }
+            }
+            set {
+                lock (_lock)
+                {
+                    _startTime = value;
+                }
+            }
+        }
         private BaseTracker? _tracker = null;
-        private static TimeSpan? _delta = null;
         private TrackerLogger _logger;
         private MouseHider? _hider = null;
         private GazeDataError _gazeError = new GazeDataError();
@@ -43,7 +60,13 @@ namespace GazeToMouse
         private string _tag = "";
         public string Tag
         {
-            get { return _tag; }
+            get
+            {
+                lock (_tag)
+                {
+                    return _tag;
+                }
+            }
             set
             {
                 lock (_tag)
@@ -162,6 +185,7 @@ namespace GazeToMouse
         {
             _logger = new TrackerLogger(null);
             _config = new GazeConfiguration(_logger);
+            _startTime = DateTime.Now.TimeOfDay;
 
             if (!Init())
             {
@@ -320,6 +344,14 @@ namespace GazeToMouse
                         if (msg == null)
                         {
                             break;
+                        }
+
+                        if (msg.ResetStartTime == true)
+                        {
+                            app.CustomDispatcher.Invoke(() =>
+                            {
+                                app.StartTime = DateTime.Now.TimeOfDay;
+                            });
                         }
 
                         if (msg.Command.StartsWith("TERMINATE"))
@@ -588,7 +620,7 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (_config != null && _config.Config.DataLogWriteOutput)
             {
-                string[] formatted_values = data.Prepare(_config.Config, this.Tag, ref _delta);
+                string[] formatted_values = data.Prepare(_config.Config, this.Tag, this.StartTime);
                 if (_isRecording)
                 {
                     _config.WriteToGazeOutput(formatted_values);

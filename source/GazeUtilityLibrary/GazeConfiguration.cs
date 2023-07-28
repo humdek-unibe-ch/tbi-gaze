@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Windows.Media;
 
 namespace GazeUtilityLibrary
 {
@@ -369,6 +370,8 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatTimeStamp { get; set; }
         [JsonProperty(Required = Required.Default)]
+        public string DataLogFormatTimeStampRelative { get; set; }
+        [JsonProperty(Required = Required.Default)]
         public string DataLogPath { get; set; }
         [JsonProperty(Required = Required.Always)]
         public bool DataLogWriteOutput { get; set; }
@@ -407,6 +410,7 @@ namespace GazeUtilityLibrary
         {
             DataLogDisabledOnStartup = false;
             DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff";
+            DataLogFormatTimeStampRelative = "ss\\.fff";
             DataLogFormatDiameter = "0.000";
             DataLogFormatOrigin = "0.000";
             DataLogFormatNormalizedPoint = "0.000";
@@ -416,7 +420,7 @@ namespace GazeUtilityLibrary
             TobiiCalibrate = "TobiiProEyeTrackerManager.exe";
             TobiiCalibrateArguments = "--device-sn=%S --mode=usercalibration";
             DataLogColumnOrder = "";
-            for( int i = 0; i < Enum.GetNames(typeof(GazeOutputValue)).Length; i++)
+            foreach (int i in Enum.GetValues(typeof(GazeOutputValue)))
             {
                 if (i == 0)
                 {
@@ -429,6 +433,8 @@ namespace GazeUtilityLibrary
             }
             DataLogColumnTitle = new string[] {
                 "timestamp",
+                "timestamp_relative",
+                "tag",
 
                 "combined_gazePoint2dCompensated_x",
                 "combined_gazePoint2dCompensated_y",
@@ -478,9 +484,7 @@ namespace GazeUtilityLibrary
                 "right_gazeOrigin3d_isValid",
                 "right_gazeDistance",
                 "right_pupilDiameter",
-                "right_pupilDiameter_isValid",
-
-                "tag"
+                "right_pupilDiameter_isValid"
             };
             CalibrationLogColumnOrder =
                 $"{{{(int)CalibrationOutputValue.XCoord}}}\t" +

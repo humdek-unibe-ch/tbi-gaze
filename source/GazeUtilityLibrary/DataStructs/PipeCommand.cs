@@ -10,9 +10,13 @@ namespace GazeUtilityLibrary.DataStructs
         [JsonProperty(Required = Required.Default)]
         public string? Value { get; set; }
 
-        public PipeCommand(string command, string? value) {
+        [JsonProperty(Required = Required.Default)]
+        public bool? ResetStartTime { get; set; }
+
+        public PipeCommand(string command, bool reset, string? value) {
             Command = command;
             Value = value;
+            ResetStartTime = reset;
         }
     }
 }
