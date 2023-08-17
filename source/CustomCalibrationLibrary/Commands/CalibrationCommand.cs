@@ -11,7 +11,11 @@ namespace CustomCalibrationLibrary.Commands
     {
         private CalibrationEventType _eventType;
         private CalibrationModel _model;
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged
+        {
+            add { }
+            remove { }
+        }
 
         public CalibrationCommand(CalibrationModel model, CalibrationEventType eventType)
         {

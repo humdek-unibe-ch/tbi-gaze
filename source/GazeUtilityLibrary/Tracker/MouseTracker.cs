@@ -193,7 +193,7 @@ namespace GazeUtilityLibrary.Tracker
         {
             using (Process curProcess = Process.GetCurrentProcess())
             {
-                using (ProcessModule curModule = curProcess.MainModule)
+                using (ProcessModule? curModule = curProcess.MainModule)
                 {
                     IntPtr hook = SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle("user32"), 0);
                     if (hook == IntPtr.Zero) throw new System.ComponentModel.Win32Exception();
@@ -213,9 +213,12 @@ namespace GazeUtilityLibrary.Tracker
         {
             if (nCode >= 0 && (MouseMessages)wParam == MouseMessages.WM_MOUSEMOVE)
             {
-                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                GazeData gaze_data = new GazeData(TimeSpan.FromMilliseconds(hookStruct.time), new Vector2(hookStruct.pt.x, hookStruct.pt.y), true);
-                OnGazeDataReceived(gaze_data);
+                MSLLHOOKSTRUCT? hookStruct = (MSLLHOOKSTRUCT?)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT?));
+                if (hookStruct != null)
+                {
+                    GazeData gaze_data = new GazeData(TimeSpan.FromMilliseconds(hookStruct?.time ?? 0), new Vector2(hookStruct?.pt.x ?? 0, hookStruct?.pt.y ?? 0), true);
+                    OnGazeDataReceived(gaze_data);
+                }
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }

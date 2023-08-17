@@ -47,6 +47,7 @@ namespace Tobii.Research.Addons
 
         internal CalibrationValidationResult()
         {
+            Points = new List<CalibrationValidationPoint>();
             UpdateResult(new List<CalibrationValidationPoint>(), float.NaN, float.NaN, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
@@ -205,11 +206,11 @@ namespace Tobii.Research.Addons
         }
 
         private IEyeTracker _eyeTracker;
-        private Queue<GazeDataEventArgs> _data;
-        private List<KeyValuePair<NormalizedPoint2D, Queue<GazeDataEventArgs>>> _dataMap;
+        private Queue<GazeDataEventArgs>? _data = null;
+        private List<KeyValuePair<NormalizedPoint2D, Queue<GazeDataEventArgs>>>? _dataMap = null;
         private TimeKeeper _timeKeeper;
         private CalibrationValidationResult _result;
-        private NormalizedPoint2D _currentPoint;
+        private NormalizedPoint2D? _currentPoint = null;
         private readonly object _lock = new object();
         private ValidationState _state;
         private int _sampleCount;
@@ -381,6 +382,11 @@ namespace Tobii.Research.Addons
                 throw new InvalidOperationException("Compute called while collecting data");
             }
 
+            if (_dataMap == null)
+            {
+                throw new ArgumentException("Attempt to compute non-collected point.");
+            }
+
             var points = new List<CalibrationValidationPoint>();
 
             foreach (var kv in _dataMap)
@@ -471,7 +477,7 @@ namespace Tobii.Research.Addons
             return _result;
         }
 
-        private void OnGazeDataReceived(object sender, GazeDataEventArgs e)
+        private void OnGazeDataReceived(object? sender, GazeDataEventArgs e)
         {
             switch (State)
             {
@@ -525,6 +531,10 @@ namespace Tobii.Research.Addons
 
         private void SaveDataForPoint()
         {
+            if (_dataMap == null || _currentPoint == null)
+            {
+                throw new ArgumentException("Attempt to save non-collected point.");
+            }
             _dataMap.Add(new KeyValuePair<NormalizedPoint2D, Queue<GazeDataEventArgs>>(_currentPoint, _data ?? new Queue<GazeDataEventArgs>()));
             _data = null;
             _state = ValidationState.NotCollectingData;

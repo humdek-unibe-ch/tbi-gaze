@@ -10,7 +10,11 @@ namespace CustomCalibrationLibrary.Commands
     internal class GazeVisibilityCommand : ICommand
     {
         private CalibrationResultViewModel _model;
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged
+        {
+            add { }
+            remove { }
+        }
 
         public GazeVisibilityCommand(CalibrationResultViewModel model)
         {
