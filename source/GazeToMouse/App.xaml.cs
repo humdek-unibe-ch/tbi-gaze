@@ -75,6 +75,18 @@ namespace GazeToMouse
                 }
             }
         }
+        private int _trialId = 0;
+        public int TrialId
+        {
+            get
+            {
+                return _trialId;
+            }
+            set
+            {
+                Interlocked.Exchange(ref _trialId, value);
+            }
+        }
         private string? _outputPath = null;
 
         [DllImport("User32.dll")]
@@ -396,6 +408,16 @@ namespace GazeToMouse
                                 }
                             });
                         }
+                        else if (msg.Command.StartsWith("SET_TRIAL_ID"))
+                        {
+                            app.CustomDispatcher.Invoke(() =>
+                            {
+                                if (msg.Value != null)
+                                {
+                                    app.TrialId = int.Parse(msg.Value);
+                                }
+                            });
+                        }
                         else if (msg.Command.StartsWith("DRIFT_COMPENSATION"))
                         {
                             bool res = await app.CustomDispatcher.Invoke(() =>
@@ -620,7 +642,7 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (_config != null && _config.Config.DataLogWriteOutput)
             {
-                string[] formatted_values = data.Prepare(_config.Config, this.Tag, this.StartTime);
+                string[] formatted_values = data.Prepare(_config.Config, this.TrialId, this.Tag, this.StartTime);
                 if (_isRecording)
                 {
                     _config.WriteToGazeOutput(formatted_values);

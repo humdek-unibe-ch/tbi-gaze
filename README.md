@@ -34,6 +34,7 @@ The package contains the following executables:
     - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
     - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
     - `SET_TAG <TAG>` sets a custom tag `<TAG>` which will be added to each data sample in the output file (use argument `/value` to define the `<TAG>`).
+    - `SET_TRIAL_ID <ID>` sets a trial ID integer number `<ID>` which will be added to each data sample in the output file (use argument `/value` to define the `<ID>`).
     - `RESET_START_TIME` allows to reset the relative timestamp. The relative timestamp can also be reset by passing the argument `/reset` to th eapplication with any of the above commands.
 - **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
   It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.

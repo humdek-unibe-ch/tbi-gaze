@@ -66,57 +66,58 @@
 
   //  - 0: timestamp of the gaze data item (uses DataLogFormatTimeStamp)
   //  - 1: relative timestamp of the gaze data item (uses DataLogFormatTimeStamp)
-  //  - 2: an arbitrary tag to annotate the data sample
+  //  - 2: the ID of the current trial
+  //  - 3: an arbitrary tag to annotate the data sample
 
-  //  - 3: x-coordinate of the drift compensated combined 2d gaze point (normalized value)
-  //  - 4: y-coordinate of the drift compensated combined 2d gaze point (normalized value)
-  //  - 5: x-coordinate of the raw combined 2d gaze point (normalized value)
-  //  - 6: y-coordinate of the raw combined 2d gaze point (normalized value)
-  //  - 7: flag indicating whether the combined 2d gaze point values are valid
-  //  - 8: x-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
-  //  - 9: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
+  //  - 4: x-coordinate of the drift compensated combined 2d gaze point (normalized value)
+  //  - 5: y-coordinate of the drift compensated combined 2d gaze point (normalized value)
+  //  - 6: x-coordinate of the raw combined 2d gaze point (normalized value)
+  //  - 7: y-coordinate of the raw combined 2d gaze point (normalized value)
+  //  - 8: flag indicating whether the combined 2d gaze point values are valid
+  //  - 9: x-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
   //  - 10: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
-  //  - 11: x-coordinate of the raw combined 3d gaze point (mm in UCS)
-  //  - 12: y-coordinate of the raw combined 3d gaze point (mm in UCS)
-  //  - 13: z-coordinate of the raw combined 3d gaze point (mm in UCS)
-  //  - 14: flag indicating whether the combined 3d gaze point values are valid
-  //  - 15: x-coordinate of the combined 3d gaze origin (mm in UCS)
-  //  - 16: y-coordinate of the combined 3d gaze origin (mm in UCS)
-  //  - 17: z-coordinate of the combined 3d gaze origin (mm in UCS)
-  //  - 18: flag indicating whether the combined 3d gaze origin values are valid
-  //  - 19: the distance of the gaze origin to the gaze point (mm)
-  //  - 20: the average pupil diameter of both eyes (mm)
-  //  - 21: flag indicating whether the averaged pupil diameter is valid
+  //  - 11: y-coordinate of the drift compensated combined 3d gaze point (mm in UCS)
+  //  - 12: x-coordinate of the raw combined 3d gaze point (mm in UCS)
+  //  - 13: y-coordinate of the raw combined 3d gaze point (mm in UCS)
+  //  - 14: z-coordinate of the raw combined 3d gaze point (mm in UCS)
+  //  - 15: flag indicating whether the combined 3d gaze point values are valid
+  //  - 16: x-coordinate of the combined 3d gaze origin (mm in UCS)
+  //  - 17: y-coordinate of the combined 3d gaze origin (mm in UCS)
+  //  - 18: z-coordinate of the combined 3d gaze origin (mm in UCS)
+  //  - 19: flag indicating whether the combined 3d gaze origin values are valid
+  //  - 20: the distance of the gaze origin to the gaze point (mm)
+  //  - 21: the average pupil diameter of both eyes (mm)
+  //  - 22: flag indicating whether the averaged pupil diameter is valid
 
-  //  - 22: x-coordinate of the raw left 2d gaze point (normalized value)
-  //  - 23: y-coordinate of the raw left 2d gaze point (normalized value)
-  //  - 24: flag indicating whether the left 2d gaze point values are valid
-  //  - 25: x-coordinate of the raw left 3d gaze point (mm in UCS)
-  //  - 26: y-coordinate of the raw left 3d gaze point (mm in UCS)
-  //  - 27: z-coordinate of the raw left 3d gaze point (mm in UCS)
-  //  - 28: flag indicating whether the left 3d gaze point values are valid
-  //  - 29: x-coordinate of the left 3d gaze origin (mm in UCS)
-  //  - 30: y-coordinate of the left 3d gaze origin (mm in UCS)
-  //  - 31: z-coordinate of the left 3d gaze origin (mm in UCS)
-  //  - 32: flag indicating whether the left 3d gaze origin values are valid
-  //  - 33: the distance of the left gaze origin to the gaze point (mm)
-  //  - 34: the pupil diameter of the left eyes (mm)
-  //  - 35: flag indicating whether the left pupil diameter is valid
+  //  - 23: x-coordinate of the raw left 2d gaze point (normalized value)
+  //  - 24: y-coordinate of the raw left 2d gaze point (normalized value)
+  //  - 25: flag indicating whether the left 2d gaze point values are valid
+  //  - 26: x-coordinate of the raw left 3d gaze point (mm in UCS)
+  //  - 27: y-coordinate of the raw left 3d gaze point (mm in UCS)
+  //  - 28: z-coordinate of the raw left 3d gaze point (mm in UCS)
+  //  - 29: flag indicating whether the left 3d gaze point values are valid
+  //  - 30: x-coordinate of the left 3d gaze origin (mm in UCS)
+  //  - 31: y-coordinate of the left 3d gaze origin (mm in UCS)
+  //  - 32: z-coordinate of the left 3d gaze origin (mm in UCS)
+  //  - 33: flag indicating whether the left 3d gaze origin values are valid
+  //  - 34: the distance of the left gaze origin to the gaze point (mm)
+  //  - 35: the pupil diameter of the left eyes (mm)
+  //  - 36: flag indicating whether the left pupil diameter is valid
 
-  //  - 36: x-coordinate of the raw right 2d gaze point (normalized value)
-  //  - 37: y-coordinate of the raw right 2d gaze point (normalized value)
-  //  - 38: flag indicating whether the right 2d gaze point values are valid
-  //  - 39: x-coordinate of the raw right 3d gaze point (mm in UCS)
-  //  - 40: y-coordinate of the raw right 3d gaze point (mm in UCS)
-  //  - 41: z-coordinate of the raw right 3d gaze point (mm in UCS)
-  //  - 42: flag indicating whether the right 3d gaze point values are valid
-  //  - 43: x-coordinate of the right 3d gaze origin (mm in UCS)
-  //  - 44: y-coordinate of the right 3d gaze origin (mm in UCS)
-  //  - 45: z-coordinate of the right 3d gaze origin (mm in UCS)
-  //  - 46: flag indicating whether the right 3d gaze origin values are valid
-  //  - 47: the distance of the right gaze origin to the gaze point (mm)
-  //  - 48: the pupil diameter of the right eyes (mm)
-  //  - 49: flag indicating whether the right pupil diameter is valid
+  //  - 37: x-coordinate of the raw right 2d gaze point (normalized value)
+  //  - 38: y-coordinate of the raw right 2d gaze point (normalized value)
+  //  - 39: flag indicating whether the right 2d gaze point values are valid
+  //  - 40: x-coordinate of the raw right 3d gaze point (mm in UCS)
+  //  - 41: y-coordinate of the raw right 3d gaze point (mm in UCS)
+  //  - 42: z-coordinate of the raw right 3d gaze point (mm in UCS)
+  //  - 43: flag indicating whether the right 3d gaze point values are valid
+  //  - 44: x-coordinate of the right 3d gaze origin (mm in UCS)
+  //  - 45: y-coordinate of the right 3d gaze origin (mm in UCS)
+  //  - 46: z-coordinate of the right 3d gaze origin (mm in UCS)
+  //  - 47: flag indicating whether the right 3d gaze origin values are valid
+  //  - 48: the distance of the right gaze origin to the gaze point (mm)
+  //  - 49: the pupil diameter of the right eyes (mm)
+  //  - 50: flag indicating whether the right pupil diameter is valid
 
   // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
   // "DataLogColumnOrder": "",

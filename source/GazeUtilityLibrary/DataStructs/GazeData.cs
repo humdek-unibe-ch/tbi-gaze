@@ -118,10 +118,11 @@ namespace GazeUtilityLibrary.DataStructs
         /// Prepare a list of formatted gaze data values
         /// </summary>
         /// <param name="config">The gaze configuration structure</param>
+        /// <param name="trialId">The ID of the current trial.</param>
         /// <param name="tag">An arbitrary tag to associate with the data sample.</param>
         /// <param name="startTime">The system time to use toi compute the relative timestamp</param>
         /// <returns>A list of formatted values. Each index corresponds to a specific value. This allows to reorder the list according to a format string.</returns>
-        public string[] Prepare(ConfigItem config, string tag, TimeSpan startTime)
+        public string[] Prepare(ConfigItem config, int trialId, string tag, TimeSpan startTime)
         {
             string[] formattedValues = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
 
@@ -179,6 +180,7 @@ namespace GazeUtilityLibrary.DataStructs
             formattedValues[(int)GazeOutputValue.RightPupilDiameterIsValid] = GazeDataConverter.FormatBoolean(_right?.EyeData?.IsPupilDiameterValid);
 
             formattedValues[(int)GazeOutputValue.Tag] = tag;
+            formattedValues[(int)GazeOutputValue.TrialId] = trialId.ToString();
 
             return formattedValues;
         }

@@ -50,6 +50,7 @@ namespace GazeControl
                 case "MOUSE_TRACKING_ENABLE":
                 case "RESET_DRIFT_COMPENSATION":
                 case "SET_TAG":
+                case "SET_TRIAL_ID":
                 case "TERMINATE":
                 send_signal:
                     try
