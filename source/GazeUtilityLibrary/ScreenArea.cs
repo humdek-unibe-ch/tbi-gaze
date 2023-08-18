@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.IO;
+using System.Numerics;
 
 namespace GazeUtilityLibrary
 {
@@ -121,6 +123,35 @@ namespace GazeUtilityLibrary
             Vector2 point2dOffset = GetPoint2d(point3d);
             Vector2 point2d = point2dOffset - _origin;
             return new Vector2(point2d.X / _width, point2d.Y / _height);
+        }
+
+        /// <summary>
+        /// Dump the four screen corner points to a csv file
+        /// </summary>
+        /// <param name="path">The folder to store the file.</param>
+        /// <param name="prefix">The file prefix.</param>
+        /// <returns></returns>
+        public bool Dump(string path, string prefix)
+        {
+            path += $"/{prefix}screenArea.csv";
+            StreamWriter? sw = null;
+            try
+            {
+                sw = new StreamWriter($"{path}");
+                FileInfo fi = new FileInfo($"{path}");
+            }
+            catch
+            {
+                return false;
+            }
+
+            sw?.WriteLine("top_left, top_right, bottom_left, bottom_right");
+            sw?.WriteLine($"{_topLeft.X}, {_topRight.X}, {_bottomLeft.X}, {_bottomRight.X}");
+            sw?.WriteLine($"{_topLeft.Y}, {_topRight.Y}, {_bottomLeft.Y}, {_bottomRight.Y}");
+            sw?.WriteLine($"{_topLeft.Z}, {_topRight.Z}, {_bottomLeft.Z}, {_bottomRight.Z}");
+
+            sw?.Close();
+            return true;
         }
     }
 }

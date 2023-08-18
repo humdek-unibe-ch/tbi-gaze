@@ -52,6 +52,7 @@ namespace GazeUtilityLibrary.Tracker
         /// The scrren area structure holding the metrics of the screen in 3d space.
         /// </summary>
         protected ScreenArea? screenArea = null;
+        public ScreenArea? ScreenArea { get { return screenArea; } }
         /// <summary>
         /// The gaze configuration item
         /// </summary>

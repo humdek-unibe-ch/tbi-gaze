@@ -1,6 +1,8 @@
 # v3.2.1
 ### New Features
 - Add pipe command `SET_TRIAL_ID` to allow to annotate data samples.
+- On multi-screen setups start calibration with a screen selection page.
+- Add Screen Area coordinates to the dumped configuration file.
 
 ### Improvements
 - Fix compiler warnings.

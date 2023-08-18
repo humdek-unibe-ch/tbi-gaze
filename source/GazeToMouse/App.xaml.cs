@@ -299,6 +299,11 @@ namespace GazeToMouse
                 return false;
             }
 
+            if (_tracker.ScreenArea != null)
+            {
+                _config.Config.ScreenArea = new ConfigScreenArea(_tracker.ScreenArea);
+            }
+
             _tracker.GazeDataReceived += OnGazeDataReceived;
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;

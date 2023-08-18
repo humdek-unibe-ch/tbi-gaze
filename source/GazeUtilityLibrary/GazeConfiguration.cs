@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Windows.Media;
 
 namespace GazeUtilityLibrary
 {
@@ -195,9 +194,9 @@ namespace GazeUtilityLibrary
             string fileName = $"{_starttime}_{filePostfix}";
 
             // create gaze data file
-            if (_config.DataLogPath == "")
+            if (outputPath != null)
             {
-                _config.DataLogPath = outputPath ?? Directory.GetCurrentDirectory();
+                _config.DataLogPath = outputPath;
             }
 
             string outputFilePath = $"{_config.DataLogPath}\\{fileName}";
@@ -344,6 +343,46 @@ namespace GazeUtilityLibrary
         }
     }
 
+    public class ConfigScreenArea
+    {
+        [JsonProperty(Required = Required.Always)]
+        public double Width { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public double Height { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public double[] Center { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public double[] TopLeft { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public double[] TopRight { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public double[] BottomLeft { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public double[] BottomRight { get; set; }
+
+        public ConfigScreenArea()
+        {
+            Width = 0;
+            Height = 0;
+            Center = new double[3] { 0, 0, 0 };
+            TopLeft = new double[3] { 0, 0, 0 };
+            TopRight = new double[3] { 0, 0, 0 };
+            BottomLeft = new double[3] { 0, 0, 0 };
+            BottomRight = new double[3] { 0, 0, 0 };
+        }
+
+        public ConfigScreenArea(ScreenArea screenArea)
+        {
+            Width = screenArea.Width;
+            Height = screenArea.Height;
+            Center = new double[3] { screenArea.Center.X, screenArea.Center.Y, screenArea.Center.Z };
+            TopLeft = new double[3] { screenArea.TopLeft.X, screenArea.TopLeft.Y, screenArea.TopLeft.Z };
+            TopRight = new double[3] { screenArea.TopRight.X, screenArea.TopRight.Y, screenArea.TopRight.Z };
+            BottomLeft = new double[3] { screenArea.BottomLeft.X, screenArea.BottomLeft.Y, screenArea.BottomLeft.Z };
+            BottomRight = new double[3] { screenArea.BottomRight.X, screenArea.BottomRight.Y, screenArea.BottomRight.Z };
+        }
+    }
+
     /// <summary>
     /// configuration file class
     /// </summary>
@@ -405,6 +444,8 @@ namespace GazeUtilityLibrary
         public string TobiiCalibrate { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string TobiiCalibrateArguments { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public ConfigScreenArea ScreenArea { get; set; }
 
         public ConfigItem()
         {
@@ -524,6 +565,7 @@ namespace GazeUtilityLibrary
             MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur";
             ReadyTimer = 5000;
             TrackerDevice = 0;
+            ScreenArea = new ConfigScreenArea();
         }
     }
 
@@ -570,6 +612,9 @@ namespace GazeUtilityLibrary
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
                     if (item?.CalibrationLogColumnOrder == "")
                         item.CalibrationLogColumnOrder = item_default.CalibrationLogColumnOrder;
+                    if (item?.DataLogPath == "")
+                        item.DataLogPath = item_default.DataLogPath;
+
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();
                 }
