@@ -14,6 +14,7 @@ namespace CustomCalibrationLibrary.Models
     /// </summary>
     public enum CalibrationEventType
     {
+        Init,
         Start,
         Accept,
         Restart,
@@ -25,6 +26,7 @@ namespace CustomCalibrationLibrary.Models
     /// </summary>
     public enum CalibrationStatus
     {
+        ScreenSelection,
         HeadPosition,
         DataCollection,
         Computing,

@@ -15,7 +15,8 @@ using GazeUtilityLibrary.Tracker;
 using GazeUtilityLibrary.DataStructs;
 using Newtonsoft.Json;
 using System.Reflection;
-using System.Windows.Shapes;
+using WpfScreenHelper;
+using System.Linq;
 
 namespace GazeToMouse
 {
@@ -177,7 +178,14 @@ namespace GazeToMouse
             Current.Dispatcher.Invoke(() => {
                 _calibrationWindow.Show();
             });
-            _calibrationModel.Status = CalibrationStatus.HeadPosition;
+            if (Screen.AllScreens.Count() > 1)
+            {
+                _calibrationModel.Status = CalibrationStatus.ScreenSelection;
+            }
+            else
+            {
+                _calibrationModel.Status = CalibrationStatus.HeadPosition;
+            }
             _tracker.UserPositionDataReceived += OnUserPositionGuideReceived;
             _isCalibrationOn = true;
             bool res = await _processCompletion.Task;
@@ -211,7 +219,7 @@ namespace GazeToMouse
 
             _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;
-            _calibrationWindow.Content = new CalibrationFrame(_calibrationModel);
+            _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
         }
 
         /// <summary>
@@ -228,13 +236,13 @@ namespace GazeToMouse
             _fixationWindow.WindowStyle = WindowStyle.None;
             _fixationWindow.WindowState = WindowState.Maximized;
             _fixationWindow.ResizeMode = ResizeMode.NoResize;
-            _fixationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            _fixationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _fixationWindow.Title = "FixationWindow";
 
             _calibrationWindow.WindowStyle = WindowStyle.None;
             _calibrationWindow.WindowState = WindowState.Maximized;
             _calibrationWindow.ResizeMode = ResizeMode.NoResize;
-            _calibrationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            _calibrationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _calibrationWindow.Title = "CalibrationWindow";
 
             // hide the mouse cursor on calibration window
@@ -608,6 +616,9 @@ namespace GazeToMouse
             _logger.Info($"Received calibration user event {type.ToString()}");
             switch (type)
             {
+                case CalibrationEventType.Init:
+                    _calibrationModel.Status = CalibrationStatus.HeadPosition;
+                    break;
                 case CalibrationEventType.Accept:
                     _processCompletion.SetResult(true);
                     break;

@@ -1,3 +1,11 @@
+# v3.2.1
+### New Features
+- Add pipe command `SET_TRIAL_ID` to allow to annotate data samples.
+
+### Improvements
+- Fix compiler warnings.
+- Extend helper scripts. 
+
 # v3.2.0
 ### New Features
 - Add relative timestamp to output data.

@@ -1,6 +1,7 @@
 ﻿using CustomCalibrationLibrary.Models;
 using System;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
@@ -12,10 +13,12 @@ namespace CustomCalibrationLibrary.Views
     public partial class CalibrationFrame : Frame
     {
         private CalibrationModel _model;
+        private Window _window;
         private Computing _computingView;
 
-        public CalibrationFrame(CalibrationModel model)
+        public CalibrationFrame(CalibrationModel model, Window window)
         {
+            _window = window;
             _computingView = new Computing();
             InitializeComponent();
             _model = model;
@@ -31,6 +34,9 @@ namespace CustomCalibrationLibrary.Views
             }
             switch (((CalibrationModel)sender).Status)
             {
+                case CalibrationStatus.ScreenSelection:
+                    this.Content = new ScreenSelection(_model, _window);
+                    break;
                 case CalibrationStatus.HeadPosition:
                     this.Content = new UserPositionGuide(_model);
                     break;

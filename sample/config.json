@@ -132,6 +132,7 @@
   "DataLogColumnTitle": [
     "timestamp",
     "timestamp_relative",
+    "trial_id",
     "tag",
 
     "combined_gazePoint2dCompensated_x",

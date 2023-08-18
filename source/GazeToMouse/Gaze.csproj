@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CustomCalibrationLibrary\CustomCalibrationLibrary.csproj" />
     <ProjectReference Include="..\GazeUtilityLibrary\GazeUtilityLibrary.csproj" />
   </ItemGroup>

@@ -1,4 +1,9 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Input;
+using WpfScreenHelper;
+using WpfScreenHelper.Enum;
 
 namespace CustomCalibrationLibrary.Views
 {
@@ -7,5 +12,6 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class CalibrationWindow : Window
     {
+       
     }
 }
