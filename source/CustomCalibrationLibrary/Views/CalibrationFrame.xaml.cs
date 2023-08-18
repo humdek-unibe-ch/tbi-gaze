@@ -46,8 +46,11 @@ namespace CustomCalibrationLibrary.Views
                 case CalibrationStatus.Computing:
                     this.Content = _computingView;
                     break;
-                case CalibrationStatus.DataResult:
+                case CalibrationStatus.CalibrationResult:
                     this.Content = new CalibrationResult(_model);
+                    break;
+                case CalibrationStatus.ValidationResult:
+                    this.Content = new ValidationResult(_model);
                     break;
                 case CalibrationStatus.Error:
                     this.Content = new CalibrationFailed(_model);

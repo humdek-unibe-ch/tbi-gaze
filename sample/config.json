@@ -51,6 +51,56 @@
   // items matching the pattern "CalibrationLog*" are ignored.
   "CalibrationLogWriteOutput": true,
 
+  // Allows to define the order and the delimiters between the different validation result values.
+  // The definition is of the form
+  //  {0}<delim>{1}<delim> ... <delim>{24}
+  // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
+  // replaced by the following values
+  //  - 0: The accuracy in degrees averaged over all collected points for the left eye.
+  //  - 1: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
+  //  - 2: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
+  //       points for the left eye.
+  //  - 3: The accuracy in degrees averaged over all collected points for the left eye.
+  //  - 4: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
+  //  - 5: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
+  //       points for the left eye.
+  // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+  // "ValidationLogColumnOrder": "",
+  // This configuration value has no effect if "ValidationLogWriteOutput" is set to false.
+  "ValidationLogColumnOrder": "",
+
+  // Defines the titles of the validation log value columns. A title for all possible columns must
+  // be defined. Titles for values that are removed from the "ValidationLogColumnOrder" parameter
+  // will not be logged but must still be defined here. The index of a title must correspond to the
+  // value number of the configuration parameter "ValidationLogColumnOrder".
+  // This configuration value has no effect if "ValidationLogWriteOutput" is set to false.
+  "ValidationLogColumnTitle": [
+    "left_accuracy",
+    "left_precision",
+    "left_precision_rms",
+    "right_accuracy",
+    "right_precision",
+    "right_precision_rms"
+  ],
+
+  // Define the validation points to be shown during the validation process. Each point is given as
+  // a normalize coordinate where [0, 0] is the top left corner and [1, 1] the bottom right corner of
+  // the screen. Any number of points is permitted.
+  "ValidationPoints": [
+    [ 0.7, 0.5 ],
+    [ 0.3, 0.5 ],
+    [ 0.9, 0.9 ],
+    [ 0.1, 0.9 ],
+    [ 0.5, 0.1 ],
+    [ 0.1, 0.1 ],
+    [ 0.9, 0.1 ],
+    [ 0.5, 0.9 ]
+  ],
+
+  // Defines whether gaze validation data is written to a log file. If set to false, all the configuration
+  // items matching the pattern "ValidationLog*" are ignored.
+  "ValidationLogWriteOutput": true,
+
   // Use this parameter to associate the configuration with an experiment. When "Gaze.exe" is
   // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
   // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following

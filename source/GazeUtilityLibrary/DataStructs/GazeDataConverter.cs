@@ -68,14 +68,27 @@ namespace GazeUtilityLibrary.DataStructs
     /// </summary>
     public enum CalibrationOutputValue
     {
-        XCoord, // x-coordinate of the calibration point (normalised value)
-        YCoord, // y-coordinate of the gaze calibration (normalised value)
-        XCoordLeft, // x-coordinate of the gaze point of the left eye (normalised value)
-        YCoordLeft, // y-coordinate of the gaze point of the left eye (normalised value)
-        ValidCoordLeft, // validity of the gaze data of the left eye
-        XCoordRight, // x-coordinate of the gaze point of the right eye (normalised value)
-        YCoordRight, // y-coordinate of the gaze point of the right eye (normalised value)
-        ValidCoordRight // validity of the gaze data of the right eye
+        Point2dX, // x-coordinate of the calibration point (normalised value)
+        Point2dY, // y-coordinate of the gaze calibration (normalised value)
+        LeftGazePoint2dX, // x-coordinate of the gaze point of the left eye (normalised value)
+        LeftGazePoint2dY, // y-coordinate of the gaze point of the left eye (normalised value)
+        LeftGazePoint2dIsValid, // validity of the gaze data of the left eye
+        RightGazePoint2dX, // x-coordinate of the gaze point of the right eye (normalised value)
+        RightGazePoint2dY, // y-coordinate of the gaze point of the right eye (normalised value)
+        RightGazePoint2dIsValid // validity of the gaze data of the right eye
+    }
+
+    /// <summary>
+    /// enummerates output values produced by the eyetracker
+    /// </summary>
+    public enum ValidationOutputValue
+    {
+        LeftAccuracy, // The accuracy in degrees averaged over all collected points for the left eye.
+        LeftPrecision, // The precision (standard deviation) in degrees averaged over all collected points for the left eye.
+        LeftPrecisionRMS, // The precision (root mean square of sample-to-sample error) in degrees averaged over all collected points for the left eye.
+        RightAccuracy, // The accuracy in degrees averaged over all collected points for the right eye.
+        RightPrecision, // The precision (standard deviation) in degrees averaged over all collected points for the right eye.
+        RightPrecisionRMS, // The precision (root mean square of sample-to-sample error) in degrees averaged over all collected points for the right eye.
     }
 
     static public class GazeDataConverter

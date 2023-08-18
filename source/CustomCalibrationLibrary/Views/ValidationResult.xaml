@@ -1,0 +1,60 @@
+﻿<Page x:Class="CustomCalibrationLibrary.Views.ValidationResult"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CustomCalibrationLibrary.Views"
+      xmlns:ui="http://schemas.modernwpf.com/2019"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ValidationResult">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+                <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    <Page.InputBindings>
+        <KeyBinding Command="{Binding CalibrationRestartCommand}" Key="R" />
+        <KeyBinding Command="{Binding GazeVisibilityCommand}" Key="G" />
+        <KeyBinding Command="{Binding CalibrationAcceptCommand}" Key="Space" />
+    </Page.InputBindings>
+    <Grid>
+        <Grid Background="Black">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                <StackPanel Margin="10" HorizontalAlignment="Center">
+                    <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                       Validation Result
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
+                <DockPanel Margin="10" HorizontalAlignment="Right">
+                    <Button
+                        ui:ThemeManager.RequestedTheme="Dark"
+                        Command="{Binding CalibrationRestartCommand}"
+                    >
+                        Restart Validation (R)
+                    </Button>
+                    <Button
+                        ui:ThemeManager.RequestedTheme="Dark"
+                        Margin="10,0,0,0"
+                        Style="{ui:ThemeResource AccentButtonStyle}"
+                        Command="{Binding CalibrationAcceptCommand}"
+                    >
+                        Close (SPACE)
+                    </Button>
+                </DockPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

@@ -30,7 +30,8 @@ namespace CustomCalibrationLibrary.Models
         HeadPosition,
         DataCollection,
         Computing,
-        DataResult,
+        CalibrationResult,
+        ValidationResult,
         Error,
         Disconnect
     }
@@ -56,6 +57,17 @@ namespace CustomCalibrationLibrary.Models
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        private GazeValidationData _validationData;
+        public GazeValidationData ValidationData
+        {
+            get { return _validationData; }
+            set
+            {
+                _validationData = value;
+                OnPropertyChanged();
+            }
+        }
 
         private CalibrationStatus _status;
 
@@ -147,6 +159,7 @@ namespace CustomCalibrationLibrary.Models
             _status = CalibrationStatus.Computing;
             _gazePoint = new Point(0, 0);
             _userPositionGuide = new UserPositionData();
+            _validationData = new GazeValidationData();
         }
 
         /// <summary>

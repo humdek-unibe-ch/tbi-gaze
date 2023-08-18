@@ -47,16 +47,20 @@ namespace GazeToMouse
         private MouseHider? _hider = null;
         private GazeDataError _gazeError = new GazeDataError();
         private CalibrationDataError _calibrationError = new CalibrationDataError();
+        private CalibrationDataError _validationError = new CalibrationDataError();
         private GazeConfiguration _config;
         private bool _isRecording = true;
         private bool _isMouseTracking = false;
         private bool _isCalibrationOn = false;
+        private bool _isValidationOn = false;
         private Dispatcher _dispatcher;
         private Dispatcher CustomDispatcher { get { return _dispatcher; } }
         private TaskCompletionSource<bool> _processCompletion = new TaskCompletionSource<bool>();
         private DriftCompensationWindow _fixationWindow = new DriftCompensationWindow();
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
+        private CalibrationWindow _validationWindow = new CalibrationWindow();
         private CalibrationModel _calibrationModel;
+        private CalibrationModel _validationModel;
         private string? _subjectCode = null;
         private string _tag = "";
         public string Tag
@@ -199,6 +203,37 @@ namespace GazeToMouse
         }
 
         /// <summary>
+        /// Start the gaze calibration process
+        /// </summary>
+        /// <returns>True on success, false on failure</returns>
+        public async Task<bool> CalibrationValidate()
+        {
+            if (_tracker == null)
+            {
+                return false;
+            }
+            Current.Dispatcher.Invoke(() => {
+                _validationWindow.Show();
+            });
+            if (Screen.AllScreens.Count() > 1)
+            {
+                _validationModel.Status = CalibrationStatus.ScreenSelection;
+            }
+            else
+            {
+                _validationModel.Status = CalibrationStatus.DataCollection;
+            }
+            _isValidationOn = true;
+            bool res = await _processCompletion.Task;
+            _isValidationOn = false;
+            Current.Dispatcher.Invoke(() => {
+                _validationWindow.Hide();
+            });
+            _processCompletion = new TaskCompletionSource<bool>();
+            return res;
+        }
+
+        /// <summary>
         /// Constructor: initialised logger, gaze configuration, pipe server, and calibration model
         /// </summary>
         public App()
@@ -220,6 +255,9 @@ namespace GazeToMouse
             _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;
             _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
+            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints);
+            _validationModel.CalibrationEvent += OnValidationEvent;
+            _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
         }
 
         /// <summary>
@@ -245,10 +283,18 @@ namespace GazeToMouse
             _calibrationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _calibrationWindow.Title = "CalibrationWindow";
 
+            _validationWindow.WindowStyle = WindowStyle.None;
+            _validationWindow.WindowState = WindowState.Maximized;
+            _validationWindow.ResizeMode = ResizeMode.NoResize;
+            _validationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            _validationWindow.Title = "ValidationWindow";
+
             // hide the mouse cursor on calibration window
             if (_config.Config.MouseCalibrationHide)
             {
                 _calibrationWindow.Cursor = Cursors.None;
+                _validationWindow.Cursor = Cursors.None;
+                _fixationWindow.Cursor = Cursors.None;
             }
 
             // hide the mouse cursor
@@ -334,6 +380,16 @@ namespace GazeToMouse
         {
             _calibrationModel.Error = error;
             _logger.Error(_calibrationModel.Error);
+        }
+
+        /// <summary>
+        /// Sets the error property and logs the error message
+        /// </summary>
+        /// <param name="error">The error message.</param>
+        private void HandleValidationError(string error)
+        {
+            _validationModel.Error = error;
+            _logger.Error(_validationModel.Error);
         }
 
         /// <summary>
@@ -470,6 +526,22 @@ namespace GazeToMouse
                             }
                             sw.Flush();
                         }
+                        else if (msg.Command.StartsWith("CALIBRATION_VALIDATE"))
+                        {
+                            bool res = await app.CustomDispatcher.Invoke(() =>
+                            {
+                                return app.CalibrationValidate();
+                            });
+                            if (res)
+                            {
+                                sw.WriteLine("SUCCESS");
+                            }
+                            else
+                            {
+                                sw.WriteLine("FAILED");
+                            }
+                            sw.Flush();
+                        }
                     }
                 }
             }
@@ -478,7 +550,6 @@ namespace GazeToMouse
         /// <summary>
         /// Collect the calibration data.
         /// </summary>
-        /// <param name="calibration">The Tobii calibration object.</param>
         /// <returns></returns>
         private async Task CollectCalibrationData()
         {
@@ -496,7 +567,7 @@ namespace GazeToMouse
                 // Wait a little for user to focus.
                 await Task.Delay(1000);
 
-                bool res = await _tracker.CollectCalibrationData(point);
+                bool res = await _tracker.CollectCalibrationDataAsync(point);
                 _calibrationModel.GazeDataCollected();
 
                 if (!res)
@@ -506,6 +577,42 @@ namespace GazeToMouse
                 }
 
                 _logger.Debug($"Calibration data collected at point [{point.X}, {point.Y}]");
+
+                // Wait a little.
+                await Task.Delay(700);
+            }
+        }
+
+        /// <summary>
+        /// Collect the validation data.
+        /// </summary>
+        /// <returns></returns>
+        private async Task CollectValidationData()
+        {
+            if (_tracker == null)
+            {
+                return;
+            }
+
+            // Collect data.
+            foreach (Point point in _validationModel.Points)
+            {
+                _logger.Debug($"Show validation point at [{point.X}, {point.Y}]");
+                _validationModel.NextCalibrationPoint();
+
+                // Wait a little for user to focus.
+                await Task.Delay(1000);
+
+                bool res = _tracker.CollectValidationData(point);
+                _validationModel.GazeDataCollected();
+
+                if (!res)
+                {
+                    HandleValidationError($"Failed to collect data for validation point at [{point.X}, {point.Y}]");
+                    break;
+                }
+
+                _logger.Debug($"Validation data collected at point [{point.X}, {point.Y}]");
 
                 // Wait a little.
                 await Task.Delay(700);
@@ -532,7 +639,7 @@ namespace GazeToMouse
             _calibrationModel.InitCalibration();
             _calibrationModel.Status = CalibrationStatus.DataCollection;
 
-            await _tracker.InitCalibration();
+            await _tracker.InitCalibrationAsync();
 
             await CollectCalibrationData();
 
@@ -546,11 +653,52 @@ namespace GazeToMouse
             }
 
             _calibrationModel.SetCalibrationResult(calibrationResult);
-            _calibrationModel.Status = CalibrationStatus.DataResult;
+            _calibrationModel.Status = CalibrationStatus.CalibrationResult;
 
-            await _tracker.FinishCalibration();
+            await _tracker.FinishCalibrationAsync();
 
             _config.CleanupCalibrationOutputFile(_calibrationError.GetCalibrationDataErrorString());
+        }
+
+        /// <summary>
+        /// Calibrat the eyetracker.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private async Task Validate()
+        {
+            if (_tracker == null)
+            {
+                return;
+            }
+
+            if (!_config.PrepareValidationOutputFile(_subjectCode))
+            {
+                throw new Exception("Failed to prepare validation output file");
+            }
+
+            _validationModel.InitCalibration();
+            _validationModel.Status = CalibrationStatus.DataCollection;
+
+            _tracker.InitValidation();
+
+            await CollectValidationData();
+
+            _validationModel.Status = CalibrationStatus.Computing;
+
+            GazeValidationData? validationResult = _tracker.ComputeValidation();
+            if(validationResult != null)
+            {
+                string[] formattedValues = validationResult.Prepare(_config.Config);
+                _config.WriteToValidationOutput(formattedValues);
+                _validationModel.ValidationData = validationResult;
+            }
+
+            _validationModel.Status = CalibrationStatus.ValidationResult;
+
+            _tracker.FinishValidation();
+
+            _config.CleanupValidationOutputFile(_validationError.GetCalibrationDataErrorString());
         }
 
         /// <summary>
@@ -649,6 +797,43 @@ namespace GazeToMouse
         }
 
         /// <summary>
+        /// Called on a calibration event from the calibration model.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="type">The calibration event type.</param>
+        private async void OnValidationEvent(object? sender, CalibrationEventType type)
+        {
+            _logger.Info($"Received validation user event {type.ToString()}");
+            switch (type)
+            {
+                case CalibrationEventType.Init:
+                    _validationModel.Status = CalibrationStatus.DataCollection;
+                    break;
+                case CalibrationEventType.Accept:
+                    _processCompletion.SetResult(true);
+                    break;
+                case CalibrationEventType.Abort:
+                    _processCompletion.SetResult(false);
+                    break;
+                case CalibrationEventType.Restart:
+                    goto case CalibrationEventType.Start;
+                case CalibrationEventType.Start:
+                    _validationModel.Error = "No Error";
+                    try
+                    {
+                        await Validate();
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
+                        _validationModel.Status = CalibrationStatus.Error;
+                        _config.CleanupValidationOutputFile(_validationError.GetCalibrationDataErrorString());
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Called when [gaze data received].
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -667,6 +852,10 @@ namespace GazeToMouse
             if (_isCalibrationOn && data.Combined.GazeData2d.IsGazePointValid == true)
             {
                 _calibrationModel.UpdateGazePoint(data.Combined.GazeData2d.GazePoint.X, data.Combined.GazeData2d.GazePoint.Y);
+            }
+            if (_isValidationOn && data.Combined.GazeData2d.IsGazePointValid == true)
+            {
+                _validationModel.UpdateGazePoint(data.Combined.GazeData2d.GazePoint.X, data.Combined.GazeData2d.GazePoint.Y);
             }
             // set the cursor position to the gaze position
             if (_isMouseTracking)
@@ -710,6 +899,18 @@ namespace GazeToMouse
                         break;
                 }
             }
+            if (_isValidationOn)
+            {
+                switch (_validationModel.LastStatus)
+                {
+                    case CalibrationStatus.DataCollection:
+                        _validationModel.Status = CalibrationStatus.Error;
+                        break;
+                    default:
+                        _validationModel.Status = _validationModel.LastStatus;
+                        break;
+                }
+            }
             if (_config != null && _config.Config.MouseControl && _config.Config.MouseControlHide)
             {
                 _hider?.HideCursor();
@@ -739,6 +940,18 @@ namespace GazeToMouse
                 }
                 _calibrationModel.Status = CalibrationStatus.Disconnect;
                 _calibrationError.Error = ECalibrationDataError.DeviceInterrupt;
+            }
+
+            if (_isValidationOn)
+            {
+                switch (_validationModel.Status)
+                {
+                    case CalibrationStatus.DataCollection:
+                        _validationModel.Error = "Connection to the device interrupted, validation aborted.";
+                        break;
+                }
+                _validationModel.Status = CalibrationStatus.Disconnect;
+                _validationError.Error = ECalibrationDataError.DeviceInterrupt;
             }
         }
 
