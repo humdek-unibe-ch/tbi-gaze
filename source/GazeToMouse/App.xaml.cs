@@ -807,8 +807,7 @@ namespace GazeToMouse
             switch (type)
             {
                 case CalibrationEventType.Init:
-                    _validationModel.Status = CalibrationStatus.DataCollection;
-                    break;
+                    goto case CalibrationEventType.Start;
                 case CalibrationEventType.Accept:
                     _processCompletion.SetResult(true);
                     break;
@@ -825,7 +824,7 @@ namespace GazeToMouse
                     }
                     catch (Exception ex)
                     {
-                        HandleCalibrationError($"Calibration failed due to an exception: {ex.Message}");
+                        HandleCalibrationError($"Validation failed due to an exception: {ex.Message}");
                         _validationModel.Status = CalibrationStatus.Error;
                         _config.CleanupValidationOutputFile(_validationError.GetCalibrationDataErrorString());
                     }

@@ -152,7 +152,7 @@ namespace GazeUtilityLibrary
             {
                 return true;
             }
-            string path = getFileSwFullPath(_swCalibration!);
+            string path = getFileSwFullPath(_swValidation!);
             _swValidation?.Close();
             _swValidation?.Dispose();
             _swValidation = null;
