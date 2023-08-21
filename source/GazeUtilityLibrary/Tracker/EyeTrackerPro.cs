@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using GazeUtilityLibrary.DataStructs;
 using Tobii.Research;
+using Tobii.Research.Addons;
 
 namespace GazeUtilityLibrary.Tracker
 {
@@ -17,6 +18,7 @@ namespace GazeUtilityLibrary.Tracker
         private bool _hasLicense = true;
         private IEyeTracker? _eyeTracker = null;
         private ScreenBasedCalibration? _screenBasedCalibration = null;
+        private ScreenBasedCalibrationValidation? _screenBasedCalibrationValidation = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
@@ -122,10 +124,31 @@ namespace GazeUtilityLibrary.Tracker
         /// Initialise the screen based calibration.
         /// </summary>
         /// <returns>An async handler</returns>
-        override public async Task InitCalibration()
+        override public async Task InitCalibrationAsync()
         {
             _screenBasedCalibration = new ScreenBasedCalibration(_eyeTracker);
             await _screenBasedCalibration.EnterCalibrationModeAsync();
+        }
+
+        /// <summary>
+        /// Initialise the screen based calibration.
+        /// </summary>
+        override public void InitCalibration()
+        {
+            _screenBasedCalibration = new ScreenBasedCalibration(_eyeTracker);
+            _screenBasedCalibration.EnterCalibrationMode();
+        }
+
+        /// <summary>
+        /// Initialise the screen based calibration.
+        /// </summary>
+        override public void InitValidation()
+        {
+            if (_eyeTracker != null)
+            {
+                _screenBasedCalibrationValidation = new ScreenBasedCalibrationValidation(_eyeTracker, GetFixationFrameCount(), 3000);
+                _screenBasedCalibrationValidation.EnterValidationMode();
+            }
         }
 
         /// <summary>
@@ -146,7 +169,7 @@ namespace GazeUtilityLibrary.Tracker
         /// </summary>
         /// <param name="point"></param>
         /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
-        override public async Task<bool> CollectCalibrationData(Point point)
+        override public async Task<bool> CollectCalibrationDataAsync(Point point)
         {
             if (_screenBasedCalibration == null)
             {
@@ -175,10 +198,32 @@ namespace GazeUtilityLibrary.Tracker
         }
 
         /// <summary>
-        /// Finish the screen based calibration process.
+        /// Collects gaze data of a validation point.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
+        override public async Task<bool> CollectValidationDataAsync(Point point)
+        {
+            if (_screenBasedCalibrationValidation == null)
+            {
+                return false;
+            }
+
+            NormalizedPoint2D normalizedPoint = new NormalizedPoint2D((float)point.X, (float)point.Y);
+            _screenBasedCalibrationValidation.StartCollectingData(normalizedPoint);
+            while (_screenBasedCalibrationValidation.State == ScreenBasedCalibrationValidation.ValidationState.CollectingData)
+            {
+                await Task.Delay(25);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Finish the screen based async calibration process.
         /// </summary>
         /// <returns>An async handler</returns>
-        override public async Task FinishCalibration()
+        override public async Task FinishCalibrationAsync()
         {
             if (_screenBasedCalibration == null)
             {
@@ -186,6 +231,32 @@ namespace GazeUtilityLibrary.Tracker
             }
 
             await _screenBasedCalibration.LeaveCalibrationModeAsync();
+        }
+
+        /// <summary>
+        /// Finish the screen based calibration process.
+        /// </summary>
+        override public void FinishCalibration()
+        {
+            if (_screenBasedCalibration == null)
+            {
+                return;
+            }
+
+            _screenBasedCalibration.LeaveCalibrationMode();
+        }
+
+        /// <summary>
+        /// Finish the screen based validation process.
+        /// </summary>
+        override public void FinishValidation()
+        {
+            if (_screenBasedCalibrationValidation == null)
+            {
+                return;
+            }
+
+            _screenBasedCalibrationValidation.LeaveValidationMode();
         }
 
         /// <summary>
@@ -255,6 +326,28 @@ namespace GazeUtilityLibrary.Tracker
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// Compute the validation data.
+        /// </summary>
+        /// <returns>The validation data result.</returns>
+        override public GazeValidationData? ComputeValidation()
+        {
+            if (_screenBasedCalibrationValidation == null)
+            {
+                return null;
+            }
+
+            CalibrationValidationResult result = _screenBasedCalibrationValidation.Compute();
+
+            logger.Info($"Validation accuracy: left: {result.AverageAccuracyLeftEye},  right: {result.AverageAccuracyRightEye}.");
+            logger.Info($"Validation precision: left: {result.AveragePrecisionLeftEye},  right: {result.AveragePrecisionRightEye}.");
+            logger.Info($"Validation precision RMS: left: {result.AveragePrecisionRMSLeftEye},  right: {result.AveragePrecisionRMSRightEye}.");
+
+            return new GazeValidationData(result.AverageAccuracyLeftEye, result.AverageAccuracyRightEye,
+                result.AveragePrecisionLeftEye, result.AveragePrecisionRightEye,
+                result.AveragePrecisionRMSLeftEye, result.AveragePrecisionRMSRightEye );
         }
 
         /// <summary>

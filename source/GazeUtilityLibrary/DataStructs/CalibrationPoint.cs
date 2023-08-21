@@ -78,8 +78,8 @@ namespace GazeUtilityLibrary.DataStructs
 
         public CalibrationPoint(Point position, int index)
         {
-            _hasData = false;
-            _position = position;
+            HasData = false;
+            Position = position;
             _index = index;
         }
     }

@@ -7,7 +7,8 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ScreenSelection">
+      Title="ScreenSelection"
+      Focusable="True">
     
     <Page.Resources>
         <ResourceDictionary>
@@ -73,7 +74,7 @@
                     ui:ThemeManager.RequestedTheme="Dark"
                     Command="{Binding CalibrationAbortCommand}"
                 >
-                    Abort Calibration (ESC)
+                    Abort (ESC)
                 </Button>
                 <Button
                     ui:ThemeManager.RequestedTheme="Dark"
@@ -81,7 +82,7 @@
                     Style="{ui:ThemeResource AccentButtonStyle}"
                     Command="{Binding CalibrationStartCommand}"
                 >
-                    Start Calibration (SPACE)
+                    Start (SPACE)
                 </Button>
             </DockPanel>
         </Grid>

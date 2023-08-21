@@ -8,7 +8,8 @@ namespace GazeUtilityLibrary
     public enum EOutputType
     {
         gaze,
-        calibration
+        calibration,
+        validation
     }
 
     public class GazeConfiguration
@@ -21,6 +22,7 @@ namespace GazeUtilityLibrary
         private string _starttime;
         private StreamWriter? _swGaze = null;
         private StreamWriter? _swCalibration = null;
+        private StreamWriter? _swValidation = null;
         private JsonConfigParser _parser;
         public GazeConfiguration(TrackerLogger logger)
         {
@@ -131,6 +133,29 @@ namespace GazeUtilityLibrary
             _swCalibration?.Close();
             _swCalibration?.Dispose();
             _swCalibration = null;
+            File.Move(path, $"{path}{error}.txt", true);
+            return true;
+        }
+
+        /// <summary>
+        /// Close the validation outputfile and rename it by appending error codes.
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns>True on success, False on failure.</returns>
+        public bool CleanupValidationOutputFile(string error)
+        {
+            if (_config == null)
+            {
+                return false;
+            }
+            if (!_config.ValidationLogWriteOutput)
+            {
+                return true;
+            }
+            string path = getFileSwFullPath(_swValidation!);
+            _swValidation?.Close();
+            _swValidation?.Dispose();
+            _swValidation = null;
             File.Move(path, $"{path}{error}.txt", true);
             return true;
         }
@@ -317,6 +342,72 @@ namespace GazeUtilityLibrary
         }
 
         /// <summary>
+        /// Prepare the validation output file based on the configuration.
+        /// </summary>
+        /// <param name="subjectCode">An optional subject code to be appended to the file name if set.</param>
+        /// <returns>True on success, False on failure.</returns>
+        public bool PrepareValidationOutputFile(string? subjectCode)
+        {
+            if (_config == null)
+            {
+                ReportUninitalisedConfig();
+                return false;
+            }
+            if (!_config.ValidationLogWriteOutput)
+            {
+                return true;
+            }
+
+            string subjectCodeString = subjectCode != null ? $"_{subjectCode}" : "";
+            string filePostfix = $"{Environment.MachineName}_{_config.ConfigName}{subjectCodeString}_{EOutputType.validation.ToString()}";
+            string fileName = $"{_starttime}_{filePostfix}";
+
+            // create gaze data file
+            if (_config.DataLogPath == "")
+            {
+                _config.DataLogPath = Directory.GetCurrentDirectory();
+            }
+
+            string outputFilePath = $"{_config.DataLogPath}\\{fileName}";
+            _swValidation = InitOutputFile(outputFilePath);
+            if (_swValidation == null)
+            {
+                // something went wrong, write to the current directory
+                _config.DataLogPath = Directory.GetCurrentDirectory();
+                outputFilePath = $"{_config.DataLogPath}\\{fileName}";
+                _logger.Warning($"Writing validation data to the current directory: \"{outputFilePath}\"");
+                _error.Error = EGazeConfigError.FallbackToCurrentOutputDir;
+                _swValidation = new StreamWriter(outputFilePath);
+            }
+
+            // check output data format
+            if (!ConfigChecker.CheckDataLogFormat(1.000000, _config.DataLogFormatNormalizedPoint, _logger))
+            {
+                _config.DataLogFormatNormalizedPoint = _default_config.DataLogFormatNormalizedPoint;
+                _logger.Warning($"Using the default output format for normaliyed point values: \"{_config.DataLogFormatNormalizedPoint}\"");
+                _error.Error = EGazeConfigError.FallbackToDefaultNormalizedFormat;
+            }
+            if (!ConfigChecker.CheckLogColumnOrder<ValidationOutputValue>(_config.ValidationLogColumnOrder, _logger))
+            {
+                _config.ValidationLogColumnOrder = _default_config.ValidationLogColumnOrder;
+                _logger.Warning($"Using the default column order: \"{_config.ValidationLogColumnOrder}\"");
+                _error.Error = EGazeConfigError.FallbackToDefualtColumnOrder;
+            }
+            if (!ConfigChecker.CheckLogColumnTitles(_config.ValidationLogColumnOrder, _config.ValidationLogColumnTitle, _logger))
+            {
+                _logger.Warning($"Column titles are omitted");
+                _error.Error = EGazeConfigError.OmitColumnTitles;
+            }
+
+            // write titles
+            _swValidation?.WriteLine(String.Format(_config.ValidationLogColumnOrder, _config.ValidationLogColumnTitle));
+
+            // delete old files
+            DeleteOldGazeLogFiles(_config.DataLogPath, _config.DataLogCount, $"*_{filePostfix}");
+            return true;
+        }
+
+        /// <summary>
         /// Write to the gaze output file
         /// </summary>
         /// <param name="formatted_values">The list of formatted values to be written to the file.</param>
@@ -340,6 +431,19 @@ namespace GazeUtilityLibrary
                 return;
             }
             _swCalibration?.WriteLine(String.Format(_config.CalibrationLogColumnOrder, formatted_values));
+        }
+
+        /// <summary>
+        /// Write to the calibration output file
+        /// </summary>
+        /// <param name="formatted_values">The list of formatted values to be written to the file.</param>
+        public void WriteToValidationOutput(string[] formatted_values)
+        {
+            if (_config == null)
+            {
+                return;
+            }
+            _swValidation?.WriteLine(String.Format(_config.ValidationLogColumnOrder, formatted_values));
         }
     }
 
@@ -398,6 +502,10 @@ namespace GazeUtilityLibrary
         public string CalibrationLogColumnOrder { get; set; }
         [JsonProperty(Required = Required.Default)]
         public string[] CalibrationLogColumnTitle { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public string ValidationLogColumnOrder { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public string[] ValidationLogColumnTitle { get; set; }
         [JsonProperty(Required = Required.Default)]
         public int DataLogCount { get; set; }
         [JsonProperty(Required = Required.Default)]
@@ -416,8 +524,12 @@ namespace GazeUtilityLibrary
         public bool DataLogWriteOutput { get; set; }
         [JsonProperty(Required = Required.Always)]
         public bool CalibrationLogWriteOutput { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public bool ValidationLogWriteOutput { get; set; }
         [JsonProperty(Required = Required.Default)]
         public double[][] CalibrationPoints { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public double[][] ValidationPoints { get; set; }
         [JsonProperty(Required = Required.Default)]
         public bool DataLogDisabledOnStartup { get; set; }
         [JsonProperty(Required = Required.Default)]
@@ -528,14 +640,14 @@ namespace GazeUtilityLibrary
                 "right_pupilDiameter_isValid"
             };
             CalibrationLogColumnOrder =
-                $"{{{(int)CalibrationOutputValue.XCoord}}}\t" +
-                $"{{{(int)CalibrationOutputValue.YCoord}}}\t" +
-                $"{{{(int)CalibrationOutputValue.XCoordLeft}}}\t" +
-                $"{{{(int)CalibrationOutputValue.YCoordLeft}}}\t" +
-                $"{{{(int)CalibrationOutputValue.ValidCoordLeft}}}\t" +
-                $"{{{(int)CalibrationOutputValue.XCoordRight}}}\t" +
-                $"{{{(int)CalibrationOutputValue.YCoordRight}}}\t" +
-                $"{{{(int)CalibrationOutputValue.ValidCoordRight}}}";
+                $"{{{(int)CalibrationOutputValue.Point2dX}}}\t" +
+                $"{{{(int)CalibrationOutputValue.Point2dY}}}\t" +
+                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dX}}}\t" +
+                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dY}}}\t" +
+                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dIsValid}}}\t" +
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dX}}}\t" +
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dY}}}\t" +
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dIsValid}}}";
             CalibrationLogColumnTitle = new string[] {
                 "calibrationPoint_x",
                 "calibrationPoint_y",
@@ -546,10 +658,26 @@ namespace GazeUtilityLibrary
                 "right_gazePoint_y",
                 "right_gazePoint_isValid"
             };
+            ValidationLogColumnOrder =
+                $"{{{(int)ValidationOutputValue.LeftAccuracy}}}\t" +
+                $"{{{(int)ValidationOutputValue.LeftPrecision}}}\t" +
+                $"{{{(int)ValidationOutputValue.LeftPrecisionRMS}}}\t" +
+                $"{{{(int)ValidationOutputValue.RightAccuracy}}}\t" +
+                $"{{{(int)ValidationOutputValue.RightPrecision}}}\t" +
+                $"{{{(int)ValidationOutputValue.RightPrecisionRMS}}}";
+            ValidationLogColumnTitle = new string[] {
+                "left_accuracy",
+                "left_precision",
+                "left_precision_rms",
+                "right_accuracy",
+                "right_precision",
+                "right_precision_rms"
+            };
             DataLogCount = 200;
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;
             CalibrationLogWriteOutput = true;
+            ValidationLogWriteOutput = true;
             CalibrationPoints = new double[8][];
             CalibrationPoints[0] = new double[2] { 0.7, 0.5 };
             CalibrationPoints[1] = new double[2] { 0.3, 0.5 };
@@ -559,6 +687,15 @@ namespace GazeUtilityLibrary
             CalibrationPoints[5] = new double[2] { 0.1, 0.1 };
             CalibrationPoints[6] = new double[2] { 0.9, 0.1 };
             CalibrationPoints[7] = new double[2] { 0.5, 0.9 };
+            ValidationPoints = new double[8][];
+            ValidationPoints[0] = new double[2] { 0.7, 0.5 };
+            ValidationPoints[1] = new double[2] { 0.3, 0.5 };
+            ValidationPoints[2] = new double[2] { 0.9, 0.9 };
+            ValidationPoints[3] = new double[2] { 0.1, 0.9 };
+            ValidationPoints[4] = new double[2] { 0.5, 0.1 };
+            ValidationPoints[5] = new double[2] { 0.1, 0.1 };
+            ValidationPoints[6] = new double[2] { 0.9, 0.1 };
+            ValidationPoints[7] = new double[2] { 0.5, 0.9 };
             MouseControl = false;
             MouseControlHide = false;
             MouseCalibrationHide = false;
@@ -612,6 +749,8 @@ namespace GazeUtilityLibrary
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
                     if (item?.CalibrationLogColumnOrder == "")
                         item.CalibrationLogColumnOrder = item_default.CalibrationLogColumnOrder;
+                    if (item?.ValidationLogColumnOrder == "")
+                        item.ValidationLogColumnOrder = item_default.ValidationLogColumnOrder;
                     if (item?.DataLogPath == "")
                         item.DataLogPath = item_default.DataLogPath;
 

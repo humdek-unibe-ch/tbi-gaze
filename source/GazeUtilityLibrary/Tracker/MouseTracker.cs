@@ -146,21 +146,6 @@ namespace GazeUtilityLibrary.Tracker
             throw new NotImplementedException();
         }
 
-        public override Task<bool> CollectCalibrationData(Point point)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task FinishCalibration()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task InitCalibration()
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void InitDriftCompensation()
         {
             throw new NotImplementedException();
@@ -221,6 +206,51 @@ namespace GazeUtilityLibrary.Tracker
                 }
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        public override Task InitCalibrationAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void InitValidation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task FinishCalibrationAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void FinishValidation()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> CollectCalibrationDataAsync(Point point)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> CollectValidationDataAsync(Point point)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void InitCalibration()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void FinishCalibration()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override GazeValidationData? ComputeValidation()
+        {
+            throw new NotImplementedException();
         }
     }
 }

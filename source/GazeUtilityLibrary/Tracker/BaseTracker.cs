@@ -169,16 +169,36 @@ namespace GazeUtilityLibrary.Tracker
         }
 
         /// <summary>
-        /// Initialise the calibartion process. This is device specific and must be overwritten by the device class.
+        /// Initialise the async calibartion process. This is device specific and must be overwritten by the device class.
         /// </summary>
         /// <returns>An async handler</returns>
-        abstract public Task InitCalibration();
+        abstract public Task InitCalibrationAsync();
+
+        /// <summary>
+        /// Initialise the calibartion process. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        abstract public void InitCalibration();
+
+        /// <summary>
+        /// Initialise the validation process. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        abstract public void InitValidation();
+
+        /// <summary>
+        /// Finish the async calibartion process. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <returns>An async handler</returns>
+        abstract public Task FinishCalibrationAsync();
 
         /// <summary>
         /// Finish the calibartion process. This is device specific and must be overwritten by the device class.
         /// </summary>
-        /// <returns>An async handler</returns>
-        abstract public Task FinishCalibration();
+        abstract public void FinishCalibration();
+
+        /// <summary>
+        /// Finish the validation process. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        abstract public void FinishValidation();
 
         /// <summary>
         /// Apply the calibration data. This is device specific and must be overwritten by the device class.
@@ -187,11 +207,24 @@ namespace GazeUtilityLibrary.Tracker
         abstract public Task<List<GazeCalibrationData>> ApplyCalibration();
 
         /// <summary>
+        /// Apply the validation data. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <returns>The validation data result.</returns>
+        abstract public GazeValidationData? ComputeValidation();
+
+        /// <summary>
         /// Collect calibration data on a calibration point. This is device specific and must be overwritten by the device class.
         /// </summary>
         /// <param name="point">The calibration point for which to collect data</param>
         /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
-        abstract public Task<bool> CollectCalibrationData(Point point);
+        abstract public Task<bool> CollectCalibrationDataAsync(Point point);
+
+        /// <summary>
+        /// Collect validation data on a validation point. This is device specific and must be overwritten by the device class.
+        /// </summary>
+        /// <param name="point">The calibration point for which to collect data</param>
+        /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
+        abstract public Task<bool> CollectValidationDataAsync(Point point);
 
         /// <summary>
         /// Start the drift compensation process.
