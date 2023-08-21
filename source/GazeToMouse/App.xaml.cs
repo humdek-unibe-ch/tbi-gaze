@@ -526,7 +526,7 @@ namespace GazeToMouse
                             }
                             sw.Flush();
                         }
-                        else if (msg.Command.StartsWith("CALIBRATION_VALIDATE"))
+                        else if (msg.Command.StartsWith("VALIDATE"))
                         {
                             bool res = await app.CustomDispatcher.Invoke(() =>
                             {

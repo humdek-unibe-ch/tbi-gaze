@@ -64,7 +64,7 @@ namespace GazeControl
                     break;
                 case "DRIFT_COMPENSATION":
                 case "CUSTOM_CALIBRATE":
-                case "CALIBRATION_VALIDATE":
+                case "VALIDATE":
                     try
                     {
                         NamedPipeClient.SendRequest(command, reset, value, logger);
