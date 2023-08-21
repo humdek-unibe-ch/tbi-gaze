@@ -25,6 +25,8 @@
 \usepackage{listings}
 \usepackage{amsmath}
 
+\setlength{\emergencystretch}{3em}
+
 \newtoggle{InString}{}% Keep track of if we are within a string
 \togglefalse{InString}% Assume not initally in string
 
@@ -129,6 +131,7 @@ The following set of executables are provided:
         The following \texttt{<COMMAND>}s are available:
         \begin{description}
             \item{\texttt{CUSTOM\_CALIBRATE}} uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
+            \item{\texttt{VALIDATE}} uses the \href{https://github.com/tobiipro/prosdk-addons-dotnet/}{Tobii Pro SDK Addon} and launches a validation process.
             \item{\texttt{DRIFT\_COMPENSATION}} launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
             \item{\texttt{GAZE\_RECORDING\_DISABLE}} requests Gaze.exe to stop recording gaze data.
                 Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
@@ -137,6 +140,9 @@ The following set of executables are provided:
             \item{\texttt{MOUSE\_TRACKING\_ENABLE}} requests Gaze.exe to start updating the mouse pointer by the gaze position.
             \item{\texttt{RESET\_DRIFT\_COMPENSATION}} resets the drift compensation computed with the command \texttt{DRIFT\_COMPENSATION}.
             \item{\texttt{TERMINATE}} requests Gaze.exe to close gracefully and logs these events to the log file.
+            \item{\texttt{SET\_TAG\ <TAG>}} sets a custom tag \texttt{<TAG>} which will be added to each data sample in the output file (use argument \texttt{/value} to define the \texttt{<TAG>}).
+            \item{\texttt{SET\_TRIAL\_ID <ID>}} sets a trial ID integer number \texttt{<ID>} which will be added to each data sample in the output file (use argument \texttt{/value} to define the \texttt{<ID>}).
+            \item{\texttt{RESET\_START\_TIME} allows to reset the relative timestamp. The relative timestamp can also be reset by passing the argument \texttt{/reset} to the application with any of the above commands.
         \end{description}
     \item[ShowMouse.exe] This program allows to restore the standard mouse pointer.
         It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
@@ -228,7 +234,7 @@ In order to get started with a quick experiment the following steps are required
 \begin{itemize}
     \item Install the latest version of \href{https://osdoc.cogsci.nl/3.3/download/}{opensesame} with your preferred installation method.
     \item As a starting point use the provided opensesame sample file.
-        The file is located in \texttt{<Gaze toolset path>\textbackslash sample\textbackslash template.osexp}.
+        The file is located in\\ \texttt{<Gaze toolset path>\textbackslash sample\textbackslash template.osexp}.
         Make sure to change the \texttt{gazeAppPath} variable in \texttt{gaze\_initialisation} of the sample file such that it points to \texttt{<Gaze toolset path>}.
 \end{itemize}
 
@@ -483,7 +489,7 @@ In the following some further information is provided.
 The following data field types with individual data fields are provided:
 \begin{enumerate}
     \item timestamps indicating when the data was sampled by the eye tracker
-    \item an arbitrary tag to annotate each data sample
+    \item the trial ID and an arbitrary tag to annotate each data sample
     \item 2D gaze point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
         \begin{description}
             \item[Mouse Tracker] \hfill
@@ -578,7 +584,7 @@ The following list describes the individual errors that can occur during an expe
 
 %------------------------------------------------------------------------------
 \section{Calibration Output File}
-When running the program \texttt{CustomCalibration.exe} an output file can be generated which holds the calibration results provided by the Tobii engine.
+When running the program \texttt{GazeControl.exe /command CUSTOM\_CALIBRATE} an output file can be generated which holds the calibration results provided by the Tobii engine.
 The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
 The name of the output file follows the form
 \begin{lstlisting}
@@ -652,6 +658,82 @@ The following list describes the individual errors that can occur during an expe
 \end{description}
 
 
+%------------------------------------------------------------------------------
+\section{Validation Output File}
+When running the program \texttt{GazeControl.exe /command VALIDATE} an output file can be generated which holds the validation results provided by the Tobii engine.
+The output file is saved in the directory specified by \texttt{OutputPath} in \texttt{config.json}.
+The name of the output file follows the form
+\begin{lstlisting}
+<yyyyMMddTHHmmss>_<hostName>_<ConfigName>[_<SubjectNumber>]_validation[_err-<code>].txt
+\end{lstlisting}
+where
+\begin{itemize}
+    \item \texttt{<yyyyMMddTHHmmss>} is replaced by the timestamp indicating when the file was created (e.g. 20180129T085521 stands for 29.01.2018 08:55:21).
+    \item \texttt{<hostName>} is replaced by the name of the machine
+    \item \texttt{<ConfigName>} is replaced by the configuration value \texttt{"ConfigName"} as specified in the configuration file (see Listing~\ref{lst.config} for more details)
+    \item \texttt{<SubjectNumber>} is replaced by the subject number passed by argument \texttt{/subject} to the application.
+        If no argument \texttt{/subject} is passed the subject number is omitted in the file name (as well as the prefixed underline character).
+    \item \texttt{[\_err-<code>]} is either omitted if no error occurred during the experiment or indicates data errors where
+        \begin{itemize}
+            \item \texttt{<code>} is replaced by an error code which is a binary string where each character can either be 1, indicating an error or 0, indicating no error (see Section~\ref{sect.calibration.error})
+        \end{itemize}
+\end{itemize}
+
+A validation output file is only generated if the parameter \texttt{ValidationLogWriteOutput"} in the configuration file is set to \texttt{true} (which is the default).
+
+The configuration of the validation data fields to be stored to the output file follows the same logic as described with the gaze output in Section \ref{sec.output.gaze}, except that the presentation of the data is defined through parameters \texttt{"ValidationLogColumnOrder"} and \texttt{"ValidationColumnTitle"} (see Listing~\ref{lst.config} for more details).
+
+\subsection{Validation Data Fields}
+The comments above the parameter \texttt{"ValidationLogColumnOrder"} in the configuration file (see Listing~\ref{lst.config}) provide a short description for each available data field.
+In the following some further information is provided.
+
+The following three data fields are provided for the left and the right eye:
+\begin{enumerate}
+    \item accuracy of the gaze points.
+        \begin{description}
+            \item[Mouse Tracker] not applicable
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item systematic error of the measured gaze point with respect to the target gaze point in degrees
+                \end{itemize}
+        \end{description}
+    \item precision of the gaze points
+        \begin{description}
+            \item[Mouse Tracker] not applicable
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item averaged standard deviation over all collected points in degrees
+                \end{itemize}
+        \end{description}
+    \item precision RMS
+        \begin{description}
+            \item[Mouse Tracker] not supported
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item averaged root mean square of sample-to-sample error over all collected points in degrees
+                \end{itemize}
+        \end{description}
+\end{enumerate}
+
+\subsection{Validation Data Error Code}
+\label{sect.validation.error}
+The error code that is postfixed to the validation output file name is a binary string where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
+Multiple errors can occur at the same time, hence, the position of a \texttt{1} in the error code indicates the specific error.
+If all positions of the error code are 0, the errors are not postfixed to the output file name.
+
+The following list describes the individual errors that can occur during an experiment:
+\begin{description}
+    \item[code \texttt{10}] \hfill \\
+        This code indicates that during the validation the eye tracker device stopped tracking.
+        This means that the validation had to be redone in order to be valid.
+        This can be caused by a malfunctioning of the eye tracker device or simply because the device was disconnected.
+        The exact time instances of such an occurrence is logged to the log file.
+    \item[code \texttt{01}] \hfill \\
+        This code indicates that the system was not able to start the validation because the device does not support validation.
+        This error occurs if the configuration option \texttt{TrackerDevice} was set to a device with no validation support.
+\end{description}
+
+%------------------------------------------------------------------------------
 \section{Configuration File Dump}
 For each experiment where the utility \texttt{Gaze.exe} is executed, a dump of the configuration file is produced.
 This allows to associate a set of configuration values to an experiment, reuse the same configuration file should the experiment be repeated, and provides transparency of how the output data was produced.

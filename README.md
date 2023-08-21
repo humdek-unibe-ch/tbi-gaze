@@ -36,11 +36,11 @@ The package contains the following executables:
     - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
     - `SET_TAG <TAG>` sets a custom tag `<TAG>` which will be added to each data sample in the output file (use argument `/value` to define the `<TAG>`).
     - `SET_TRIAL_ID <ID>` sets a trial ID integer number `<ID>` which will be added to each data sample in the output file (use argument `/value` to define the `<ID>`).
-    - `RESET_START_TIME` allows to reset the relative timestamp. The relative timestamp can also be reset by passing the argument `/reset` to th eapplication with any of the above commands.
+    - `RESET_START_TIME` allows to reset the relative timestamp. The relative timestamp can also be reset by passing the argument `/reset` to the application with any of the above commands.
 - **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
-  It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
+  It might be useful if the program `Gaze.exe` crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
   The subject might end up with a hidden mouse pointer.
-  A good solution for such a case is to install a shortcut to \texttt{ShowMouse.exe} on the desktop in order to execute it with the keyboard.
+  A good solution for such a case is to install a shortcut to `ShowMouse.exe` on the desktop in order to execute it with the keyboard.
 
 In order to run the executables the following files need to be placed in the same directory as the executables:
 
