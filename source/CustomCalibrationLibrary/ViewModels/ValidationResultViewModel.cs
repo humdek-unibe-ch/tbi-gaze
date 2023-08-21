@@ -1,5 +1,8 @@
 ﻿using CustomCalibrationLibrary.Commands;
 using CustomCalibrationLibrary.Models;
+using GazeUtilityLibrary.DataStructs;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.ViewModels
@@ -18,6 +21,12 @@ namespace CustomCalibrationLibrary.ViewModels
         /// </summary>
         public ICommand CalibrationAcceptCommand { get { return _calibrationAcceptCommand; } }
 
+        private GazeValidationData _validationData;
+        public GazeValidationData ValidationData
+        {
+            get { return _validationData; }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -26,6 +35,7 @@ namespace CustomCalibrationLibrary.ViewModels
         {
             _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
             _calibrationAcceptCommand = new CalibrationCommand(model, CalibrationEventType.Accept);
+            _validationData = model.ValidationData;
         }
     }
 }

@@ -44,7 +44,7 @@ namespace GazeUtilityLibrary.DataStructs
         /// <returns>A list of formatted values. Each index corresponds to a specific value. This allows to reorder the list according to a format string.</returns>
         public string[] Prepare(ConfigItem config)
         {
-            string[] formattedValues = new string[Enum.GetNames(typeof(CalibrationOutputValue)).Length];
+            string[] formattedValues = new string[Enum.GetNames(typeof(ValidationOutputValue)).Length];
 
             formattedValues[(int)ValidationOutputValue.LeftAccuracy] = GazeDataConverter.FormatDouble(_accuracyLeft);
             formattedValues[(int)ValidationOutputValue.LeftPrecision] = GazeDataConverter.FormatDouble(_precisionLeft);

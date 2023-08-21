@@ -7,7 +7,8 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ValidationResult">
+      Title="ValidationResult"
+      Focusable="True">
 
     <Page.Resources>
         <ResourceDictionary>
@@ -20,7 +21,6 @@
     </Page.Resources>
     <Page.InputBindings>
         <KeyBinding Command="{Binding CalibrationRestartCommand}" Key="R" />
-        <KeyBinding Command="{Binding GazeVisibilityCommand}" Key="G" />
         <KeyBinding Command="{Binding CalibrationAcceptCommand}" Key="Space" />
     </Page.InputBindings>
     <Grid>
@@ -37,6 +37,32 @@
                     </TextBlock>
                 </StackPanel>
             </Grid>
+            <DockPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <DockPanel Margin="5">
+                    <StackPanel Margin="5">
+                        <TextBlock Foreground="White">Left Accurracy</TextBlock>
+                        <TextBlock Foreground="White">Left Precision</TextBlock>
+                        <TextBlock Foreground="White">Left Precision RMS</TextBlock>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}°}" />
+                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}°}" />
+                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}°}" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <StackPanel Margin="5">
+                        <TextBlock Foreground="White">Right Accurracy</TextBlock>
+                        <TextBlock Foreground="White">Right Precision</TextBlock>
+                        <TextBlock Foreground="White">Right Precision RMS</TextBlock>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}°}" />
+                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}°}" />
+                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}°}" />
+                    </StackPanel>
+                </DockPanel>
+            </DockPanel>
             <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button

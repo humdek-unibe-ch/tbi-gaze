@@ -749,6 +749,8 @@ namespace GazeUtilityLibrary
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
                     if (item?.CalibrationLogColumnOrder == "")
                         item.CalibrationLogColumnOrder = item_default.CalibrationLogColumnOrder;
+                    if (item?.ValidationLogColumnOrder == "")
+                        item.ValidationLogColumnOrder = item_default.ValidationLogColumnOrder;
                     if (item?.DataLogPath == "")
                         item.DataLogPath = item_default.DataLogPath;
 

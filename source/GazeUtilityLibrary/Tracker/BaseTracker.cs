@@ -223,8 +223,8 @@ namespace GazeUtilityLibrary.Tracker
         /// Collect validation data on a validation point. This is device specific and must be overwritten by the device class.
         /// </summary>
         /// <param name="point">The calibration point for which to collect data</param>
-        /// <returns>True on success, false on failure.</returns>
-        abstract public bool CollectValidationData(Point point);
+        /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
+        abstract public Task<bool> CollectValidationDataAsync(Point point);
 
         /// <summary>
         /// Start the drift compensation process.

@@ -603,7 +603,7 @@ namespace GazeToMouse
                 // Wait a little for user to focus.
                 await Task.Delay(1000);
 
-                bool res = _tracker.CollectValidationData(point);
+                bool res = await _tracker.CollectValidationDataAsync(point);
                 _validationModel.GazeDataCollected();
 
                 if (!res)

@@ -233,7 +233,7 @@ namespace GazeUtilityLibrary.Tracker
             throw new NotImplementedException();
         }
 
-        public override bool CollectValidationData(Point point)
+        public override Task<bool> CollectValidationDataAsync(Point point)
         {
             throw new NotImplementedException();
         }

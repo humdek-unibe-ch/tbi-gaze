@@ -146,7 +146,7 @@ namespace GazeUtilityLibrary.Tracker
         {
             if (_eyeTracker != null)
             {
-                _screenBasedCalibrationValidation = new ScreenBasedCalibrationValidation(_eyeTracker);
+                _screenBasedCalibrationValidation = new ScreenBasedCalibrationValidation(_eyeTracker, GetFixationFrameCount(), 3000);
                 _screenBasedCalibrationValidation.EnterValidationMode();
             }
         }
@@ -202,7 +202,7 @@ namespace GazeUtilityLibrary.Tracker
         /// </summary>
         /// <param name="point"></param>
         /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
-        override public bool CollectValidationData(Point point)
+        override public async Task<bool> CollectValidationDataAsync(Point point)
         {
             if (_screenBasedCalibrationValidation == null)
             {
@@ -211,9 +211,9 @@ namespace GazeUtilityLibrary.Tracker
 
             NormalizedPoint2D normalizedPoint = new NormalizedPoint2D((float)point.X, (float)point.Y);
             _screenBasedCalibrationValidation.StartCollectingData(normalizedPoint);
-            while (_screenBasedCalibrationValidation.State != ScreenBasedCalibrationValidation.ValidationState.CollectingData)
+            while (_screenBasedCalibrationValidation.State == ScreenBasedCalibrationValidation.ValidationState.CollectingData)
             {
-                System.Threading.Thread.Sleep(25);
+                await Task.Delay(25);
             }
 
             return true;
