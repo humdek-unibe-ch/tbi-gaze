@@ -20,8 +20,8 @@
         </ResourceDictionary>
     </Page.Resources>
     <Page.InputBindings>
-        <KeyBinding Command="{Binding CalibrationRestartCommand}" Key="R" />
-        <KeyBinding Command="{Binding CalibrationAcceptCommand}" Key="Space" />
+        <KeyBinding Command="{Binding ValidationRestartCommand}" Key="R" />
+        <KeyBinding Command="{Binding ValidationCloseCommand}" Key="Space" />
     </Page.InputBindings>
     <Grid>
         <Grid Background="Black">
@@ -35,39 +35,64 @@
                     <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                        Validation Result
                     </TextBlock>
+                    <TextBlock Foreground="White">
+                        <TextBlock.Inlines>
+                            <Run FontWeight="Bold" Text="Accuracy"/>
+                            <Run Text="is the systematic error of the measured gaze point and the target gaze point in degrees."/>
+                        </TextBlock.Inlines>
+                    </TextBlock>
+                    <TextBlock Foreground="White">
+                        <TextBlock.Inlines>
+                            <Run FontWeight="Bold" Text="Precision"/>
+                            <Run Text="is the averaged standard deviation over all collected points in degrees."/>
+                        </TextBlock.Inlines>
+                    </TextBlock>
+                    <TextBlock Foreground="White">
+                        <TextBlock.Inlines>
+                            <Run FontWeight="Bold" Text="Precision RMS"/>
+                            <Run Text="is the averaged root mean square of sample-to-sample error over all collected points in degrees."/>
+                        </TextBlock.Inlines>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <DockPanel Margin="5">
-                    <StackPanel Margin="5">
-                        <TextBlock Foreground="White">Left Accurracy</TextBlock>
-                        <TextBlock Foreground="White">Left Precision</TextBlock>
-                        <TextBlock Foreground="White">Left Precision RMS</TextBlock>
-                    </StackPanel>
-                    <StackPanel Margin="5">
-                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}°}" />
-                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}°}" />
-                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}°}" />
-                    </StackPanel>
-                </DockPanel>
-                <DockPanel Margin="5">
-                    <StackPanel Margin="5">
-                        <TextBlock Foreground="White">Right Accurracy</TextBlock>
-                        <TextBlock Foreground="White">Right Precision</TextBlock>
-                        <TextBlock Foreground="White">Right Precision RMS</TextBlock>
-                    </StackPanel>
-                    <StackPanel Margin="5">
-                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}°}" />
-                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}°}" />
-                        <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}°}" />
-                    </StackPanel>
-                </DockPanel>
+
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center" Foreground="White">Left Eye</TextBlock>
+                    <DockPanel Margin="5">
+                        <StackPanel Margin="5">
+                            <TextBlock Foreground="White">Accuracy:</TextBlock>
+                            <TextBlock Foreground="White">Precision:</TextBlock>
+                            <TextBlock Foreground="White">Precision RMS:</TextBlock>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}°}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}°}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}°}" />
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center" Foreground="White">Right Eye</TextBlock>
+                    <DockPanel Margin="5">
+                        <StackPanel Margin="5">
+                            <TextBlock Foreground="White">Accuracy</TextBlock>
+                            <TextBlock Foreground="White">Precision</TextBlock>
+                            <TextBlock Foreground="White">Precision RMS</TextBlock>
+                        </StackPanel>
+                        <StackPanel Margin="5">
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}°}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}°}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}°}" />
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
             </DockPanel>
             <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                         ui:ThemeManager.RequestedTheme="Dark"
-                        Command="{Binding CalibrationRestartCommand}"
+                        Command="{Binding ValidationRestartCommand}"
                     >
                         Restart Validation (R)
                     </Button>
@@ -75,7 +100,7 @@
                         ui:ThemeManager.RequestedTheme="Dark"
                         Margin="10,0,0,0"
                         Style="{ui:ThemeResource AccentButtonStyle}"
-                        Command="{Binding CalibrationAcceptCommand}"
+                        Command="{Binding ValidationCloseCommand}"
                     >
                         Close (SPACE)
                     </Button>

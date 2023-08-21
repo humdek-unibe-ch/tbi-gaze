@@ -1,27 +1,31 @@
 ﻿using CustomCalibrationLibrary.Commands;
 using CustomCalibrationLibrary.Models;
 using GazeUtilityLibrary.DataStructs;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
+    /// <summary>
+    /// View model class of the gaze validation result.
+    /// </summary>
     class ValidationResultViewModel
     {
-        private ICommand _calibrationRestartCommand;
+        private ICommand _validationRestartCommand;
         /// <summary>
-        /// Command to restart the calibration
+        /// Command to restart the validation
         /// </summary>
-        public ICommand CalibrationRestartCommand { get { return _calibrationRestartCommand; } }
+        public ICommand ValidationRestartCommand { get { return _validationRestartCommand; } }
 
-        private ICommand _calibrationAcceptCommand;
+        private ICommand _validationCloseCommand;
         /// <summary>
-        /// Command to accept the calibration
+        /// Command to close the validation window
         /// </summary>
-        public ICommand CalibrationAcceptCommand { get { return _calibrationAcceptCommand; } }
+        public ICommand ValidationCloseCommand { get { return _validationCloseCommand; } }
 
         private GazeValidationData _validationData;
+        /// <summary>
+        /// The validation result
+        /// </summary>
         public GazeValidationData ValidationData
         {
             get { return _validationData; }
@@ -33,8 +37,8 @@ namespace CustomCalibrationLibrary.ViewModels
         /// <param name="model">The claibration model</param>
         public ValidationResultViewModel(CalibrationModel model)
         {
-            _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
-            _calibrationAcceptCommand = new CalibrationCommand(model, CalibrationEventType.Accept);
+            _validationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
+            _validationCloseCommand = new CalibrationCommand(model, CalibrationEventType.Accept);
             _validationData = model.ValidationData;
         }
     }

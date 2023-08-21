@@ -12,6 +12,7 @@ CALL :CreateCmd MOUSE_TRACKING_DISABLE , MouseTrackingDisable
 CALL :CreateCmd MOUSE_TRACKING_ENABLE , MouseTrackingEnable
 CALL :CreateCmd RESET_DRIFT_COMPENSATION , ResetDriftCompensation
 CALL :CreateCmd RESET_START_TIME , ResetStartTime
+CALL :CreateCmd VALIDATE , Validate
 
 EXIT /B %ERRORLEVEL%
 

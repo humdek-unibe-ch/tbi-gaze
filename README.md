@@ -25,6 +25,7 @@ The package contains the following executables:
   Corresponding shortcuts for all available `<COMMAND>`s are provided in the release package.
   The following `<COMMAND>`s are available (use argument `/value <VALUE>` whenever a command accepts a value):
     - `CUSTOM_CALIBRATE` uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
+    - `VALIDATE` uses the [Tobii Pro SDK Addon](https://github.com/tobiipro/prosdk-addons-dotnet) and launches a validation process.
     - `DRIFT_COMPENSATION` launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
     - `GAZE_RECORDING_DISABLE` requests **`Gaze.exe`** to stop recording gaze data.
       Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
