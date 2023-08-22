@@ -852,10 +852,6 @@ namespace GazeToMouse
             {
                 _calibrationModel.UpdateGazePoint(data.Combined.GazeData2d.GazePoint.X, data.Combined.GazeData2d.GazePoint.Y);
             }
-            if (_isValidationOn && data.Combined.GazeData2d.IsGazePointValid == true)
-            {
-                _validationModel.UpdateGazePoint(data.Combined.GazeData2d.GazePoint.X, data.Combined.GazeData2d.GazePoint.Y);
-            }
             // set the cursor position to the gaze position
             if (_isMouseTracking)
             {
