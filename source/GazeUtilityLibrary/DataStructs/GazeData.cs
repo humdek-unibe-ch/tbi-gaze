@@ -127,7 +127,7 @@ namespace GazeUtilityLibrary.DataStructs
             string[] formattedValues = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
 
             formattedValues[(int)GazeOutputValue.DataTimeStamp] = GazeDataConverter.FormatTimestamp(_timestamp, config.DataLogFormatTimeStamp);
-            formattedValues[(int)GazeOutputValue.DataTimeStampRelative] = GazeDataConverter.FormatTimestamp(_timestamp - startTime, config.DataLogFormatTimeStampRelative);
+            formattedValues[(int)GazeOutputValue.DataTimeStampRelative] = GazeDataConverter.FormatDouble((_timestamp - startTime).TotalMilliseconds, config.DataLogFormatTimeStampRelative);
 
             formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedX] = GazeDataConverter.FormatDouble(DriftCompensation?.GazePosition2d.X, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedY] = GazeDataConverter.FormatDouble(DriftCompensation?.GazePosition2d.Y, config.DataLogFormatNormalizedPoint);

@@ -280,11 +280,13 @@
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogFormatTimeStamp": "hh\\:mm\\:ss\\.fff",
 
-  // Allows to define the format of the relative timestamp. Use the .NET syntax to specify the format:
+  // Allows to define the format of the relative timestamp in milliseconds. Use the .NET syntax to specify
+  // the format:
   //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
-  // Note that special characters (e.g. ':', '.') need to be escaped with '\\'.
+  // Note that the numbers will be represented differently depending in the localisation settings of the
+  // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
-  "DataLogFormatTimeStampRelative": "ss\\.fff",
+  "DataLogFormatTimeStampRelative": "0.000",
 
   // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
   // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).
