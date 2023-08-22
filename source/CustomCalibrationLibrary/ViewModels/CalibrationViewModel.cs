@@ -36,7 +36,7 @@ namespace CustomCalibrationLibrary.ViewModels
             _model = model;
             foreach (CalibrationPoint item in _model.CalibrationPoints)
             {
-                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                _calibrationPoints.Add(new CalibrationPointViewModel(item));
                 item.PropertyChanged += OnCollectionItemChanged;
             }
             _model.CalibrationPoints.CollectionChanged += OnCollectionChanged;
