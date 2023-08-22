@@ -9,6 +9,9 @@ namespace GazeUtilityLibrary.DataStructs
     /// </summary>
     public class CalibrationPoint : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Event to trigger property changes.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private int _index;

@@ -11,7 +11,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="CalibrationPointViewModel"/> class.
         /// </summary>
-        /// <param name="position">The position of the calibration point.</param>
+        /// <param name="point">The position of the calibration point.</param>
         /// <param name="index">The index of the calibration point.</param>
         public CalibrationPointViewModel(Point point, int index) : base(point, index) { }
     }

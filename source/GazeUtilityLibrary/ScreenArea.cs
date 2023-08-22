@@ -11,24 +11,45 @@ namespace GazeUtilityLibrary
     {
 
         private float _width;
+        /// <summary>
+        /// The width of the screen.
+        /// </summary>
         public float Width { get { return _width; } }
 
         private float _height;
+        /// <summary>
+        /// The height of the screen.
+        /// </summary>
         public float Height { get { return _height; } }
 
         private Vector3 _bottomLeft;
+        /// <summary>
+        /// The coordinates of the bottom left point of the screen.
+        /// </summary>
         public Vector3 BottomLeft { get { return _bottomLeft; } }
 
         private Vector3 _bottomRight;
+        /// <summary>
+        /// The coordinates of the bottom right point of the screen.
+        /// </summary>
         public Vector3 BottomRight { get { return _bottomRight; } }
 
         private Vector3 _topLeft;
+        /// <summary>
+        /// The coordinates of the top left point of the screen.
+        /// </summary>
         public Vector3 TopLeft { get { return _topLeft; } }
 
         private Vector3 _topRight;
+        /// <summary>
+        /// The coordinates of the to right point of the screen.
+        /// </summary>
         public Vector3 TopRight { get { return _topRight; } }
 
         private Vector3 _center;
+        /// <summary>
+        /// The coordinates of the center point of the screen.
+        /// </summary>
         public Vector3 Center { get { return _center; } }
 
         private Vector2 _origin;
@@ -116,7 +137,7 @@ namespace GazeUtilityLibrary
         /// Get the normalized 2d point on the sreen given given a 3d point on the screen plane.
         /// Note that values outside of the interval [0, 1] indicate an intersection point outsate of the screen area.
         /// </summary>
-        /// <param name="point">The 3d point on the screen plane to convert.</param>
+        /// <param name="point3d">The 3d point on the screen plane to convert.</param>
         /// <returns>The normalized 2d point on the screen plane</returns>
         public Vector2 GetPoint2dNormalized(Vector3 point3d)
         {

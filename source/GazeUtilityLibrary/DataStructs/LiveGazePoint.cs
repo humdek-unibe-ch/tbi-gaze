@@ -38,6 +38,9 @@ namespace GazeUtilityLibrary.DataStructs
             set { _visibility = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// Event to trigger property changes.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
 

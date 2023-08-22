@@ -119,6 +119,9 @@ namespace CustomCalibrationLibrary.Models
             get { return _calibrationPoints; }
         }
 
+        /// <summary>
+        /// Event to trigger gaze point changes.
+        /// </summary>
         public event EventHandler<Point>? GazePointChanged;
         private Point _gazePoint;
         /// <summary>

@@ -13,6 +13,9 @@ namespace CustomCalibrationLibrary.ViewModels
     /// </summary>
     class CalibrationViewModel
     {
+        /// <summary>
+        /// The claibration model.
+        /// </summary>
         protected CalibrationModel _model;
 
         private ObservableCollection<CalibrationPointViewModel> _calibrationPoints = new ObservableCollection<CalibrationPointViewModel>();
