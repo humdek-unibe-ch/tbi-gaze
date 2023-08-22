@@ -698,8 +698,12 @@ namespace GazeToMouse
             GazeValidationData? validationResult = _tracker.ComputeValidation();
             if(validationResult != null)
             {
-                string[] formattedValues = validationResult.Prepare(_config.Config);
-                _config.WriteToValidationOutput(formattedValues);
+                string[] formattedValues;
+                foreach (GazeValidationPoint point in validationResult.Points)
+                {
+                    formattedValues = point.Prepare(_config.Config);
+                    _config.WriteToValidationOutput(formattedValues);
+                }
                 _validationModel.ValidationData = validationResult;
             }
 

@@ -1,8 +1,5 @@
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
-using ModernWpf.Controls;
-using System;
-using System.Windows;
 
 namespace CustomCalibrationLibrary.Views
 {

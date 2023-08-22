@@ -56,13 +56,15 @@
   //  {0}<delim>{1}<delim> ... <delim>{24}
   // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
   // replaced by the following values
-  //  - 0: The accuracy in degrees averaged over all collected points for the left eye.
-  //  - 1: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
-  //  - 2: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
+  //  - 0: x-coordinate of the validation point (normalized value)
+  //  - 1: y-coordinate of the validation point (normalized value)
+  //  - 2: The accuracy in degrees averaged over all collected points for the left eye.
+  //  - 3: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
+  //  - 4: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
   //       points for the left eye.
-  //  - 3: The accuracy in degrees averaged over all collected points for the left eye.
-  //  - 4: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
-  //  - 5: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
+  //  - 5: The accuracy in degrees averaged over all collected points for the left eye.
+  //  - 6: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
+  //  - 7: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
   //       points for the left eye.
   // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
   // "ValidationLogColumnOrder": "",
@@ -75,6 +77,8 @@
   // value number of the configuration parameter "ValidationLogColumnOrder".
   // This configuration value has no effect if "ValidationLogWriteOutput" is set to false.
   "ValidationLogColumnTitle": [
+    "validationPoint_x",
+    "validationPoint_y",
     "left_accuracy",
     "left_precision",
     "left_precision_rms",
@@ -287,6 +291,14 @@
   // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogFormatTimeStampRelative": "0.000",
+
+  // Allows to define the format of how validation results will be logged. Use the
+  // .NET syntax to specify the format:
+  //  https://docs.microsoft.com/en-us/dotnet/standard/base-types/formatting-types
+  // Note that the numbers will be represented differently depending in the localisation settings of the
+  // windows installation (e.g. 123,4 for DE_CH or 123.4 for EN_US).
+  // This configuration value has no effect if "ValidationLogWriteOutput" is set to false.
+  "DataLogFormatValidation": "0.000",
 
   // Defines the location of the output file. It must be the path to a folder (not a file). If empty,
   // the output file is produced in the directory of the caller (e.g the directory of zleaf.exe).

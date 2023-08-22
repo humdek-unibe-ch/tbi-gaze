@@ -333,6 +333,8 @@ namespace GazeUtilityLibrary.Tracker
         /// <returns>The validation data result.</returns>
         override public GazeValidationData? ComputeValidation()
         {
+            GazeValidationData data;
+
             if (_screenBasedCalibrationValidation == null)
             {
                 return null;
@@ -344,9 +346,17 @@ namespace GazeUtilityLibrary.Tracker
             logger.Info($"Validation precision: left: {result.AveragePrecisionLeftEye},  right: {result.AveragePrecisionRightEye}.");
             logger.Info($"Validation precision RMS: left: {result.AveragePrecisionRMSLeftEye},  right: {result.AveragePrecisionRMSRightEye}.");
 
-            return new GazeValidationData(result.AverageAccuracyLeftEye, result.AverageAccuracyRightEye,
+            data = new GazeValidationData(result.AverageAccuracyLeftEye, result.AverageAccuracyRightEye,
                 result.AveragePrecisionLeftEye, result.AveragePrecisionRightEye,
                 result.AveragePrecisionRMSLeftEye, result.AveragePrecisionRMSRightEye );
+
+            foreach(CalibrationValidationPoint point in result.Points)
+            {
+                data.AddPoint(new Vector2(point.Coordinates.X, point.Coordinates.Y), point.AccuracyLeftEye, point.AccuracyRightEye,
+                    point.PrecisionLeftEye, point.PrecisionRightEye, point.PrecisionRMSLeftEye, point.PrecisionRMSRightEye);
+            }
+
+            return data;
         }
 
         /// <summary>

@@ -603,6 +603,11 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatTimeStampRelative { get; set; }
         /// <summary>
+        /// Allows to define the format of the validation values.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public string DataLogFormatValidation { get; set; }
+        /// <summary>
         /// Defines the location of the output file. It must be the path to a folder (not a file).
         /// </summary>
         [JsonProperty(Required = Required.Default)]
@@ -712,10 +717,11 @@ namespace GazeUtilityLibrary
         {
             DataLogDisabledOnStartup = false;
             DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff";
-            DataLogFormatTimeStampRelative = "ss\\.fff";
+            DataLogFormatTimeStampRelative = "0.000";
             DataLogFormatDiameter = "0.000";
             DataLogFormatOrigin = "0.000";
             DataLogFormatNormalizedPoint = "0.000";
+            DataLogFormatValidation = "0.00";
             DispersionThreshold = 1;
             DriftCompensationTimer = 5000;
             TobiiApplicationPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\TobiiProEyeTrackerManager";
@@ -808,6 +814,8 @@ namespace GazeUtilityLibrary
                 "right_gazePoint_isValid"
             };
             ValidationLogColumnOrder =
+                $"{{{(int)ValidationOutputValue.Point2dX}}}\t" +
+                $"{{{(int)ValidationOutputValue.Point2dY}}}\t" +
                 $"{{{(int)ValidationOutputValue.LeftAccuracy}}}\t" +
                 $"{{{(int)ValidationOutputValue.LeftPrecision}}}\t" +
                 $"{{{(int)ValidationOutputValue.LeftPrecisionRMS}}}\t" +
@@ -815,6 +823,8 @@ namespace GazeUtilityLibrary
                 $"{{{(int)ValidationOutputValue.RightPrecision}}}\t" +
                 $"{{{(int)ValidationOutputValue.RightPrecisionRMS}}}";
             ValidationLogColumnTitle = new string[] {
+                "validationPoint_x",
+                "validationPoint_y",
                 "left_accuracy",
                 "left_precision",
                 "left_precision_rms",

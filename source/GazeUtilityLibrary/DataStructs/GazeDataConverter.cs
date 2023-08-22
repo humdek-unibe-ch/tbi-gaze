@@ -69,7 +69,7 @@ namespace GazeUtilityLibrary.DataStructs
     public enum CalibrationOutputValue
     {
         Point2dX, // x-coordinate of the calibration point (normalised value)
-        Point2dY, // y-coordinate of the gaze calibration (normalised value)
+        Point2dY, // y-coordinate of the calibration point (normalised value)
         LeftGazePoint2dX, // x-coordinate of the gaze point of the left eye (normalised value)
         LeftGazePoint2dY, // y-coordinate of the gaze point of the left eye (normalised value)
         LeftGazePoint2dIsValid, // validity of the gaze data of the left eye
@@ -83,6 +83,8 @@ namespace GazeUtilityLibrary.DataStructs
     /// </summary>
     public enum ValidationOutputValue
     {
+        Point2dX, // x-coordinate of the validation point (normalised value)
+        Point2dY, // y-coordinate of the validation point (normalised value)
         LeftAccuracy, // The accuracy in degrees averaged over all collected points for the left eye.
         LeftPrecision, // The precision (standard deviation) in degrees averaged over all collected points for the left eye.
         LeftPrecisionRMS, // The precision (root mean square of sample-to-sample error) in degrees averaged over all collected points for the left eye.
