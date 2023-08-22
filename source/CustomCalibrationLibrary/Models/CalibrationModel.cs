@@ -130,7 +130,13 @@ namespace CustomCalibrationLibrary.Models
         public UserPositionData UserPositionGuide
         {
             get { return _userPositionGuide; }
-            set { _userPositionGuide = value; OnUserPositionGuideChanged(); }
+            set {
+                _userPositionGuide = value;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    OnUserPositionGuideChanged();
+                });
+            }
         }
         private void OnUserPositionGuideChanged([CallerMemberName] string? property_name = null)
         {
@@ -171,7 +177,10 @@ namespace CustomCalibrationLibrary.Models
         {
             _gazePoint.X = x;
             _gazePoint.Y = y;
-            OnGazePointChanged();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                OnGazePointChanged();
+            });
         }
 
         /// <summary>
