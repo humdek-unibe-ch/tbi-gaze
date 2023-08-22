@@ -1,3 +1,10 @@
+# v3.3.1
+### Improvements
+- Improve performance
+
+### Bug Fixes
+- Represent the relative timestamp in total milliseconds instead of a timespan.
+
 # v3.3.0
 ### New Features
 - Add pipe command `SET_TRIAL_ID` to allow to annotate data samples.
