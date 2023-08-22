@@ -379,7 +379,7 @@ The Listing~\ref{lst.config} shows the default configuration values and provides
 The configuration file contains detailed descriptions for each parameter.
 It is recommended to go through all the configuration parameters and read the description in order to get an understanding of the available configuration options.
 
-\lstinputlisting[language=json, caption={Default configuartion values},label=lst.config]{../sample/config.json}
+\lstinputlisting[language=json, caption={Default configuartion values}, label=lst.config]{../sample/config.json}
 
 Note that the configuration file follows the \texttt{json} syntax which must not be violated.
 If the following points are respected, no problem should arise:
@@ -689,6 +689,14 @@ In the following some further information is provided.
 
 The following three data fields are provided for the left and the right eye:
 \begin{enumerate}
+    \item validation point ADCS coordinates (see Figure~\ref{fig.adcs}) as normalized values
+        \begin{description}
+            \item[Mouse Tracker] not applicable
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item x and y coordinates of the validation point
+                \end{itemize}
+        \end{description}
     \item accuracy of the gaze points.
         \begin{description}
             \item[Mouse Tracker] not applicable
@@ -754,6 +762,43 @@ where
             \item \texttt{<code>} is replaced by an error code which is a binary string where each character can either be 1, indicating an error or 0, indicating no error (see Section~\ref{sect.config.error})
         \end{itemize}
 \end{itemize}
+
+In addition to the configuration data used during the experimentation the dumped configuration file includes information on the screen area in UCS coordinate system (see Figure~\ref{fig.ucs}).
+The Listing~\ref{lst.screen} shows an example of the screen area data as it can be found in the dumped configuration file.
+
+\begin{lstlisting}[language=json, caption={Screen Area Data in Dumped Config}, label=lst.screen]
+{
+  "ScreenArea": {
+    "Width": 597.5177001953125,
+    "Height": 336.10369873046875,
+    "Center": [
+      0.1185302734375,
+      173.82257080078125,
+      56.42921829223633
+    ],
+    "TopLeft": [
+      -298.64031982421875,
+      331.7396545410156,
+      113.90633392333984
+    ],
+    "TopRight": [
+      298.87738037109375,
+      331.7396545410156,
+      113.90633392333984
+    ],
+    "BottomLeft": [
+      -298.64031982421875,
+      15.905486106872559,
+      -1.0478993654251099
+    ],
+    "BottomRight": [
+      298.87738037109375,
+      15.905486106872559,
+      -1.0478993654251099
+    ]
+  }
+}
+\end{lstlisting}
 
 \subsection{Configuration Error Code}
 \label{sect.config.error}

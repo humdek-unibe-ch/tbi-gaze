@@ -1,6 +1,7 @@
 # v3.3.1
 ### Improvements
-- Improve performance
+- Improve performance.
+- Dump validation results for each validation point.
 
 ### Bug Fixes
 - Represent the relative timestamp in total milliseconds instead of a timespan.
