@@ -3,7 +3,7 @@
 namespace GazeUtilityLibrary.DataStructs
 {
     /// <summary>
-    /// The event argument class for Tobii eyetracker data
+    /// The gaze calibration data structure
     /// </summary>
     public class GazeCalibrationData
     {
