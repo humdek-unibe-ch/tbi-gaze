@@ -2,6 +2,9 @@
 
 namespace GazeUtilityLibrary
 {
+    /// <summary>
+    /// Helper class to check for the valididty of configuration options.
+    /// </summary>
     public static class ConfigChecker
     {
         /// <summary>

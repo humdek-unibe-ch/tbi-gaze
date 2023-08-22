@@ -12,20 +12,41 @@ namespace GazeUtilityLibrary
     public class ScreenTriangle
     {
         private Vector3 _v1;
+        /// <summary>
+        /// A corner point of the triangle.
+        /// </summary>
         public Vector3 V1 { get { return _v1; } }
 
         private Vector3 _v2;
+        /// <summary>
+        /// A corner point of the triangle.
+        /// </summary>
         public Vector3 V2 { get { return _v2; } }
 
         private Vector3 _v3;
+        /// <summary>
+        /// A corner point of the triangle.
+        /// </summary>
         public Vector3 V3 { get { return _v3; } }
 
         private Vector3 _e1;
+        /// <summary>
+        /// The edge vector from v1 to v2.
+        /// </summary>
         public Vector3 E1 { get { return _e1; } }
 
         private Vector3 _e2;
+        /// <summary>
+        /// The edge vector from v1 to v3.
+        /// </summary>
         public Vector3 E2 { get { return _e2; } }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScreenTriangle"/> class.
+        /// </summary>
+        /// <param name="v1">A corner point of the triangle.</param>
+        /// <param name="v2">A corner point of the triangle.</param>
+        /// <param name="v3">A corner point of the triangle.</param>
         public ScreenTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
         {
             _v1 = v1;

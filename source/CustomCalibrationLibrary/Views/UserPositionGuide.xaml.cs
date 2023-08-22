@@ -10,6 +10,11 @@ namespace CustomCalibrationLibrary.Views
     public partial class UserPositionGuide : Page
     {
         private CalibrationModel _model;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserPositionGuide"/> class.
+        /// </summary>
+        /// <param name="model">The calibration model.</param>
         public UserPositionGuide(CalibrationModel model)
         {
             InitializeComponent();

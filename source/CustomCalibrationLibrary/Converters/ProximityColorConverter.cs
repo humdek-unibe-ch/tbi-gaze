@@ -11,7 +11,14 @@ namespace CustomCalibrationLibrary.Converters
     /// </summary>
     public class ProximityColorConverter : IValueConverter
     {
-
+        /// <summary>
+        /// Value converter.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the target value.</param>
+        /// <param name="parameter">The conversion parameter.</param>
+        /// <param name="culture">The language localisation.</param>
+        /// <returns>The converted value object</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -40,9 +47,18 @@ namespace CustomCalibrationLibrary.Converters
             return new SolidColorBrush(Colors.White);
         }
 
+        /// <summary>
+        /// Reverted value converter.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the target value.</param>
+        /// <param name="parameter">The conversion parameter.</param>
+        /// <param name="culture">The language localisation.</param>
+        /// <returns>The converted value object</returns>
+        /// <exception cref="NotSupportedException"></exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return 0;
+            throw new NotImplementedException();
         }
     }
 }

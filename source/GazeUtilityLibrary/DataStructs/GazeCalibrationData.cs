@@ -8,27 +8,51 @@ namespace GazeUtilityLibrary.DataStructs
     public class GazeCalibrationData
     {
         private double _xCoord;
+        /// <summary>
+        /// The x coordinate of the calibration point.
+        /// </summary>
         public double XCoord { get { return _xCoord; } }
 
         private double _yCoord;
+        /// <summary>
+        /// The y coordinate of the calibration point.
+        /// </summary>
         public double YCoord { get { return _yCoord; } }
 
         private double _xCoordLeft;
+        /// <summary>
+        /// The x coord of the gaze point of the left eye.
+        /// </summary>
         public double XCoordLeft { get { return _xCoordLeft; } }
 
         private double _yCoordLeft;
+        /// <summary>
+        /// The y coord of the gaze point of the left eye.
+        /// </summary>
         public double YCoordLeft { get { return _yCoordLeft; } }
 
         private bool _validityLeft;
+        /// <summary>
+        /// The validity of gaze point coordinate of the left eye.
+        /// </summary>
         public bool ValidityLeft { get { return _validityLeft; } }
 
         private double _xCoordRight;
+        /// <summary>
+        /// The x coord of the gaze point of the right eye.
+        /// </summary>
         public double XCoordRight { get { return _xCoordRight; } }
 
         private double _yCoordRight;
+        /// <summary>
+        /// The y coord of the gaze point of the right eye.
+        /// </summary>
         public double YCoordRight { get { return _yCoordRight; } }
 
         private bool _validityRight;
+        /// <summary>
+        /// The validity of gaze point coordinate of the right eye.
+        /// </summary>
         public bool ValidityRight { get { return _validityRight; } }
 
         /// <summary>
@@ -38,7 +62,7 @@ namespace GazeUtilityLibrary.DataStructs
         /// <param name="yCoord">The y coord of the calibration point.</param>
         /// <param name="xCoordLeft">The x coord of the gaze point of the left eye.</param>
         /// <param name="yCoordLeft">The y coord of the gaze point of the left eye.</param>
-        /// <param name="validityLeft">the validity of gaze point coordinate of the left eye.</param>
+        /// <param name="validityLeft">The validity of gaze point coordinate of the left eye.</param>
         /// <param name="xCoordRight">The x coord of the gaze point of the right eye.</param>
         /// <param name="yCoordRight">The y coord of the gaze point of the right eye.</param>
         /// <param name="validityRight">the validity of gaze point coordinate of the right eye.</param>

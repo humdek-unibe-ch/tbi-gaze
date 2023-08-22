@@ -10,22 +10,44 @@ using WpfScreenHelper;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
+    /// <summary>
+    /// A representation of the screen.
+    /// </summary>
     class Monitor
     {
         private string _name;
+        /// <summary>
+        /// The name of the screen.
+        /// </summary>
         public string Name { get { return _name;  } }
         private int _index;
+        /// <summary>
+        /// The screen index.
+        /// </summary>
         public int Index { get { return _index; } }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Monitor"/> class.
+        /// </summary>
+        /// <param name="index">The screen index.</param>
+        /// <param name="name">The name of the screen.</param>
         public Monitor(int index, string name)
         {
             _index = index;
             _name = name;
         }
     }
+
+    /// <summary>
+    /// The view model class for the screen selection view.
+    /// </summary>
     class ScreenSelectionViewModel
     {
         private Window _window;
         private ObservableCollection<Monitor> _monitors = new ObservableCollection<Monitor>();
+        /// <summary>
+        /// The observable lidt of monitors to select from.
+        /// </summary>
         public ObservableCollection<Monitor> Monitors
         {
             get { return _monitors; }
@@ -43,6 +65,11 @@ namespace CustomCalibrationLibrary.ViewModels
         /// </summary>
         public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScreenSelectionViewModel"/> class.
+        /// </summary>
+        /// <param name="model">The calibration model</param>
+        /// <param name="window">The target window of the screen selection</param>
         public ScreenSelectionViewModel(CalibrationModel model, Window window)
         {
             _window = window;
@@ -55,6 +82,10 @@ namespace CustomCalibrationLibrary.ViewModels
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }
 
+        /// <summary>
+        /// Sets the window position to a screen, given an index.
+        /// </summary>
+        /// <param name="index">The index of the screen to switch to.</param>
         public void SwitchScreen(int index)
         {
             this._window.SetWindowPosition(WindowPositions.Center, Screen.AllScreens.ElementAt(index));

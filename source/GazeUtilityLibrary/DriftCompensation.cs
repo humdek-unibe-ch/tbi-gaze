@@ -24,6 +24,12 @@ namespace GazeUtilityLibrary
 
         private List<GazeData> _samples;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DriftCompensation"/> class.
+        /// </summary>
+        /// <param name="fixationPoint">The target fixation point.</param>
+        /// <param name="fixationFrameCount">The required number of frames during fixation.</param>
+        /// <param name="dispersionThreashold">The dispersion threashold for the fixation.</param>
         public DriftCompensation(Vector3 fixationPoint, int fixationFrameCount, double dispersionThreashold)
         {
             _q = Quaternion.Identity;

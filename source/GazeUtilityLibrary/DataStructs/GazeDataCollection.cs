@@ -14,12 +14,21 @@ namespace GazeUtilityLibrary.DataStructs
     public class GazeDataCollection
     {
         private GazeData2d _gazeData2d;
+        /// <summary>
+        /// The 2d gaze data.
+        /// </summary>
         public GazeData2d GazeData2d { get { return _gazeData2d; } }
 
+        /// <summary>
+        /// The 3d gaze data.
+        /// </summary>
         private GazeData3d? _gazeData3d = null;
         public GazeData3d? GazeData3d { get { return _gazeData3d; } }
 
         private EyeData? _eyeData = null;
+        /// <summary>
+        /// Pupil data of the eye.
+        /// </summary>
         public EyeData? EyeData { get { return _eyeData; } }
 
 

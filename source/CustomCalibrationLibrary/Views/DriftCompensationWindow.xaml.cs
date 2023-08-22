@@ -8,6 +8,9 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class DriftCompensationWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DriftCompensationWindow"/> class.
+        /// </summary>
         public DriftCompensationWindow()
         {
             InitializeComponent();

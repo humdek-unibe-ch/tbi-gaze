@@ -111,7 +111,7 @@ namespace GazeUtilityLibrary.Tracker
         /// Initializes a new instance of the <see cref="MouseTracker"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        /// <param name="ready_timer">The ready timer.</param>
+        /// <param name="config">The config item.</param>
         public MouseTracker(TrackerLogger logger, ConfigItem config) : base(logger, config, "Mouse Tracker")
         {
             State = DeviceStatus.Initializing;

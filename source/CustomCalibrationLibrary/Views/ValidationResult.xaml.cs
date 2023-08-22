@@ -9,6 +9,10 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class ValidationResult : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidationResult"/> class.
+        /// </summary>
+        /// <param name="model">The calibration model.</param>
         public ValidationResult(CalibrationModel model)
         {
             InitializeComponent();

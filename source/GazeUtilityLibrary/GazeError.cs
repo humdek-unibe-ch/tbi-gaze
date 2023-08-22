@@ -34,6 +34,9 @@ namespace GazeUtilityLibrary
         DeviceInterrupt = 0x02
     }
 
+    /// <summary>
+    /// The base error class to convert error flags to binary strings.
+    /// </summary>
     public class GazeError
     {
         /// <summary>
@@ -49,10 +52,16 @@ namespace GazeUtilityLibrary
         }
     }
 
+    /// <summary>
+    /// The gaze config error class to convert error flags to binary strings.
+    /// </summary>
     public class GazeConfigError : GazeError
     {
 
         private EGazeConfigError _error = 0;
+        /// <summary>
+        /// The error flags.
+        /// </summary>
         public EGazeConfigError Error { set { _error |= value; } }
 
         /// <summary>
@@ -71,10 +80,17 @@ namespace GazeUtilityLibrary
 
         }
     }
+
+    /// <summary>
+    /// The gaze data error class to convert error flags to binary strings.
+    /// </summary>
     public class GazeDataError : GazeError
     {
 
         private EGazeDataError _error = 0;
+        /// <summary>
+        /// The error flags.
+        /// </summary>
         public EGazeDataError Error { set { _error |= value; } }
 
         /// <summary>
@@ -89,10 +105,17 @@ namespace GazeUtilityLibrary
 
         }
     }
+
+    /// <summary>
+    /// The calibration data error class to convert error flags to binary strings.
+    /// </summary>
     public class CalibrationDataError : GazeError
     {
 
         private ECalibrationDataError _error = 0;
+        /// <summary>
+        /// The error flags.
+        /// </summary>
         public ECalibrationDataError Error { set { _error |= value; } }
 
         /// <summary>

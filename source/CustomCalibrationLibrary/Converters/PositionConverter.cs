@@ -10,15 +10,29 @@ namespace CustomCalibrationLibrary.Converters
     /// </summary>
     public class PositionConverter: DependencyObject, IValueConverter
     {
+        /// <summary>
+        /// The position offset.
+        /// </summary>
         public string Offset
         {
             get => (string)GetValue(OffsetProperty) ?? "0";
             set => SetValue(OffsetProperty, value);
         }
 
+        /// <summary>
+        /// The custom offset property of the value converter.
+        /// </summary>
         public static readonly DependencyProperty OffsetProperty =
         DependencyProperty.Register("Offset", typeof(string), typeof(PositionConverter), new PropertyMetadata(null));
 
+        /// <summary>
+        /// Value converter.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the target value.</param>
+        /// <param name="parameter">The conversion parameter.</param>
+        /// <param name="culture">The language localisation.</param>
+        /// <returns>The converted value object</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
@@ -46,6 +60,15 @@ namespace CustomCalibrationLibrary.Converters
             return 0;
         }
 
+        /// <summary>
+        /// Reverted value converter.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the target value.</param>
+        /// <param name="parameter">The conversion parameter.</param>
+        /// <param name="culture">The language localisation.</param>
+        /// <returns>The converted value object</returns>
+        /// <exception cref="NotSupportedException"></exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

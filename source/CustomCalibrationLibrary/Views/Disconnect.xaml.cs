@@ -15,6 +15,11 @@ namespace CustomCalibrationLibrary.Views
         /// Command to abort the calibration
         /// </summary>
         public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Disconnect"/> class.
+        /// </summary>
+        /// <param name="model">The calibration model</param>
         public Disconnect(CalibrationModel model)
         {
             InitializeComponent();

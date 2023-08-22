@@ -24,8 +24,7 @@ namespace GazeUtilityLibrary.Tracker
         /// Initializes a new instance of the <see cref="EyeTrackerPro"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        /// <param name="ready_timer">The ready timer.</param>
-        /// <param name="license_path">The license path.</param>
+        /// <param name="config">The config item.</param>
         public EyeTrackerPro(TrackerLogger logger, ConfigItem config) : base(logger, config, "Tobii SDK Pro")
         {
             State = DeviceStatus.Configuring;

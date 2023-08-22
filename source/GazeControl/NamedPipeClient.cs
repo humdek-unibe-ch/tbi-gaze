@@ -7,6 +7,9 @@ using GazeUtilityLibrary.DataStructs;
 
 namespace GazeControl
 {
+    /// <summary>
+    /// The named pipe client handler.
+    /// </summary>
     public static class NamedPipeClient
     {
         /// <summary>

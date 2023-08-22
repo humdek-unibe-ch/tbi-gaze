@@ -10,6 +10,9 @@ namespace GazeUtilityLibrary.DataStructs
     {
         private static TimeSpan? _delta = null;
         private TimeSpan _timestamp;
+        /// <summary>
+        /// The timestamp of the data sample.
+        /// </summary>
         public TimeSpan Timestamp {
             get { return _timestamp; }
             set
@@ -23,13 +26,26 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         private GazeDataCollection? _left = null;
+        /// <summary>
+        /// The gaze data set, including 2d and (optionally) 3d gaze data as well as optional eye data of the left eye.
+        /// </summary>
         public GazeDataCollection? Left { get { return _left; } }
 
         private GazeDataCollection? _right = null;
+        /// <summary>
+        /// The gaze data set, including 2d and (optionally) 3d gaze data as well as optional eye data of the right eye.
+        /// </summary>
         public GazeDataCollection? Right { get { return _right; } }
 
         private GazeDataCollection _combined;
+        /// <summary>
+        /// The gaze data set, including 2d and (optionally) 3d gaze data as well as optional eye data of the combined eyes.
+        /// </summary>
         public GazeDataCollection Combined { get { return _combined; } }
+
+        /// <summary>
+        /// The drift compensation information.
+        /// </summary>
         public DriftCompensationData? DriftCompensation { get; set; }
 
         /// <summary>

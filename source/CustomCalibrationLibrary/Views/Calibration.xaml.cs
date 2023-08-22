@@ -11,6 +11,10 @@ namespace CustomCalibrationLibrary.Views
     {
         private CalibrationModel _model;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Calibration"/> class.
+        /// </summary>
+        /// <param name="model">The calibration model</param>
         public Calibration(CalibrationModel model)
         {
             InitializeComponent();

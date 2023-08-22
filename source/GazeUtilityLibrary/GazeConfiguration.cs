@@ -5,6 +5,9 @@ using System.IO;
 
 namespace GazeUtilityLibrary
 {
+    /// <summary>
+    /// A list of output files.
+    /// </summary>
     public enum EOutputType
     {
         gaze,
@@ -12,10 +15,16 @@ namespace GazeUtilityLibrary
         validation
     }
 
+    /// <summary>
+    /// The gaze configuration handler.
+    /// </summary>
     public class GazeConfiguration
     {
         private ConfigItem? _config;
         private ConfigItem _default_config;
+        /// <summary>
+        /// The JSON structure holding the configuratyion options.
+        /// </summary>
         public ConfigItem Config { get { return _config ?? _default_config; } }
         private TrackerLogger _logger;
         private GazeConfigError _error = new GazeConfigError();
@@ -24,6 +33,11 @@ namespace GazeUtilityLibrary
         private StreamWriter? _swCalibration = null;
         private StreamWriter? _swValidation = null;
         private JsonConfigParser _parser;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GazeConfiguration"/> class.
+        /// </summary>
+        /// <param name="logger">The log handler.</param>
         public GazeConfiguration(TrackerLogger logger)
         {
             _logger = logger;
@@ -447,23 +461,50 @@ namespace GazeUtilityLibrary
         }
     }
 
+    /// <summary>
+    /// The JSON structure of the screen area.
+    /// </summary>
     public class ConfigScreenArea
     {
+        /// <summary>
+        /// The width of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double Width { get; set; }
+        /// <summary>
+        /// The height of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double Height { get; set; }
+        /// <summary>
+        /// The coordinates of the center point of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double[] Center { get; set; }
+        /// <summary>
+        /// The coordinates of the top left point of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double[] TopLeft { get; set; }
+        /// <summary>
+        /// The coordinates of the to right point of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double[] TopRight { get; set; }
+        /// <summary>
+        /// The coordinates of the bottom left point of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double[] BottomLeft { get; set; }
+        /// <summary>
+        /// The coordinates of the bottom right point of the screen.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public double[] BottomRight { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigScreenArea"/> class.
+        /// </summary>
         public ConfigScreenArea()
         {
             Width = 0;
@@ -475,6 +516,10 @@ namespace GazeUtilityLibrary
             BottomRight = new double[3] { 0, 0, 0 };
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigScreenArea"/> class.
+        /// </summary>
+        /// <param name="screenArea">A screen area object.</param>
         public ConfigScreenArea(ScreenArea screenArea)
         {
             Width = screenArea.Width;
@@ -492,73 +537,177 @@ namespace GazeUtilityLibrary
     /// </summary>
     public class ConfigItem
     {
+        /// <summary>
+        /// The name of the experiment.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public string? ConfigName { get; set; }
+        /// <summary>
+        /// Allows to define the order and the delimiters between the different gaze data values.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public string DataLogColumnOrder { get; set; }
+        /// <summary>
+        /// Defines the titles of the gaze data log value columns.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string[] DataLogColumnTitle { get; set; }
+        /// <summary>
+        /// Allows to define the order and the delimiters between the different calibration data values.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public string CalibrationLogColumnOrder { get; set; }
+        /// <summary>
+        /// Defines the titles of the calibration data log value columns.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string[] CalibrationLogColumnTitle { get; set; }
+        /// <summary>
+        /// Allows to define the order and the delimiters between the different validation data values.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public string ValidationLogColumnOrder { get; set; }
+        /// <summary>
+        /// Defines the titles of the validation data log value columns.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string[] ValidationLogColumnTitle { get; set; }
+        /// <summary>
+        /// Number of maximal allowed output data files in the output path. Oldest files are deleted first.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public int DataLogCount { get; set; }
+        /// <summary>
+        /// Allows to define the format of how the pupil diameter (in millimetres) will be logged.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatDiameter { get; set; }
+        /// <summary>
+        /// Allows to define the format of how the gaze origin values (in millimetres) will be logged.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatOrigin { get; set; }
+        /// <summary>
+        /// Allows to define the format of how normalized data points will be logged.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatNormalizedPoint { get; set; }
+        /// <summary>
+        /// Allows to define the format of the timestamp.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatTimeStamp { get; set; }
+        /// <summary>
+        /// Allows to define the format of the relative timestamp in milliseconds.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string DataLogFormatTimeStampRelative { get; set; }
+        /// <summary>
+        /// Defines the location of the output file. It must be the path to a folder (not a file).
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string DataLogPath { get; set; }
+        /// <summary>
+        /// Defines whether gaze data is written to a log file.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public bool DataLogWriteOutput { get; set; }
+        /// <summary>
+        /// Defines whether gaze calibration data is written to a log file.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public bool CalibrationLogWriteOutput { get; set; }
+        /// <summary>
+        /// Defines whether gaze validation data is written to a log file.
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public bool ValidationLogWriteOutput { get; set; }
+        /// <summary>
+        /// Define the calibration points to be shown during the calibration process.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double[][] CalibrationPoints { get; set; }
+        /// <summary>
+        /// Define the validation points to be shown during the validation process.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double[][] ValidationPoints { get; set; }
+        /// <summary>
+        /// Defines whether gaze data storing is disabled on Gaze application start.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public bool DataLogDisabledOnStartup { get; set; }
+        /// <summary>
+        /// In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
+        /// Provide an angle in degrees.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double DispersionThreshold { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double DriftCompensationTimer { get; set; }
+        /// <summary>
+        /// Defines the location of the license files. It must be the path to a folder (not a file).
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
+        /// <summary>
+        /// Defines whether the mouse cursor shall be controlled by the gaze of the subject during the experiment.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public bool MouseControl { get; set; }
+        /// <summary>
+        /// Defines whether the mouse cursor shall be hidden during the experiment.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public bool MouseControlHide { get; set; }
+        /// <summary>
+        /// Defines whether the mouse cursor shall be hidden on the calibration window.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public bool MouseCalibrationHide { get; set; }
+        /// <summary>
+        /// Defines the Path to the standard mouse pointer icon.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string MouseStandardIconPath { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) to wait for the eye tracker to become ready while it is in any other state.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public int ReadyTimer { get; set; }
+        /// <summary>
+        /// Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
+        /// </summary>
         [JsonProperty(Required = Required.Always)]
         public int TrackerDevice { get; set; }
+        /// <summary>
+        /// Defines the Tobii installation path. It must be the path to a folder (not a file).
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string TobiiApplicationPath { get; set; }
+        /// <summary>
+        /// The Tobii application to run a calibration.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string TobiiCalibrate { get; set; }
+        /// <summary>
+        /// The arguments to pass to the calibration application. Use %S as a placeholder for the device serial number
+        /// and %A as a placeholder for the device address.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string TobiiCalibrateArguments { get; set; }
+        /// <summary>
+        /// Hold the screen area once the config file is dumped during experimentation.
+        /// </summary>
         [JsonProperty(Required = Required.Default)]
         public ConfigScreenArea ScreenArea { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigItem"/> class.
+        /// </summary>
         public ConfigItem()
         {
             DataLogDisabledOnStartup = false;

@@ -76,6 +76,11 @@ namespace GazeUtilityLibrary.DataStructs
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalibrationPoint"/> class.
+        /// </summary>
+        /// <param name="position">The position of the calibration point.</param>
+        /// <param name="index">The index of the calibration point.</param>
         public CalibrationPoint(Point position, int index)
         {
             HasData = false;

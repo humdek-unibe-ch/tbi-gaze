@@ -8,21 +8,39 @@ namespace GazeUtilityLibrary.DataStructs
     public class GazeData3d
     {
         private Vector3 _gazePoint;
+        /// <summary>
+        /// The 3d gaze point.
+        /// </summary>
         public Vector3 GazePoint { get { return _gazePoint; } }
 
         private bool _isGazePointValid;
+        /// <summary>
+        /// The validity of the 3d gaze point.
+        /// </summary>
         public bool IsGazePointValid { get { return _isGazePointValid; } }
 
         private Vector3 _gazeOrigin;
+        /// <summary>
+        /// The 3d origin of the gaze.
+        /// </summary>
         public Vector3 GazeOrigin { get { return _gazeOrigin; } }
 
         private Vector3 _gazeDirection;
+        /// <summary>
+        /// The 3d gaze direction vector.
+        /// </summary>
         public Vector3 GazeDirection { get { return _gazeDirection; } }
 
         private float _gazeDistance;
+        /// <summary>
+        /// The gaze distance from the origin to the gaze point.
+        /// </summary>
         public float GazeDistance { get { return _gazeDistance; } }
 
         private bool _isGazeOriginValid;
+        /// <summary>
+        /// The validity of the 3d origin.
+        /// </summary>
         public bool IsGazeOriginValid { get { return _isGazeOriginValid; } }
 
         /// <summary>

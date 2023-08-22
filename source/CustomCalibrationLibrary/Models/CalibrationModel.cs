@@ -48,17 +48,26 @@ namespace CustomCalibrationLibrary.Models
         public string Error { get { return _error; } set { _error = value; OnPropertyChanged(); } }
 
         /// <summary>
-        /// Events to trigger changes in the calibration process.
+        /// Event to trigger changes in the calibration process.
         /// </summary>
         public event EventHandler<CalibrationEventType>? CalibrationEvent;
+        /// <summary>
+        /// The calibraion event change handler.
+        /// </summary>
+        /// <param name="type"></param>
         public void OnCalibrationEvent(CalibrationEventType type)
         {
             CalibrationEvent?.Invoke(this, type);
         }
-
+        /// <summary>
+        /// Event to trigger property changes in this class.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private GazeValidationData _validationData;
+        /// <summary>
+        /// The data returned by a successful validation process.
+        /// </summary>
         public GazeValidationData ValidationData
         {
             get { return _validationData; }
@@ -122,6 +131,9 @@ namespace CustomCalibrationLibrary.Models
             GazePointChanged?.Invoke(this, _gazePoint);
         }
 
+        /// <summary>
+        /// Event to trigger user position guide changes.
+        /// </summary>
         public event EventHandler<UserPositionData>? UserPositionGuideChanged;
         private UserPositionData _userPositionGuide;
         /// <summary>
@@ -151,7 +163,11 @@ namespace CustomCalibrationLibrary.Models
 
         private TrackerLogger _logger;
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalibrationModel"/> class.
+        /// </summary>
+        /// <param name="logger">The log handler.</param>
+        /// <param name="points">Calibration points.</param>
         public CalibrationModel(TrackerLogger logger, double[][] points)
         {
             _logger = logger;

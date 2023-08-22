@@ -9,6 +9,9 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class Computing : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Computing"/> class.
+        /// </summary>
         public Computing()
         {
             InitializeComponent();

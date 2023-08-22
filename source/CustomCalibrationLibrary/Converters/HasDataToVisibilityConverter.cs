@@ -13,6 +13,15 @@ namespace CustomCalibrationLibrary.Converters
     /// </summary>
     public class HasDataToVisibilityConverter: IValueConverter
     {
+        /// <summary>
+        /// Value converter.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the target value.</param>
+        /// <param name="parameter">The conversion parameter.</param>
+        /// <param name="culture">The language localisation.</param>
+        /// <returns>The converted value object</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
@@ -22,6 +31,15 @@ namespace CustomCalibrationLibrary.Converters
             return (bool)value ? Visibility.Hidden : Visibility.Visible;
         }
 
+        /// <summary>
+        /// Reverted value converter.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="targetType">The type of the target value.</param>
+        /// <param name="parameter">The conversion parameter.</param>
+        /// <param name="culture">The language localisation.</param>
+        /// <returns>The converted value object</returns>
+        /// <exception cref="NotSupportedException"></exception>
         public object ConvertBack(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {

@@ -4,9 +4,15 @@ using System.Runtime.CompilerServices;
 
 namespace GazeUtilityLibrary.DataStructs
 {
+    /// <summary>
+    /// The user position to be rendered on the screen.
+    /// </summary>
     public class UserPositionData : INotifyPropertyChanged
     {
         private double _xCoordLeft;
+        /// <summary>
+        /// The normalized x coordinate of the left eye.
+        /// </summary>
         public double XCoordLeft
         {
             get { return _xCoordLeft; }
@@ -14,6 +20,9 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         private double _yCoordLeft;
+        /// <summary>
+        /// The normalized y coordinate of the left eye.
+        /// </summary>
         public double YCoordLeft
         {
             get { return _yCoordLeft; }
@@ -21,6 +30,9 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         private double _zCoordLeft;
+        /// <summary>
+        /// The normalized z coordinate of the left eye.
+        /// </summary>
         public double ZCoordLeft
         {
             get { return _zCoordLeft; }
@@ -28,6 +40,9 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         private double _xCoordRight;
+        /// <summary>
+        /// The normalized x coordinate of the right eye.
+        /// </summary>
         public double XCoordRight
         {
             get { return _xCoordRight; }
@@ -35,6 +50,9 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         private double _yCoordRight;
+        /// <summary>
+        /// The normalized y coordinate of the right eye.
+        /// </summary>
         public double YCoordRight
         {
             get { return _yCoordRight; }
@@ -42,13 +60,18 @@ namespace GazeUtilityLibrary.DataStructs
         }
 
         private double _zCoordRight;
+        /// <summary>
+        /// The normalized z coordinate of the right eye.
+        /// </summary>
         public double ZCoordRight 
         {
             get { return _zCoordRight; }
             set { _zCoordRight = value; OnPropertyChanged(); }
         }
 
-
+        /// <summary>
+        /// The property change event handler.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
@@ -60,6 +83,9 @@ namespace GazeUtilityLibrary.DataStructs
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserPositionData"/> class.
+        /// </summary>
         public UserPositionData()
         {
             _xCoordLeft = 0.5;
@@ -69,6 +95,16 @@ namespace GazeUtilityLibrary.DataStructs
             _yCoordRight = 0.5;
             _zCoordRight = 0.5;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserPositionData"/> class.
+        /// </summary>
+        /// <param name="xCoordLeft">The normalized x coordinate of the left eye.</param>
+        /// <param name="yCoordLeft">The normalized y coordinate of the left eye.</param>
+        /// <param name="zCoordLeft">The normalized z coordinate of the left eye.</param>
+        /// <param name="xCoordRight">The normalized x coordinate of the right eye.</param>
+        /// <param name="yCoordRight">The normalized y coordinate of the right eye.</param>
+        /// <param name="zCoordRight">The normalized z coordinate of the right eye.</param>
         public UserPositionData(double xCoordLeft, double yCoordLeft, double zCoordLeft, double xCoordRight, double yCoordRight, double zCoordRight)
         {
             _xCoordLeft = xCoordLeft;

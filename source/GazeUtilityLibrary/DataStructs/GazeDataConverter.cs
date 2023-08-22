@@ -91,6 +91,9 @@ namespace GazeUtilityLibrary.DataStructs
         RightPrecisionRMS, // The precision (root mean square of sample-to-sample error) in degrees averaged over all collected points for the right eye.
     }
 
+    /// <summary>
+    /// Convert values to strings according to a format.
+    /// </summary>
     static public class GazeDataConverter
     {
         /// <summary>

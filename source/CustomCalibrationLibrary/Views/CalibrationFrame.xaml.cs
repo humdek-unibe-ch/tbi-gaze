@@ -16,6 +16,11 @@ namespace CustomCalibrationLibrary.Views
         private Window _window;
         private Computing _computingView;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalibrationFrame"/> class.
+        /// </summary>
+        /// <param name="model">The calibration model.</param>
+        /// <param name="window">The target window.</param>
         public CalibrationFrame(CalibrationModel model, Window window)
         {
             _window = window;

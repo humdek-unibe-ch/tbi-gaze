@@ -7,6 +7,9 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class CalibrationResultPoint : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalibrationResultPoint"/> class.
+        /// </summary>
         public CalibrationResultPoint()
         {
             InitializeComponent();

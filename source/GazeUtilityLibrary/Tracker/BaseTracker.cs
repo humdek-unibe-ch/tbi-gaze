@@ -18,6 +18,9 @@ namespace GazeUtilityLibrary.Tracker
     /// <seealso cref="IDisposable" />
     public abstract class BaseTracker : INotifyPropertyChanged, IDisposable
     {
+        /// <summary>
+        /// The tracker device status
+        /// </summary>
         public enum DeviceStatus
         {
             Configuring,
@@ -52,6 +55,9 @@ namespace GazeUtilityLibrary.Tracker
         /// The scrren area structure holding the metrics of the screen in 3d space.
         /// </summary>
         protected ScreenArea? screenArea = null;
+        /// <summary>
+        /// The scrren area structure holding the metrics of the screen in 3d space.
+        /// </summary>
         public ScreenArea? ScreenArea { get { return screenArea; } }
         /// <summary>
         /// The gaze configuration item
@@ -125,8 +131,8 @@ namespace GazeUtilityLibrary.Tracker
         /// Initializes a new instance of the <see cref="EyeTrackerHandler" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        /// <param name="ready_timer">The ready timer.</param>
-        /// <param name="device_name">Name of the device.</param>
+        /// <param name="config">The configuration object.</param>
+        /// <param name="deviceName">Name of the device.</param>
         public BaseTracker(TrackerLogger logger, ConfigItem config, string deviceName)
         {
             this.config = config;
@@ -292,7 +298,7 @@ namespace GazeUtilityLibrary.Tracker
         /// <summary>
         /// Called when [gaze data received].
         /// </summary>
-        /// <param name="data">The gaze data event data.</param>
+        /// <param name="gazeData">The gaze data event data.</param>
         protected virtual void OnGazeDataReceived(GazeData gazeData)
         {
             if (driftCompensation != null)

@@ -8,9 +8,15 @@ namespace GazeUtilityLibrary.DataStructs
     public class GazeData2d
     {
         private Vector2 _gazePoint;
+        /// <summary>
+        /// The 2d gaze point.
+        /// </summary>
         public Vector2 GazePoint { get { return _gazePoint; } }
 
         private bool _isGazePointValid;
+        /// <summary>
+        /// The validity flag of the 2d gaze point.
+        /// </summary>
         public bool IsGazePointValid { get { return _isGazePointValid; } }
 
         /// <summary>

@@ -69,6 +69,10 @@ namespace Tobii.Research.Addons
             AveragePrecisionRMSRightEye = averagePrecisionRMSRightEye;
         }
 
+        /// <summary>
+        /// Convert validation values to a string.
+        /// </summary>
+        /// <returns>The validation string.</returns>
         public override string ToString()
         {
             return string.Format("" +
@@ -163,6 +167,10 @@ namespace Tobii.Research.Addons
             GazeData = gazeData;
         }
 
+        /// <summary>
+        /// Convert validation values to a string.
+        /// </summary>
+        /// <returns>The validation string.</returns>
         public override string ToString()
         {
             return string.Format("" +
@@ -551,6 +559,10 @@ namespace Tobii.Research.Addons
             }
         }
 
+        /// <summary>
+        /// Convert validation values to a string.
+        /// </summary>
+        /// <returns>The validation string.</returns>
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder();

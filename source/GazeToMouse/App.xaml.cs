@@ -27,6 +27,9 @@ namespace GazeToMouse
     {
         private object _lock = new object();
         private TimeSpan _startTime;
+        /// <summary>
+        /// The start time of the application.
+        /// </summary>
         public TimeSpan StartTime
         {
             get {
@@ -63,6 +66,9 @@ namespace GazeToMouse
         private CalibrationModel _validationModel;
         private string? _subjectCode = null;
         private string _tag = "";
+        /// <summary>
+        /// An arbitary tag to annotate gaze data.
+        /// </summary>
         public string Tag
         {
             get
@@ -81,6 +87,9 @@ namespace GazeToMouse
             }
         }
         private int _trialId = 0;
+        /// <summary>
+        /// The trial ID to annotate gaze data.
+        /// </summary>
         public int TrialId
         {
             get

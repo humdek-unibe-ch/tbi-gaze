@@ -56,6 +56,15 @@ namespace GazeUtilityLibrary.DataStructs
             _precisionRmsRight = 0;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GazeValidationData"/> class.
+        /// </summary>
+        /// <param name="accuracyLeft">The accuracy in degrees averaged over all collected points for the left eye.</param>
+        /// <param name="accuracyRight">The accuracy in degrees averaged over all collected points for the right eye.</param>
+        /// <param name="precisionLeft">The precision (standard deviation) in degrees averaged over all collected points for the left eye.</param>
+        /// <param name="precisionRight">The precision (standard deviation) in degrees averaged over all collected points for the right eye.</param>
+        /// <param name="precisionRmsLeft">The precision (root mean square of sample-to-sample error) in degrees averaged over all collected points for the left eye.</param>
+        /// <param name="precisionRmsRight">The precision (root mean square of sample-to-sample error) in degrees averaged over all collected points for the right eye.</param>
         public GazeValidationData(float accuracyLeft, float accuracyRight, float precisionLeft,
             float precisionRight, float precisionRmsLeft, float precisionRmsRight)
         {
