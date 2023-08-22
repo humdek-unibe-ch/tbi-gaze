@@ -19,10 +19,10 @@ namespace GazeUtilityLibrary.DataStructs
         /// </summary>
         public GazeData2d GazeData2d { get { return _gazeData2d; } }
 
+        private GazeData3d? _gazeData3d = null;
         /// <summary>
         /// The 3d gaze data.
         /// </summary>
-        private GazeData3d? _gazeData3d = null;
         public GazeData3d? GazeData3d { get { return _gazeData3d; } }
 
         private EyeData? _eyeData = null;
