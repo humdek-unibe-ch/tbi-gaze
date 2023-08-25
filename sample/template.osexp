@@ -1,9 +1,9 @@
 ---
-API: 3
-OpenSesame: 4.0.0a35
+API: 2.1
+OpenSesame: 3.3.14
 Platform: nt
 ---
-set width 1024
+set width 2560
 set uniform_coordinates yes
 set title "New experiment"
 set subject_parity even
@@ -13,8 +13,11 @@ set sound_sample_size -16
 set sound_freq 48000
 set sound_channels 2
 set sound_buf_size 1024
+set sampler_backend psycho
 set round_decimals 2
-set height 768
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 1440
 set fullscreen no
 set form_clicks no
 set foreground white
@@ -23,11 +26,13 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "C:/Users/tpf/TBI-tobii_eye_tracker_gaze/sample"
+set experiment_path "C:/Users/moiri/Documents/git-tobii_eye_tracker_gaze/sample"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
 set compensation 0
+set color_backend psycho
+set clock_backend psycho
 set canvas_backend psycho
 set background black
 
@@ -42,10 +47,7 @@ define sequence experiment
 	run welcome always
 	run gaze_start always
 	run gaze_calibration always
-	run gaze_recording_enable always
-	run gaze_drift_compensation True
-	run new_advanced_delay always
-	run gaze_recording_disable always
+	run new_loop True
 	run gaze_stop always
 	run ThankYou True
 
@@ -67,12 +69,6 @@ define inline_script gaze_drift_compensation
 	
 	print("enable gaze recording")
 	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "DRIFT_COMPENSATION"])
-	__end__
-	set _prepare ""
-
-define inline_script gaze_initialisation
-	set description "Executes Python code"
-	___run__
 	__end__
 	set _prepare ""
 
@@ -106,7 +102,8 @@ define inline_script gaze_start
 	time.sleep(3)
 	__end__
 	___prepare__
-	gazeAppPath = "C:\\Users\\tpf\\TBI-tobii_eye_tracker_gaze\\build"
+	#gazeAppPath = "\\\\130.92.158.19\\runexp\\applications\\TPF_EyeTracking\\current"
+	gazeAppPath = "C:\\Users\\moiri\\Documents\\git-tobii_eye_tracker_gaze\\build"
 	print(f"use path {gazeAppPath}")
 	__end__
 
@@ -120,17 +117,77 @@ define inline_script gaze_stop
 	__end__
 	set _prepare ""
 
+define loop new_1_loop
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 3
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 label label1
+	setcycle 1 label label2
+	setcycle 2 label label3
+	run new_1_sequence
+
+define sequence new_1_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run set_label True
+	run new_advanced_delay True
+
 define advanced_delay new_advanced_delay
 	set jitter_mode Uniform
 	set jitter 0
-	set duration 5000
+	set duration 1000
 	set description "Waits for a specified duration"
 
-define advanced_delay new_advanced_delay_1
-	set jitter_mode Uniform
-	set jitter 0
-	set duration 5000
-	set description "Waits for a specified duration"
+define loop new_loop
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 3
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 trial_id 1
+	setcycle 1 trial_id 2
+	setcycle 2 trial_id 3
+	run new_sequence
+
+define sequence new_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run gaze_drift_compensation True
+	run set_trial_id True
+	run gaze_recording_enable True
+	run new_1_loop True
+	run gaze_recording_disable True
+
+define inline_script set_label
+	set description "Executes Python code"
+	___run__
+	import subprocess
+	
+	label = var.get(u'label')
+	print(f"set label {label}")
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "SET_TAG", "/value", f"{label}"])
+	__end__
+	set _prepare ""
+
+define inline_script set_trial_id
+	set description "Executes Python code"
+	___run__
+	import subprocess
+	
+	
+	trial_id = var.get(u'trial_id')
+	print(f"set trial_id {trial_id}")
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "SET_TRIAL_ID", "/value", f"{var.get(u'trial_id')}"])
+	__end__
+	set _prepare ""
 
 define sketchpad welcome
 	set start_response_interval no
