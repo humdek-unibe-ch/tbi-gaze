@@ -1,10 +1,14 @@
 # Sample Files for Experimentation with Eye Tracker Utility
 
-This folder hold some sample files to use the gaze utility in a experiment management tool.
+This folder holds some sample files to use the gaze utility in an experiment management tool.
 
 ## `config.json`
 
 A sample configuration file which can be used as a starting point to configure the gaze utility.
+
+## `config_libgac.json`
+
+A sample configuration file which produces minimalistic gaze output data which matches with the example script of [`libgac`](http://phhum-a209-cp.unibe.ch:10012/LIB/LIB-gaze_analysis_c) (a gaze analysis library).
 
 ## `template.osexp`
 
@@ -18,4 +22,4 @@ It might be possible (and potentially a better solution) to manually control the
 ## `template.ztt`
 
 A sample file which demonstrates how to start the gaze utility from openseame.
-The sample file was generated with the ytree version 5.1.11. 
+The sample file was generated with the ztree version `5.1.11`. 
