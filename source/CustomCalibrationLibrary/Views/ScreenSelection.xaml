@@ -22,6 +22,26 @@
     <Page.InputBindings>
         <KeyBinding Command="{Binding CalibrationStartCommand}" Key="Space" />
         <KeyBinding Command="{Binding CalibrationAbortCommand}" Key="Esc" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="0" Key="D0" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="1" Key="D1" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="2" Key="D2" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="3" Key="D3" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="4" Key="D4" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="5" Key="D5" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="6" Key="D6" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="7" Key="D7" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="8" Key="D8" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="9" Key="D9" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="0" Key="NumPad0" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="1" Key="NumPad1" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="2" Key="NumPad2" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="3" Key="NumPad3" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="4" Key="NumPad4" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="5" Key="NumPad5" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="6" Key="NumPad6" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="7" Key="NumPad7" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="8" Key="NumPad8" />
+        <KeyBinding Command="{Binding ScreenSwitchCommand}" CommandParameter="9" Key="NumPad9" />
     </Page.InputBindings>
 
     <Grid>
@@ -52,7 +72,9 @@
                         <Button
                             ui:ThemeManager.RequestedTheme="Dark"
                             Margin="5"
-                            Click="OnMonitorButtonClick"
+                            Command="{Binding DataContext.ScreenSwitchCommand,
+                                RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                            CommandParameter="{Binding Index}"
                             Tag="{Binding Index}"
                         >
                             <StackPanel>
@@ -61,7 +83,7 @@
                                         <BitmapImage UriSource="../images/screen.png" />
                                     </Image.Source>
                                 </Image>
-                                <TextBlock HorizontalAlignment="Center" Text="{Binding Index, StringFormat='Screen {0}'}"/>
+                                <TextBlock HorizontalAlignment="Center" Text="{Binding Index, StringFormat='Screen {0} ({0})'}"/>
                             </StackPanel>
                         </Button>
                     </DataTemplate>

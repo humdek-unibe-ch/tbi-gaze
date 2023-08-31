@@ -43,7 +43,6 @@ namespace CustomCalibrationLibrary.ViewModels
     /// </summary>
     class ScreenSelectionViewModel
     {
-        private Window _window;
         private ObservableCollection<Monitor> _monitors = new ObservableCollection<Monitor>();
         /// <summary>
         /// The observable lidt of monitors to select from.
@@ -65,6 +64,12 @@ namespace CustomCalibrationLibrary.ViewModels
         /// </summary>
         public ICommand CalibrationAbortCommand { get { return _calibrationAbortCommand; } }
 
+        private ICommand _screenSwitchCommand;
+        /// <summary>
+        /// Command to switch the screen
+        /// </summary>
+        public ICommand ScreenSwitchCommand { get { return _screenSwitchCommand; } }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ScreenSelectionViewModel"/> class.
         /// </summary>
@@ -72,7 +77,6 @@ namespace CustomCalibrationLibrary.ViewModels
         /// <param name="window">The target window of the screen selection</param>
         public ScreenSelectionViewModel(CalibrationModel model, Window window)
         {
-            _window = window;
             foreach (var screen in Screen.AllScreens)
             {
                 _monitors.Add(new Monitor(_monitors.Count, screen.DeviceName));
@@ -80,15 +84,7 @@ namespace CustomCalibrationLibrary.ViewModels
 
             _calibrationStartCommand = new CalibrationCommand(model, CalibrationEventType.Init);
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
-        }
-
-        /// <summary>
-        /// Sets the window position to a screen, given an index.
-        /// </summary>
-        /// <param name="index">The index of the screen to switch to.</param>
-        public void SwitchScreen(int index)
-        {
-            this._window.SetWindowPosition(WindowPositions.Center, Screen.AllScreens.ElementAt(index));
+            _screenSwitchCommand = new ScreenSwitchCommand(window, _monitors.Count);
         }
     }
 }
