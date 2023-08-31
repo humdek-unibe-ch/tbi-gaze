@@ -153,8 +153,8 @@ namespace GazeToMouse
         public async Task<bool> CompensateDrift()
         {
             Current.Dispatcher.Invoke(() => {
-                _fixationWindow.Show();
                 _fixationWindow.Topmost = true;
+                _fixationWindow.Show();
             });
             System.Timers.Timer? timer = null;
             if (_config.Config.DriftCompensationTimer > 0)
@@ -191,8 +191,8 @@ namespace GazeToMouse
 
             Current.Dispatcher.Invoke(() =>
             {
-                _calibrationWindow.Show();
                 _calibrationWindow.Topmost = true;
+                _calibrationWindow.Show();
             });
             if (Screen.AllScreens.Count() > 1)
             {
@@ -225,8 +225,8 @@ namespace GazeToMouse
                 return false;
             }
             Current.Dispatcher.Invoke(() => {
-                _validationWindow.Show();
                 _validationWindow.Topmost = true;
+                _validationWindow.Show();
             });
             if (Screen.AllScreens.Count() > 1)
             {
