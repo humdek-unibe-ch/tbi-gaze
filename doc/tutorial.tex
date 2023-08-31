@@ -249,12 +249,30 @@ The provided sample \texttt{opensesame} program includes the following python sc
         Further, note that a sleep of three seconds is introduced here to give the eye tracker time to initialize.
     \item[gaze\_calibration]
         Runs the command \texttt{GazeControl.exe /command CUSTOM\_CALIBRATE} to start the custom calibration.
-    \item[gaze\_drift\_compensation]
-        Runs the command \texttt{GazeControl.exe /command DRIFT\_COMPENSATION} to start the drift compensation process.
-    \item[gaze\_recording\_enable]
-        Runs the command \texttt{GazeControl.exe /command GAZE\_RECORDING\_ENABLE} to start storing gaze data to the disk.
-    \item[gaze\_recording\_disable]
-        Runs the command \texttt{GazeControl.exe /command GAZE\_RECORDING\_DISABLE} to stop storing gaze data to the disk.
+    \item[gaze\_validation]
+        Runs the command \texttt{GazeControl.exe /command VALIDATE} to start the validation.
+    \item[loop]
+        Loops over a table of trial IDs
+        \begin{description}
+            \item[gaze\_drift\_compensation]
+                Runs the command \texttt{GazeControl.exe /command DRIFT\_COMPENSATION} to start the drift compensation process.
+            \item[set\_trial\_id]
+                Runs the command \texttt{GazeControl.exe /command SET\_TRIAL\_ID /value <ID>} to communicate a trial ID to the gaze application.
+                Note that \texttt{<ID>} is an ID extracted from the loop table.
+            \item[gaze\_recording\_enable]
+                Runs the command \texttt{GazeControl.exe /command GAZE\_RECORDING\_ENABLE} to start storing gaze data to the disk.
+            \item[loop]
+                Loops over a table of labels
+                \begin{description}
+                    \item[set\_label]
+                        Runs the command \texttt{GazeControl.exe /command SET\_LABEL /value <LABEL>} to communicate a label to the gaze application.
+                        Note that \texttt{<LABEL>} is a label extracted from the loop table.
+                    \item[timeout]
+                        Waits for one second.
+                \end{description}
+            \item[gaze\_recording\_disable]
+                Runs the command \texttt{GazeControl.exe /command GAZE\_RECORDING\_DISABLE} to stop storing gaze data to the disk.
+        \end{description}
     \item[gaze\_stop]
         Runs the command \texttt{GazeControl.exe /command TERMINATE} to gracefully shutdown the gaze application.
 \end{description}
