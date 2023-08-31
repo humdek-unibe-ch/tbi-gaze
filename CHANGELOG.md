@@ -1,3 +1,15 @@
+# v3.3.2
+### New Features
+- Allow to select the screen on a multi-screen setup with the keyboard. 
+
+### Improvements
+- Improve opensesame template files and add a template for version 3.3 and 4.0.
+- Improve ztree template file
+- Add a documentation to the sample folder
+
+### Bug Fixes
+- Move calibration, validation and drift compensation windows to the foreground.
+
 # v3.3.1
 ### Improvements
 - Improve performance.

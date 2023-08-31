@@ -92,14 +92,7 @@ For quick starters, a simple [``ztree`` sample program](http://phhum-a209-cp.uni
 
 ### Opensesame
 
-To start a process from within opensesame use a python script.
-The following example starts the custom calibartion program with the subject number passed as argument:
-
-```python
-import subprocess
-
-subprocess.run(["CustomCalibrate.exe", "/subject", var.get(u'subject_nr')])
-```
+For quick starters, a simple [``opensesame`` sample program](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/sample/template4.0.osexp) is available.
 
 ## Release Notes
 Information about the releases can be found in the [CHANGELOG](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/CHANGELOG.md)
