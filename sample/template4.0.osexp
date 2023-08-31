@@ -1,6 +1,6 @@
 ---
-API: 2.1
-OpenSesame: 3.3.14
+API: 3
+OpenSesame: 4.0.5
 Platform: nt
 ---
 set width 2560
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "C:/Users/moiri/Documents/git-tobii_eye_tracker_gaze/sample"
+set experiment_path "C:\\Users\\moiri\\Documents\\git-tobii_eye_tracker_gaze\\sample"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -37,7 +37,7 @@ set canvas_backend psycho
 set background black
 
 define sketchpad ThankYou
-	set duration keypress
+	set duration 3
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=True text="Thank You!" x=0 y=0 z_index=0
 
@@ -47,9 +47,21 @@ define sequence experiment
 	run welcome always
 	run gaze_start always
 	run gaze_calibration always
+	run gaz_validation True
 	run new_loop True
 	run gaze_stop always
 	run ThankYou True
+
+define inline_script gaz_validation
+	set description "Executes Python code"
+	___run__
+	import subprocess
+	
+	print("running validation")
+	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "VALIDATE"])
+	print("validation done")
+	__end__
+	set _prepare ""
 
 define inline_script gaze_calibration
 	set description "Executes Python code"
@@ -67,8 +79,9 @@ define inline_script gaze_drift_compensation
 	___run__
 	import subprocess
 	
-	print("enable gaze recording")
+	print("running drift compensation")
 	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "DRIFT_COMPENSATION"])
+	print("drift compensation done")
 	__end__
 	set _prepare ""
 
@@ -118,6 +131,7 @@ define inline_script gaze_stop
 	set _prepare ""
 
 define loop new_1_loop
+	set source_file ""
 	set source table
 	set repeat 1
 	set order sequential
@@ -144,6 +158,7 @@ define advanced_delay new_advanced_delay
 	set description "Waits for a specified duration"
 
 define loop new_loop
+	set source_file ""
 	set source table
 	set repeat 1
 	set order sequential
@@ -182,7 +197,6 @@ define inline_script set_trial_id
 	___run__
 	import subprocess
 	
-	
 	trial_id = var.get(u'trial_id')
 	print(f"set trial_id {trial_id}")
 	subprocess.run([f"{gazeAppPath}\\GazeControl.exe", "/command", "SET_TRIAL_ID", "/value", f"{var.get(u'trial_id')}"])
@@ -192,7 +206,7 @@ define inline_script set_trial_id
 define sketchpad welcome
 	set start_response_interval no
 	set reset_variables no
-	set duration keypress
+	set duration 0
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.3 <i>Lentiform Loewenfeld</i>" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 4.0 <i>Eye Tracking</i>" x=0 y=0 z_index=0
 
