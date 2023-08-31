@@ -154,7 +154,7 @@ namespace GazeToMouse
         {
             Current.Dispatcher.Invoke(() => {
                 _fixationWindow.Show();
-                _fixationWindow.Activate();
+                _fixationWindow.Topmost = true;
             });
             System.Timers.Timer? timer = null;
             if (_config.Config.DriftCompensationTimer > 0)
@@ -188,8 +188,11 @@ namespace GazeToMouse
             {
                 return false;
             }
-            Current.Dispatcher.Invoke(() => {
+
+            Current.Dispatcher.Invoke(() =>
+            {
                 _calibrationWindow.Show();
+                _calibrationWindow.Topmost = true;
             });
             if (Screen.AllScreens.Count() > 1)
             {
@@ -223,6 +226,7 @@ namespace GazeToMouse
             }
             Current.Dispatcher.Invoke(() => {
                 _validationWindow.Show();
+                _validationWindow.Topmost = true;
             });
             if (Screen.AllScreens.Count() > 1)
             {
