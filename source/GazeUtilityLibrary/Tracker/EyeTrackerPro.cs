@@ -455,7 +455,8 @@ namespace GazeUtilityLibrary.Tracker
         {
             State = DeviceStatus.Tracking;
             GazeData gazeData = new GazeData(
-                TimeSpan.FromMilliseconds(data.SystemTimeStamp / 1000),
+                TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond),
+                data.DeviceTimeStamp,
                 new Vector2(data.LeftEye.GazePoint.PositionOnDisplayArea.X, data.LeftEye.GazePoint.PositionOnDisplayArea.Y),
                 data.LeftEye.GazePoint.Validity == Validity.Valid,
                 new Vector2(data.RightEye.GazePoint.PositionOnDisplayArea.X, data.RightEye.GazePoint.PositionOnDisplayArea.Y),

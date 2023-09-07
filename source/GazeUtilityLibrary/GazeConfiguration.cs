@@ -743,6 +743,7 @@ namespace GazeUtilityLibrary
             DataLogColumnTitle = new string[] {
                 "timestamp",
                 "timestamp_relative",
+                "timestamp_device",
                 "trial_id",
                 "tag",
 

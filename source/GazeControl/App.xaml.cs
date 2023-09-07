@@ -52,18 +52,13 @@ namespace GazeControl
 
             switch (command)
             {
-                case "RESET_START_TIME":
-                    reset = true;
-                    goto send_signal;
                 case null:
                 case "GAZE_RECORDING_DISABLE":
                 case "GAZE_RECORDING_ENABLE":
                 case "MOUSE_TRACKING_DISABLE":
                 case "MOUSE_TRACKING_ENABLE":
                 case "RESET_DRIFT_COMPENSATION":
-                case "ANNOTATE":
                 case "TERMINATE":
-                send_signal:
                     try
                     {
                         NamedPipeClient.SendSignal(command, reset, trialId, label, logger);

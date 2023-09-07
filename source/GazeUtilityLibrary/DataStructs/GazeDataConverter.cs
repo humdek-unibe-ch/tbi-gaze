@@ -9,6 +9,7 @@ namespace GazeUtilityLibrary.DataStructs
     {
         DataTimeStamp = 0, // timestamp of the gaze data item (uses ValueFormat.TimeStamp)
         DataTimeStampRelative,
+        DataTimeStampDevice,
         TrialId,
         Tag,
 
