@@ -10,12 +10,12 @@ The complete toolset package can be downloaded from the [release folder](http://
 The package contains the following executables:
 
 - **`Gaze.exe`** This program uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) to extract the gaze position on the screen where the subject is looking at.
-  The extracted data is recorded and stored to a file.
-  Optionally, the mouse cursor position is updated to this position such that the mouse cursor is controlled by the gaze of the subject.
-  Instead of using an eye tracker device it is also possible to simply log the mouse coordinates.
+    The extracted data is recorded and stored to a file.
+    Optionally, the mouse cursor position is updated to this position such that the mouse cursor is controlled by the gaze of the subject.
+    Instead of using an eye tracker device it is also possible to simply log the mouse coordinates.
   **`Gaze.exe`** runs infinitely until it is terminated by an external command.
-  This should **not** be done with a forced kill (e.g. by executing the command `taskkill /F /IM Gaze.exe` or by killing the task with the task manager) because it prevents the program from terminating gracefully.
-  This as several consequences:
+    This should **not** be done with a forced kill (e.g. by executing the command `taskkill /F /IM Gaze.exe` or by killing the task with the task manager) because it prevents the program from terminating gracefully.
+    This as several consequences:
     - open files are not closed properly and the data stream is cut off. This can lead to corrupt files.
     - if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
     - memory is not freed properly.
@@ -35,14 +35,14 @@ The package contains the following executables:
         - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
         - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
         - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
-  
-  Multiple arguments can be passed to the application but each argument can only be passed once.
-  Passing an argument to an application can be done in command line or by crating a shortcut to the program.
-  Corresponding shortcuts for all available `<COMMAND>`s are provided in the release package.
+        
+    Multiple arguments can be passed to the application but each argument can only be passed once.
+    Passing an argument to an application can be done in command line or by crating a shortcut to the program.
+    Corresponding shortcuts for all available `<COMMAND>`s are provided in the release package.
 - **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
-  It might be useful if the program `Gaze.exe` crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
-  The subject might end up with a hidden mouse pointer.
-  A good solution for such a case is to install a shortcut to `ShowMouse.exe` on the desktop in order to execute it with the keyboard.
+    It might be useful if the program `Gaze.exe` crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
+    The subject might end up with a hidden mouse pointer.
+    A good solution for such a case is to install a shortcut to `ShowMouse.exe` on the desktop in order to execute it with the keyboard.
 
 In order to run the executables the following files need to be placed in the same directory as the executables:
 
