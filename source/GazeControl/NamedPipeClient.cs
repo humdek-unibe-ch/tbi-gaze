@@ -16,7 +16,7 @@ namespace GazeControl
         /// Sends a signal through the named gaze pipe.
         /// </summary>
         /// <param name="signal">The signal to be sent.</param>
-        public static void SendSignal(string signal, bool reset, string? value, TrackerLogger logger)
+        public static void SendSignal(string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
         {
             string pipeName = "tobii_gaze";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
@@ -37,7 +37,7 @@ namespace GazeControl
                 using (StreamWriter sw = new StreamWriter(pipeClient))
                 {
                     logger.Info($"Sending {signal} signal to pipe {pipeName}");
-                    sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, value)));
+                    sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, trialId, label)));
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace GazeControl
         /// Sends a signal through the named gaze pipe and awaits a reply.
         /// </summary>
         /// <param name="signal">The request to be sent.</param>
-        public static void SendRequest(string signal, bool reset, string? value, TrackerLogger logger)
+        public static void SendRequest(string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
         {
             string pipeName = "tobii_gaze";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(pipeName))
@@ -67,7 +67,7 @@ namespace GazeControl
                 logger.Debug($"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
 
                 logger.Info($"Sending {signal} request to pipe {pipeName}");
-                sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, value)));
+                sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, trialId, label)));
                 sw.Flush();
 
                 logger.Debug($"Awaiting {signal} reply from {pipeName}");

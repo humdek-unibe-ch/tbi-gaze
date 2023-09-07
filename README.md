@@ -20,23 +20,25 @@ The package contains the following executables:
     - if the feature of hiding the mouse pointer is used, the mouse will remain hidden.
     - memory is not freed properly.
   Instead the program **`GazeControls.exe /command TERMINATE`** should be used.
-- **`GazeControl.exe`** This program allows to interact with **`Gaze.exe`** by passing the arguments `/command <COMMAND>`, `/value <VALUE>`, and `/reset` to the application.
+- **`GazeControl.exe`** This program allows to interact with **`Gaze.exe`**. `GazeControl.exe` accepts the following optional arguments:
+    - `/reset`: Allows to reset the relative timestamp of the gaze data.
+    - `/trialId <ID>`: Sets a trial ID `<ID>` which will be added to each data sample in the output file. **Important**: Make sure that only integer numbers are used as trial ID.
+    - `/label <LABEL>`: Sets a custom label `<LABEL>` which will be added to each data sample in the output file. Any string is accepted here.
+    - `/command <COMMAND>`: A command allow to activate/deactivate features of `Gaze.exe`. The following commands are supported:
+        - `CUSTOM_CALIBRATE` uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
+        - `VALIDATE` uses the [Tobii Pro SDK Addon](https://github.com/tobiipro/prosdk-addons-dotnet) and launches a validation process.
+        - `DRIFT_COMPENSATION` launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
+        - `GAZE_RECORDING_DISABLE` requests **`Gaze.exe`** to stop recording gaze data.
+            `Gaze.exe` will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
+        - `GAZE_RECORDING_ENABLE` requests **`Gaze.exe`** to start recording gaze data.
+        - `MOUSE_TRACKING_DISABLE` requests **`Gaze.exe`** to stop updating the mouse pointer by the gaze position.
+        - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
+        - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
+        - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
+  
+  Multiple arguments can be passed to the application but each argument can only be passed once.
   Passing an argument to an application can be done in command line or by crating a shortcut to the program.
   Corresponding shortcuts for all available `<COMMAND>`s are provided in the release package.
-  The following `<COMMAND>`s are available (use argument `/value <VALUE>` whenever a command accepts a value):
-    - `CUSTOM_CALIBRATE` uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
-    - `VALIDATE` uses the [Tobii Pro SDK Addon](https://github.com/tobiipro/prosdk-addons-dotnet) and launches a validation process.
-    - `DRIFT_COMPENSATION` launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
-    - `GAZE_RECORDING_DISABLE` requests **`Gaze.exe`** to stop recording gaze data.
-      Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
-    - `GAZE_RECORDING_ENABLE` requests **`Gaze.exe`** to start recording gaze data.
-    - `MOUSE_TRACKING_DISABLE` requests **`Gaze.exe`** to stop updating the mouse pointer by the gaze position.
-    - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
-    - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
-    - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
-    - `SET_TAG <TAG>` sets a custom tag `<TAG>` which will be added to each data sample in the output file (use argument `/value` to define the `<TAG>`).
-    - `SET_TRIAL_ID <ID>` sets a trial ID integer number `<ID>` which will be added to each data sample in the output file (use argument `/value` to define the `<ID>`).
-    - `RESET_START_TIME` allows to reset the relative timestamp. The relative timestamp can also be reset by passing the argument `/reset` to the application with any of the above commands.
 - **`ShowMouse.exe`** This program allows to restore the standard mouse pointer.
   It might be useful if the program `Gaze.exe` crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
   The subject might end up with a hidden mouse pointer.

@@ -1,6 +1,5 @@
 ﻿using GazeUtilityLibrary;
 using System;
-using System.Threading;
 using System.Windows;
 
 namespace GazeControl
@@ -15,7 +14,8 @@ namespace GazeControl
             TrackerLogger logger = new TrackerLogger(null);
 
             string? command = null;
-            string? value = null;
+            int? trialId = null;
+            string? label = null;
             bool reset = false;
             for (int i = 0; i < e.Args.Length; i++)
             {
@@ -27,12 +27,23 @@ namespace GazeControl
                             i++;
                             command = e.Args[i];
                             break;
-                        case "value":
+                        case "label":
                             i++;
-                            value = e.Args[i];
+                            label = e.Args[i];
                             break;
                         case "reset":
                             reset = true;
+                            break;
+                        case "trialId":
+                            i++;
+                            try
+                            {
+                                trialId = int.Parse(e.Args[i]);
+                            }
+                            catch
+                            {
+                                trialId = 0;
+                            }
                             break;
 
                     }
@@ -44,18 +55,18 @@ namespace GazeControl
                 case "RESET_START_TIME":
                     reset = true;
                     goto send_signal;
+                case null:
                 case "GAZE_RECORDING_DISABLE":
                 case "GAZE_RECORDING_ENABLE":
                 case "MOUSE_TRACKING_DISABLE":
                 case "MOUSE_TRACKING_ENABLE":
                 case "RESET_DRIFT_COMPENSATION":
-                case "SET_TAG":
-                case "SET_TRIAL_ID":
+                case "ANNOTATE":
                 case "TERMINATE":
                 send_signal:
                     try
                     {
-                        NamedPipeClient.SendSignal(command, reset, value, logger);
+                        NamedPipeClient.SendSignal(command, reset, trialId, label, logger);
                     }
                     catch (Exception error)
                     {
@@ -67,7 +78,7 @@ namespace GazeControl
                 case "VALIDATE":
                     try
                     {
-                        NamedPipeClient.SendRequest(command, reset, value, logger);
+                        NamedPipeClient.SendRequest(command, reset, trialId, label, logger);
                     }
                     catch (Exception error)
                     {

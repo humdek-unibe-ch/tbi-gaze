@@ -253,7 +253,7 @@ namespace GazeToMouse
         {
             _logger = new TrackerLogger(null);
             _config = new GazeConfiguration(_logger);
-            _startTime = DateTime.Now.TimeOfDay;
+            _startTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
             if (!Init())
             {
@@ -411,6 +411,8 @@ namespace GazeToMouse
         /// <param name="data">The context passed to the handler.</param>
         private async void HandlePipeSignals(object? data)
         {
+            bool res = false;
+            bool reply = false;
             if (data == null)
             {
                 return;
@@ -439,121 +441,70 @@ namespace GazeToMouse
                         {
                             break;
                         }
+                        app.CustomDispatcher.Invoke(() =>
+                        {
+                            if (msg.ResetStartTime == true)
+                            {
+                                app.StartTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+                            }
+                            if (msg.Label != null)
+                            {
+                                app.Tag = msg.Label;
+                            }
+                            if (msg.TrialId != null)
+                            {
+                                app.TrialId = msg.TrialId ?? 0;
+                            }
+                        });
 
-                        if (msg.ResetStartTime == true)
+                        if (msg.Command != null)
                         {
-                            app.CustomDispatcher.Invoke(() =>
+                            switch (msg.Command)
                             {
-                                app.StartTime = DateTime.Now.TimeOfDay;
-                            });
-                        }
+                                case "TERMINATE":
+                                    app.CustomDispatcher.InvokeShutdown();
+                                    break;
+                                case "GAZE_RECORDING_DISABLE":
+                                    app.CustomDispatcher.Invoke(() => app.GazeRecordingDisable());
+                                    break;
+                                case "GAZE_RECORDING_ENABLE":
+                                    app.CustomDispatcher.Invoke(() => app.GazeRecordingEnable());
+                                    break;
+                                case "MOUSE_TRACKING_DISABLE":
+                                    app.CustomDispatcher.Invoke(() => app.MouseTrackingDisable());
+                                    break;
+                                case "MOUSE_TRACKING_ENABLE":
+                                    app.CustomDispatcher.Invoke(() => app.MouseTrackingEnable());
+                                    break;
+                                case "RESET_DRIFT_COMPENSATION":
+                                    app.CustomDispatcher.Invoke(() => app.ResetDriftCompensation());
+                                    break;
+                                case "DRIFT_COMPENSATION":
+                                    res = await app.CustomDispatcher.Invoke(() => app.CompensateDrift());
+                                    reply = true;
+                                    break;
+                                case "CUSTOM_CALIBRATE":
+                                    res = await app.CustomDispatcher.Invoke(() => app.CustomCalibrate());
+                                    reply = true;
+                                    break;
+                                case "VALIDATE":
+                                    res = await app.CustomDispatcher.Invoke(() => app.CalibrationValidate());
+                                    reply = true;
+                                    break;
+                            }
 
-                        if (msg.Command.StartsWith("TERMINATE"))
-                        {
-                            app.CustomDispatcher.InvokeShutdown();
-                        }
-                        else if (msg.Command.StartsWith("GAZE_RECORDING_DISABLE"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
+                            if (reply)
                             {
-                                app.GazeRecordingDisable();
-                            });
-                        }
-                        else if (msg.Command.StartsWith("GAZE_RECORDING_ENABLE"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
-                            {
-                                app.GazeRecordingEnable();
-                            });
-                        }
-                        else if (msg.Command.StartsWith("MOUSE_TRACKING_DISABLE"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
-                            {
-                                app.MouseTrackingDisable();
-                            });
-                        }
-                        else if (msg.Command.StartsWith("MOUSE_TRACKING_ENABLE"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
-                            {
-                                app.MouseTrackingEnable();
-                            });
-                        }
-                        else if (msg.Command.StartsWith("SET_TAG"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
-                            {
-                                if ( msg.Value != null)
+                                if (res)
                                 {
-                                    app.Tag = msg.Value;
+                                    sw.WriteLine("SUCCESS");
                                 }
-                            });
-                        }
-                        else if (msg.Command.StartsWith("SET_TRIAL_ID"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
-                            {
-                                if (msg.Value != null)
+                                else
                                 {
-                                    app.TrialId = int.Parse(msg.Value);
+                                    sw.WriteLine("FAILED");
                                 }
-                            });
-                        }
-                        else if (msg.Command.StartsWith("DRIFT_COMPENSATION"))
-                        {
-                            bool res = await app.CustomDispatcher.Invoke(() =>
-                            {
-                                return app.CompensateDrift();
-                            });
-                            if (res)
-                            {
-                                sw.WriteLine("SUCCESS");
+                                sw.Flush();
                             }
-                            else
-                            {
-                                sw.WriteLine("FAILED");
-                            }
-                            sw.Flush();
-                        }
-                        else if (msg.Command.StartsWith("RESET_DRIFT_COMPENSATION"))
-                        {
-                            app.CustomDispatcher.Invoke(() =>
-                            {
-                                app.ResetDriftCompensation();
-                            });
-                        }
-                        else if (msg.Command.StartsWith("CUSTOM_CALIBRATE"))
-                        {
-                            bool res = await app.CustomDispatcher.Invoke(() =>
-                            {
-                                return app.CustomCalibrate();
-                            });
-                            if (res)
-                            {
-                                sw.WriteLine("SUCCESS");
-                            }
-                            else
-                            {
-                                sw.WriteLine("FAILED");
-                            }
-                            sw.Flush();
-                        }
-                        else if (msg.Command.StartsWith("VALIDATE"))
-                        {
-                            bool res = await app.CustomDispatcher.Invoke(() =>
-                            {
-                                return app.CalibrationValidate();
-                            });
-                            if (res)
-                            {
-                                sw.WriteLine("SUCCESS");
-                            }
-                            else
-                            {
-                                sw.WriteLine("FAILED");
-                            }
-                            sw.Flush();
                         }
                     }
                 }

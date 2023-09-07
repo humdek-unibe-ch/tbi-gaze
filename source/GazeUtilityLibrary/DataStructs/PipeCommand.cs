@@ -8,16 +8,22 @@ namespace GazeUtilityLibrary.DataStructs
     public class PipeCommand
     {
         /// <summary>
-        /// The pipe command to be sent.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public string Command { get; set; }
-
-        /// <summary>
-        /// An optional value associated to the command
+        /// The optional pipe command to be sent.
         /// </summary>
         [JsonProperty(Required = Required.Default)]
-        public string? Value { get; set; }
+        public string? Command { get; set; }
+
+        /// <summary>
+        /// An optional label to annotate gaze data.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// An optional trial ID to annotate gaze data.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int? TrialId { get; set; }
 
         /// <summary>
         /// An optional flag to indicate whether the relative timestamp should be reset.
@@ -30,11 +36,13 @@ namespace GazeUtilityLibrary.DataStructs
         /// </summary>
         /// <param name="command">The pipe command to be sent.</param>
         /// <param name="reset">A flag to indicate whether the relative timestamp should be reset.</param>
-        /// <param name="value">An optional value associated to the command</param>
-        public PipeCommand(string command, bool reset, string? value) {
+        /// <param name="trialId">An optional trial ID to annotate gaze data.</param>
+        /// <param name="label">An optional label to annotate gaze data.</param>
+        public PipeCommand(string? command, bool reset, int? trialId, string? label) {
             Command = command;
-            Value = value;
             ResetStartTime = reset;
+            Label = label;
+            TrialId = trialId;
         }
     }
 }
