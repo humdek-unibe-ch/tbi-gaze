@@ -715,6 +715,7 @@ namespace GazeUtilityLibrary
         /// </summary>
         public ConfigItem()
         {
+            ConfigName = "default";
             DataLogDisabledOnStartup = false;
             DataLogFormatTimeStamp = "hh\\:mm\\:ss\\.fff";
             DataLogFormatTimeStampRelative = "0.000";
@@ -742,6 +743,7 @@ namespace GazeUtilityLibrary
             DataLogColumnTitle = new string[] {
                 "timestamp",
                 "timestamp_relative",
+                "trial_id",
                 "tag",
 
                 "combined_gazePoint2dCompensated_x",
@@ -860,7 +862,7 @@ namespace GazeUtilityLibrary
             MouseCalibrationHide = false;
             MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur";
             ReadyTimer = 5000;
-            TrackerDevice = 0;
+            TrackerDevice = 1;
             ScreenArea = new ConfigScreenArea();
         }
     }
