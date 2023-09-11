@@ -56,6 +56,11 @@
   // calibration and validation the functions provided by the manufacturer are used).
   "DriftCompensationDispersionThreshold": 0.5,
 
+  // In order to prevent drift compensation from getting out of hand limit the maximal allowed dispresion.
+  // If the drift compensation angle is larger than the here defined degrees, no compensation is applied.
+  // Provide an angle in degrees.
+  "DriftCompensationDispersionThresholdMax": 3,
+
   // Specifies the amount of time (in milliseconds) required to fixate the target during drift compensation.
   "DriftCompensationDurationThreshold": 500,
 
