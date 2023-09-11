@@ -202,7 +202,7 @@ namespace GazeUtilityLibrary.Tracker
                 if (hookStruct != null)
                 {
                     GazeData gaze_data = new GazeData(TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond),
-                        hookStruct?.time ?? 0, new Vector2(hookStruct?.pt.x ?? 0, hookStruct?.pt.y ?? 0), true);
+                        TimeSpan.FromMilliseconds(hookStruct?.time ?? 0), new Vector2(hookStruct?.pt.x ?? 0, hookStruct?.pt.y ?? 0), true);
                     OnGazeDataReceived(gaze_data);
                 }
             }

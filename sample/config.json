@@ -118,9 +118,9 @@
   // where <delim> can be customized (e.g. '\t' for tab, ',' for comma, etc.) and where the numbers are
   // replaced by the following values
 
-  //  - 0: timestamp of the gaze data item (uses DataLogFormatTimeStamp)
-  //  - 1: relative timestamp of the gaze data item (uses DataLogFormatTimeStamp)
-  //  - 2: device timestamp of the gaze data item
+  //  - 0: timestamp of the gaze data item when it was captured by the tracker (uses DataLogFormatTimeStamp)
+  //  - 1: timestamp of the gaze data item when it was received by the system (uses DataLogFormatTimeStamp)
+  //  - 2: relative timestamp of the gaze data item (uses DataLogFormatTimeStampRelative)
   //  - 3: the ID of the current trial
   //  - 4: an arbitrary tag to annotate the data sample
 
@@ -186,8 +186,8 @@
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogColumnTitle": [
     "timestamp",
+    "timestamp_received",
     "timestamp_relative",
-    "timestamp_device",
     "trial_id",
     "tag",
 

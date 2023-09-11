@@ -66,6 +66,28 @@ namespace GazeToMouse
         private CalibrationModel _calibrationModel;
         private CalibrationModel _validationModel;
         private string? _subjectCode = null;
+        private TimeSpan _tagTime;
+        private string _lastTag = "";
+        /// <summary>
+        /// The last tag to annotate gaze data.
+        /// </summary>
+        public string LastTag
+        {
+            get
+            {
+                lock (_lastTag)
+                {
+                    return _lastTag;
+                }
+            }
+            set
+            {
+                lock (_lastTag)
+                {
+                    _lastTag = value;
+                }
+            }
+        }
         private string _tag = "";
         /// <summary>
         /// An arbitary tag to annotate gaze data.
@@ -83,10 +105,14 @@ namespace GazeToMouse
             {
                 lock (_tag)
                 {
+                    _tagTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+                    LastTag = _tag;
                     _tag = value;
                 }
             }
         }
+        private TimeSpan _trialIdTime;
+        private int _lastTrialId = 0;
         private int _trialId = 0;
         /// <summary>
         /// The trial ID to annotate gaze data.
@@ -99,6 +125,8 @@ namespace GazeToMouse
             }
             set
             {
+                _trialIdTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+                Interlocked.Exchange(ref _lastTrialId, _trialId);
                 Interlocked.Exchange(ref _trialId, value);
             }
         }
@@ -849,7 +877,11 @@ namespace GazeToMouse
             // write the coordinates to the log file
             if (_config != null && _config.Config.DataLogWriteOutput)
             {
-                string[] formatted_values = data.Prepare(_config.Config, this.TrialId, this.Tag, this.StartTime);
+                string[] formatted_values = data.Prepare(
+                    _config.Config,
+                    data.Timestamp < _trialIdTime ? _lastTrialId : this.TrialId,
+                    data.Timestamp < _tagTime ? this.LastTag : this.Tag,
+                    this.StartTime);
                 if (_isRecording)
                 {
                     _config.WriteToGazeOutput(formatted_values);

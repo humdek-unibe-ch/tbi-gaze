@@ -453,10 +453,12 @@ namespace GazeUtilityLibrary.Tracker
         /// <param name="data">The <see cref="GazeDataEventArgs"/> instance containing the event data.</param>
         private void OnGazeDataReceivedPro(object? sender, GazeDataEventArgs data)
         {
+            long latency = (EyeTrackingOperations.GetSystemTimeStamp() - data.SystemTimeStamp) / 1000;
+            long nowSystem = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             State = DeviceStatus.Tracking;
             GazeData gazeData = new GazeData(
-                TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond),
-                data.DeviceTimeStamp,
+                TimeSpan.FromMilliseconds(nowSystem - latency),
+                TimeSpan.FromMilliseconds(nowSystem),
                 new Vector2(data.LeftEye.GazePoint.PositionOnDisplayArea.X, data.LeftEye.GazePoint.PositionOnDisplayArea.Y),
                 data.LeftEye.GazePoint.Validity == Validity.Valid,
                 new Vector2(data.RightEye.GazePoint.PositionOnDisplayArea.X, data.RightEye.GazePoint.PositionOnDisplayArea.Y),

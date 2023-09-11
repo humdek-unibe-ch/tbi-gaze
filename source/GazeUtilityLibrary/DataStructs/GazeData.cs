@@ -15,11 +15,11 @@ namespace GazeUtilityLibrary.DataStructs
         /// </summary>
         public TimeSpan Timestamp { get { return _timestamp; } }
 
-        private long _timestampDevice;
+        private TimeSpan _timestampReceived;
         /// <summary>
         /// The device timestamp of the data sample.
         /// </summary>
-        public long TimestampDevice { get { return _timestampDevice; } }
+        public TimeSpan TimestampReceived { get { return _timestampReceived; } }
 
         private GazeDataCollection? _left = null;
         /// <summary>
@@ -47,30 +47,30 @@ namespace GazeUtilityLibrary.DataStructs
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
         /// </summary>
-        /// <param name="timestamp">The timestamp.</param>
-        /// <param name="timestampDevice">The device timestamp.</param>
+        /// <param name="timestamp">The timestamp when the data was captured by the device.</param>
+        /// <param name="timestampReceived">The timestamp when the data was received by the system.</param>
         /// <param name="gazePoint2d">The 2d coordinates of the combined gaze point.</param>
         /// <param name="isGazePoint2dValid">The validity of the combined 2d gaze point.</param>
-        public GazeData(TimeSpan timestamp, long timestampDevice, Vector2 gazePoint2d, bool isGazePoint2dValid)
+        public GazeData(TimeSpan timestamp, TimeSpan timestampReceived, Vector2 gazePoint2d, bool isGazePoint2dValid)
         {
             _timestamp = timestamp;
-            _timestampDevice = timestampDevice;
+            _timestampReceived = timestampReceived;
             _combined = new GazeDataCollection(gazePoint2d, isGazePoint2dValid);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
         /// </summary>
-        /// <param name="timestamp">The timestamp.</param>
-        /// <param name="timestampDevice">The device timestamp.</param>
+        /// <param name="timestamp">The timestamp when the data was captured by the device.</param>
+        /// <param name="timestampReceived">The timestamp when the data was received by the system.</param>
         /// <param name="gazePoint2dLeft">The 2d coordinates of the left gaze point.</param>
         /// <param name="isGazePoint2dValidLeft">The validity of the left 2d gaze point.</param>
         /// <param name="gazePoint2dRight">The 2d coordinates of the right gaze point.</param>
         /// <param name="isGazePoint2dValidRight">The validity of the right 2d gaze point.</param>
-        public GazeData(TimeSpan timestamp, long timestampDevice, Vector2 gazePoint2dLeft, bool isGazePoint2dValidLeft, Vector2 gazePoint2dRight, bool isGazePoint2dValidRight)
+        public GazeData(TimeSpan timestamp, TimeSpan timestampReceived, Vector2 gazePoint2dLeft, bool isGazePoint2dValidLeft, Vector2 gazePoint2dRight, bool isGazePoint2dValidRight)
         {
             _timestamp = timestamp;
-            _timestampDevice = timestampDevice;
+            _timestampReceived = timestampReceived;
             _left = new GazeDataCollection(gazePoint2dLeft, isGazePoint2dValidLeft);
             _right = new GazeDataCollection(gazePoint2dRight, isGazePoint2dValidRight);
             Vector2 gazePoint2dCombined = new Vector2(GazeFilter(gazePoint2dLeft.X, gazePoint2dRight.X), GazeFilter(gazePoint2dLeft.Y, gazePoint2dRight.Y));
@@ -80,8 +80,8 @@ namespace GazeUtilityLibrary.DataStructs
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
         /// </summary>
-        /// <param name="timestamp">The timestamp.</param>
-        /// <param name="timestampDevice">The device timestamp.</param>
+        /// <param name="timestamp">The timestamp when the data was captured by the device.</param>
+        /// <param name="timestampReceived">The timestamp when the data was received by the system.</param>
         /// <param name="gazePoint2dLeft">The 2d coordinates of the left gaze point.</param>
         /// <param name="isGazePoint2dValidLeft">The validity of the left 2d gaze point.</param>
         /// <param name="gazePoint2dRight">The 2d coordinates of the right gaze point.</param>
@@ -98,14 +98,14 @@ namespace GazeUtilityLibrary.DataStructs
         /// <param name="isPupilDiameterValidLeft">The validity of the left pupil diameter.</param>
         /// <param name="pupilDiameterRight">The pupil diameter the left eye.</param>
         /// <param name="isPupilDiameterValidRight">The validity of the left pupil diameter.</param>
-        public GazeData(TimeSpan timestamp, long timestampDevice, Vector2 gazePoint2dLeft, bool isGazePoint2dValidLeft, Vector2 gazePoint2dRight, bool isGazePoint2dValidRight,
+        public GazeData(TimeSpan timestamp, TimeSpan timestampReceived, Vector2 gazePoint2dLeft, bool isGazePoint2dValidLeft, Vector2 gazePoint2dRight, bool isGazePoint2dValidRight,
             Vector3 gazePoint3dLeft, bool isGazePoint3dValidLeft, Vector3 gazePoint3dRight, bool isGazePoint3dValidRight,
             Vector3 gazeOrigin3dLeft, bool isGazeOrigin3dValidLeft, Vector3 gazeOrigin3dRight, bool isGazeOrigin3dValidRight,
             float pupilDiameterLeft, bool isPupilDiameterValidLeft, float pupilDiameterRight, bool isPupilDiameterValidRight)
         {
 
             _timestamp = timestamp;
-            _timestampDevice = timestampDevice;
+            _timestampReceived = timestampReceived;
             _left = new GazeDataCollection(gazePoint2dLeft, isGazePoint2dValidLeft, gazePoint3dLeft, isGazePoint3dValidLeft, gazeOrigin3dLeft, isGazeOrigin3dValidLeft, pupilDiameterLeft, isPupilDiameterValidLeft);
             _right = new GazeDataCollection(gazePoint2dRight, isGazePoint2dValidRight, gazePoint3dRight, isGazePoint3dValidRight, gazeOrigin3dRight, isGazeOrigin3dValidRight, pupilDiameterRight, isPupilDiameterValidRight);
             Vector2 gazePoint2dCombined = new Vector2(GazeFilter(gazePoint2dLeft.X, gazePoint2dRight.X), GazeFilter(gazePoint2dLeft.Y, gazePoint2dRight.Y));
@@ -145,8 +145,8 @@ namespace GazeUtilityLibrary.DataStructs
             string[] formattedValues = new string[Enum.GetNames(typeof(GazeOutputValue)).Length];
 
             formattedValues[(int)GazeOutputValue.DataTimeStamp] = GazeDataConverter.FormatTimestamp(_timestamp, config.DataLogFormatTimeStamp);
+            formattedValues[(int)GazeOutputValue.DataTimeStampReceived] = GazeDataConverter.FormatTimestamp(_timestampReceived, config.DataLogFormatTimeStamp);
             formattedValues[(int)GazeOutputValue.DataTimeStampRelative] = GazeDataConverter.FormatDouble((_timestamp - startTime).TotalMilliseconds, config.DataLogFormatTimeStampRelative);
-            formattedValues[(int)GazeOutputValue.DataTimeStampDevice] = GazeDataConverter.FormatDouble(_timestampDevice);
 
             formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedX] = GazeDataConverter.FormatDouble(DriftCompensation?.GazePosition2d.X, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)GazeOutputValue.CombinedGazePoint2dCompensatedY] = GazeDataConverter.FormatDouble(DriftCompensation?.GazePosition2d.Y, config.DataLogFormatNormalizedPoint);
@@ -197,6 +197,7 @@ namespace GazeUtilityLibrary.DataStructs
             formattedValues[(int)GazeOutputValue.RightGazeDistance] = GazeDataConverter.FormatDouble(_right?.GazeData3d?.GazeDistance, config.DataLogFormatOrigin);
             formattedValues[(int)GazeOutputValue.RightPupilDiameter] = GazeDataConverter.FormatDouble(_right?.EyeData?.PupilDiameter, config.DataLogFormatDiameter);
             formattedValues[(int)GazeOutputValue.RightPupilDiameterIsValid] = GazeDataConverter.FormatBoolean(_right?.EyeData?.IsPupilDiameterValid);
+
 
             formattedValues[(int)GazeOutputValue.Tag] = tag;
             formattedValues[(int)GazeOutputValue.TrialId] = trialId.ToString();

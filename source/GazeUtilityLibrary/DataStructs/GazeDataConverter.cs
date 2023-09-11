@@ -8,8 +8,8 @@ namespace GazeUtilityLibrary.DataStructs
     public enum GazeOutputValue
     {
         DataTimeStamp = 0, // timestamp of the gaze data item (uses ValueFormat.TimeStamp)
+        DataTimeStampReceived,
         DataTimeStampRelative,
-        DataTimeStampDevice,
         TrialId,
         Tag,
 
