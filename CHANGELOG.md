@@ -1,4 +1,6 @@
-# v3.4.0
+# Changelog
+
+## v3.4.0
 ### New Features
 - Add configuration option `DriftCompensationWindowShow` to enable or disable the drift
   compensation window.
@@ -32,7 +34,7 @@
 ### Bug Fixes
 - Fix dispersion computation during drift compensation.
 
-# v3.3.2
+## v3.3.2
 ### New Features
 - Allow to select the screen on a multi-screen setup with the keyboard. 
 
@@ -44,7 +46,7 @@
 ### Bug Fixes
 - Move calibration, validation and drift compensation windows to the foreground.
 
-# v3.3.1
+## v3.3.1
 ### Improvements
 - Improve performance.
 - Dump validation results for each validation point.
@@ -52,7 +54,7 @@
 ### Bug Fixes
 - Represent the relative timestamp in total milliseconds instead of a timespan.
 
-# v3.3.0
+## v3.3.0
 ### New Features
 - Add pipe command `SET_TRIAL_ID` to allow to annotate data samples.
 - On multi-screen setups start calibration with a screen selection page.
@@ -63,7 +65,7 @@
 - Fix compiler warnings.
 - Extend helper scripts. 
 
-# v3.2.0
+## v3.2.0
 ### New Features
 - Add relative timestamp to output data.
 - Add annotation tag to ouput data.
@@ -72,7 +74,7 @@
 - Add a log entry of the version of the gaze application.
 - Add helper scripts to generate shortcuts to `GazeControl.exe`.
 
-# v3.1.0
+## v3.1.0
 ### New Features
  - Add a custom drift compensation process
  - Allow to pass the argument `outputPath` to the application for dynamic output path assignement.
@@ -82,7 +84,7 @@
  - Remove Tobii research dependencies from everywhere except the eye tracker device class
  - Cleanup and rearrangement of code to improve readability
 
-# v3.0.0
+## v3.0.0
 ### New Features
  - A custom calibration application is added to the portfolio.
    This allows to calibrate a device without the need for a 3rd party application.
@@ -103,7 +105,7 @@
  - Use the Tobii pro eye tracker manager for device calibration instead of the Tobii Core software.
  - Rename `GazeToMouse` to `Gaze` and `GazeToMouseClose` to `GazeClose`.
 
-# v2.3.0
+## v2.3.0
 ### New Features
  - A mouse tracker device can now be used instead of an eyetracker device.
    The mouse tracker logs the timestamp and the x and y coordinates of the mouse pointer whenever the mouse-move event is fired.
@@ -112,7 +114,7 @@
 ### Improvements
  - Rename the configuration field 'TobiiSDK' to 'TrackerDevice'.
 
-# v2.2.0
+## v2.2.0
 ### New Features
  - Configuration file
    - Dump the configurations used for an experiment to a file at the "DataLogPath"
@@ -127,7 +129,7 @@
 ### Improvements
  - Fall back to Core SDK if the license file cannot be applied to the device
 
-# v2.1.0
+## v2.1.0
 ### New Features
  - Log eye origin coordinates
    - x, y, z coordinates of the left and the right eye
@@ -137,12 +139,12 @@
 ### Improvements
  - Check the three format values and the column order individually to produce more specific log entries
 
-# v2.0.1
+## v2.0.1
 ### Bug Fix
  - with SDK Pro, use system timestamp to cope with disconnected device
  - fix the path in the z-tree sample file
 
-# v2.0.0
+## v2.0.0
 ### New Features
  - Support for Tobii Pro SDK
    - apply license to eyetracker device at stratup
@@ -153,7 +155,7 @@
 ### Improvements
  - Improved configuration options for the output file
 
-# v1.0.0
+## v1.0.0
 ### New Features
  - Notify user with popup if eyetracker is not ready
  - Allow to configure time interval for the software to wait for the eyetracker to become ready
@@ -161,7 +163,7 @@
 ### Improvements
  - Rename default output file for data from ```<prefix>_data.txt``` to ``<prefix>_gaze.txt``
 
-# v0.3.2
+## v0.3.2
 ### Improvements
 
  - add header to the data log file.
@@ -172,7 +174,7 @@
 
  - create a log file per machine to prevent concurrency conflicts.
 
-# v0.3.1
+## v0.3.1
 
 ### Improvements
 
@@ -182,7 +184,7 @@
 
  - remove double log entry of mouse hiding and restoring event.
 
-# v0.3.0
+## v0.3.0
 
 ### New Features
 
@@ -197,7 +199,7 @@
    At any time only two log files are allowed,
    The older file is overwritten once both files exceed 1MB.
 
-# v0.2.0
+## v0.2.0
 
 ### New Features
 
@@ -205,7 +207,7 @@
  - allow to configure the output format of the gaze data.
 
 
-# v0.1.0
+## v0.1.0
 
 First release of the GazeToMouse toolset.
 

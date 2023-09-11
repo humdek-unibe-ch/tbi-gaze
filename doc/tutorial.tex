@@ -580,6 +580,30 @@ The following data field types with individual data fields are provided:
     Therefore it can happen that multiple mouse events are logged with the same timestamp.
 \end{mdframed}
 
+\subsection{Gaze Data Timestamps and Annotations}
+\label{sect.data.annotations}
+Gaze data have three different timestamps:
+\begin{description}
+    \item[timestamp] The system time when the data point was captured by the device.
+    \item[timestamp\_received] The system time when the data point was received by the system.
+    \item[Timestamp\_relative] The number of milliseconds since the start of the application.
+        Note that this timestamp can be reset with the command \texttt{GazeControl.exe /reset}.
+\end{description}
+
+The latency of the gaze data can computed with Equation~\ref{eq.latency}.
+\begin{equation}
+    \label{eq.latency}
+    latency = timestamp\_received - timestamp
+\end{equation}
+
+Gaze data can be annotated with a \texttt{label} and a \texttt{trial ID}.
+To do this use the command \texttt{GazeControl.exe /label <label>} and \texttt{GazeControl.exe /trialID <ID of the trial>}, respectively.
+A label can be any arbitrary string (make sure to use quotations marks in the command if the label has spaces).
+The trial ID must be an integer number.
+The label and trial ID annotations are assigned to gaze data points synchronized with the timestamp when the data was captured.
+This means that when a label or a trial ID is set through a command, the gaze data is not annotated immediately.
+Rather, the annotations are delayed such that the timestamps are synchronized with the timestamps of the data capture.
+
 \subsection{Gaze Data Error Code}
 \label{sect.data.error}
 The data error code that is postfixed to the output file name is a binary string where each character indicates whether a specific error has occurred (indicated with the number \texttt{1}) or not (indicated with the number \texttt{0}).
