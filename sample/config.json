@@ -12,7 +12,7 @@
   //  - 5: x-coordinate of the gaze point of the right eye (normalized value)
   //  - 6: y-coordinate of the gaze point of the right eye (normalized value)
   //  - 7: validity of the gaze data of the right eye
-  // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+  // To log all possible values with a comma (i.e. ',') as delimiter use the empty string:
   // "CalibrationLogColumnOrder": "",
   // This configuration value has no effect if "CalibrationLogWriteOutput" is set to false.
   "CalibrationLogColumnOrder": "",
@@ -33,6 +33,10 @@
     "right_gazePoint_isValid"
   ],
 
+  // Defines whether gaze calibration data is written to a log file. If set to false, all the configuration
+  // items matching the pattern "CalibrationLog*" are ignored.
+  "CalibrationLogWriteOutput": true,
+
   // Define the calibration points to be shown during the calibration process. Each point is given as
   // a normalize coordinate where [0, 0] is the top left corner and [1, 1] the bottom right corner of
   // the screen. Any number of points is permitted.
@@ -47,9 +51,24 @@
     [ 0.5, 0.9 ]
   ],
 
-  // Defines whether gaze calibration data is written to a log file. If set to false, all the configuration
-  // items matching the pattern "CalibrationLog*" are ignored.
-  "CalibrationLogWriteOutput": true,
+  // In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
+  // Provide an angle in degrees. The fixation detection is only used for drift compensation (for
+  // calibration and validation the functions provided by the manufacturer are used).
+  "DriftCompensationDispersionThreshold": 0.5,
+
+  // Specifies the amount of time (in milliseconds) required to fixate the target during drift compensation.
+  "DriftCompensationDurationThreshold": 500,
+
+  // Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
+  // If the timer elapses drift compensation will be aborted. Use a value of zero for infinite timeout.
+  "DriftCompensationTimer": 5000,
+
+  // If set to true the drift compensation window is shown on the drift compensation command.
+  // Otherwise only the drift compensation process is done without showing the window.
+  "DriftCompensationWindowShow": true,
+
+  // Specifies the amount of time (in milliseconds) required to fixate the target during validation.
+  "ValidationDurationThreshold": 1000,
 
   // Allows to define the order and the delimiters between the different validation result values.
   // The definition is of the form
@@ -66,7 +85,7 @@
   //  - 6: The precision (standard deviation) in degrees averaged over all collected points for the left eye.
   //  - 7: The precision (root mean square of sample-to-sample error) in degrees averaged over all collected
   //       points for the left eye.
-  // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+  // To log all possible values with a comma (i.e. ',') as delimiter use the empty string:
   // "ValidationLogColumnOrder": "",
   // This configuration value has no effect if "ValidationLogWriteOutput" is set to false.
   "ValidationLogColumnOrder": "",
@@ -87,6 +106,10 @@
     "right_precision_rms"
   ],
 
+  // Defines whether gaze validation data is written to a log file. If set to false, all the configuration
+  // items matching the pattern "ValidationLog*" are ignored.
+  "ValidationLogWriteOutput": true,
+
   // Define the validation points to be shown during the validation process. Each point is given as
   // a normalize coordinate where [0, 0] is the top left corner and [1, 1] the bottom right corner of
   // the screen. Any number of points is permitted.
@@ -101,16 +124,8 @@
     [ 0.5, 0.9 ]
   ],
 
-  // Defines whether gaze validation data is written to a log file. If set to false, all the configuration
-  // items matching the pattern "ValidationLog*" are ignored.
-  "ValidationLogWriteOutput": true,
-
-  // Use this parameter to associate the configuration with an experiment. When "Gaze.exe" is
-  // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
-  // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following
-  // file will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
-  // Note that the following characters are not allowed in a file name: <>:"/\|?*
-  "ConfigName": "experiment_x",
+  // Specifies the amount of time (in milliseconds) to wait for a fixation point during validation.
+  "ValidationTimer": 3000,
 
   // Allows to define the order and the delimiters between the different gaze data values.
   // The definition is of the form
@@ -174,7 +189,7 @@
   //  - 50: the pupil diameter of the right eyes (mm)
   //  - 51: flag indicating whether the right pupil diameter is valid
 
-  // To log all possible values with a tab (i.e. '\t') as delimiter use the empty string:
+  // To log all possible values with a comma (i.e. ',') as delimiter use the empty string:
   // "DataLogColumnOrder": "",
   // This configuration value has no effect if "DataLogWriteOutput" is set to false.
   "DataLogColumnOrder": "",
@@ -313,14 +328,12 @@
   // matching the pattern "DataLog*" are ignored.
   "DataLogWriteOutput": true,
 
-  // In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
-  // Provide an angle in degrees. The fixation detection is only used for drift compensation (for
-  // calibration and validation the functions provided by the manufacturer are used).
-  "DispersionThreshold": 0.5,
-
-  // Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
-  // If the timer elapses drift compensation will be aborted. Use a value of zero for infinite timeout.
-  "DriftCompensationTimer": 5000,
+  // Use this parameter to associate the configuration with an experiment. When "Gaze.exe" is
+  // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
+  // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following
+  // file will be produced at "DataLogPath": <timestamp>_<computer name>_config_experiment_x.json
+  // Note that the following characters are not allowed in a file name: <>:"/\|?*
+  "ConfigName": "experiment_x",
 
   // Defines the location of the license files. It must be the path to a folder (not a file).
   // This is only required if the eye tracker device requires an external license file.
@@ -331,6 +344,18 @@
   // To avoid confusion with path locations it is recommended to use absolute paths, e.g.:
   //  C:\\Users\\Subject\\Documents\\tobii_licenses
   "LicensePath": "",
+
+  // Specifies the amount of time (in milliseconds) to wait for the eye tracker to become ready while it
+  // is in any other state. If the eye tracker is not ready within the specified time the subject will
+  // be notified with a pop-up window. This is only relevant for Gaze.exe as the CustomCalibration.exe
+  // reacts immediately to lost connections and uses its own GUI to display an error message.
+  // Use 0 for immediate reaction.
+  "ReadyTimer": 5000,
+
+  // Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
+  // Note that for some eye trackers the Tobii SDK Pro requires a license file to work
+  // (see parameter "LicesePath").
+  "TrackerDevice": 1,
 
   // Defines whether the mouse cursor shall be hidden on the calibration window.
   "MouseCalibrationHide": false,
@@ -349,13 +374,6 @@
   // This parameter is ignored if "MouseControl" or "MouseHide" is set to false.
   "MouseStandardIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
-  // Specifies the amount of time (in milliseconds) to wait for the eye tracker to become ready while it
-  // is in any other state. If the eye tracker is not ready within the specified time the subject will
-  // be notified with a pop-up window. This is only relevant for Gaze.exe as the CustomCalibration.exe
-  // reacts immediately to lost connections and uses its own GUI to display an error message.
-  // Use 0 for immediate reaction.
-  "ReadyTimer": 5000,
-
   // Defines the Tobii installation path. It must be the path to a folder (not a file).
   "TobiiApplicationPath": "C:\\<LoaclApplicationData>\\Programs\\TobiiProEyeTrackerManager",
 
@@ -365,10 +383,5 @@
   // The arguments to pass to the calibration application. Use %S as a placeholder for the device
   // serial number and %A as a placeholder for the device address. The placeholders will be replaced
   // by the actual values of the first device found in the connection list.
-  "TobiiCalibrateArguments": "--device-sn=%S --mode=usercalibration",
-
-  // Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
-  // Note that for some eye trackers the Tobii SDK Pro requires a license file to work
-  // (see parameter "LicesePath").
-  "TrackerDevice": 1
+  "TobiiCalibrateArguments": "--device-sn=%S --mode=usercalibration"
 }

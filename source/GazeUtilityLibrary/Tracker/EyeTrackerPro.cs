@@ -15,6 +15,7 @@ namespace GazeUtilityLibrary.Tracker
     /// <seealso cref="GazeHelper.TrackerHandler" />
     public class EyeTrackerPro : BaseTracker
     {
+        private float _outputFrequency = 60;
         private bool _hasLicense = true;
         private IEyeTracker? _eyeTracker = null;
         private ScreenBasedCalibration? _screenBasedCalibration = null;
@@ -40,6 +41,7 @@ namespace GazeUtilityLibrary.Tracker
                 logger.Error("No eye tracker connected");
                 return;
             }
+            _outputFrequency = _eyeTracker.GetGazeOutputFrequency();
             _eyeTracker.GazeDataReceived += OnGazeDataReceivedPro;
             _eyeTracker.ConnectionLost += OnConnectionLost;
             _eyeTracker.ConnectionRestored += OnConnectionRestored;
@@ -145,7 +147,7 @@ namespace GazeUtilityLibrary.Tracker
         {
             if (_eyeTracker != null)
             {
-                _screenBasedCalibrationValidation = new ScreenBasedCalibrationValidation(_eyeTracker, GetFixationFrameCount(), 3000);
+                _screenBasedCalibrationValidation = new ScreenBasedCalibrationValidation(_eyeTracker, GetFixationFrameCount(config.ValidationDurationThreshold), config.ValidationTimer);
                 _screenBasedCalibrationValidation.EnterValidationMode();
             }
         }
@@ -160,7 +162,8 @@ namespace GazeUtilityLibrary.Tracker
                 logger.Warning("Failed to initialise drift compensation: screenArea is not defined");
                 return;
             }
-            driftCompensation = new DriftCompensation(screenArea.Center, GetFixationFrameCount(), config.DispersionThreshold);
+            driftCompensation = new DriftCompensation(screenArea.Center, GetFixationFrameCount(config.DriftCompensationDurationThreshold), config.DriftCompensationDispersionThreshold, config.DriftCompensationDispersionThresholdMax);
+            logger.Info($"Drift compensation initialised ({GetFixationFrameCount(config.DriftCompensationDurationThreshold)}, {config.DriftCompensationDispersionThreshold}, {config.DriftCompensationDispersionThresholdMax})");
         }
 
         /// <summary>
@@ -361,12 +364,14 @@ namespace GazeUtilityLibrary.Tracker
 
         /// <summary>
         /// Get the number of required gaze samples to compute a fixation.
+        /// This is based on the duration threshold and the sample rate of the device.
         /// </summary>
-        /// <returns>60</returns>
-        protected override int GetFixationFrameCount()
+        /// <param name="durationThreshold">The required fixation duration in milliseconds.</param>
+        /// <returns>The number of required samples.</returns>
+        protected override int GetFixationFrameCount(int durationThreshold)
         {
-            // 1000ms at 60 Hz
-            return 60;
+            float period = 1000 / _outputFrequency;
+            return durationThreshold / (int)period;
         }
 
         /// <summary>

@@ -16,11 +16,19 @@ namespace GazeUtilityLibrary
         private Vector3 _fixationPoint;
         private int _fixationFrameCount;
         private double _normalizedDispersionThreshold;
+        private double _deviationAngleMax;
         private Quaternion _q;
         /// <summary>
         /// The drift compensation quatrenion.
         /// </summary>
         public Quaternion Q { get { return _q; } }
+        private double _deviationAngle;
+        public double DeviationAngle { get { return _deviationAngle; } }
+        private double _dispersion;
+        public double Dispersion
+        {
+            get { return _dispersion; }
+        }
 
         private List<GazeData> _samples;
 
@@ -30,11 +38,13 @@ namespace GazeUtilityLibrary
         /// <param name="fixationPoint">The target fixation point.</param>
         /// <param name="fixationFrameCount">The required number of frames during fixation.</param>
         /// <param name="dispersionThreashold">The dispersion threashold for the fixation.</param>
-        public DriftCompensation(Vector3 fixationPoint, int fixationFrameCount, double dispersionThreashold)
+        /// <param name="dispersionThreasholdMax">The maximal allowed deviation angle.</param>
+        public DriftCompensation(Vector3 fixationPoint, int fixationFrameCount, double dispersionThreashold, double dispersionThreasholdMax)
         {
             _q = Quaternion.Identity;
             _samples = new List<GazeData>();
             _normalizedDispersionThreshold = AngleToDist(dispersionThreashold);
+            _deviationAngleMax = dispersionThreasholdMax;
             _fixationPoint = fixationPoint;
             _fixationFrameCount = fixationFrameCount;
         }
@@ -63,6 +73,7 @@ namespace GazeUtilityLibrary
         /// <returns>True if new drift compensation is computed, false if the process is ongoning.</returns>
         public bool Update(GazeData gazeData)
         {
+            bool res = false;
             if (gazeData.Combined.GazeData3d == null || !gazeData.Combined.GazeData3d.IsGazePointValid || !gazeData.Combined.GazeData3d.IsGazeOriginValid || !_isCollecting)
             {
                 return false;
@@ -71,26 +82,26 @@ namespace GazeUtilityLibrary
             _samples.Add(gazeData);
             if (_samples.Count >= _fixationFrameCount)
             {
-                if (Dispersion() <= MaxDeviation())
+                _dispersion = ComputeDispersion();
+                if (_dispersion <= MaxDeviation())
                 {
-                    _q = Compute();
+                    res = Compute();
                     _samples.Clear();
                     _isCollecting = false;
-                    return true;
                 }
                 else
                 {
                     _samples.RemoveAt(0);
                 }
             }
-            return false;
+            return res;
         }
 
         /// <summary>
         /// Compute the drift compensation based on the collected samples.
         /// </summary>
         /// <returns>The drift compenstaion quaternion.</returns>
-        private Quaternion Compute()
+        private bool Compute()
         {
             Vector3 oAvg = Vector3.Zero;
             Vector3 gAvg = Vector3.Zero;
@@ -106,7 +117,15 @@ namespace GazeUtilityLibrary
             Vector3 gDir = Vector3.Normalize(gAvg - oAvg);
             Vector3 cDir = Vector3.Normalize(_fixationPoint - oAvg);
 
-            return CreateQuaternionFromVectors(gDir, cDir);
+            float dot = Vector3.Dot(gDir, cDir);
+            _deviationAngle = Math.Acos(dot) / (gDir.Length() * cDir.Length()) * 180 / Math.PI;
+            if (_deviationAngle > _deviationAngleMax)
+            {
+                return false;
+            }
+            _q = CreateQuaternionFromVectors(gDir, cDir);
+
+            return true;
         }
 
         /// <summary>
@@ -123,16 +142,16 @@ namespace GazeUtilityLibrary
         /// Compute the dispersion of a gaze sample.
         /// </summary>
         /// <returns>The dispersion of a gaze sample.</returns>
-        private double Dispersion()
+        private double ComputeDispersion()
         {
-            float xMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.X ?? 0);
-            float yMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? 0);
-            float zMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? 0);
-            float xMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.X ?? 0);
-            float yMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? 0);
-            float zMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? 0);
+            float xMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.X ?? float.NegativeInfinity);
+            float yMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? float.NegativeInfinity);
+            float zMax = _samples.Max(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? float.NegativeInfinity);
+            float xMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.X ?? float.PositiveInfinity);
+            float yMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? float.PositiveInfinity);
+            float zMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? float.PositiveInfinity);
             float dispersion = xMax - xMin + yMax - yMin + zMax - zMin;
-            return dispersion;
+            return dispersion / 3;
         }
 
         /// <summary>
@@ -164,7 +183,8 @@ namespace GazeUtilityLibrary
         /// <returns>The normalized dispersion.</returns>
         private double AngleToDist(double angle)
         {
-            return Math.Sqrt(2 * (1 - Math.Cos(angle * Math.PI / 180)));
+            //return Math.Sqrt(2 * (1 - Math.Cos(angle * Math.PI / 180)));
+            return Math.Tan(angle * Math.PI / 180);
         }
     }
 }

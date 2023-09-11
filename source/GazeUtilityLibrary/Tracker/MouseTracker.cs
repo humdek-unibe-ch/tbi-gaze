@@ -131,7 +131,7 @@ namespace GazeUtilityLibrary.Tracker
             }
         }
 
-        protected override int GetFixationFrameCount()
+        protected override int GetFixationFrameCount(int durationThreshold)
         {
             throw new NotImplementedException();
         }

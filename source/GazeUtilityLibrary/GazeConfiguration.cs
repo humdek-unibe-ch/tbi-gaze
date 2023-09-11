@@ -538,21 +538,6 @@ namespace GazeUtilityLibrary
     public class ConfigItem
     {
         /// <summary>
-        /// The name of the experiment.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public string? ConfigName { get; set; }
-        /// <summary>
-        /// Allows to define the order and the delimiters between the different gaze data values.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public string DataLogColumnOrder { get; set; }
-        /// <summary>
-        /// Defines the titles of the gaze data log value columns.
-        /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public string[] DataLogColumnTitle { get; set; }
-        /// <summary>
         /// Allows to define the order and the delimiters between the different calibration data values.
         /// </summary>
         [JsonProperty(Required = Required.Always)]
@@ -563,6 +548,52 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public string[] CalibrationLogColumnTitle { get; set; }
         /// <summary>
+        /// Defines whether gaze calibration data is written to a log file.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public bool CalibrationLogWriteOutput { get; set; }
+        /// <summary>
+        /// Define the calibration points to be shown during the calibration process.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double[][] CalibrationPoints { get; set; }
+
+        /// <summary>
+        /// In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
+        /// Provide an angle in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double DriftCompensationDispersionThreshold { get; set; }
+        /// <summary>
+        /// In order to prevent drift compensation from getting out of hand limit the maximal allowed dispresion.
+        /// If the drift compensation angle is larger than the here defined degrees, no compensation is applied.
+        /// Provide an angle in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double DriftCompensationDispersionThresholdMax { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) required to fixate the target during drift compensation.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int DriftCompensationDurationThreshold { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int DriftCompensationTimer { get; set; }
+        /// <summary>
+        /// If set to true the drift compensation window is shown on the drift compensation command.
+        /// Otherwise only the drift compensation process is done without showing the window.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public bool DriftCompensationWindowShow { get; set; }
+
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) required to fixate the target during validation.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int ValidationDurationThreshold { get; set; }
+        /// <summary>
         /// Allows to define the order and the delimiters between the different validation data values.
         /// </summary>
         [JsonProperty(Required = Required.Always)]
@@ -572,6 +603,32 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string[] ValidationLogColumnTitle { get; set; }
+        /// <summary>
+        /// Defines whether gaze validation data is written to a log file.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public bool ValidationLogWriteOutput { get; set; }
+        /// <summary>
+        /// Define the validation points to be shown during the validation process.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double[][] ValidationPoints { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) to wait for a fixation point during validation.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int ValidationTimer { get; set; }
+
+        /// <summary>
+        /// Allows to define the order and the delimiters between the different gaze data values.
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public string DataLogColumnOrder { get; set; }
+        /// <summary>
+        /// Defines the titles of the gaze data log value columns.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public string[] DataLogColumnTitle { get; set; }
         /// <summary>
         /// Number of maximal allowed output data files in the output path. Oldest files are deleted first.
         /// </summary>
@@ -618,52 +675,32 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Always)]
         public bool DataLogWriteOutput { get; set; }
         /// <summary>
-        /// Defines whether gaze calibration data is written to a log file.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public bool CalibrationLogWriteOutput { get; set; }
-        /// <summary>
-        /// Defines whether gaze validation data is written to a log file.
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public bool ValidationLogWriteOutput { get; set; }
-        /// <summary>
-        /// Define the calibration points to be shown during the calibration process.
-        /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public double[][] CalibrationPoints { get; set; }
-        /// <summary>
-        /// Define the validation points to be shown during the validation process.
-        /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public double[][] ValidationPoints { get; set; }
-        /// <summary>
         /// Defines whether gaze data storing is disabled on Gaze application start.
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public bool DataLogDisabledOnStartup { get; set; }
+
         /// <summary>
-        /// In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
-        /// Provide an angle in degrees.
+        /// The name of the experiment.
         /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public double DispersionThreshold { get; set; }
-        /// <summary>
-        /// Specifies the amount of time (in milliseconds) to wait for a fixation point during drift compensation.
-        /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public double DriftCompensationTimer { get; set; }
-        /// <summary>
-        /// If set to true the drift compensation window is shown on the drift compensation command.
-        /// Otherwise only the drift compensation process is done without showing the window.
-        /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public bool DriftCompensationWindowShow { get; set; }
+        [JsonProperty(Required = Required.Always)]
+        public string? ConfigName { get; set; }
         /// <summary>
         /// Defines the location of the license files. It must be the path to a folder (not a file).
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string? LicensePath { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) to wait for the eye tracker to become ready while it is in any other state.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int ReadyTimer { get; set; }
+        /// <summary>
+        /// Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
+        /// </summary>
+        [JsonProperty(Required = Required.Always)]
+        public int TrackerDevice { get; set; }
+
         /// <summary>
         /// Defines whether the mouse cursor shall be controlled by the gaze of the subject during the experiment.
         /// </summary>
@@ -684,16 +721,7 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string MouseStandardIconPath { get; set; }
-        /// <summary>
-        /// Specifies the amount of time (in milliseconds) to wait for the eye tracker to become ready while it is in any other state.
-        /// </summary>
-        [JsonProperty(Required = Required.Default)]
-        public int ReadyTimer { get; set; }
-        /// <summary>
-        /// Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
-        /// </summary>
-        [JsonProperty(Required = Required.Always)]
-        public int TrackerDevice { get; set; }
+
         /// <summary>
         /// Defines the Tobii installation path. It must be the path to a folder (not a file).
         /// </summary>
@@ -710,6 +738,7 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string TobiiCalibrateArguments { get; set; }
+
         /// <summary>
         /// Hold the screen area once the config file is dumped during experimentation.
         /// </summary>
@@ -729,8 +758,12 @@ namespace GazeUtilityLibrary
             DataLogFormatOrigin = "0.000";
             DataLogFormatNormalizedPoint = "0.000";
             DataLogFormatValidation = "0.00";
-            DispersionThreshold = 1;
+            DriftCompensationDispersionThreshold = 0.5;
+            DriftCompensationDispersionThresholdMax = 3;
+            DriftCompensationDurationThreshold = 500;
             DriftCompensationTimer = 5000;
+            ValidationTimer = 3000;
+            ValidationDurationThreshold = 1000;
             DriftCompensationWindowShow = true;
             TobiiApplicationPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\TobiiProEyeTrackerManager";
             TobiiCalibrate = "TobiiProEyeTrackerManager.exe";
@@ -744,7 +777,7 @@ namespace GazeUtilityLibrary
                 }
                 else
                 {
-                    DataLogColumnOrder += $"\t{{{i}}}";
+                    DataLogColumnOrder += $",{{{i}}}";
                 }
             }
             DataLogColumnTitle = new string[] {
@@ -805,13 +838,13 @@ namespace GazeUtilityLibrary
                 "right_pupilDiameter_isValid"
             };
             CalibrationLogColumnOrder =
-                $"{{{(int)CalibrationOutputValue.Point2dX}}}\t" +
-                $"{{{(int)CalibrationOutputValue.Point2dY}}}\t" +
-                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dX}}}\t" +
-                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dY}}}\t" +
-                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dIsValid}}}\t" +
-                $"{{{(int)CalibrationOutputValue.RightGazePoint2dX}}}\t" +
-                $"{{{(int)CalibrationOutputValue.RightGazePoint2dY}}}\t" +
+                $"{{{(int)CalibrationOutputValue.Point2dX}}}," +
+                $"{{{(int)CalibrationOutputValue.Point2dY}}}," +
+                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dX}}}," +
+                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dY}}}," +
+                $"{{{(int)CalibrationOutputValue.LeftGazePoint2dIsValid}}}," +
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dX}}}," +
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dY}}}," +
                 $"{{{(int)CalibrationOutputValue.RightGazePoint2dIsValid}}}";
             CalibrationLogColumnTitle = new string[] {
                 "calibrationPoint_x",
@@ -824,13 +857,13 @@ namespace GazeUtilityLibrary
                 "right_gazePoint_isValid"
             };
             ValidationLogColumnOrder =
-                $"{{{(int)ValidationOutputValue.Point2dX}}}\t" +
-                $"{{{(int)ValidationOutputValue.Point2dY}}}\t" +
-                $"{{{(int)ValidationOutputValue.LeftAccuracy}}}\t" +
-                $"{{{(int)ValidationOutputValue.LeftPrecision}}}\t" +
-                $"{{{(int)ValidationOutputValue.LeftPrecisionRMS}}}\t" +
-                $"{{{(int)ValidationOutputValue.RightAccuracy}}}\t" +
-                $"{{{(int)ValidationOutputValue.RightPrecision}}}\t" +
+                $"{{{(int)ValidationOutputValue.Point2dX}}}," +
+                $"{{{(int)ValidationOutputValue.Point2dY}}}," +
+                $"{{{(int)ValidationOutputValue.LeftAccuracy}}}," +
+                $"{{{(int)ValidationOutputValue.LeftPrecision}}}," +
+                $"{{{(int)ValidationOutputValue.LeftPrecisionRMS}}}," +
+                $"{{{(int)ValidationOutputValue.RightAccuracy}}}," +
+                $"{{{(int)ValidationOutputValue.RightPrecision}}}," +
                 $"{{{(int)ValidationOutputValue.RightPrecisionRMS}}}";
             ValidationLogColumnTitle = new string[] {
                 "validationPoint_x",

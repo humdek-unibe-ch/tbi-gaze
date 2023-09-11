@@ -258,8 +258,9 @@ namespace GazeUtilityLibrary.Tracker
         /// This is device specific and must be overwritten by the device because the duration of fixation point
         /// detection depends on the frame rate of the device.
         /// </summary>
+        /// <param name="durationThreshold">The required fixation duration in milliseconds.</param>
         /// <returns>The number of gaze samples to require for fixation detection.</returns>
-        abstract protected int GetFixationFrameCount();
+        abstract protected int GetFixationFrameCount(int durationThreshold);
 
         /// <summary>
         /// Get the unit vector pointing in the direction of the gaze vector.
@@ -308,7 +309,7 @@ namespace GazeUtilityLibrary.Tracker
                     if (driftCompensation.Update(gazeData))
                     {
                         DriftCompensationComputed?.Invoke(this, driftCompensation.Q);
-                        logger?.Info($"Add drift compensation [{driftCompensation.Q.X}, {driftCompensation.Q.Y}, {driftCompensation.Q.Z}, {driftCompensation.Q.W}]");
+                        logger?.Info($"Set new drift compensation (dispersion: {driftCompensation.Dispersion}, deviation: {driftCompensation.DeviationAngle}°, Q: [{driftCompensation.Q.X}, {driftCompensation.Q.Y}, {driftCompensation.Q.Z}, {driftCompensation.Q.W}])");
                     }
                 }
 
