@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using WpfScreenHelper;
 using System.Linq;
+using System.Diagnostics;
 
 namespace GazeToMouse
 {
@@ -261,6 +262,17 @@ namespace GazeToMouse
         public App()
         {
             _logger = new TrackerLogger(null);
+
+            Process[] gazeProcesses = Process.GetProcessesByName("Gaze");
+            int currentProcessId = Process.GetCurrentProcess().Id;
+            foreach (Process gazeProcess in gazeProcesses)
+            {
+                if (gazeProcess.Id != currentProcessId)
+                {
+                    _logger.Warning($"A Process 'Gaze' with ID {gazeProcess.Id} is already running: killing the process.");
+                    gazeProcess.Kill();
+                }
+            }
 
             _config = new GazeConfiguration(_logger);
             _startTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
