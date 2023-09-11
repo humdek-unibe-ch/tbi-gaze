@@ -124,7 +124,7 @@ namespace GazeUtilityLibrary
             _swGaze?.Close();
             _swGaze?.Dispose();
             _swGaze = null;
-            File.Move(path, $"{path}{error}.txt");
+            File.Move(path, $"{path}{error}.csv");
             return true;
         }
 
@@ -147,7 +147,7 @@ namespace GazeUtilityLibrary
             _swCalibration?.Close();
             _swCalibration?.Dispose();
             _swCalibration = null;
-            File.Move(path, $"{path}{error}.txt", true);
+            File.Move(path, $"{path}{error}.csv", true);
             return true;
         }
 
@@ -170,7 +170,7 @@ namespace GazeUtilityLibrary
             _swValidation?.Close();
             _swValidation?.Dispose();
             _swValidation = null;
-            File.Move(path, $"{path}{error}.txt", true);
+            File.Move(path, $"{path}{error}.csv", true);
             return true;
         }
 
@@ -782,8 +782,8 @@ namespace GazeUtilityLibrary
             }
             DataLogColumnTitle = new string[] {
                 "timestamp",
+                "timestamp_received",
                 "timestamp_relative",
-                "timestamp_device",
                 "trial_id",
                 "tag",
 

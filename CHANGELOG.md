@@ -30,6 +30,8 @@
 - Rename configuration option `DispersionThreshold` to `DriftCompensationDispersionThreshold`.
 - Hide window icon in taskbar. This might help to avoid taskbar flickering during
   experimentatino.
+- Save data files with `csv` extension instead of `txt`.
+- By default, use `,` delimiter instead of `\t` delimiter when dumping values.
 
 ### Bug Fixes
 - Fix dispersion computation during drift compensation.
