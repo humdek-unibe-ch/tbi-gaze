@@ -654,6 +654,12 @@ namespace GazeUtilityLibrary
         [JsonProperty(Required = Required.Default)]
         public double DriftCompensationTimer { get; set; }
         /// <summary>
+        /// If set to true the drift compensation window is shown on the drift compensation command.
+        /// Otherwise only the drift compensation process is done without showing the window.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public bool DriftCompensationWindowShow { get; set; }
+        /// <summary>
         /// Defines the location of the license files. It must be the path to a folder (not a file).
         /// </summary>
         [JsonProperty(Required = Required.Default)]
@@ -725,6 +731,7 @@ namespace GazeUtilityLibrary
             DataLogFormatValidation = "0.00";
             DispersionThreshold = 1;
             DriftCompensationTimer = 5000;
+            DriftCompensationWindowShow = true;
             TobiiApplicationPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\TobiiProEyeTrackerManager";
             TobiiCalibrate = "TobiiProEyeTrackerManager.exe";
             TobiiCalibrateArguments = "--device-sn=%S --mode=usercalibration";

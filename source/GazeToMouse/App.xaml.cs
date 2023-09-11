@@ -59,7 +59,7 @@ namespace GazeToMouse
         private Dispatcher _dispatcher;
         private Dispatcher CustomDispatcher { get { return _dispatcher; } }
         private TaskCompletionSource<bool> _processCompletion = new TaskCompletionSource<bool>();
-        private DriftCompensationWindow _fixationWindow = new DriftCompensationWindow();
+        private DriftCompensationWindow? _fixationWindow = null;
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
         private CalibrationWindow _validationWindow = new CalibrationWindow();
         private CalibrationModel _calibrationModel;
@@ -152,10 +152,14 @@ namespace GazeToMouse
         /// <returns>True on success, false on failure</returns>
         public async Task<bool> CompensateDrift()
         {
-            Current.Dispatcher.Invoke(() => {
-                _fixationWindow.Topmost = true;
-                _fixationWindow.Show();
-            });
+            if (_fixationWindow != null)
+            {
+                Current.Dispatcher.Invoke(() =>
+                {
+                    _fixationWindow.Topmost = true;
+                    _fixationWindow.Show();
+                });
+            }
             System.Timers.Timer? timer = null;
             if (_config.Config.DriftCompensationTimer > 0)
             {
@@ -170,9 +174,14 @@ namespace GazeToMouse
             await Task.Delay(500);
             _tracker?.StartDriftCompensation();
             bool res = await _processCompletion.Task;
-            Current.Dispatcher.Invoke(() => {
-                _fixationWindow.Hide();
-            });
+
+            if (_fixationWindow != null)
+            {
+                Current.Dispatcher.Invoke(() =>
+                {
+                    _fixationWindow.Hide();
+                });
+            }
             timer?.Dispose();
             _processCompletion = new TaskCompletionSource<bool>();
             return res;
@@ -252,6 +261,7 @@ namespace GazeToMouse
         public App()
         {
             _logger = new TrackerLogger(null);
+
             _config = new GazeConfiguration(_logger);
             _startTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
@@ -284,11 +294,15 @@ namespace GazeToMouse
                 return false;
             }
 
-            _fixationWindow.WindowStyle = WindowStyle.None;
-            _fixationWindow.WindowState = WindowState.Maximized;
-            _fixationWindow.ResizeMode = ResizeMode.NoResize;
-            _fixationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
-            _fixationWindow.Title = "FixationWindow";
+            if (_config.Config.DriftCompensationWindowShow)
+            {
+                _fixationWindow = new DriftCompensationWindow();
+                _fixationWindow.WindowStyle = WindowStyle.None;
+                _fixationWindow.WindowState = WindowState.Maximized;
+                _fixationWindow.ResizeMode = ResizeMode.NoResize;
+                _fixationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+                _fixationWindow.Title = "FixationWindow";
+            }
 
             _calibrationWindow.WindowStyle = WindowStyle.None;
             _calibrationWindow.WindowState = WindowState.Maximized;
@@ -307,7 +321,10 @@ namespace GazeToMouse
             {
                 _calibrationWindow.Cursor = Cursors.None;
                 _validationWindow.Cursor = Cursors.None;
-                _fixationWindow.Cursor = Cursors.None;
+                if (_fixationWindow != null)
+                {
+                    _fixationWindow.Cursor = Cursors.None;
+                }
             }
 
             // hide the mouse cursor
@@ -434,13 +451,17 @@ namespace GazeToMouse
                         line = sr.ReadLine();
                         if (line == null)
                         {
+                            pipeServer.Close();
                             break;
                         }
                         PipeCommand? msg = JsonConvert.DeserializeObject<PipeCommand>(line);
+
                         if (msg == null)
                         {
+                            pipeServer.Close();
                             break;
                         }
+
                         app.CustomDispatcher.Invoke(() =>
                         {
                             if (msg.ResetStartTime == true)
@@ -454,6 +475,7 @@ namespace GazeToMouse
                             if (msg.TrialId != null)
                             {
                                 app.TrialId = msg.TrialId ?? 0;
+
                             }
                         });
 
@@ -463,7 +485,8 @@ namespace GazeToMouse
                             {
                                 case "TERMINATE":
                                     app.CustomDispatcher.InvokeShutdown();
-                                    break;
+                                    pipeServer.Close();
+                                    return;
                                 case "GAZE_RECORDING_DISABLE":
                                     app.CustomDispatcher.Invoke(() => app.GazeRecordingDisable());
                                     break;
@@ -504,6 +527,7 @@ namespace GazeToMouse
                                     sw.WriteLine("FAILED");
                                 }
                                 sw.Flush();
+                                reply = false;
                             }
                         }
                     }

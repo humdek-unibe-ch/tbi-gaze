@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:uc="clr-namespace:CustomCalibrationLibrary.Views"
         mc:Ignorable="d"
-        Title="DriftCompensation" Height="450" Width="800">
+        Title="DriftCompensation">
     <Grid>
         <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
             <uc:FixationPoint DataContext="{Binding FixationPoint}" />
