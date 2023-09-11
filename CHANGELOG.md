@@ -1,3 +1,37 @@
+# v3.4.0
+### New Features
+- Add configuration option `DriftCompensationWindowShow` to enable or disable the drift
+  compensation window.
+- Add configuration option `DriftCompensationDurationThreshold` to configure the required
+  fixation time during drift compensation.
+- Add configuration option `DriftCompensationWindowShow` to enable or disable the drift
+  compensation window.
+- Add configuration option `DriftCompensationDispersionThresholdMax` which allows to define
+  maximal allowed deviation angle during drift compensation: If the computed compensation
+  angle is larger as the here configured angle the drift compensation is not updated.
+- During `Gaze.exe` startup check for already running `Gaze` processes and kill them.
+
+### Improvements
+- Update default configuration settings to allow starting the application without error.
+- Improvments to `GazeControl.exe` and annotations:
+	- Introduce arguments `/label` and `/trialId` to pass a label and the trial ID.
+	- Make argument `/command` optional to allow setting annotations without a command.
+	- Set trialID and label based on capture timestamp instead of system timestamp.
+- Improve timestamps: Compute the tracker latency for each sample and use this to dump
+  the system time of data capure and the system time of data reading.
+- Update opensesame templates. This might help to reduce taskbar flickering and makes the
+  code more maintainable.
+
+### Changes
+- Remove argument `/value` in `GazeControl.exe` because it became obsolete with the new
+  arguments `/label` and `trialId`.
+- Rename configuration option `DispersionThreshold` to `DriftCompensationDispersionThreshold`.
+- Hide window icon in taskbar. This might help to avoid taskbar flickering during
+  experimentatino.
+
+### Bug Fixes
+- Fix dispersion computation during drift compensation.
+
 # v3.3.2
 ### New Features
 - Allow to select the screen on a multi-screen setup with the keyboard. 
