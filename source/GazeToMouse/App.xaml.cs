@@ -314,6 +314,7 @@ namespace GazeToMouse
                 _fixationWindow.ResizeMode = ResizeMode.NoResize;
                 _fixationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
                 _fixationWindow.Title = "FixationWindow";
+                _fixationWindow.ShowInTaskbar = false;
             }
 
             _calibrationWindow.WindowStyle = WindowStyle.None;
@@ -321,12 +322,14 @@ namespace GazeToMouse
             _calibrationWindow.ResizeMode = ResizeMode.NoResize;
             _calibrationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _calibrationWindow.Title = "CalibrationWindow";
+            _calibrationWindow.ShowInTaskbar = false;
 
             _validationWindow.WindowStyle = WindowStyle.None;
             _validationWindow.WindowState = WindowState.Maximized;
             _validationWindow.ResizeMode = ResizeMode.NoResize;
             _validationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _validationWindow.Title = "ValidationWindow";
+            _validationWindow.ShowInTaskbar = false;
 
             // hide the mouse cursor on calibration window
             if (_config.Config.MouseCalibrationHide)
