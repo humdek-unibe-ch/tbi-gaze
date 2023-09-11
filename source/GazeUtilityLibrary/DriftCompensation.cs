@@ -23,8 +23,14 @@ namespace GazeUtilityLibrary
         /// </summary>
         public Quaternion Q { get { return _q; } }
         private double _deviationAngle;
+        /// <summary>
+        /// The deviation angle of the drift compensation.
+        /// </summary>
         public double DeviationAngle { get { return _deviationAngle; } }
         private double _dispersion;
+        /// <summary>
+        /// The dispersion of the drift compensation fixation.
+        /// </summary>
         public double Dispersion
         {
             get { return _dispersion; }
