@@ -166,6 +166,15 @@ Please send a mail to \href{tpf@humdek.unibe.ch}{TPF}\footnote{tpf@humdek.unibe.
 %==============================================================================
 \chapter{Quick Start}
 \label{sec.quick}
+
+\begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Attention}
+    Configure the task manager to be always in the foreground (in the task manager enable "Options->Always on top").\\
+    Here is why: The application \texttt{Gaze.exe} may open windows that are put to the foreground in a very aggressive manner.
+    This is done in order to cope with experimentation software that uses this same behaviour (e.g. Opensesame with psychopy or expyriment backend).
+    If something goes wrong with `\texttt{Gaze.exe} the user could be locked out from the computer because a window keeps blocking access to the system.
+    With the task manager set to "Always on top" there is always an easy way out.
+\end{mdframed}
+
 In order to get started with Tobii eye tracking the following installation steps need to be performed:
 \begin{itemize}
     \item Install the \href{https://www.tobii.com/products/software/applications-and-developer-kits/tobii-pro-eye-tracker-manager}{Tobii Pro Eye Tracker Manager} application.
