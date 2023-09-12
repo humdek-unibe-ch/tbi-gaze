@@ -9,7 +9,7 @@
     <Platforms>x64</Platforms>
 	<ServerGarbageCollection>true</ServerGarbageCollection>
 	<ApplicationIcon>butterfly.ico</ApplicationIcon>
-	<Version>3.4.0</Version>
+	<Version>3.4.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

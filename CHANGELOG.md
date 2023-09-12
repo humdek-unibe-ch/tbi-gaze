@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.4.1
+### Improvements
+- Add note on foreground behaviour to readme.
+
+### Bug Fixes
+- Fix validation when only one screen is connected.
+
 ## v3.4.0
 ### New Features
 - Add configuration option `DriftCompensationWindowShow` to enable or disable the drift

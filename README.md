@@ -5,6 +5,12 @@ Specifically, this project aims at providing a set of executables that can be ca
 
 For more details please refer to the [documentation](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/doc/tutorial.pdf).
 
+**Important** Configure the task manager to be always in the foreground (In task manager enable "Options->Always on top").
+Why: The application `Gaze.exe` may open windows that are put to the foreground in a very agressive manner.
+This is done in order to cope with experimentation software that uses this same behaviour (e.g. Opensesame with psychopy or expyriment backend).
+If something goes wrong with `Gaze.exe` the user could be locked out from the computer because a window keeps blocking accsess to the system.
+With the taskmanager set to "Always on top" there is a way out.
+
 ## Installation
 The complete toolset package can be downloaded from the [release folder](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
 The package contains the following executables:
