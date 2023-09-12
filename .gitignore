@@ -98,3 +98,4 @@ artifacts/
 doc-doxygen
 build
 test
+release
