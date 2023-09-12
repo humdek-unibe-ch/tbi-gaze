@@ -238,7 +238,7 @@ namespace GazeToMouse
             }
             else
             {
-                _calibrationModel.Status = CalibrationStatus.HeadPosition;
+                OnCalibrationEvent(null, CalibrationEventType.Init);
             }
             _tracker.UserPositionDataReceived += OnUserPositionGuideReceived;
             _isCalibrationOn = true;
@@ -272,7 +272,7 @@ namespace GazeToMouse
             }
             else
             {
-                _validationModel.Status = CalibrationStatus.DataCollection;
+                OnValidationEvent(null, CalibrationEventType.Init);
             }
             _isValidationOn = true;
             bool res = await _processCompletion.Task;
