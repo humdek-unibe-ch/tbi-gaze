@@ -12,7 +12,7 @@ If something goes wrong with `Gaze.exe` the user could be locked out from the co
 With the task manager set to "Always on top" there is a way out.
 
 ## Installation
-The complete toolset package can be downloaded from the [release folder](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/blob/master/release).
+The complete toolset package can be downloaded from the [releases](http://phhum-a209-cp.unibe.ch:10012/TBI/TBI-tobii_eye_tracker_gaze/tags).
 The package contains the following executables:
 
 - **`Gaze.exe`** This program uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) to extract the gaze position on the screen where the subject is looking at.
