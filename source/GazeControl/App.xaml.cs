@@ -54,7 +54,7 @@ namespace GazeControl
                 }
             }
 
-            NamedPipeClient.HandleCommands(command, reset, trialId, label);
+            NamedPipeClient.HandleCommands(command, reset, trialId, label, logger);
 
             Current.Shutdown();
         }
