@@ -11,6 +11,7 @@ using GazeUtilityLibrary;
 using Newtonsoft.Json;
 using GazeUtilityLibrary.DataStructs;
 using System.Threading;
+using System.Diagnostics;
 
 namespace GazeControl
 {
@@ -19,13 +20,59 @@ namespace GazeControl
     /// </summary>
     public static class NamedPipeClient
     {
+        public static void HandleCommands(string? command, bool reset, int? trialId, string? label)
+        {
+            TrackerLogger logger = new TrackerLogger(null, EOutputType.control);
+            string pipeName = "tobii_gaze";
+
+            if (!NamedPipeClient.AwaitServer(pipeName, logger))
+            {
+                logger.Warning($"No pipe server '{pipeName}' available");
+            }
+
+            switch (command)
+            {
+                case null:
+                case "GAZE_RECORDING_DISABLE":
+                case "GAZE_RECORDING_ENABLE":
+                case "MOUSE_TRACKING_DISABLE":
+                case "MOUSE_TRACKING_ENABLE":
+                case "RESET_DRIFT_COMPENSATION":
+                case "TERMINATE":
+                    try
+                    {
+                        NamedPipeClient.SendSignal(pipeName, command, reset, trialId, label, logger);
+                    }
+                    catch (Exception error)
+                    {
+                        logger.Error(error.Message);
+                    }
+                    break;
+                case "DRIFT_COMPENSATION":
+                case "CUSTOM_CALIBRATE":
+                case "VALIDATE":
+                    try
+                    {
+                        NamedPipeClient.SendRequest(pipeName, command, reset, trialId, label, logger);
+                    }
+                    catch (Exception error)
+                    {
+                        logger.Error(error.Message);
+                    }
+                    break;
+                default:
+                    logger.Error($"unknown command: {command}");
+                    break;
+            }
+        }
+
         /// <summary>
         /// Periodically check if a pipe file exists. If the file exists, the server is running. Otherwise, no pipe server is running.
         /// </summary>
         /// <param name="pipeName">The name of the pipe to check.</param>
         /// <param name="logger">The application logger.</param>
         /// <returns>True if the server pipe file was found, false otherwise.</returns>
-        public static bool AwaitServer(string pipeName, TrackerLogger logger)
+        private static bool AwaitServer(string pipeName, TrackerLogger logger)
         {
             int count = 0;
             int countMax = 10;
@@ -48,7 +95,7 @@ namespace GazeControl
         /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
         /// <param name="label">If set the gaze data will be annotated with this label.</param>
         /// <param name="logger">The application logger.</param>
-        public static void SendSignal(string pipeName, string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
+        private static void SendSignal(string pipeName, string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
         {
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
@@ -83,7 +130,7 @@ namespace GazeControl
         /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
         /// <param name="label">If set the gaze data will be annotated with this label.</param>
         /// <param name="logger">The application logger.</param>
-        public static void SendRequest(string pipeName, string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
+        private static void SendRequest(string pipeName, string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
         {
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(pipeName))
             using (StreamReader sr = new StreamReader(pipeClient))

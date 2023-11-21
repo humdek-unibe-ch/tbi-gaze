@@ -4,7 +4,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 using GazeUtilityLibrary;
-using System;
 using System.Windows;
 
 namespace GazeControl
@@ -22,7 +21,6 @@ namespace GazeControl
             int? trialId = null;
             string? label = null;
             bool reset = false;
-            string pipeName = "tobii_gaze";
             for (int i = 0; i < e.Args.Length; i++)
             {
                 if (e.Args[i].StartsWith("/"))
@@ -56,45 +54,7 @@ namespace GazeControl
                 }
             }
 
-            if (!NamedPipeClient.AwaitServer(pipeName, logger))
-            {
-                logger.Warning($"No pipe server '{pipeName}' available");
-            }
-
-            switch (command)
-            {
-                case null:
-                case "GAZE_RECORDING_DISABLE":
-                case "GAZE_RECORDING_ENABLE":
-                case "MOUSE_TRACKING_DISABLE":
-                case "MOUSE_TRACKING_ENABLE":
-                case "RESET_DRIFT_COMPENSATION":
-                case "TERMINATE":
-                    try
-                    {
-                        NamedPipeClient.SendSignal(pipeName, command, reset, trialId, label, logger);
-                    }
-                    catch (Exception error)
-                    {
-                        logger.Error(error.Message);
-                    }
-                    break;
-                case "DRIFT_COMPENSATION":
-                case "CUSTOM_CALIBRATE":
-                case "VALIDATE":
-                    try
-                    {
-                        NamedPipeClient.SendRequest(pipeName, command, reset, trialId, label, logger);
-                    }
-                    catch (Exception error)
-                    {
-                        logger.Error(error.Message);
-                    }
-                    break;
-                default:
-                    logger.Error($"unknown command: {command}");
-                    break;
-            }
+            NamedPipeClient.HandleCommands(command, reset, trialId, label);
 
             Current.Shutdown();
         }
