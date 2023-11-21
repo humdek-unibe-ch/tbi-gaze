@@ -1,8 +1,3 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- */
 ﻿using GazeUtilityLibrary;
 using System;
 using System.Windows;
@@ -16,7 +11,7 @@ namespace GazeControl
     {
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
-            TrackerLogger logger = new TrackerLogger(null);
+            TrackerLogger logger = new TrackerLogger(null, EOutputType.control);
 
             string? command = null;
             int? trialId = null;
