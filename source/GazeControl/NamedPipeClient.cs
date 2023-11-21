@@ -4,11 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 ﻿using System;
+using System.Linq;
 using System.IO.Pipes;
 using System.IO;
 using GazeUtilityLibrary;
 using Newtonsoft.Json;
 using GazeUtilityLibrary.DataStructs;
+using System.Threading;
 
 namespace GazeControl
 {
@@ -18,12 +20,36 @@ namespace GazeControl
     public static class NamedPipeClient
     {
         /// <summary>
+        /// Periodically check if a pipe file exists. If the file exists, the server is running. Otherwise, no pipe server is running.
+        /// </summary>
+        /// <param name="pipeName">The name of the pipe to check.</param>
+        /// <param name="logger">The application logger.</param>
+        /// <returns>True if the server pipe file was found, false otherwise.</returns>
+        public static bool AwaitServer(string pipeName, TrackerLogger logger)
+        {
+            int count = 0;
+            int countMax = 10;
+            while(!Directory.GetFiles(@"\\.\pipe\").Contains($"\\\\.\\pipe\\{pipeName}") && count < countMax)
+            {
+                count++;
+                logger.Info($"Awaiting pipe server {pipeName} ({count})...");
+                Thread.Sleep(1000);
+            }
+
+            return count != countMax;
+        }
+
+        /// <summary>
         /// Sends a signal through the named gaze pipe.
         /// </summary>
+        /// <param name="pipeName">The name of the pipe.</param>
         /// <param name="signal">The signal to be sent.</param>
-        public static void SendSignal(string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
+        /// <param name="reset">If set to true the relative timestamp will be reset with this command.</param>
+        /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
+        /// <param name="label">If set the gaze data will be annotated with this label.</param>
+        /// <param name="logger">The application logger.</param>
+        public static void SendSignal(string pipeName, string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
         {
-            string pipeName = "tobii_gaze";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
                 logger.Debug($"Attempting to connect to pipe {pipeName}...");
@@ -34,6 +60,7 @@ namespace GazeControl
                 catch (Exception ex)
                 {
                     logger.Error($"Connection to pipe {pipeName} failed: {ex.Message}");
+                    logger.Warning($"Failed to send signal {signal}");
                     return;
                 }
                 logger.Debug($"Connected to pipe {pipeName}...");
@@ -50,10 +77,14 @@ namespace GazeControl
         /// <summary>
         /// Sends a signal through the named gaze pipe and awaits a reply.
         /// </summary>
-        /// <param name="signal">The request to be sent.</param>
-        public static void SendRequest(string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
+        /// <param name="pipeName">The name of the pipe.</param>
+        /// <param name="signal">The signal to be sent.</param>
+        /// <param name="reset">If set to true the relative timestamp will be reset with this command.</param>
+        /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
+        /// <param name="label">If set the gaze data will be annotated with this label.</param>
+        /// <param name="logger">The application logger.</param>
+        public static void SendRequest(string pipeName, string? signal, bool reset, int? trialId, string? label, TrackerLogger logger)
         {
-            string pipeName = "tobii_gaze";
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(pipeName))
             using (StreamReader sr = new StreamReader(pipeClient))
             using (StreamWriter sw = new StreamWriter(pipeClient))
@@ -66,6 +97,7 @@ namespace GazeControl
                 catch (Exception ex)
                 {
                     logger.Error($"Connection to pipe {pipeName} failed: {ex.Message}");
+                    logger.Warning($"Failed to send signal request {signal}");
                     return;
                 }
                 logger.Debug($"Connected to pipe {pipeName}...");

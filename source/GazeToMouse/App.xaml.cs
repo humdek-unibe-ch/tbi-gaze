@@ -295,6 +295,9 @@ namespace GazeToMouse
         public App()
         {
             _logger = new TrackerLogger(null);
+            _dispatcher = Dispatcher.CurrentDispatcher;
+            _dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
+            ThreadPool.QueueUserWorkItem(HandlePipeSignals, this);
 
             Process[] gazeProcesses = Process.GetProcessesByName("Gaze");
             int currentProcessId = Process.GetCurrentProcess().Id;
@@ -315,10 +318,6 @@ namespace GazeToMouse
                 _logger.Error("Failed to initialise the gaze process, aborting");
                 Current.Shutdown();
             }
-
-            _dispatcher = Dispatcher.CurrentDispatcher;
-            _dispatcher.ShutdownStarted += OnDispatcherShutdownStarted;
-            ThreadPool.QueueUserWorkItem(HandlePipeSignals, this);
 
             _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;

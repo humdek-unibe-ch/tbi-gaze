@@ -22,6 +22,7 @@ namespace GazeControl
             int? trialId = null;
             string? label = null;
             bool reset = false;
+            string pipeName = "tobii_gaze";
             for (int i = 0; i < e.Args.Length; i++)
             {
                 if (e.Args[i].StartsWith("/"))
@@ -55,6 +56,11 @@ namespace GazeControl
                 }
             }
 
+            if (!NamedPipeClient.AwaitServer(pipeName, logger))
+            {
+                logger.Warning($"No pipe server '{pipeName}' available");
+            }
+
             switch (command)
             {
                 case null:
@@ -66,7 +72,7 @@ namespace GazeControl
                 case "TERMINATE":
                     try
                     {
-                        NamedPipeClient.SendSignal(command, reset, trialId, label, logger);
+                        NamedPipeClient.SendSignal(pipeName, command, reset, trialId, label, logger);
                     }
                     catch (Exception error)
                     {
@@ -78,7 +84,7 @@ namespace GazeControl
                 case "VALIDATE":
                     try
                     {
-                        NamedPipeClient.SendRequest(command, reset, trialId, label, logger);
+                        NamedPipeClient.SendRequest(pipeName, command, reset, trialId, label, logger);
                     }
                     catch (Exception error)
                     {
