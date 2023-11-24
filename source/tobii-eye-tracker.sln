@@ -5,6 +5,7 @@ VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{765F293B-2C27-45B4-B5FC-5F0A75A6E753}"
 	ProjectSection(SolutionItems) = preProject
+		..\.doxygen = ..\.doxygen
 		..\CHANGELOG.md = ..\CHANGELOG.md
 		..\sample\config.json = ..\sample\config.json
 		..\scripts\CreateShortcut.ps1 = ..\scripts\CreateShortcut.ps1
