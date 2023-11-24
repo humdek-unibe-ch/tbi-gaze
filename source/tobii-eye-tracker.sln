@@ -8,8 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\CHANGELOG.md = ..\CHANGELOG.md
 		..\sample\config.json = ..\sample\config.json
 		..\scripts\CreateShortcut.ps1 = ..\scripts\CreateShortcut.ps1
-		..\README.md = ..\README.md
 		..\scripts\CreateShortcuts.bat = ..\scripts\CreateShortcuts.bat
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomCalibrationLibrary", "CustomCalibrationLibrary\CustomCalibrationLibrary.csproj", "{8BA485A3-7EE8-4EE8-9F9E-65837518D8EB}"
@@ -28,6 +28,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TobiiProSdkAddons", "TobiiProSdkAddons\TobiiProSdkAddons.csproj", "{2DA927EE-04D4-43FD-A625-4E2F75459182}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GazeControl", "GazeControl\GazeControl.csproj", "{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GazeControlLibrary", "GazeControlLibrary\GazeControlLibrary.csproj", "{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,14 @@ Global
 		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|Any CPU.Build.0 = Release|x64
 		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|x64.ActiveCfg = Release|x64
 		{8E75DD38-AFB4-4ED1-BDD1-0631ED0988E9}.Release|x64.Build.0 = Release|x64
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Debug|x64.ActiveCfg = Debug|x64
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Debug|x64.Build.0 = Debug|x64
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Release|x64.ActiveCfg = Release|x64
+		{A9C772C8-BE18-4A86-A6B3-89E1EDC3360B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

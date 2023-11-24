@@ -23,6 +23,7 @@ using System.Reflection;
 using WpfScreenHelper;
 using System.Linq;
 using System.Diagnostics;
+using GazeControlLibrary;
 
 namespace GazeToMouse
 {

@@ -5,7 +5,7 @@
  */
 ﻿using Newtonsoft.Json;
 
-namespace GazeUtilityLibrary.DataStructs
+namespace GazeControlLibrary
 {
     /// <summary>
     /// The JSON structure of a pipe command.
@@ -16,13 +16,13 @@ namespace GazeUtilityLibrary.DataStructs
         /// The optional pipe command to be sent.
         /// </summary>
         [JsonProperty(Required = Required.Default)]
-        public string? Command { get; set; }
+        public string Command { get; set; }
 
         /// <summary>
         /// An optional label to annotate gaze data.
         /// </summary>
         [JsonProperty(Required = Required.Default)]
-        public string? Label { get; set; }
+        public string Label { get; set; }
 
         /// <summary>
         /// An optional trial ID to annotate gaze data.
@@ -43,7 +43,7 @@ namespace GazeUtilityLibrary.DataStructs
         /// <param name="reset">A flag to indicate whether the relative timestamp should be reset.</param>
         /// <param name="trialId">An optional trial ID to annotate gaze data.</param>
         /// <param name="label">An optional label to annotate gaze data.</param>
-        public PipeCommand(string? command, bool reset, int? trialId, string? label) {
+        public PipeCommand(string command, bool reset, int? trialId, string label) {
             Command = command;
             ResetStartTime = reset;
             Label = label;

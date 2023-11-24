@@ -3,7 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+using GazeControlLibrary;
 using GazeUtilityLibrary;
+using System;
 using System.Windows;
 
 namespace GazeControl
@@ -13,10 +15,29 @@ namespace GazeControl
     /// </summary>
     public partial class App : Application
     {
+        private TrackerLogger logger = new TrackerLogger(null, EOutputType.control);
+
+        private void Logger(LogLevel level, string msg)
+        {
+            switch (level)
+            {
+                case LogLevel.error:
+                    logger.Error(msg);
+                    break;
+                case LogLevel.info:
+                    logger.Info(msg);
+                    break;
+                case LogLevel.warning:
+                    logger.Warning(msg);
+                    break;
+                case LogLevel.debug:
+                    logger.Debug(msg);
+                    break;
+            }
+        }
+
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
-            TrackerLogger logger = new TrackerLogger(null, EOutputType.control);
-
             string? command = null;
             int? trialId = null;
             string? label = null;
@@ -54,7 +75,7 @@ namespace GazeControl
                 }
             }
 
-            NamedPipeClient.HandleCommands(command, reset, trialId, label, logger);
+            NamedPipeClient.HandleCommands(command, reset, trialId, label, Logger);
 
             Current.Shutdown();
         }

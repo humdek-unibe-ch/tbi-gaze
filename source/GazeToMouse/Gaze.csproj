@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomCalibrationLibrary\CustomCalibrationLibrary.csproj" />
+    <ProjectReference Include="..\GazeControlLibrary\GazeControlLibrary.csproj" />
     <ProjectReference Include="..\GazeUtilityLibrary\GazeUtilityLibrary.csproj" />
     <ProjectReference Include="..\TobiiProSdkAddons\TobiiProSdkAddons.csproj" />
   </ItemGroup>
