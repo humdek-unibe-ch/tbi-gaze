@@ -9,6 +9,8 @@
 ### Bug Fixes
 - Log GazeControl messages to seperate file to avoid race conditions (#1).
 - Fix pipe connection problems on startup (#5).
+- Only hide the mouse when calibration dots are shown (#7).
+- Fix dispersion calculation in drift compensation (#9).
 
 ## v3.4.1
 ### Improvements
