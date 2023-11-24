@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-using System.Runtime.InteropServices;
 using System;
 using System.IO;
 using System.IO.Pipes;
@@ -29,12 +28,12 @@ namespace GazeControlLibrary
     /// </summary>
     public static class NamedPipeClient
     {
+        /// <summary>
+        /// Log message delegate to allow independant package building.
+        /// </summary>
+        /// <param name="level">The log level.</param>
+        /// <param name="msg">The log message</param>
         public delegate void Logger(LogLevel level, string msg);
-
-        public static void HandleCommandsC(IntPtr command, int trialId, int reset, IntPtr label)
-        {
-            HandleCommands(Marshal.PtrToStringAnsi(command), reset == 0 ? false : true, trialId, Marshal.PtrToStringAnsi(label));
-        }
 
         /// <summary>
         /// Sends command messages or command request to a named pipe tobii_gaze according to the command provided.

@@ -30,9 +30,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -76,5 +73,8 @@
   <PropertyGroup>
     <PostBuildEvent>copy /Y $(TargetPath) $(SolutionDir)..\build\$(TargetFileName)
 copy /Y $(TargetDir)Newtonsoft.Json.dll $(SolutionDir)..\build\Newtonsoft.Json.dll</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 </Project>
