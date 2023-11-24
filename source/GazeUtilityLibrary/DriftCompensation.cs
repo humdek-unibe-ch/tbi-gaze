@@ -161,8 +161,8 @@ namespace GazeUtilityLibrary
             float xMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.X ?? float.PositiveInfinity);
             float yMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Y ?? float.PositiveInfinity);
             float zMin = _samples.Min(sample => sample.Combined.GazeData3d?.GazePoint.Z ?? float.PositiveInfinity);
-            float dispersion = xMax - xMin + yMax - yMin + zMax - zMin;
-            return dispersion / 3;
+            double dispersion = Math.Sqrt(Math.Pow(xMax - xMin, 2) + Math.Pow(yMax - yMin, 2) + Math.Pow(zMax - zMin, 2));
+            return dispersion;
         }
 
         /// <summary>
