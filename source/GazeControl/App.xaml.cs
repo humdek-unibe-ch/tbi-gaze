@@ -5,7 +5,6 @@
  */
 using GazeControlLibrary;
 using GazeUtilityLibrary;
-using System;
 using System.Windows;
 
 namespace GazeControl
@@ -21,17 +20,17 @@ namespace GazeControl
         {
             switch (level)
             {
-                case LogLevel.error:
-                    logger.Error(msg);
+                case LogLevel.Debug:
+                    logger.Debug(msg);
                     break;
-                case LogLevel.info:
+                case LogLevel.Info:
                     logger.Info(msg);
                     break;
-                case LogLevel.warning:
+                case LogLevel.Warning:
                     logger.Warning(msg);
                     break;
-                case LogLevel.debug:
-                    logger.Debug(msg);
+                case LogLevel.Error:
+                    logger.Error(msg);
                     break;
             }
         }

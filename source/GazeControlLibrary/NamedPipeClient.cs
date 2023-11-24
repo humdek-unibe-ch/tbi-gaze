@@ -8,17 +8,17 @@ using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-using Newtonsoft.Json;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace GazeControlLibrary
 {
     public enum LogLevel
     {
-        error,
-        warning,
-        info,
-        debug
+        Debug,
+        Info,
+        Warning,
+        Error
     }
     /// <summary>
     /// The named pipe client handler.
@@ -46,7 +46,7 @@ namespace GazeControlLibrary
 
             if (!AwaitServer(pipeName, logger))
             {
-                if (logger != null) logger(LogLevel.warning, $"No pipe server '{pipeName}' available");
+                if (logger != null) logger(LogLevel.Warning, $"No pipe server '{pipeName}' available");
             }
 
             switch (command)
@@ -64,7 +64,7 @@ namespace GazeControlLibrary
                     }
                     catch (Exception error)
                     {
-                        if (logger != null) logger(LogLevel.error, error.Message);
+                        if (logger != null) logger(LogLevel.Error, error.Message);
                     }
                     break;
                 case "DRIFT_COMPENSATION":
@@ -76,11 +76,11 @@ namespace GazeControlLibrary
                     }
                     catch (Exception error)
                     {
-                        if (logger != null) logger(LogLevel.error, error.Message);
+                        if (logger != null) logger(LogLevel.Error, error.Message);
                     }
                     break;
                 default:
-                    if (logger != null) logger(LogLevel.error, $"unknown command: {command}");
+                    if (logger != null) logger(LogLevel.Error, $"unknown command: {command}");
                     break;
             }
         }
@@ -98,7 +98,7 @@ namespace GazeControlLibrary
             while(!Directory.GetFiles(@"\\.\pipe\").ToList().Contains($"\\\\.\\pipe\\{pipeName}") && count < countMax)
             {
                 count++;
-                if (logger != null) logger(LogLevel.info, $"Awaiting pipe server {pipeName} ({count})...");
+                if (logger != null) logger(LogLevel.Info, $"Awaiting pipe server {pipeName} ({count})...");
                 Thread.Sleep(1000);
             }
 
@@ -118,23 +118,23 @@ namespace GazeControlLibrary
         {
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
-                if (logger != null) logger(LogLevel.debug, $"Attempting to connect to pipe {pipeName}...");
+                if (logger != null) logger(LogLevel.Debug, $"Attempting to connect to pipe {pipeName}...");
                 try
                 {
                     pipeClient.Connect(1000);
                 }
                 catch (Exception ex)
                 {
-                    if (logger != null) logger(LogLevel.error, $"Connection to pipe {pipeName} failed: {ex.Message}");
-                    if (logger != null) logger(LogLevel.warning, $"Failed to send signal {signal}");
+                    if (logger != null) logger(LogLevel.Error, $"Connection to pipe {pipeName} failed: {ex.Message}");
+                    if (logger != null) logger(LogLevel.Warning, $"Failed to send signal {signal}");
                     return;
                 }
-                if (logger != null) logger(LogLevel.debug, $"Connected to pipe {pipeName}...");
-                if (logger != null) logger(LogLevel.debug, $"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
+                if (logger != null) logger(LogLevel.Debug, $"Connected to pipe {pipeName}...");
+                if (logger != null) logger(LogLevel.Debug, $"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
 
                 using (StreamWriter sw = new StreamWriter(pipeClient))
                 {
-                    if (logger != null) logger(LogLevel.info, $"Sending {signal} signal to pipe {pipeName}");
+                    if (logger != null) logger(LogLevel.Info, $"Sending {signal} signal to pipe {pipeName}");
                     sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, trialId, label)));
                 }
             }
@@ -155,36 +155,36 @@ namespace GazeControlLibrary
             using (StreamReader sr = new StreamReader(pipeClient))
             using (StreamWriter sw = new StreamWriter(pipeClient))
             {
-                if (logger != null) logger(LogLevel.debug, $"Attempting to connect to pipe {pipeName}...");
+                if (logger != null) logger(LogLevel.Debug, $"Attempting to connect to pipe {pipeName}...");
                 try
                 {
                     pipeClient.Connect(1000);
                 }
                 catch (Exception ex)
                 {
-                    if (logger != null) logger(LogLevel.error, $"Connection to pipe {pipeName} failed: {ex.Message}");
-                    if (logger != null) logger(LogLevel.warning, $"Failed to send signal request {signal}");
+                    if (logger != null) logger(LogLevel.Error, $"Connection to pipe {pipeName} failed: {ex.Message}");
+                    if (logger != null) logger(LogLevel.Warning, $"Failed to send signal request {signal}");
                     return;
                 }
-                if (logger != null) logger(LogLevel.debug, $"Connected to pipe {pipeName}...");
-                if (logger != null) logger(LogLevel.debug, $"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
+                if (logger != null) logger(LogLevel.Debug, $"Connected to pipe {pipeName}...");
+                if (logger != null) logger(LogLevel.Debug, $"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
 
-                if (logger != null) logger(LogLevel.info, $"Sending {signal} request to pipe {pipeName}");
+                if (logger != null) logger(LogLevel.Info, $"Sending {signal} request to pipe {pipeName}");
                 sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, trialId, label)));
                 sw.Flush();
 
-                if (logger != null) logger(LogLevel.debug, $"Awaiting {signal} reply from {pipeName}");
+                if (logger != null) logger(LogLevel.Debug, $"Awaiting {signal} reply from {pipeName}");
                 string msg = sr.ReadLine();
                 
                 if (msg != null)
                 {
                     if (msg.StartsWith("SUCCESS"))
                     {
-                        if (logger != null) logger(LogLevel.info, $"Request {signal} on {pipeName} was succesful");
+                        if (logger != null) logger(LogLevel.Info, $"Request {signal} on {pipeName} was succesful");
                     }
                     else if (msg.StartsWith("FAILED"))
                     {
-                        if (logger != null) logger(LogLevel.info, $"Request {signal} on {pipeName} failed");
+                        if (logger != null) logger(LogLevel.Info, $"Request {signal} on {pipeName} failed");
                     }
                 }
             }
