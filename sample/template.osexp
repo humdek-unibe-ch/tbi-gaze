@@ -26,7 +26,7 @@ set font_size 18
 set font_italic False
 set font_family mono
 set font_bold False
-set experiment_path "C:\\Users\\moiri\\Documents\\git-tobii_eye_tracker_gaze\\sample"
+set experiment_path "C:\\Users\\moiri\\Documents\\git-tbi-gaze\\sample"
 set disable_garbage_collection False
 set description "The main experiment item"
 set coordinates uniform
@@ -45,7 +45,7 @@ define sequence experiment
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run welcome always
-	run inline_script always
+	run gaze_start always
 	run gaze_calibration always
 	run gaze_validation True
 	run new_loop True
@@ -74,40 +74,34 @@ define inline_script gaze_recording_enable
 	set _run "gazeRecordingEnable(trialId = var.get(u'trial_id'), reset = True)"
 	set _prepare ""
 
-define inline_script gaze_stop
-	set description "Executes Python code"
-	set _run "gazeTerminate()"
-	set _prepare ""
-
-define inline_script gaze_validation
-	set description "Executes Python code"
-	set _run "gazeValidation()"
-	set _prepare ""
-
-define inline_script inline_script
+define inline_script gaze_start
 	set description "Executes Python code"
 	___run__
 	print("start gaze process")
-	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}", "/outputPath", f"{var.get(u'experiment_path')}"])
+	#subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}", "/outputPath", f"{var.get(u'experiment_path')}"])
+	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}"])
 	time.sleep(3)
 	__end__
 	___prepare__
 	import subprocess, json, time
 	
-	#gazeAppPath = "\\\\130.92.158.19\\runexp\\applications\\TPF_EyeTracking\\current"
-	gazeAppPath = "C:\\Users\\moiri\\Documents\\git-tobii_eye_tracker_gaze\\build"
+	gazeAppPath = "\\\\130.92.158.19\\runexp\\applications\\TPF_EyeTracking\\current"
+	gazeAppPath = "C:\\Users\\moiri\\Documents\\git-tbi-gaze\\build"
 	print(f"use path {gazeAppPath}")
 	
-	si = subprocess.STARTUPINFO()
-	si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-	si.wShowWindow = subprocess.SW_HIDE
-	DETACHED_PROCESS = 0x08000008
-	
-	pipeName = r'\\.\pipe\tobii_gaze'
-	pipeDelay = 0.05
-	pipeTimeout = 3
-	pipeMaxCount = pipeTimeout / pipeDelay
-	usePipe = False
+	# use 'lib' to call c# methods directly from python (default, lower latency)
+	# use 'app' to run the GazeControl.exe as subprocess
+	mode = 'lib'
+	if mode == 'lib':
+	    import clr, sys
+	    sys.path.append(r"C:\Users\moiri\Documents\git-tbi-gaze\build")
+	    clr.AddReference("GazeControlLibrary")
+	    from GazeControlLibrary import NamedPipeClient
+	elif mode == 'app':
+	    si = subprocess.STARTUPINFO()
+	    si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+	    si.wShowWindow = subprocess.SW_HIDE
+	    DETACHED_PROCESS = 0x08000008
 	
 	def printGazeAnnotation(trialId, label, reset):
 	    if trialId is not None:
@@ -116,35 +110,14 @@ define inline_script inline_script
 	        print("annotate gaze data with label " + label)
 	    if reset is True:
 	        print("reset relative timestamp")
-	
-	def openPipe(op):
-	    count = 0
-	    while(count < pipeMaxCount):
-	        try:
-	            return open(pipeName, op)
-	        except:
-	            print("Failed to open Pipe")
-	            time.sleep(pipeDelay)
-	            count += 1
-	    return None
 	        
+	def gazeCommand(command = None, trialId = None, label = None, reset = False):
+	    if mode == 'lib':
+	        NamedPipeClient.HandleCommands(command, reset, trialId, label)
+	    elif mode == 'app':
+	        gazeCommandApp(command, trialId, label, reset)
 	
-	def gazeCommandWrite(command = None, trialId = None, label = None, reset = False):
-	    if usePipe:
-	        f = openPipe('w')
-	        if f is None:
-	            return
-	        f.write(json.dumps({
-	            'command': command,
-	            'trialId': trialId,
-	            'label': label,
-	            'reset': reset
-	        }))
-	        f.close()
-	    else:
-	        gazeCommandRun(command, trialId, label, reset)
-	
-	def gazeCommandRun(command = None, trialId = None, label = None, reset = False):
+	def gazeCommandApp(command = None, trialId = None, label = None, reset = False):
 	    args = [f"{gazeAppPath}\\GazeControl.exe"]
 	    if command is not None:
 	        args.append("/command")
@@ -158,71 +131,65 @@ define inline_script inline_script
 	    if reset is True:
 	        args.append("/reset")
 	    subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=si, creationflags=DETACHED_PROCESS)
-	
-	def gazeCommandRead():
-	    f = openPipe('r')
-	    if f is None:
-	        return "NO_PIPE"
-	    res = f.read()
-	    f.close()
-	    return res
-	
-	def gazeCommandRequest(command, trialId = None, label = None, reset = False):
-	    if usePipe:
-	        gazeCommandWrite(command, trialId, label, reset)
-	        return gazeCommandRead()
-	    else:
-	        gazeCommandRun(command, trialId, label, reset)
-	        return "UNKNOWN"
 	    
 	def gazeCalibration(trialId = None, label = None, reset = False):
-	    res = gazeCommandRequest("CUSTOM_CALIBRATE", trialId, label, reset)
-	    print("gaze calibration: " + res)
+	    gazeCommand("CUSTOM_CALIBRATE", trialId, label, reset)
+	    print("gaze calibration done")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def gazeValidation(trialId = None, label = None, reset = False):
-	    res = gazeCommandRequest("VALIDATE", trialId, label, reset)
-	    print("gaze validation: " + res)
+	    gazeCommand("VALIDATE", trialId, label, reset)
+	    print("gaze validation done")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def gazeDriftCompensation(trialId = None, label = None, reset = False):
-	    res = gazeCommandRequest("DRIFT_COMPENSATION", trialId, label, reset)
-	    print("gaze drift compensation: " + res)
+	    gazeCommand("DRIFT_COMPENSATION", trialId, label, reset)
+	    print("gaze drift compensation done")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def gazeDriftCompensationReset(trialId = None, label = None, reset = False):
-	    gazeCommandWrite("RESET_DRIFT_COMPENSATION", trialId, label, reset)
+	    gazeCommand("RESET_DRIFT_COMPENSATION", trialId, label, reset)
 	    print("gaze drift compensation reset")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def gazeRecordingDisable(trialId = None, label = None, reset = False):
-	    gazeCommandWrite("GAZE_RECORDING_DISABLE", trialId, label, reset)
+	    gazeCommand("GAZE_RECORDING_DISABLE", trialId, label, reset)
 	    print("disable gaze recording")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def gazeRecordingEnable(trialId = None, label = None, reset = False):
-	    gazeCommandWrite("GAZE_RECORDING_ENABLE", trialId, label, reset)
+	    gazeCommand("GAZE_RECORDING_ENABLE", trialId, label, reset)
 	    print("enable gaze recording")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def mouseTrackingDisable(trialId = None, label = None, reset = False):
-	    gazeCommandWrite("MOUSE_TRACKING_DISABLE", trialId, label, reset)
+	    gazeCommand("MOUSE_TRACKING_DISABLE", trialId, label, reset)
 	    print("disable mouse tracking")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def mouseTrackingEnable(trialId = None, label = None, reset = False):
-	    gazeCommandWrite("MOUSE_TRACKING_ENABLE", trialId, label, reset)
+	    gazeCommand("MOUSE_TRACKING_ENABLE", trialId, label, reset)
 	    print("enable mouse tracking")
 	    printGazeAnnotation(trialId, label, reset)
 	
 	def gazeTerminate():
-	    gazeCommandWrite("TERMINATE")
+	    gazeCommand("TERMINATE")
 	    print("stop gaze process")
 	    
 	def gazeAnnotate(trialId = None, label = None, reset = False):
-	    gazeCommandWrite(trialId = trialId, label = label, reset = reset)
+	    gazeCommand(trialId = trialId, label = label, reset = reset)
 	    printGazeAnnotation(trialId, label, reset)
 	__end__
+
+define inline_script gaze_stop
+	set description "Executes Python code"
+	set _run "gazeTerminate()"
+	set _prepare ""
+
+define inline_script gaze_validation
+	set description "Executes Python code"
+	set _run "gazeValidation()"
+	set _prepare ""
 
 define loop new_1_loop
 	set source_file ""
