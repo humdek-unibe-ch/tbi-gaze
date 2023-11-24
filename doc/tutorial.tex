@@ -402,6 +402,24 @@ print("stop gaze process")
 subprocess.run([f"{gazeToolsetPath}\\GazeControl.exe], "/command", "TERMINATE")
 \end{lstlisting}
 
+\subsection{Execute C\# Library from Python}
+Starting a subprocess to send commands to \texttt{Gaze.exe} can introduce severe latency to the experiment flow (up to 800ms of latency was observed).
+To avoid this it is possible to call C\# methods directly from within python with the package \texttt{pythonnet} (\texttt{pip install pythonnet}).
+
+The following example shows how to enable the gaze, set the trial ID 42, set a label \texttt{myLabel}, and reset the relative timestamp by calling the method \texttt{NamedPipeClient.HandleCommands} from the \texttt{GazeControlLibrary.dll} library file.
+\begin{lstlisting}[language=Python]
+import sys, clr
+
+sys.path.append(r"c:\GazeToolset")
+clr.AddReference("GazeControlLibrary")
+from GazeControlLibrary import NamedPipeClient
+
+NamedPipeClient.HandleCommands("GAZE_RECORDING_ENABLE", True, 42, "myLabel")
+\end{lstlisting}
+
+The sample file \texttt{template.osexp} provides helper functions in the script \texttt{gaze\_start} in the prepare section to simplify this work.
+Note the variable \texttt{mode} which allows select whether the helper functions will run \texttt{GazeControl.exe} with the \texttt{subprocess} module (use value \texttt{app}) or whether they will perform C\# method calls with the \texttt{pythonnet} module (use value \texttt{lib}).
+
 
 %==============================================================================
 \chapter{Configuration of the \texttt{Gaze} Toolset}
