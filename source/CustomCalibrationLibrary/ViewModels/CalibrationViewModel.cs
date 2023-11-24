@@ -8,6 +8,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Input;
 using CustomCalibrationLibrary.Models;
 using GazeUtilityLibrary.DataStructs;
 
@@ -30,6 +31,11 @@ namespace CustomCalibrationLibrary.ViewModels
         public ObservableCollection<CalibrationPointViewModel> CalibrationPoints
         {
             get { return _calibrationPoints; }
+        }
+
+        public Cursor CursorType
+        {
+            get { return _model.CursorType; }
         }
 
         /// <summary>

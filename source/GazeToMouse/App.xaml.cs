@@ -326,6 +326,17 @@ namespace GazeToMouse
             _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints);
             _validationModel.CalibrationEvent += OnValidationEvent;
             _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
+
+            // hide the mouse cursor on calibration window
+            if (_config.Config.MouseCalibrationHide)
+            {
+                _calibrationModel.CursorType = Cursors.None;
+                _validationModel.CursorType = Cursors.None;
+                if (_fixationWindow != null)
+                {
+                    _fixationWindow.Cursor = Cursors.None;
+                }
+            }
         }
 
         /// <summary>
@@ -363,17 +374,6 @@ namespace GazeToMouse
             _validationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _validationWindow.Title = "ValidationWindow";
             _validationWindow.ShowInTaskbar = false;
-
-            // hide the mouse cursor on calibration window
-            if (_config.Config.MouseCalibrationHide)
-            {
-                _calibrationWindow.Cursor = Cursors.None;
-                _validationWindow.Cursor = Cursors.None;
-                if (_fixationWindow != null)
-                {
-                    _fixationWindow.Cursor = Cursors.None;
-                }
-            }
 
             // hide the mouse cursor
             _hider = new MouseHider(_logger);

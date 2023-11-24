@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Models
 {
@@ -79,6 +80,20 @@ namespace CustomCalibrationLibrary.Models
             set
             {
                 _validationData = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Cursor _cursorType = Cursors.Arrow;
+        /// <summary>
+        /// The data returned by a successful validation process.
+        /// </summary>
+        public Cursor CursorType
+        {
+            get { return _cursorType; }
+            set
+            {
+                _cursorType = value;
                 OnPropertyChanged();
             }
         }

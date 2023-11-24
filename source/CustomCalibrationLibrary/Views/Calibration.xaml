@@ -10,7 +10,12 @@
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Calibration">
-    <Grid>
+    <Page.Resources>
+        <Style x:Key="RootGrid" TargetType="Grid">
+            <Setter Property="Cursor" Value="{Binding CursorType}" />
+        </Style>
+    </Page.Resources>
+    <Grid Style="{StaticResource RootGrid}">
         <ItemsControl ItemsSource="{Binding CalibrationPoints}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
