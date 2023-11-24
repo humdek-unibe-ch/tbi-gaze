@@ -16,6 +16,11 @@ namespace GazeControl
     {
         private TrackerLogger logger = new TrackerLogger(null, EOutputType.control);
 
+        /// <summary>
+        /// Logger function to be passed to the pipe handler.
+        /// </summary>
+        /// <param name="level">The log level.</param>
+        /// <param name="msg">The log message.</param>
         private void Logger(LogLevel level, string msg)
         {
             switch (level)
@@ -35,6 +40,11 @@ namespace GazeControl
             }
         }
 
+        /// <summary>
+        /// Called when [application starts].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="StartupEventArgs"/> instance containing the event data.</param>
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             string? command = null;

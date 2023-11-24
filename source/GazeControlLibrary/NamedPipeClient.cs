@@ -13,6 +13,9 @@ using Newtonsoft.Json;
 
 namespace GazeControlLibrary
 {
+    /// <summary>
+    /// Defines the availabel log levels.
+    /// </summary>
     public enum LogLevel
     {
         Debug,
@@ -20,6 +23,7 @@ namespace GazeControlLibrary
         Warning,
         Error
     }
+
     /// <summary>
     /// The named pipe client handler.
     /// </summary>

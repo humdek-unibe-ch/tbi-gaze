@@ -57,6 +57,9 @@ In order to run the executables the following files need to be placed in the sam
  - `assets/blank.cur`
  - `config.json`
 
+In order to use tje GazeControlLibrary, the following files need to be placed in the same directory as the executables:
+ - `GazeControlLibrary.dll`
+ - `Newtonsoft.Json.dll`
 
 Further, the Tobii engine must be running and the eye tracker must be enabled.
 

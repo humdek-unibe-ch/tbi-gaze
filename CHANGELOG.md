@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.4.2
+### Improvements
+- Seperate pipe command handler funtionality to `NamedPipeClient` class and move
+  `NamedPipeClient` to seperate project based on .NET 4.72. This allows for a direct
+  integration in python with `pythonnet`.
+
+### Bug Fixes
+- Log GazeControl messages to seperate file to avoid race conditions (#1).
+- Fix pipe connection problems on startup (#5).
+
 ## v3.4.1
 ### Improvements
 - Add note on foreground behaviour to readme.
