@@ -10,12 +10,13 @@
       xmlns:ui="http://schemas.modernwpf.com/2019" xmlns:views="clr-namespace:CustomCalibrationLibrary.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Background="Black"
       Focusable="True"
       Loaded="OnLoaded"
 >
     <UserControl.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
+            <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <converter:PositionConverter x:Key="PositionConverterOffset" Offset="100"/>
             <converter:ProximityColorConverter x:Key="ProximityColorConverter" />
             <ResourceDictionary.MergedDictionaries>
@@ -29,13 +30,13 @@
         <KeyBinding Command="{Binding CalibrationStartCommand}" Key="Space" />
         <KeyBinding Command="{Binding CalibrationAbortCommand}" Key="Esc" />
     </UserControl.InputBindings>
-    <Grid>
+    <Grid Background="{StaticResource CanvasBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Background="{StaticResource FrameBackground}">
             <StackPanel Margin="10" HorizontalAlignment="Center">
                 <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                     User Position Guide
@@ -46,7 +47,7 @@
             </StackPanel>
         </Grid>
         <Viewbox Stretch="Uniform" Grid.Row="1">
-            <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
+            <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
                 <Ellipse
                     Height="200"
                     Width="200"
@@ -79,7 +80,7 @@
                 </Ellipse>
             </Canvas>
         </Viewbox>
-        <Grid Grid.Row="2" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Grid.Row="2" Background="{StaticResource FrameBackground}">
             <DockPanel Margin="10" HorizontalAlignment="Right">
                 <Button
                     ui:ThemeManager.RequestedTheme="Dark"

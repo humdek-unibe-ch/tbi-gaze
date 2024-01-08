@@ -5,6 +5,7 @@
  */
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
+using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Input;
 

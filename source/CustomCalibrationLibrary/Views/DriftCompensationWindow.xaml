@@ -9,8 +9,12 @@
         xmlns:uc="clr-namespace:CustomCalibrationLibrary.Views"
         mc:Ignorable="d"
         Title="DriftCompensation">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
+    </Window.Resources>
     <Grid>
-        <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
+        <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
             <uc:FixationPoint DataContext="{Binding FixationPoint}" />
         </Canvas>
     </Grid>

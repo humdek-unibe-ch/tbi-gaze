@@ -15,6 +15,8 @@
       >
     <UserControl.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
+            <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <converter:PositionConverter x:Key="PositionConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
@@ -32,13 +34,13 @@
         <KeyBinding Command="{Binding CalibrationAcceptCommand}" Key="Space" />
     </UserControl.InputBindings>
     <Grid>
-        <Grid Background="Black">
+        <Grid Background="{StaticResource CanvasBackground}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="0">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="0">
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -89,7 +91,7 @@
                 <ItemsControl ItemsSource="{Binding CalibrationPoints}" Grid.Row="1">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
+                            <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -108,7 +110,7 @@
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
             </Viewbox>
-            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                         ui:ThemeManager.RequestedTheme="Dark"

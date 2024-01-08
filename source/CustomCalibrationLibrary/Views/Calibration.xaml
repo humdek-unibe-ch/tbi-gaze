@@ -13,12 +13,13 @@
         <Style x:Key="RootGrid" TargetType="Grid">
             <Setter Property="Cursor" Value="{Binding CursorType}" />
         </Style>
+        <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
     </UserControl.Resources>
     <Grid Style="{StaticResource RootGrid}">
         <ItemsControl ItemsSource="{Binding CalibrationPoints}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Background="Black" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" />
+                    <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>

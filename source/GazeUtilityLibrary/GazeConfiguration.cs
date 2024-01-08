@@ -7,6 +7,7 @@ using GazeUtilityLibrary.DataStructs;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Windows.Media;
 
 namespace GazeUtilityLibrary
 {
@@ -71,6 +72,19 @@ namespace GazeUtilityLibrary
                 _error.Error = EGazeConfigError.FallbackToDefaultConfigName;
                 return false;
             }
+
+            if (!ConfigChecker.CheckColor(_config.BackgroundColor, _logger))
+            {
+                _logger.Warning($"Using background color 'Black' instead");
+                _config.BackgroundColor = "Black";
+            }
+
+            if (!ConfigChecker.CheckColor(_config.FrameColor, _logger))
+            {
+                _logger.Warning($"Using background color '#202124' instead");
+                _config.FrameColor = "#202124";
+            }
+
             return true;
         }
 
@@ -708,6 +722,17 @@ namespace GazeUtilityLibrary
         public int TrackerDevice { get; set; }
 
         /// <summary>
+        /// Defines the background color of the calibration and validation canvas.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public string BackgroundColor { get; set; }
+        /// <summary>
+        /// Defines the color of the calibration and validation frames where titles and buttons are rendered.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public string FrameColor { get; set; }
+
+        /// <summary>
         /// Defines whether the mouse cursor shall be controlled by the gaze of the subject during the experiment.
         /// </summary>
         [JsonProperty(Required = Required.Default)]
@@ -904,6 +929,8 @@ namespace GazeUtilityLibrary
             ValidationPoints[5] = new double[2] { 0.1, 0.1 };
             ValidationPoints[6] = new double[2] { 0.9, 0.1 };
             ValidationPoints[7] = new double[2] { 0.5, 0.9 };
+            BackgroundColor = "Black";
+            FrameColor = "#202124";
             MouseControl = false;
             MouseControlHide = false;
             MouseCalibrationHide = false;

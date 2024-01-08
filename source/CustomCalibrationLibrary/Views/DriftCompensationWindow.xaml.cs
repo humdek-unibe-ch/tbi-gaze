@@ -5,6 +5,7 @@
  */
 ﻿using CustomCalibrationLibrary.ViewModels;
 using System.Windows;
+using System.Windows.Media;
 
 namespace CustomCalibrationLibrary.Views
 {
@@ -16,10 +17,10 @@ namespace CustomCalibrationLibrary.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="DriftCompensationWindow"/> class.
         /// </summary>
-        public DriftCompensationWindow()
+        public DriftCompensationWindow(Color backgroundColor)
         {
             InitializeComponent();
-            DataContext = new DriftCompensationViewModel();
+            DataContext = new DriftCompensationViewModel(backgroundColor);
         }
     }
 }

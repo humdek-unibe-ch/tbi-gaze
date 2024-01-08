@@ -6,6 +6,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace CustomCalibrationLibrary.Views
 {
@@ -17,9 +18,10 @@ namespace CustomCalibrationLibrary.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="Computing"/> class.
         /// </summary>
-        public Spinner()
+        public Spinner(Color backgroundColor)
         {
             InitializeComponent();
+            this.Background = new SolidColorBrush(backgroundColor);
 
             this.Initialized += Computing_Initialized;
             this.Loaded += Computing_Loaded;

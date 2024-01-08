@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace CustomCalibrationLibrary.Models
 {
@@ -47,6 +48,20 @@ namespace CustomCalibrationLibrary.Models
     /// </summary>
     public class CalibrationModel : INotifyPropertyChanged
     {
+        private Color _backgroundColor;
+
+        /// <summary>
+        /// The background color of the canvas.
+        /// </summary>
+        public Color BackgroundColor { get { return _backgroundColor; } }
+
+        private Color _frameColor;
+
+        /// <summary>
+        /// The background color of the frame.
+        /// </summary>
+        public Color FrameColor { get { return _frameColor; } }
+
         private string _error = "No Error";
         /// <summary>
         /// The error message of the calibration process.
@@ -191,9 +206,11 @@ namespace CustomCalibrationLibrary.Models
         /// </summary>
         /// <param name="logger">The log handler.</param>
         /// <param name="points">Calibration points.</param>
-        public CalibrationModel(TrackerLogger logger, double[][] points)
+        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor)
         {
             _logger = logger;
+            _backgroundColor = backgroundColor;
+            _frameColor = frameColor;
 
             _points = new Point[points.Length];
             for (int i = 0; i < points.Length; i++ )

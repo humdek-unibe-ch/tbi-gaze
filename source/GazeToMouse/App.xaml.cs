@@ -24,6 +24,7 @@ using WpfScreenHelper;
 using System.Linq;
 using System.Diagnostics;
 using GazeControlLibrary;
+using System.Windows.Media;
 
 namespace GazeToMouse
 {
@@ -322,24 +323,6 @@ namespace GazeToMouse
                 _logger.Error("Failed to initialise the gaze process, aborting");
                 Current.Shutdown();
             }
-
-            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints);
-            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
-            _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
-            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints);
-            _validationModel.CalibrationEvent += OnValidationEvent;
-            _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
-
-            // hide the mouse cursor on calibration window
-            if (_config.Config.MouseCalibrationHide)
-            {
-                _calibrationModel.CursorType = Cursors.None;
-                _validationModel.CursorType = Cursors.None;
-                if (_fixationWindow != null)
-                {
-                    _fixationWindow.Cursor = Cursors.None;
-                }
-            }
         }
 
         /// <summary>
@@ -353,9 +336,12 @@ namespace GazeToMouse
                 return false;
             }
 
+            Color backgroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.BackgroundColor);
+            Color frameColor = (Color)ColorConverter.ConvertFromString(_config.Config.FrameColor);
+
             if (_config.Config.DriftCompensationWindowShow)
             {
-                _fixationWindow = new DriftCompensationWindow();
+                _fixationWindow = new DriftCompensationWindow(backgroundColor);
                 _fixationWindow.WindowStyle = WindowStyle.None;
                 _fixationWindow.WindowState = WindowState.Maximized;
                 _fixationWindow.ResizeMode = ResizeMode.NoResize;
@@ -435,6 +421,24 @@ namespace GazeToMouse
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;
             _tracker.DriftCompensationComputed += (sender, e) => { _processCompletion.SetResult(true); };
+
+            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor);
+            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
+            _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
+            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor);
+            _validationModel.CalibrationEvent += OnValidationEvent;
+            _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
+
+            // hide the mouse cursor on calibration window
+            if (_config.Config.MouseCalibrationHide)
+            {
+                _calibrationModel.CursorType = Cursors.None;
+                _validationModel.CursorType = Cursors.None;
+                if (_fixationWindow != null)
+                {
+                    _fixationWindow.Cursor = Cursors.None;
+                }
+            }
 
             return true;
         }

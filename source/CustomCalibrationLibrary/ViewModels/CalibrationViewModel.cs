@@ -17,7 +17,7 @@ namespace CustomCalibrationLibrary.ViewModels
     /// <summary>
     /// The view model class of the calibration view
     /// </summary>
-    class CalibrationViewModel
+    class CalibrationViewModel : ColoredViewModel
     {
         /// <summary>
         /// The claibration model.
@@ -42,7 +42,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The calibration model</param>
-        public CalibrationViewModel(CalibrationModel model)
+        public CalibrationViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
         {
             _model = model;
             foreach (CalibrationPoint item in _model.CalibrationPoints)

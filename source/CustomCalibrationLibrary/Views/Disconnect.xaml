@@ -14,6 +14,8 @@
       Loaded="OnLoaded">
     <UserControl.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
+            <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
@@ -25,13 +27,13 @@
         <KeyBinding Command="{Binding CalibrationAbortCommand}" Key="Esc" />
     </UserControl.InputBindings>
     <Grid>
-        <Grid Background="Black">
+        <Grid Background="{StaticResource CanvasBackground}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="0">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="0">
                 <Grid Margin="10">
                     <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                         Device Disconnected
@@ -53,7 +55,7 @@
                     />
                 </StackPanel>
             </Grid>
-            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                         ui:ThemeManager.RequestedTheme="Dark"

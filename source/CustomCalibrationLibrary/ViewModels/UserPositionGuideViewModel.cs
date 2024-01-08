@@ -13,7 +13,7 @@ namespace CustomCalibrationLibrary.ViewModels
     /// <summary>
     /// The view model class for the user position guide view.
     /// </summary>
-    class UserPositionGuideViewModel
+    class UserPositionGuideViewModel : ColoredViewModel
     {
         private UserPositionData _userPosition;
         /// <summary>
@@ -40,7 +40,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The calibartion model</param>
-        public UserPositionGuideViewModel(CalibrationModel model)
+        public UserPositionGuideViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
         {
             _userPosition = new UserPositionData();
             model.UserPositionGuideChanged += OnUserPositionGuideChanged;

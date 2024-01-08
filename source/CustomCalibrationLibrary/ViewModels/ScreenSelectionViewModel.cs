@@ -46,7 +46,7 @@ namespace CustomCalibrationLibrary.ViewModels
     /// <summary>
     /// The view model class for the screen selection view.
     /// </summary>
-    class ScreenSelectionViewModel
+    class ScreenSelectionViewModel : ColoredViewModel
     {
         private ObservableCollection<Monitor> _monitors = new ObservableCollection<Monitor>();
         /// <summary>
@@ -80,7 +80,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// </summary>
         /// <param name="model">The calibration model</param>
         /// <param name="window">The target window of the screen selection</param>
-        public ScreenSelectionViewModel(CalibrationModel model, Window window)
+        public ScreenSelectionViewModel(CalibrationModel model, Window window) : base(model.BackgroundColor, model.FrameColor)
         {
             foreach (var screen in Screen.AllScreens)
             {

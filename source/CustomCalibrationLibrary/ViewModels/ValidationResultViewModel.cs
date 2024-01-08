@@ -13,8 +13,9 @@ namespace CustomCalibrationLibrary.ViewModels
     /// <summary>
     /// View model class of the gaze validation result.
     /// </summary>
-    class ValidationResultViewModel
+    class ValidationResultViewModel : ColoredViewModel
     {
+
         private ICommand _validationRestartCommand;
         /// <summary>
         /// Command to restart the validation
@@ -40,7 +41,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The claibration model</param>
-        public ValidationResultViewModel(CalibrationModel model)
+        public ValidationResultViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
         {
             _validationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
             _validationCloseCommand = new CalibrationCommand(model, CalibrationEventType.Accept);

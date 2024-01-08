@@ -30,9 +30,9 @@ namespace CustomCalibrationLibrary.Views
         public CalibrationFrame(CalibrationModel model, Window window)
         {
             _window = window;
-            _computingView = new Spinner();
-            InitializeComponent();
             _model = model;
+            _computingView = new Spinner(model.BackgroundColor);
+            InitializeComponent();
             _model.PropertyChanged += OnPropertyChanged;
             this.Content = _computingView;
         }

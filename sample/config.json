@@ -333,6 +333,18 @@
   // matching the pattern "DataLog*" are ignored.
   "DataLogWriteOutput": true,
 
+  // Defines the background color of the canvas where Calibration and validation points are represented.
+  // To configure the color use either a hex string (with or without alpha value) prefixed with `#` or
+  // any of the predefined constants from:
+  //  https: //learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-8.0#properties
+  "BackgroundColor": "Black",
+
+  // Defines the background color of the frame where titles and buttons are represented.
+  // To configure the color use either a hex string (with or without alpha value) prefixed with `#` or
+  // any of the predefined constants from:
+  //  https: //learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-8.0#properties
+  "FrameColor": "#202124",
+
   // Use this parameter to associate the configuration with an experiment. When "Gaze.exe" is
   // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
   // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following

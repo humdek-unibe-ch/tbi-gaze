@@ -15,6 +15,8 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
+            <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
@@ -27,13 +29,13 @@
         <KeyBinding Command="{Binding ValidationCloseCommand}" Key="Space" />
     </UserControl.InputBindings>
     <Grid>
-        <Grid Background="Black">
+        <Grid Background="{StaticResource CanvasBackground}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <Grid Grid.Row="0" Background="{StaticResource FrameBackground}">
                 <StackPanel Margin="10" HorizontalAlignment="Center">
                     <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                        Validation Result
@@ -59,7 +61,6 @@
                 </StackPanel>
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-
                 <StackPanel>
                     <TextBlock HorizontalAlignment="Center" Foreground="White">Left Eye</TextBlock>
                     <DockPanel Margin="5">
@@ -91,7 +92,7 @@
                     </DockPanel>
                 </StackPanel>
             </DockPanel>
-            <Grid ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}" Grid.Row="2">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                         ui:ThemeManager.RequestedTheme="Dark"

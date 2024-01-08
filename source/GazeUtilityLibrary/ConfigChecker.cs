@@ -4,6 +4,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 ﻿using System;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GazeUtilityLibrary
 {
@@ -52,6 +54,20 @@ namespace GazeUtilityLibrary
             catch (FormatException)
             {
                 logger?.Error($"The output format string \"{format}\" is not valid");
+                return false;
+            }
+        }
+
+        public static bool CheckColor(string color, TrackerLogger? logger = null)
+        {
+            try
+            {
+                ColorConverter.ConvertFromString(color);
+                return true;
+            }
+            catch (FormatException)
+            {
+                logger?.Error($"The color string \"{color}\" is not valid");
                 return false;
             }
         }

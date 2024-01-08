@@ -15,6 +15,7 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
@@ -53,7 +54,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Grid.Row="0" Background="{StaticResource FrameBackground}">
             <StackPanel Margin="10" HorizontalAlignment="Center">
                 <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                     Screen Selection
@@ -63,7 +64,7 @@
                 </TextBlock>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Grid.Row="1" Background="{StaticResource FrameBackground}">
             <ItemsControl ItemsSource="{Binding Monitors}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -93,7 +94,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Grid>
-        <Grid Grid.Row="2" ui:ThemeManager.RequestedTheme="Dark" Background="{ui:ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Grid.Row="2" Background="{StaticResource FrameBackground}">
             <DockPanel Margin="10" HorizontalAlignment="Right">
                 <Button
                     ui:ThemeManager.RequestedTheme="Dark"
