@@ -32,7 +32,16 @@ namespace GazeUtilityLibrary
         /// </summary>
         public TrackerLogger(string? logPath, EOutputType type = EOutputType.gaze)
         {
-            _logPath = logPath ?? AppDomain.CurrentDomain.BaseDirectory;
+            _logPath = logPath ?? $"{AppDomain.CurrentDomain.BaseDirectory}\\log";
+            try
+            {
+                Directory.CreateDirectory(_logPath);
+            }
+            catch (Exception e)
+            {
+                _logPath = AppDomain.CurrentDomain.BaseDirectory;
+                DumpFatal(e);
+            }
             _logFile = $"{_logPath}\\{Environment.MachineName}_{type.ToString()}.log";
             _logFileBak = $"{_logFile}.0";
         }
