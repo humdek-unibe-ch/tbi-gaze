@@ -5,13 +5,15 @@
  */
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for CalibrationResult.xaml
     /// </summary>
-    public partial class CalibrationResult : System.Windows.Controls.Page
+    public partial class CalibrationResult : UserControl
     {
         private CalibrationModel _model;
 
@@ -24,7 +26,12 @@ namespace CustomCalibrationLibrary.Views
             InitializeComponent();
             _model = model;
             DataContext = new CalibrationResultViewModel(_model);
+        }
+
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             Focus();
+            Keyboard.Focus(this);
         }
     }
 }

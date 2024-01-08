@@ -6,13 +6,14 @@
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for ValidationResult.xaml
     /// </summary>
-    public partial class ValidationResult : Page
+    public partial class ValidationResult : UserControl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationResult"/> class.
@@ -22,7 +23,12 @@ namespace CustomCalibrationLibrary.Views
         {
             InitializeComponent();
             DataContext = new ValidationResultViewModel(model);
+        }
+
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             Focus();
+            Keyboard.Focus(this);
         }
     }
 }

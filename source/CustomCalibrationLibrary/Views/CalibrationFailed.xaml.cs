@@ -16,7 +16,7 @@ namespace CustomCalibrationLibrary.Views
     /// <summary>
     /// Interaction logic for CalibrationFailed.xaml
     /// </summary>
-    public partial class CalibrationFailed : Page, INotifyPropertyChanged
+    public partial class CalibrationFailed : UserControl, INotifyPropertyChanged
     {
         private CalibrationModel _model;
 
@@ -65,7 +65,6 @@ namespace CustomCalibrationLibrary.Views
             _model.PropertyChanged += OnPropertyChanged;
             InitializeComponent();
             DataContext = this;
-            Focus();
             _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }
@@ -77,6 +76,12 @@ namespace CustomCalibrationLibrary.Views
                 return;
             }
             Error = ((CalibrationModel)sender).Error;
+        }
+
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Focus();
+            Keyboard.Focus(this);
         }
     }
 }

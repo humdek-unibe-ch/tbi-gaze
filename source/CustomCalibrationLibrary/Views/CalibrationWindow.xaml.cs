@@ -17,6 +17,5 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class CalibrationWindow : Window
     {
-       
     }
 }

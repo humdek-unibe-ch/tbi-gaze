@@ -193,6 +193,7 @@ namespace GazeToMouse
                 {
                     _fixationWindow.Topmost = true;
                     _fixationWindow.Show();
+                    _fixationWindow.Activate();
                 });
             }
             System.Timers.Timer? timer = null;
@@ -237,6 +238,7 @@ namespace GazeToMouse
             {
                 _calibrationWindow.Topmost = true;
                 _calibrationWindow.Show();
+                _calibrationWindow.Activate();
             });
             if (Screen.AllScreens.Count() > 1)
             {
@@ -271,6 +273,7 @@ namespace GazeToMouse
             Current.Dispatcher.Invoke(() => {
                 _validationWindow.Topmost = true;
                 _validationWindow.Show();
+                _validationWindow.Activate();
             });
             if (Screen.AllScreens.Count() > 1)
             {

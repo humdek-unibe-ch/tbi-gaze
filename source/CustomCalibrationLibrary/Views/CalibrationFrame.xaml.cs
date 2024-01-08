@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace CustomCalibrationLibrary.Views
@@ -19,7 +20,7 @@ namespace CustomCalibrationLibrary.Views
     {
         private CalibrationModel _model;
         private Window _window;
-        private Computing _computingView;
+        private Spinner _computingView;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalibrationFrame"/> class.
@@ -29,7 +30,7 @@ namespace CustomCalibrationLibrary.Views
         public CalibrationFrame(CalibrationModel model, Window window)
         {
             _window = window;
-            _computingView = new Computing();
+            _computingView = new Spinner();
             InitializeComponent();
             _model = model;
             _model.PropertyChanged += OnPropertyChanged;
@@ -38,6 +39,7 @@ namespace CustomCalibrationLibrary.Views
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            UserControl newControl = _computingView;
             if (sender == null || e.PropertyName != "Status")
             {
                 return;
@@ -45,30 +47,31 @@ namespace CustomCalibrationLibrary.Views
             switch (((CalibrationModel)sender).Status)
             {
                 case CalibrationStatus.ScreenSelection:
-                    this.Content = new ScreenSelection(_model, _window);
+                    newControl = new ScreenSelection(_model, _window);
                     break;
                 case CalibrationStatus.HeadPosition:
-                    this.Content = new UserPositionGuide(_model);
+                    newControl = new UserPositionGuide(_model);
                     break;
                 case CalibrationStatus.DataCollection:
-                    this.Content = new Calibration(_model);
+                    newControl = new Calibration(_model);
                     break;
                 case CalibrationStatus.Computing:
-                    this.Content = _computingView;
+                    newControl = _computingView;
                     break;
                 case CalibrationStatus.CalibrationResult:
-                    this.Content = new CalibrationResult(_model);
+                    newControl = new CalibrationResult(_model);
                     break;
                 case CalibrationStatus.ValidationResult:
-                    this.Content = new ValidationResult(_model);
+                    newControl = new ValidationResult(_model);
                     break;
                 case CalibrationStatus.Error:
-                    this.Content = new CalibrationFailed(_model);
+                    newControl = new CalibrationFailed(_model);
                     break;
                 case CalibrationStatus.Disconnect:
-                    this.Content = new Disconnect(_model);
+                    newControl = new Disconnect(_model);
                     break;
             }
+            this.Content = newControl;
         }
     }
 

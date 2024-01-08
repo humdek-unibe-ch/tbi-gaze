@@ -12,12 +12,12 @@ namespace CustomCalibrationLibrary.Views
     /// <summary>
     /// Interaction logic for Computing.xaml
     /// </summary>
-    public partial class Computing : Page
+    public partial class Spinner : UserControl
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Computing"/> class.
         /// </summary>
-        public Computing()
+        public Spinner()
         {
             InitializeComponent();
 

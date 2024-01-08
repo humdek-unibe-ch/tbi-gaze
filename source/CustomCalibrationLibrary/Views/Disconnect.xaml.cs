@@ -13,7 +13,7 @@ namespace CustomCalibrationLibrary.Views
     /// <summary>
     /// Interaction logic for Disconnect.xaml
     /// </summary>
-    public partial class Disconnect : Page
+    public partial class Disconnect : UserControl
     {
         private ICommand _calibrationAbortCommand;
         /// <summary>
@@ -28,9 +28,14 @@ namespace CustomCalibrationLibrary.Views
         public Disconnect(CalibrationModel model)
         {
             InitializeComponent();
-            Focus();
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
             DataContext = this;
+        }
+
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Focus();
+            Keyboard.Focus(this);
         }
     }
 }

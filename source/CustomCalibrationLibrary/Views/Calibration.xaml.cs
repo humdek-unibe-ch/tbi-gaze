@@ -6,13 +6,14 @@
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for Calibration.xaml
     /// </summary>
-    public partial class Calibration : Page
+    public partial class Calibration : UserControl
     {
         private CalibrationModel _model;
 

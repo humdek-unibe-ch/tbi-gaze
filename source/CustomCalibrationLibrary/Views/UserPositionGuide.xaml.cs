@@ -5,14 +5,16 @@
  */
 ﻿using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
+using System;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.Views
 {
     /// <summary>
     /// Interaction logic for UserPositionGuide.xaml
     /// </summary>
-    public partial class UserPositionGuide : Page
+    public partial class UserPositionGuide : UserControl
     {
         private CalibrationModel _model;
 
@@ -25,7 +27,12 @@ namespace CustomCalibrationLibrary.Views
             InitializeComponent();
             _model = model;
             DataContext = new UserPositionGuideViewModel(_model);
+        }
+
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             Focus();
+            Keyboard.Focus(this);
         }
     }
 }

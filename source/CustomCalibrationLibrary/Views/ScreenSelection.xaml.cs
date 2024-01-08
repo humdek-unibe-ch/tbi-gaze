@@ -5,6 +5,7 @@
  */
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using CustomCalibrationLibrary.Models;
 using CustomCalibrationLibrary.ViewModels;
 
@@ -13,7 +14,7 @@ namespace CustomCalibrationLibrary.Views
     /// <summary>
     /// Interaction logic for ScreenSelection.xaml
     /// </summary>
-    public partial class ScreenSelection : Page
+    public partial class ScreenSelection : UserControl
     {
         private ScreenSelectionViewModel _viewModel;
         /// <summary>
@@ -26,7 +27,11 @@ namespace CustomCalibrationLibrary.Views
             InitializeComponent();
             _viewModel = new ScreenSelectionViewModel(model, window);
             DataContext = _viewModel;
+        }
+        private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
             Focus();
+            Keyboard.Focus(this);
         }
     }
 }
