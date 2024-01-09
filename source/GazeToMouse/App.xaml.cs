@@ -318,10 +318,31 @@ namespace GazeToMouse
             _config = new GazeConfiguration(_logger);
             _startTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
-            if (!Init())
+            Color backgroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.BackgroundColor);
+            Color frameColor = (Color)ColorConverter.ConvertFromString(_config.Config.FrameColor);
+
+            if (!Init(backgroundColor))
             {
                 _logger.Error("Failed to initialise the gaze process, aborting");
                 Current.Shutdown();
+            }
+            
+            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor);
+            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
+            _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
+            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor);
+            _validationModel.CalibrationEvent += OnValidationEvent;
+            _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
+
+            // hide the mouse cursor on calibration window
+            if (_config.Config.MouseCalibrationHide)
+            {
+                _calibrationModel.CursorType = Cursors.None;
+                _validationModel.CursorType = Cursors.None;
+                if (_fixationWindow != null)
+                {
+                    _fixationWindow.Cursor = Cursors.None;
+                }
             }
         }
 
@@ -329,15 +350,12 @@ namespace GazeToMouse
         /// Initialise the application: configure windows, apply gaze configurations, connect to tracking device 
         /// </summary>
         /// <returns>True on success, false on failure</returns>
-        private bool Init()
+        private bool Init(Color backgroundColor)
         {
             if (!_config.InitConfig())
             {
                 return false;
             }
-
-            Color backgroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.BackgroundColor);
-            Color frameColor = (Color)ColorConverter.ConvertFromString(_config.Config.FrameColor);
 
             if (_config.Config.DriftCompensationWindowShow)
             {
@@ -421,24 +439,6 @@ namespace GazeToMouse
             _tracker.TrackerEnabled += OnTrackerEnabled;
             _tracker.TrackerDisabled += OnTrackerDisabled;
             _tracker.DriftCompensationComputed += (sender, e) => { _processCompletion.SetResult(true); };
-
-            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor);
-            _calibrationModel.CalibrationEvent += OnCalibrationEvent;
-            _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
-            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor);
-            _validationModel.CalibrationEvent += OnValidationEvent;
-            _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
-
-            // hide the mouse cursor on calibration window
-            if (_config.Config.MouseCalibrationHide)
-            {
-                _calibrationModel.CursorType = Cursors.None;
-                _validationModel.CursorType = Cursors.None;
-                if (_fixationWindow != null)
-                {
-                    _fixationWindow.Cursor = Cursors.None;
-                }
-            }
 
             return true;
         }
