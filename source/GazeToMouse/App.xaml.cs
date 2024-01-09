@@ -55,6 +55,7 @@ namespace GazeToMouse
         }
         private BaseTracker? _tracker = null;
         private TrackerLogger _logger;
+        public TrackerLogger Logger { get { return _logger;  } }
         private MouseHider? _hider = null;
         private GazeDataError _gazeError = new GazeDataError();
         private CalibrationDataError _calibrationError = new CalibrationDataError();
@@ -496,17 +497,20 @@ namespace GazeToMouse
             {
                 using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut))
                 {
+                    app.Logger.Info($"Pipe server started on pipe '{pipeName}'");
                     StreamReader sr = new StreamReader(pipeServer);
                     StreamWriter sw = new StreamWriter(pipeServer);
-                    // Wait for a client to connect
+                    app.Logger.Debug("Wait for a client to connect...");
                     pipeServer.WaitForConnection();
                     string? line = null;
                     while (pipeServer.IsConnected)
                     {
+                        app.Logger.Debug("Client connected");
                         line = sr.ReadLine();
                         if (line == null)
                         {
                             pipeServer.Close();
+                            app.Logger.Info("Pipe server stopped: end of input stream reached");
                             break;
                         }
                         PipeCommand? msg = JsonConvert.DeserializeObject<PipeCommand>(line);
@@ -514,6 +518,7 @@ namespace GazeToMouse
                         if (msg == null)
                         {
                             pipeServer.Close();
+                            app.Logger.Info("Pipe server stopped: unable to parse pipe message");
                             break;
                         }
 
@@ -521,21 +526,24 @@ namespace GazeToMouse
                         {
                             if (msg.ResetStartTime == true)
                             {
+                                app.Logger.Info("Pipe command: Reset start time");
                                 app.StartTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
                             }
                             if (msg.Label != null)
                             {
+                                app.Logger.Info($"Pipe command: Set new label {msg.Label}");
                                 app.Tag = msg.Label;
                             }
                             if (msg.TrialId != null)
                             {
+                                app.Logger.Info($"Pipe command: Set new trial ID {msg.TrialId}");
                                 app.TrialId = msg.TrialId ?? 0;
-
                             }
                         });
 
                         if (msg.Command != null)
                         {
+                            app.Logger.Info($"Pipe command: {msg.Command}");
                             switch (msg.Command)
                             {
                                 case "TERMINATE":
@@ -573,6 +581,7 @@ namespace GazeToMouse
 
                             if (reply)
                             {
+                                app.Logger.Info($"Pipe command result: {res}");
                                 if (res)
                                 {
                                     sw.WriteLine("SUCCESS");
