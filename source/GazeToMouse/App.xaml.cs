@@ -497,7 +497,7 @@ namespace GazeToMouse
             {
                 using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut))
                 {
-                    app.Logger.Info($"Pipe server started on pipe '{pipeName}'");
+                    app.Logger.Debug($"Pipe server started on pipe '{pipeName}'");
                     StreamReader sr = new StreamReader(pipeServer);
                     StreamWriter sw = new StreamWriter(pipeServer);
                     app.Logger.Debug("Wait for a client to connect...");
@@ -510,7 +510,7 @@ namespace GazeToMouse
                         if (line == null)
                         {
                             pipeServer.Close();
-                            app.Logger.Info("Pipe server stopped: end of input stream reached");
+                            app.Logger.Debug("Pipe server stopped: end of input stream reached");
                             break;
                         }
                         PipeCommand? msg = JsonConvert.DeserializeObject<PipeCommand>(line);
@@ -518,7 +518,7 @@ namespace GazeToMouse
                         if (msg == null)
                         {
                             pipeServer.Close();
-                            app.Logger.Info("Pipe server stopped: unable to parse pipe message");
+                            app.Logger.Warning("Pipe server stopped: unable to parse pipe message");
                             break;
                         }
 
