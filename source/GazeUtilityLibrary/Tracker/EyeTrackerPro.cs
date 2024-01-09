@@ -5,12 +5,14 @@
  */
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 using GazeUtilityLibrary.DataStructs;
 using Tobii.Research;
 using Tobii.Research.Addons;
+using Tobii.Research.Addons.Utility;
 
 namespace GazeUtilityLibrary.Tracker
 {
@@ -286,51 +288,16 @@ namespace GazeUtilityLibrary.Tracker
 
             foreach (Tobii.Research.CalibrationPoint point in calibrationResult.CalibrationPoints)
             {
-                double xLeft = 0;
-                double yLeft = 0;
-                double xRight = 0;
-                double yRight = 0;
-                double xLeftSum = 0;
-                double yLeftSum = 0;
-                double xRightSum = 0;
-                double yRightSum = 0;
-                int leftCount = 0;
-                int rightCount = 0;
-                foreach (CalibrationSample sample in point.CalibrationSamples)
-                {
-                    if (sample.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed)
-                    {
-                        xLeftSum += sample.LeftEye.PositionOnDisplayArea.X;
-                        yLeftSum += sample.LeftEye.PositionOnDisplayArea.Y;
-                        leftCount++;
-                    }
-                    if (sample.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed)
-                    {
-                        xRightSum += sample.RightEye.PositionOnDisplayArea.X;
-                        yRightSum += sample.RightEye.PositionOnDisplayArea.Y;
-                        rightCount++;
-                    }
-                    if (leftCount > 0)
-                    {
-                        xLeft = xLeftSum / leftCount;
-                        yLeft = yLeftSum / leftCount;
-                    }
-                    if (rightCount > 0)
-                    {
-                        xRight = xRightSum / rightCount;
-                        yRight = yRightSum / rightCount;
-                    }
-                    result.Add(new GazeCalibrationData(
-                        point.PositionOnDisplayArea.X,
-                        point.PositionOnDisplayArea.Y,
-                        xLeft,
-                        yLeft,
-                        sample.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed,
-                        xRight,
-                        yRight,
-                        sample.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed
-                    ));
-                }
+                result.Add(new GazeCalibrationData(
+                    point.PositionOnDisplayArea.X,
+                    point.PositionOnDisplayArea.Y,
+                    point.CalibrationSamples.Average(s => s.LeftEye.PositionOnDisplayArea.X),
+                    point.CalibrationSamples.Average(s => s.LeftEye.PositionOnDisplayArea.Y),
+                    point.CalibrationSamples.Aggregate(false, (acc, s) => acc || s.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed),
+                    point.CalibrationSamples.Average(s => s.RightEye.PositionOnDisplayArea.X),
+                    point.CalibrationSamples.Average(s => s.RightEye.PositionOnDisplayArea.Y),
+                    point.CalibrationSamples.Aggregate(false, (acc, s) => acc || s.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed)
+                ));
             }
             return result;
         }
