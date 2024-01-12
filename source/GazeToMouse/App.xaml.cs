@@ -625,7 +625,9 @@ namespace GazeToMouse
                 if (!res)
                 {
                     HandleCalibrationError($"Failed to collect data for calibration point at [{point.X}, {point.Y}]");
-                    break;
+                    // Wait a little.
+                    await Task.Delay(700);
+                    continue;
                 }
 
                 _logger.Debug($"Calibration data collected at point [{point.X}, {point.Y}]");
