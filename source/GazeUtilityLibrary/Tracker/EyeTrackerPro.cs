@@ -17,17 +17,35 @@ using Point3D = Tobii.Research.Point3D;
 
 namespace GazeUtilityLibrary.Tracker
 {
+    /// <summary>
+    /// Helper class to hold the approximated gaze origin during the data collection of a calibration point.
+    /// </summary>
     public class CalibrationOrigin
     {
         private NormalizedPoint2D _calibrationPoint;
+        /// <summary>
+        /// The calibration point
+        /// </summary>
         public NormalizedPoint2D CalibrationPoint { get { return _calibrationPoint; } }
 
         private Point3D _left;
+        /// <summary>
+        /// The approximated gaze origin of the left eye.
+        /// </summary>
         public Point3D Left { get { return _left; } }
 
         private Point3D _right;
+        /// <summary>
+        /// The approximated gaze origin of the right eye.
+        /// </summary>
         public Point3D Right { get { return _right; } }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="left">The approximated gaze origin of the left eye.</param>
+        /// <param name="right">The approximated gaze origin of the right eye.</param>
+        /// <param name="calibrationPoint">The calibration point</param>
         public CalibrationOrigin(Point3D left, Point3D right, NormalizedPoint2D calibrationPoint)
         {
             _left = left;
@@ -342,7 +360,7 @@ namespace GazeUtilityLibrary.Tracker
                         s.LeftEye.PositionOnDisplayArea.X), point.CalibrationSamples.Average(s => s.LeftEye.PositionOnDisplayArea.Y));
                 Vector3 leftGazePoint = screenArea.GetPoint3d(leftGazePointScreen);
                 double leftAccuracy = 0;
-                if( origin != null)
+                if (origin != null)
                 {
                     leftAccuracy = ComputeCalibrationAccuracy(
                         origin.Left,
@@ -380,6 +398,13 @@ namespace GazeUtilityLibrary.Tracker
             return result;
         }
 
+        /// <summary>
+        /// Given a calibration point, a gaze origin, and a gaze point compute the accuracy of the calibration.
+        /// </summary>
+        /// <param name="origin">The gaze origin</param>
+        /// <param name="calibrationPoint">The calibration target</param>
+        /// <param name="gazePoint">The gaze point</param>
+        /// <returns>The calibration accuracy</returns>
         private double ComputeCalibrationAccuracy(Point3D origin, Point3D calibrationPoint, Point3D gazePoint)
         {
             Point3D directionCalibrationPoint = origin.NormalizedDirection(calibrationPoint);
