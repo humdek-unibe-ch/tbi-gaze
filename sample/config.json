@@ -9,9 +9,11 @@
   //  - 2: x-coordinate of the gaze point of the left eye (normalized value)
   //  - 3: y-coordinate of the gaze point of the left eye (normalized value)
   //  - 4: validity of the gaze data of the left eye
-  //  - 5: x-coordinate of the gaze point of the right eye (normalized value)
-  //  - 6: y-coordinate of the gaze point of the right eye (normalized value)
-  //  - 7: validity of the gaze data of the right eye
+  //  - 5: accuracy of the calibration of the left eye
+  //  - 6: x-coordinate of the gaze point of the right eye (normalized value)
+  //  - 7: y-coordinate of the gaze point of the right eye (normalized value)
+  //  - 8: validity of the gaze data of the right eye
+  //  - 9: accuracy of the calibration of the right eye
   // To log all possible values with a comma (i.e. ',') as delimiter use the empty string:
   // "CalibrationLogColumnOrder": "",
   // This configuration value has no effect if "CalibrationLogWriteOutput" is set to false.
@@ -28,9 +30,11 @@
     "left_gazePoint_x",
     "left_gazePoint_y",
     "left_gazePoint_isValid",
+    "left_accuracy",
     "right_gazePoint_x",
     "right_gazePoint_y",
-    "right_gazePoint_isValid"
+    "right_gazePoint_isValid",
+    "right_accuracy"
   ],
 
   // Defines whether gaze calibration data is written to a log file. If set to false, all the configuration

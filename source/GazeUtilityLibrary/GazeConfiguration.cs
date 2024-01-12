@@ -874,18 +874,22 @@ namespace GazeUtilityLibrary
                 $"{{{(int)CalibrationOutputValue.LeftGazePoint2dX}}}," +
                 $"{{{(int)CalibrationOutputValue.LeftGazePoint2dY}}}," +
                 $"{{{(int)CalibrationOutputValue.LeftGazePoint2dIsValid}}}," +
+                $"{{{(int)CalibrationOutputValue.LeftAccuarcy}}}," +
                 $"{{{(int)CalibrationOutputValue.RightGazePoint2dX}}}," +
                 $"{{{(int)CalibrationOutputValue.RightGazePoint2dY}}}," +
-                $"{{{(int)CalibrationOutputValue.RightGazePoint2dIsValid}}}";
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dIsValid}}}," +
+                $"{{{(int)CalibrationOutputValue.RightAccuarcy}}}";
             CalibrationLogColumnTitle = new string[] {
                 "calibrationPoint_x",
                 "calibrationPoint_y",
                 "left_gazePoint_x",
                 "left_gazePoint_y",
                 "left_gazePoint_isValid",
+                "left_accuracy",
                 "right_gazePoint_x",
                 "right_gazePoint_y",
-                "right_gazePoint_isValid"
+                "right_gazePoint_isValid",
+                "right_accuracy"
             };
             ValidationLogColumnOrder =
                 $"{{{(int)ValidationOutputValue.Point2dX}}}," +

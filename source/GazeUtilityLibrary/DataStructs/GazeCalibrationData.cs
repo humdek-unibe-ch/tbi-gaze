@@ -42,6 +42,12 @@ namespace GazeUtilityLibrary.DataStructs
         /// </summary>
         public bool ValidityLeft { get { return _validityLeft; } }
 
+        private double _accuracyLeft;
+        /// <summary>
+        /// The accuracy of gaze point coordinate of the left eye.
+        /// </summary>
+        public double AccuracyLeft { get { return _accuracyLeft; } }
+
         private double _xCoordRight;
         /// <summary>
         /// The x coord of the gaze point of the right eye.
@@ -60,6 +66,12 @@ namespace GazeUtilityLibrary.DataStructs
         /// </summary>
         public bool ValidityRight { get { return _validityRight; } }
 
+        private double _accuracyRight;
+        /// <summary>
+        /// The accuracy of gaze point coordinate of the right eye.
+        /// </summary>
+        public double AccuracyRight { get { return _accuracyRight; } }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GazeDataArgs"/> class.
         /// </summary>
@@ -68,19 +80,23 @@ namespace GazeUtilityLibrary.DataStructs
         /// <param name="xCoordLeft">The x coord of the gaze point of the left eye.</param>
         /// <param name="yCoordLeft">The y coord of the gaze point of the left eye.</param>
         /// <param name="validityLeft">The validity of gaze point coordinate of the left eye.</param>
+        /// <param name="accuracyLeft">The accuracy of gaze point coordinate of the left eye.</param>
         /// <param name="xCoordRight">The x coord of the gaze point of the right eye.</param>
         /// <param name="yCoordRight">The y coord of the gaze point of the right eye.</param>
         /// <param name="validityRight">the validity of gaze point coordinate of the right eye.</param>
-        public GazeCalibrationData(double xCoord, double yCoord, double xCoordLeft, double yCoordLeft, bool validityLeft, double xCoordRight, double yCoordRight, bool validityRight)
+        /// <param name="accuracyRight">the accuracy of gaze point coordinate of the right eye.</param>
+        public GazeCalibrationData(double xCoord, double yCoord, double xCoordLeft, double yCoordLeft, bool validityLeft, double accuracyLeft, double xCoordRight, double yCoordRight, bool validityRight, double accuracyRight)
         {
             _xCoord = xCoord;
             _yCoord = yCoord;
             _xCoordLeft = xCoordLeft;
             _yCoordLeft = yCoordLeft;
             _validityLeft = validityLeft;
+            _accuracyLeft = accuracyLeft;
             _xCoordRight = xCoordRight;
             _yCoordRight = yCoordRight;
             _validityRight = validityRight;
+            _accuracyRight = accuracyRight;
         }
 
         /// <summary>
@@ -97,9 +113,11 @@ namespace GazeUtilityLibrary.DataStructs
             formattedValues[(int)CalibrationOutputValue.LeftGazePoint2dX] = GazeDataConverter.FormatDouble(_xCoordLeft, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)CalibrationOutputValue.LeftGazePoint2dY] = GazeDataConverter.FormatDouble(_yCoordLeft, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)CalibrationOutputValue.LeftGazePoint2dIsValid] = GazeDataConverter.FormatBoolean(_validityLeft);
+            formattedValues[(int)CalibrationOutputValue.LeftAccuarcy] = GazeDataConverter.FormatDouble(_accuracyLeft);
             formattedValues[(int)CalibrationOutputValue.RightGazePoint2dX] = GazeDataConverter.FormatDouble(_xCoordRight, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)CalibrationOutputValue.RightGazePoint2dY] = GazeDataConverter.FormatDouble(_yCoordRight, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)CalibrationOutputValue.RightGazePoint2dIsValid] = GazeDataConverter.FormatBoolean(_validityRight);
+            formattedValues[(int)CalibrationOutputValue.RightAccuarcy] = GazeDataConverter.FormatDouble(_accuracyRight);
 
             return formattedValues;
         }

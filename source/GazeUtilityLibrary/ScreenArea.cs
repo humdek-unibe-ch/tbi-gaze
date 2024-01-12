@@ -128,10 +128,10 @@ namespace GazeUtilityLibrary
         }
 
         /// <summary>
-        /// Get the 2d point on the sreen given given a 3d point on the screen plane.
+        /// Get the 2d point on the sreen plane given a 3d point on the screen plane.
         /// </summary>
         /// <param name="point">The 3d point on the screen plane to convert.</param>
-        /// <returns>The 2d point on the screen plane</returns>
+        /// <returns>The 2d point on the screen</returns>
         public Vector2 GetPoint2d(Vector3 point)
         {
             Vector4 v = Vector4.Transform(point, _m);
@@ -139,16 +139,28 @@ namespace GazeUtilityLibrary
         }
 
         /// <summary>
-        /// Get the normalized 2d point on the sreen given given a 3d point on the screen plane.
+        /// Get the normalized 2d point on the sreen plane given a 3d point on the screen plane.
         /// Note that values outside of the interval [0, 1] indicate an intersection point outsate of the screen area.
         /// </summary>
         /// <param name="point3d">The 3d point on the screen plane to convert.</param>
-        /// <returns>The normalized 2d point on the screen plane</returns>
+        /// <returns>The normalized 2d point on the screen</returns>
         public Vector2 GetPoint2dNormalized(Vector3 point3d)
         {
             Vector2 point2dOffset = GetPoint2d(point3d);
             Vector2 point2d = point2dOffset - _origin;
             return new Vector2(point2d.X / _width, point2d.Y / _height);
+        }
+
+        /// <summary>
+        /// Get the 3d point on the sreen plane given a 2d point on the screen.
+        /// </summary>
+        /// <param name="point">A normalized 2d point on the screen to convert.</param>
+        /// <returns>The 3d point on the screen plane</returns>
+        public Vector3 GetPoint3d(Vector2 point2d)
+        {
+            Vector3 xTop = Vector3.Lerp(_topLeft, _topRight, point2d.X);
+            Vector3 xBottom = Vector3.Lerp(_bottomLeft, _bottomRight, point2d.X);
+            return Vector3.Lerp(xTop, xBottom, point2d.Y);
         }
 
         /// <summary>

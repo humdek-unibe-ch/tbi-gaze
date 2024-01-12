@@ -79,9 +79,11 @@ namespace GazeUtilityLibrary.DataStructs
         LeftGazePoint2dX, // x-coordinate of the gaze point of the left eye (normalised value)
         LeftGazePoint2dY, // y-coordinate of the gaze point of the left eye (normalised value)
         LeftGazePoint2dIsValid, // validity of the gaze data of the left eye
+        LeftAccuarcy, // accuracy of the calibration of the left eye
         RightGazePoint2dX, // x-coordinate of the gaze point of the right eye (normalised value)
         RightGazePoint2dY, // y-coordinate of the gaze point of the right eye (normalised value)
-        RightGazePoint2dIsValid // validity of the gaze data of the right eye
+        RightGazePoint2dIsValid, // validity of the gaze data of the right eye
+        RightAccuarcy // accuracy of the calibration of the right eye
     }
 
     /// <summary>

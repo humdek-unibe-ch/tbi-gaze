@@ -13,15 +13,36 @@ using GazeUtilityLibrary.DataStructs;
 using Tobii.Research;
 using Tobii.Research.Addons;
 using Tobii.Research.Addons.Utility;
+using Point3D = Tobii.Research.Point3D;
 
 namespace GazeUtilityLibrary.Tracker
 {
+    public class CalibrationOrigin
+    {
+        private NormalizedPoint2D _calibrationPoint;
+        public NormalizedPoint2D CalibrationPoint { get { return _calibrationPoint; } }
+
+        private Point3D _left;
+        public Point3D Left { get { return _left; } }
+
+        private Point3D _right;
+        public Point3D Right { get { return _right; } }
+
+        public CalibrationOrigin(Point3D left, Point3D right, NormalizedPoint2D calibrationPoint)
+        {
+            _left = left;
+            _right = right;
+            _calibrationPoint = calibrationPoint;
+        }
+    }
+
     /// <summary>
     /// Interface to the Tobii SDK Pro engine
     /// </summary>
     /// <seealso cref="GazeHelper.TrackerHandler" />
     public class EyeTrackerPro : BaseTracker
     {
+        private List<CalibrationOrigin> _calibrationOriginPoints = new List<CalibrationOrigin>();
         private float _outputFrequency = 60;
         private bool _hasLicense = true;
         private IEyeTracker? _eyeTracker = null;
@@ -180,7 +201,7 @@ namespace GazeUtilityLibrary.Tracker
         /// <returns>True on success, false on failure, wrapped by an async handler.</returns>
         override public async Task<bool> CollectCalibrationDataAsync(Point point)
         {
-            if (_screenBasedCalibration == null)
+            if (_screenBasedCalibration == null || _eyeTracker == null)
             {
                 return false;
             }
@@ -188,6 +209,22 @@ namespace GazeUtilityLibrary.Tracker
             NormalizedPoint2D normalizedPoint = new NormalizedPoint2D((float)point.X, (float)point.Y);
             int fail_count = 0;
             CalibrationStatus status = CalibrationStatus.Failure;
+
+            List<Point3D> leftOrigins = new List<Point3D>();
+            List<Point3D> rightOrigins = new List<Point3D>();
+            EventHandler<GazeDataEventArgs> handler = (s, data) =>
+            {
+                if (data.LeftEye.GazeOrigin.Validity == Validity.Valid)
+                {
+                    leftOrigins.Add(data.LeftEye.GazeOrigin.PositionInUserCoordinates);
+                }
+                if (data.RightEye.GazeOrigin.Validity == Validity.Valid)
+                {
+                    rightOrigins.Add(data.LeftEye.GazeOrigin.PositionInUserCoordinates);
+                }
+            };
+            _eyeTracker.GazeDataReceived += handler;
+
             status = await _screenBasedCalibration.CollectDataAsync(normalizedPoint);
             while (status != CalibrationStatus.Success && fail_count < 3)
             {
@@ -195,13 +232,21 @@ namespace GazeUtilityLibrary.Tracker
                 // Not all eye tracker models will fail at this point, but instead fail on ComputeAndApply.
                 logger.Warning($"Data collection failed, retry #{fail_count}");
                 fail_count++;
+                leftOrigins.Clear();
+                rightOrigins.Clear();
                 status = await _screenBasedCalibration.CollectDataAsync(normalizedPoint);
             }
+
+            _eyeTracker.GazeDataReceived -= handler;
 
             if (status != CalibrationStatus.Success)
             {
                 return false;
             }
+
+            Point3D leftOrigin = new Point3D(leftOrigins.Average(v => v.X), leftOrigins.Average(v => v.Y), leftOrigins.Average(v => v.Z));
+            Point3D rightOrigin = new Point3D(rightOrigins.Average(v => v.X), rightOrigins.Average(v => v.Y), rightOrigins.Average(v => v.Z));
+            _calibrationOriginPoints.Add(new CalibrationOrigin(leftOrigin, rightOrigin, normalizedPoint));
 
             return true;
         }
@@ -275,31 +320,72 @@ namespace GazeUtilityLibrary.Tracker
         override public async Task<List<GazeCalibrationData>> ApplyCalibration()
         {
             List<GazeCalibrationData> result = new List<GazeCalibrationData>();
-            if (_screenBasedCalibration == null)
+            if (_screenBasedCalibration == null || screenArea == null)
             {
                 return result;
             }
 
             CalibrationResult calibrationResult;
-
             calibrationResult = await _screenBasedCalibration.ComputeAndApplyAsync();
 
             logger.Info($"Calibration returned {calibrationResult.Status} and collected {calibrationResult.CalibrationPoints.Count} points.");
 
             foreach (Tobii.Research.CalibrationPoint point in calibrationResult.CalibrationPoints)
             {
+                Vector3 calibrationPointTmp = screenArea.GetPoint3d(new Vector2(point.PositionOnDisplayArea.X, point.PositionOnDisplayArea.Y));
+                Point3D calibrationPoint = new Point3D(calibrationPointTmp.X, calibrationPointTmp.Y, calibrationPointTmp.Z);
+                CalibrationOrigin? origin = _calibrationOriginPoints.Find(v =>
+                        Math.Abs(v.CalibrationPoint.X - point.PositionOnDisplayArea.X) < 0.00001
+                        && Math.Abs(v.CalibrationPoint.Y - point.PositionOnDisplayArea.Y) < 0.00001);
+
+                Vector2 leftGazePointScreen = new Vector2(point.CalibrationSamples.Average(s =>
+                        s.LeftEye.PositionOnDisplayArea.X), point.CalibrationSamples.Average(s => s.LeftEye.PositionOnDisplayArea.Y));
+                Vector3 leftGazePoint = screenArea.GetPoint3d(leftGazePointScreen);
+                double leftAccuracy = 0;
+                if( origin != null)
+                {
+                    leftAccuracy = ComputeCalibrationAccuracy(
+                        origin.Left,
+                        calibrationPoint,
+                        new Point3D(leftGazePoint.X, leftGazePoint.Y, leftGazePoint.Z)
+                    );
+                }
+
+                Vector2 rightGazePointScreen = new Vector2(point.CalibrationSamples.Average(s =>
+                        s.RightEye.PositionOnDisplayArea.X), point.CalibrationSamples.Average(s => s.RightEye.PositionOnDisplayArea.Y));
+                Vector3 rightGazePoint = screenArea.GetPoint3d(rightGazePointScreen);
+                double rightAccuracy = 0;
+                if (origin != null)
+                {
+                    rightAccuracy = ComputeCalibrationAccuracy(
+                       origin.Right,
+                       calibrationPoint,
+                       new Point3D(rightGazePoint.X, rightGazePoint.Y, rightGazePoint.Z)
+                    );
+                }
+
                 result.Add(new GazeCalibrationData(
                     point.PositionOnDisplayArea.X,
                     point.PositionOnDisplayArea.Y,
-                    point.CalibrationSamples.Average(s => s.LeftEye.PositionOnDisplayArea.X),
-                    point.CalibrationSamples.Average(s => s.LeftEye.PositionOnDisplayArea.Y),
+                    leftGazePointScreen.X,
+                    leftGazePointScreen.Y,
                     point.CalibrationSamples.Aggregate(false, (acc, s) => acc || s.LeftEye.Validity == CalibrationEyeValidity.ValidAndUsed),
-                    point.CalibrationSamples.Average(s => s.RightEye.PositionOnDisplayArea.X),
-                    point.CalibrationSamples.Average(s => s.RightEye.PositionOnDisplayArea.Y),
-                    point.CalibrationSamples.Aggregate(false, (acc, s) => acc || s.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed)
+                    leftAccuracy,
+                    rightGazePointScreen.X,
+                    rightGazePointScreen.Y,
+                    point.CalibrationSamples.Aggregate(false, (acc, s) => acc || s.RightEye.Validity == CalibrationEyeValidity.ValidAndUsed),
+                    rightAccuracy
                 ));
             }
             return result;
+        }
+
+        private double ComputeCalibrationAccuracy(Point3D origin, Point3D calibrationPoint, Point3D gazePoint)
+        {
+            Point3D directionCalibrationPoint = origin.NormalizedDirection(calibrationPoint);
+            Point3D directionGazePoint = origin.NormalizedDirection(gazePoint);
+
+            return directionCalibrationPoint.Angle(directionGazePoint);
         }
 
         /// <summary>
