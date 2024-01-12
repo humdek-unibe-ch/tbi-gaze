@@ -114,7 +114,7 @@ namespace GazeUtilityLibrary
         /// <returns>The full path string.</returns>
         private string getFileSwFullPath(StreamWriter sw)
         {
-            return ((FileStream)(sw.BaseStream)).Name;
+             return ((FileStream)(sw.BaseStream)).Name;
         }
 
         /// <summary>
@@ -577,6 +577,11 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double[][] CalibrationPoints { get; set; }
+        /// <summary>
+        /// Define the calibration accuracy threshold in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double CalibrationAccuracyThreshold { get; set; }
 
         /// <summary>
         /// In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
@@ -891,6 +896,7 @@ namespace GazeUtilityLibrary
                 "right_gazePoint_isValid",
                 "right_accuracy"
             };
+            CalibrationAccuracyThreshold = double.PositiveInfinity;
             ValidationLogColumnOrder =
                 $"{{{(int)ValidationOutputValue.Point2dX}}}," +
                 $"{{{(int)ValidationOutputValue.Point2dY}}}," +

@@ -43,6 +43,30 @@ namespace CustomCalibrationLibrary.ViewModels
             get { return _gazePoint; }
         }
 
+        private double _accuracyLeft;
+        /// <summary>
+        /// The calibration accuracy of the left eye.
+        /// </summary>
+        public double AccuracyLeft { get { return _accuracyLeft; } }
+
+        private double _accuracyRight;
+        /// <summary>
+        /// The calibration accuracy of the right eye.
+        /// </summary>
+        public double AccuracyRight { get { return _accuracyRight; } }
+
+        private Visibility _successVisibility;
+        /// <summary>
+        /// The visibility flag for all items if the accuracy is acceptable.
+        /// </summary>
+        public Visibility SuccessVisibility { get { return _successVisibility; } }
+
+        private Visibility _alertVisibility;
+        /// <summary>
+        /// The visibility flag for all items if the accuracy is too low.
+        /// </summary>
+        public Visibility AlertVisibility { get { return _alertVisibility; } }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -54,6 +78,11 @@ namespace CustomCalibrationLibrary.ViewModels
             _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
             _calibrationAcceptCommand = new CalibrationCommand(model, CalibrationEventType.Accept);
             _gazeVisibilityCommand = new GazeVisibilityCommand(this);
+            _accuracyLeft = model.CalibrationAccuracyLeft;
+            _accuracyRight = model.CalibrationAccuracyRight;
+            bool isSuccess = _accuracyLeft < model.AccuracyThreshold || _accuracyRight < model.AccuracyThreshold;
+            _alertVisibility = isSuccess ? Visibility.Collapsed : Visibility.Visible;
+            _successVisibility = isSuccess ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void OnGazePointChanged(object? sender, Point point)

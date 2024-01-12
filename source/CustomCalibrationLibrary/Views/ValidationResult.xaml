@@ -70,9 +70,9 @@
                             <TextBlock Foreground="White">Precision RMS:</TextBlock>
                         </StackPanel>
                         <StackPanel Margin="5">
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}°}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}°}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}°}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}&#186;}" />
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>
@@ -85,9 +85,9 @@
                             <TextBlock Foreground="White">Precision RMS</TextBlock>
                         </StackPanel>
                         <StackPanel Margin="5">
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}°}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}°}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}°}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}&#186;}" />
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>

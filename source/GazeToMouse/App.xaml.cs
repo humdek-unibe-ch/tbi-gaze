@@ -328,10 +328,10 @@ namespace GazeToMouse
                 Current.Shutdown();
             }
             
-            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor);
+            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor, _config.Config.CalibrationAccuracyThreshold);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;
             _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
-            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor);
+            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor, double.PositiveInfinity);
             _validationModel.CalibrationEvent += OnValidationEvent;
             _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
 

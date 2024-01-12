@@ -84,6 +84,16 @@
                                 </TextBlock>
                             </DockPanel>
                         </DockPanel>
+                        <DockPanel HorizontalAlignment="Center" Margin="0,5,0,0">
+                            <DockPanel Margin="0,0,50,0">
+                                <TextBlock Foreground="White" Margin="0,0,5,0">Accuracy Left Eye:</TextBlock>
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
+                            </DockPanel>
+                            <DockPanel>
+                                <TextBlock Foreground="White" Margin="0,0,5,0">Accuracy Right Eye:</TextBlock>
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding AccuracyRight, StringFormat={}{0:N2}&#186;}" />
+                            </DockPanel>
+                        </DockPanel>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -111,23 +121,55 @@
                 </ItemsControl>
             </Viewbox>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
-                <DockPanel Margin="10" HorizontalAlignment="Right">
-                    <Button
-                        ui:ThemeManager.RequestedTheme="Dark"
-                        Command="{Binding CalibrationRestartCommand}"
-                    >
-                        Restart Calibration (R)
-                    </Button>
-                    <Button
-                        ui:ThemeManager.RequestedTheme="Dark"
-                        Margin="10,0,0,0"
-                        Style="{ui:ThemeResource AccentButtonStyle}"
-                        Command="{Binding CalibrationAcceptCommand}"
-                    >
-                        Accept Calibration (SPACE)
-                    </Button>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10 0" Visibility="{Binding AlertVisibility}" Grid.Column="0">
+                    <Border Padding="20 10" BorderBrush="#f5c6cb" Background="#f8d7da" CornerRadius="1" BorderThickness="0">
+                        <DockPanel>
+                            <TextBlock FontWeight="Bold" Foreground="#721c24">Poor calibration accuracy:</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#721c24">Please restart the calibration and try to fixate the appearing dots!</TextBlock>
+                        </DockPanel>
+                    </Border>
                 </DockPanel>
-            </Grid>
+                    <DockPanel Margin="10" HorizontalAlignment="Right" Grid.Column="1">
+                        <Button
+                            Visibility="{Binding SuccessVisibility}"
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Command="{Binding CalibrationRestartCommand}"
+                        >
+                            Restart Calibration (R)
+                        </Button>
+                        <Button
+                            Visibility="{Binding SuccessVisibility}"
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Margin="10,0,0,0"
+                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Command="{Binding CalibrationAcceptCommand}"
+                        >
+                            Accept Calibration (SPACE)
+                        </Button>
+                        <Button
+                            Visibility="{Binding AlertVisibility}"
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Command="{Binding CalibrationRestartCommand}"
+                        >
+                            Restart Calibration (R)
+                        </Button>
+                        <Button
+                            Visibility="{Binding AlertVisibility}"
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Margin="10,0,0,0"
+                            Command="{Binding CalibrationAcceptCommand}"
+                        >
+                            Accept Calibration Anyways (SPACE)
+                        </Button>
+                    </DockPanel>
+                </Grid>
+             </Grid>
         </Grid>
         <Grid>
             <Ellipse

@@ -48,19 +48,35 @@ namespace CustomCalibrationLibrary.Models
     /// </summary>
     public class CalibrationModel : INotifyPropertyChanged
     {
-        private Color _backgroundColor;
+        private double _accuracyThreshold;
+        /// <summary>
+        /// The accuracy threshold.
+        /// </summary>
+        public double AccuracyThreshold { get { return _accuracyThreshold; } }
 
+        private Color _backgroundColor;
         /// <summary>
         /// The background color of the canvas.
         /// </summary>
         public Color BackgroundColor { get { return _backgroundColor; } }
 
         private Color _frameColor;
-
         /// <summary>
         /// The background color of the frame.
         /// </summary>
         public Color FrameColor { get { return _frameColor; } }
+
+        private double _calibrationAccuracyLeft;
+        /// <summary>
+        /// The approximated accuracy of the current calibration for the left eye.
+        /// </summary>
+        public double CalibrationAccuracyLeft { get { return _calibrationAccuracyLeft; } }
+
+        private double _calibrationAccuracyRight;
+        /// <summary>
+        /// The approximated accuracy of the current calibration for the right eye.
+        /// </summary>
+        public double CalibrationAccuracyRight { get { return _calibrationAccuracyRight; } }
 
         private string _error = "No Error";
         /// <summary>
@@ -202,15 +218,19 @@ namespace CustomCalibrationLibrary.Models
         private TrackerLogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CalibrationModel"/> class.
+        /// Constructor
         /// </summary>
-        /// <param name="logger">The log handler.</param>
-        /// <param name="points">Calibration points.</param>
-        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor)
+        /// <param name="logger">The log handler</param>
+        /// <param name="points">Calibration points</param>
+        /// <param name="backgroundColor">The background color of the canvas</param>
+        /// <param name="frameColor">The background color if the user interaction frame</param>
+        /// <param name="accuracyThreshold">The accuracy threshold</param>
+        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor, double accuracyThreshold)
         {
             _logger = logger;
             _backgroundColor = backgroundColor;
             _frameColor = frameColor;
+            _accuracyThreshold = accuracyThreshold;
 
             _points = new Point[points.Length];
             for (int i = 0; i < points.Length; i++ )
@@ -222,6 +242,8 @@ namespace CustomCalibrationLibrary.Models
             _gazePoint = new Point(0, 0);
             _userPositionGuide = new UserPositionData();
             _validationData = new GazeValidationData();
+            _calibrationAccuracyLeft = double.PositiveInfinity;
+            _calibrationAccuracyRight = double.PositiveInfinity;
         }
 
         /// <summary>
@@ -280,14 +302,38 @@ namespace CustomCalibrationLibrary.Models
         /// <param name="points"></param>
         public void SetCalibrationResult(List<GazeCalibrationData> points)
         {
+            _calibrationAccuracyLeft = 0;
+            _calibrationAccuracyRight = 0;
+            int validCountLeft = 0;
+            int validCountRight = 0;
             for (int i = 0; i < points.Count; i++)
             {
+                if (points[i].ValidityLeft && points[i].AccuracyLeft > 0)
+                {
+                    _calibrationAccuracyLeft += points[i].AccuracyLeft;
+                    validCountLeft++;
+                }
+                if (points[i].ValidityRight && points[i].AccuracyRight > 0)
+                {
+                    _calibrationAccuracyRight += points[i].AccuracyRight;
+                    validCountRight++;
+                }
                 double xAvg = (points[i].XCoordLeft + points[i].XCoordRight) / 2;
                 double yAvg = (points[i].YCoordLeft + points[i].YCoordRight) / 2;
                 CalibrationPoints[i].GazePositionAverage = new Point(xAvg, yAvg);
                 CalibrationPoints[i].GazePositionLeft = new Point(points[i].XCoordLeft, points[i].YCoordLeft);
                 CalibrationPoints[i].GazePositionRight = new Point(points[i].XCoordRight, points[i].YCoordRight);
                 _logger.Debug($"Calibration at [{points[i].XCoord}, {points[i].YCoord}]: [{points[i].XCoordLeft}, {points[i].YCoordLeft}], [{xAvg}, {yAvg}], [{points[i].XCoordRight}, {points[i].YCoordRight}]");
+            }
+
+            if(validCountLeft > 0 )
+            {
+                _calibrationAccuracyLeft /= validCountLeft;
+            }
+
+            if (validCountRight > 0)
+            {
+                _calibrationAccuracyRight /= validCountRight;
             }
         }
     }

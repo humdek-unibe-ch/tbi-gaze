@@ -15,8 +15,6 @@ namespace CustomCalibrationLibrary.Views
     /// </summary>
     public partial class CalibrationResult : UserControl
     {
-        private CalibrationModel _model;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CalibrationResult"/> class.
         /// </summary>
@@ -24,8 +22,7 @@ namespace CustomCalibrationLibrary.Views
         public CalibrationResult(CalibrationModel model)
         {
             InitializeComponent();
-            _model = model;
-            DataContext = new CalibrationResultViewModel(_model);
+            DataContext = new CalibrationResultViewModel(model);
         }
 
         private void OnLoaded(object sender, System.Windows.RoutedEventArgs e)
