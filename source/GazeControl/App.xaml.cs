@@ -5,6 +5,7 @@
  */
 using GazeControlLibrary;
 using GazeUtilityLibrary;
+using System;
 using System.Windows;
 
 namespace GazeControl
@@ -84,7 +85,7 @@ namespace GazeControl
                 }
             }
 
-            NamedPipeClient.HandleCommands(command, reset, trialId, label, Logger);
+            Environment.ExitCode = (int)NamedPipeClient.HandleCommands(command, reset, trialId, label, Logger);
 
             Current.Shutdown();
         }
