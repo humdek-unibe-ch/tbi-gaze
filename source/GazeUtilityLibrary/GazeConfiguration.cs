@@ -7,7 +7,6 @@ using GazeUtilityLibrary.DataStructs;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Windows.Media;
 
 namespace GazeUtilityLibrary
 {
@@ -991,13 +990,29 @@ namespace GazeUtilityLibrary
                     });
 
                     if (item?.DataLogColumnOrder == "")
+                    {
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
+                    }
                     if (item?.CalibrationLogColumnOrder == "")
+                    {
                         item.CalibrationLogColumnOrder = item_default.CalibrationLogColumnOrder;
+                    }
                     if (item?.ValidationLogColumnOrder == "")
+                    {
                         item.ValidationLogColumnOrder = item_default.ValidationLogColumnOrder;
+                    }
                     if (item?.DataLogPath == "")
+                    {
                         item.DataLogPath = item_default.DataLogPath;
+                    }
+                    if (item != null)
+                    {
+                        item.CalibrationPoints = ConfigChecker.SanitizePointList(item.CalibrationPoints, logger);
+                        logger.Info($"{item.CalibrationPoints.GetLength(0)} calibration points defined");
+                        item.ValidationPoints = ConfigChecker.SanitizePointList(item.ValidationPoints, logger);
+                        logger.Info($"{item.ValidationPoints.GetLength(0)} validation points defined");
+                    }
+
 
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();

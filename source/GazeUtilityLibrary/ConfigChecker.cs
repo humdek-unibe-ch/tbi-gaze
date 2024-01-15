@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -116,6 +117,29 @@ namespace GazeUtilityLibrary
                 logger?.Error($"Column titles do not match with the column order");
                 return false;
             }
+        }
+
+        public static double[][] SanitizePointList(double[][] list, TrackerLogger? logger = null)
+        {
+            List<double[]> distinctPoints = new List<double[]>();
+            for (int i = 0; i < list.GetLength(0); i++)
+            {
+                bool addItem = true;
+                for (int j = i + 1; j < list.GetLength(0); j++)
+                {
+                    if (list[i][0] == list[j][0] && list[i][1] == list[j][1])
+                    {
+                        logger?.Warning($"Point [{list[i][0]}, {list[i][1]}] is defined twice, ignoring");
+                        addItem = false;
+                        break;
+                    }
+                }
+                if (addItem)
+                {
+                    distinctPoints.Add(list[i]);
+                }
+            }
+            return distinctPoints.ToArray();
         }
     }
 }
