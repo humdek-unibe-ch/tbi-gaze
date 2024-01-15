@@ -68,9 +68,24 @@ namespace GazeUtilityLibrary
             if (!ConfigChecker.CheckConfigName(_config!.ConfigName, _logger))
             {
                 _logger.Error($"Bad config name: \"{_config.ConfigName}\"");
-                _error.Error = EGazeConfigError.FallbackToDefaultConfigName;
                 return false;
             }
+
+            if (!ConfigChecker.CheckPointList(_config.CalibrationPoints, _logger))
+            {
+                _logger.Error($"Invalid calibration point list");
+                return false;
+            }
+            _config.CalibrationPoints = ConfigChecker.SanitizePointList(_config.CalibrationPoints, _logger);
+            _logger.Info($"Added {_config.CalibrationPoints.GetLength(0)} calibration points");
+
+            if (!ConfigChecker.CheckPointList(_config.ValidationPoints, _logger))
+            {
+                _logger.Error($"Invalid validation point list");
+                return false;
+            }
+            _config.ValidationPoints = ConfigChecker.SanitizePointList(_config.ValidationPoints, _logger);
+            _logger.Info($"Added {_config.ValidationPoints.GetLength(0)} validation points");
 
             if (!ConfigChecker.CheckColor(_config.BackgroundColor, _logger))
             {
@@ -83,6 +98,7 @@ namespace GazeUtilityLibrary
                 _logger.Warning($"Using background color '#202124' instead");
                 _config.FrameColor = "#202124";
             }
+
 
             return true;
         }
@@ -1005,14 +1021,6 @@ namespace GazeUtilityLibrary
                     {
                         item.DataLogPath = item_default.DataLogPath;
                     }
-                    if (item != null)
-                    {
-                        item.CalibrationPoints = ConfigChecker.SanitizePointList(item.CalibrationPoints, logger);
-                        logger.Info($"{item.CalibrationPoints.GetLength(0)} calibration points defined");
-                        item.ValidationPoints = ConfigChecker.SanitizePointList(item.ValidationPoints, logger);
-                        logger.Info($"{item.ValidationPoints.GetLength(0)} validation points defined");
-                    }
-
 
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();

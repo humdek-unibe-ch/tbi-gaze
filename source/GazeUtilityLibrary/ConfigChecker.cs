@@ -28,7 +28,7 @@ namespace GazeUtilityLibrary
             }
             if (!Uri.IsWellFormedUriString(name, UriKind.Relative))
             {
-               logger?.Error($"The config file name \"{name}\" is invalid and cannot be used as file name postfix");
+               logger?.Warning($"The config file name \"{name}\" is invalid and cannot be used as file name postfix");
                 return false;
             }
             return true;
@@ -54,7 +54,7 @@ namespace GazeUtilityLibrary
             }
             catch (FormatException)
             {
-                logger?.Error($"The output format string \"{format}\" is not valid");
+                logger?.Warning($"The output format string \"{format}\" is not valid");
                 return false;
             }
         }
@@ -68,7 +68,7 @@ namespace GazeUtilityLibrary
             }
             catch (FormatException)
             {
-                logger?.Error($"The color string \"{color}\" is not valid");
+                logger?.Warning($"The color string \"{color}\" is not valid");
                 return false;
             }
         }
@@ -94,7 +94,7 @@ namespace GazeUtilityLibrary
             }
             catch (FormatException)
             {
-                logger?.Error($"The column order string \"{order}\" is not valid");
+                logger?.Warning($"The column order string \"{order}\" is not valid");
                 return false;
             }
         }
@@ -114,9 +114,22 @@ namespace GazeUtilityLibrary
             }
             catch (FormatException)
             {
-                logger?.Error($"Column titles do not match with the column order");
+                logger?.Warning($"Column titles do not match with the column order");
                 return false;
             }
+        }
+
+        public static bool CheckPointList(double[][] list, TrackerLogger? logger = null)
+        {
+            for(int i = 0; i < list.GetLength(0); i++)
+            {
+                if (list[i].Length != 2)
+                {
+                    logger?.Warning($"A 2-dimensional point is expected: got {list.GetLength(1)} dimensions");
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static double[][] SanitizePointList(double[][] list, TrackerLogger? logger = null)
