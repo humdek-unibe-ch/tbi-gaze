@@ -12,10 +12,11 @@ using System.Windows.Input;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
+    /// <summary>
+    /// The view model class for a failed calibration.
+    /// </summary>
     public class CalibrationFailedViewModel : ColoredViewModel
     {
-        private CalibrationModel _model;
-
         private ICommand _calibrationRestartCommand;
         /// <summary>
         /// Command to restart the calibration
@@ -57,7 +58,6 @@ namespace CustomCalibrationLibrary.ViewModels
         public CalibrationFailedViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
         {
             _error = model.Error;
-            _model = model;
             _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }

@@ -47,7 +47,7 @@ namespace GazeUtilityLibrary.DataStructs
             string[] formattedValues = new string[Enum.GetNames(typeof(ValidationOutputValue)).Length];
 
             formattedValues[(int)ValidationOutputValue.Point2dX] = GazeDataConverter.FormatDouble(_point.X, config.DataLogFormatNormalizedPoint);
-            formattedValues[(int)ValidationOutputValue.Point2dY] = GazeDataConverter.FormatDouble(_point.X, config.DataLogFormatNormalizedPoint);
+            formattedValues[(int)ValidationOutputValue.Point2dY] = GazeDataConverter.FormatDouble(_point.Y, config.DataLogFormatNormalizedPoint);
             formattedValues[(int)ValidationOutputValue.LeftAccuracy] = GazeDataConverter.FormatDouble(_result.AccuracyLeft, config.DataLogFormatValidation);
             formattedValues[(int)ValidationOutputValue.LeftPrecision] = GazeDataConverter.FormatDouble(_result.PrecisionLeft, config.DataLogFormatValidation);
             formattedValues[(int)ValidationOutputValue.LeftPrecisionRMS] = GazeDataConverter.FormatDouble(_result.PrecisionRmsLeft, config.DataLogFormatValidation);

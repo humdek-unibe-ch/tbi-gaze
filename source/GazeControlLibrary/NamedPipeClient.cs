@@ -24,6 +24,18 @@ namespace GazeControlLibrary
     }
 
     /// <summary>
+    /// The error codes of the command handler.
+    /// </summary>
+    public enum ErrorCode
+    {
+        ErrorCode_Success = 0,
+        ErrorCode_ConnectionFailed,
+        ErrorCode_RequestFailed,
+        ErrorCode_NoReply,
+        ErrorCode_Unknown,
+    }
+
+    /// <summary>
     /// The named pipe client handler.
     /// </summary>
     public static class NamedPipeClient
@@ -43,7 +55,8 @@ namespace GazeControlLibrary
         /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
         /// <param name="label">If set the gaze data will be annotated with this label.</param>
         /// <param name="logger">The application logger.</param>
-        public static void HandleCommands(string command, bool reset = false, int? trialId = 0, string label = null, Logger logger = null)
+        /// <returns>0 on success or an error code on failure.</returns>
+        public static ErrorCode HandleCommands(string command, bool reset = false, int? trialId = 0, string label = null, Logger logger = null)
         {
             string pipeName = "tobii_gaze";
 
@@ -63,7 +76,7 @@ namespace GazeControlLibrary
                 case "TERMINATE":
                     try
                     {
-                        SendSignal(pipeName, command, reset, trialId, label, logger);
+                        return SendSignal(pipeName, command, reset, trialId, label, logger);
                     }
                     catch (Exception error)
                     {
@@ -75,7 +88,7 @@ namespace GazeControlLibrary
                 case "VALIDATE":
                     try
                     {
-                        SendRequest(pipeName, command, reset, trialId, label, logger);
+                        return SendRequest(pipeName, command, reset, trialId, label, logger);
                     }
                     catch (Exception error)
                     {
@@ -86,6 +99,8 @@ namespace GazeControlLibrary
                     if (logger != null) logger(LogLevel.Error, $"unknown command: {command}");
                     break;
             }
+
+            return ErrorCode.ErrorCode_Unknown;
         }
 
         /// <summary>
@@ -117,7 +132,8 @@ namespace GazeControlLibrary
         /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
         /// <param name="label">If set the gaze data will be annotated with this label.</param>
         /// <param name="logger">The application logger.</param>
-        private static void SendSignal(string pipeName, string signal, bool reset, int? trialId, string label, Logger logger)
+        /// <returns>0 on success or an error code on failure.</returns>
+        private static ErrorCode SendSignal(string pipeName, string signal, bool reset, int? trialId, string label, Logger logger)
         {
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", pipeName, PipeDirection.Out))
             {
@@ -130,7 +146,7 @@ namespace GazeControlLibrary
                 {
                     if (logger != null) logger(LogLevel.Error, $"Connection to pipe {pipeName} failed: {ex.Message}");
                     if (logger != null) logger(LogLevel.Warning, $"Failed to send signal {signal}");
-                    return;
+                    return ErrorCode.ErrorCode_ConnectionFailed;
                 }
                 if (logger != null) logger(LogLevel.Debug, $"Connected to pipe {pipeName}...");
                 if (logger != null) logger(LogLevel.Debug, $"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
@@ -141,6 +157,8 @@ namespace GazeControlLibrary
                     sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, trialId, label)));
                 }
             }
+
+            return ErrorCode.ErrorCode_Unknown;
         }
 
         /// <summary>
@@ -152,7 +170,8 @@ namespace GazeControlLibrary
         /// <param name="trialId">If set the gaze data will be annotated with this trial ID.</param>
         /// <param name="label">If set the gaze data will be annotated with this label.</param>
         /// <param name="logger">The application logger.</param>
-        private static void SendRequest(string pipeName, string signal, bool reset, int? trialId, string label, Logger logger)
+        /// <returns>0 on success or an error code on failure.</returns>
+        private static ErrorCode SendRequest(string pipeName, string signal, bool reset, int? trialId, string label, Logger logger)
         {
             using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(pipeName))
             using (StreamReader sr = new StreamReader(pipeClient))
@@ -167,7 +186,7 @@ namespace GazeControlLibrary
                 {
                     if (logger != null) logger(LogLevel.Error, $"Connection to pipe {pipeName} failed: {ex.Message}");
                     if (logger != null) logger(LogLevel.Warning, $"Failed to send signal request {signal}");
-                    return;
+                    return ErrorCode.ErrorCode_ConnectionFailed;
                 }
                 if (logger != null) logger(LogLevel.Debug, $"Connected to pipe {pipeName}...");
                 if (logger != null) logger(LogLevel.Debug, $"There are currently {pipeClient.NumberOfServerInstances} pipe server instances open.");
@@ -184,13 +203,21 @@ namespace GazeControlLibrary
                     if (msg.StartsWith("SUCCESS"))
                     {
                         if (logger != null) logger(LogLevel.Info, $"Request {signal} on {pipeName} was succesful");
+                        return ErrorCode.ErrorCode_Success;
                     }
                     else if (msg.StartsWith("FAILED"))
                     {
                         if (logger != null) logger(LogLevel.Info, $"Request {signal} on {pipeName} failed");
+                        return ErrorCode.ErrorCode_RequestFailed;
                     }
                 }
+                else
+                {
+                    return ErrorCode.ErrorCode_NoReply;
+                }
             }
+
+            return ErrorCode.ErrorCode_Unknown;
         }
     }
 }

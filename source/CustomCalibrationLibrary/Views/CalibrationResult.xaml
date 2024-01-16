@@ -10,6 +10,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
       mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
       Focusable="True"
       Loaded="OnLoaded"
       >
@@ -38,6 +39,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="0">
@@ -84,6 +87,16 @@
                                 </TextBlock>
                             </DockPanel>
                         </DockPanel>
+                        <DockPanel HorizontalAlignment="Center" Margin="0,5,0,0">
+                            <DockPanel Margin="0,0,50,0">
+                                <TextBlock Foreground="White" Margin="0,0,5,0">Accuracy Left Eye:</TextBlock>
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
+                            </DockPanel>
+                            <DockPanel>
+                                <TextBlock Foreground="White" Margin="0,0,5,0">Accuracy Right Eye:</TextBlock>
+                                <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding AccuracyRight, StringFormat={}{0:N2}&#186;}" />
+                            </DockPanel>
+                        </DockPanel>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -110,22 +123,65 @@
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
             </Viewbox>
-            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2" Visibility="{Binding AlertVisibility}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10 0" Grid.Column="0">
+                        <Border Padding="20 10" BorderBrush="#f5c6cb" Background="#f8d7da" CornerRadius="1" BorderThickness="0">
+                            <DockPanel>
+                                <TextBlock FontWeight="Bold" Foreground="#721c24">Poor calibration accuracy:</TextBlock>
+                                <TextBlock Margin="4 0 0 0" Foreground="#721c24">Please restart the calibration and try to fixate the appearing dots!</TextBlock>
+                            </DockPanel>
+                        </Border>
+                    </DockPanel>
+                    <DockPanel Margin="10" HorizontalAlignment="Right" Grid.Column="1">
+                        <Button
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Command="{Binding CalibrationRestartCommand}"
+                        >
+                            Restart Calibration (R)
+                        </Button>
+                        <Button
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Margin="10,0,0,0"
+                            Command="{Binding CalibrationAcceptCommand}"
+                        >
+                            Accept Calibration Anyways (SPACE)
+                        </Button>
+                    </DockPanel>
+                </Grid>
+            </Grid>
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="3" Visibility="{Binding SuccessVisibility}">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
-                        ui:ThemeManager.RequestedTheme="Dark"
-                        Command="{Binding CalibrationRestartCommand}"
-                    >
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Command="{Binding CalibrationRestartCommand}"
+                        >
                         Restart Calibration (R)
                     </Button>
                     <Button
-                        ui:ThemeManager.RequestedTheme="Dark"
-                        Margin="10,0,0,0"
-                        Style="{ui:ThemeResource AccentButtonStyle}"
-                        Command="{Binding CalibrationAcceptCommand}"
-                    >
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Margin="10,0,0,0"
+                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Command="{Binding CalibrationAcceptCommand}"
+                        >
                         Accept Calibration (SPACE)
                     </Button>
+                </DockPanel>
+            </Grid>
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="4">
+                <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10" Visibility="{Binding RedoTimerVisibility}">
+                    <Border Padding="20 10" BorderBrush="#ffeeba" Background="#fff3cd" CornerRadius="1" BorderThickness="0">
+                        <DockPanel>
+                            <TextBlock FontWeight="Bold" Foreground="#856404">Poor calibration accuracy:</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#856404">The calibration will automatically restart in a few seconds.</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#856404" Text="{Binding RemainingSec, StringFormat=({0})}"/>
+                        </DockPanel>
+                    </Border>
                 </DockPanel>
             </Grid>
         </Grid>

@@ -7,7 +7,6 @@ using GazeUtilityLibrary.DataStructs;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Windows.Media;
 
 namespace GazeUtilityLibrary
 {
@@ -69,9 +68,24 @@ namespace GazeUtilityLibrary
             if (!ConfigChecker.CheckConfigName(_config!.ConfigName, _logger))
             {
                 _logger.Error($"Bad config name: \"{_config.ConfigName}\"");
-                _error.Error = EGazeConfigError.FallbackToDefaultConfigName;
                 return false;
             }
+
+            if (!ConfigChecker.CheckPointList(_config.CalibrationPoints, _logger))
+            {
+                _logger.Error($"Invalid calibration point list");
+                return false;
+            }
+            _config.CalibrationPoints = ConfigChecker.SanitizePointList(_config.CalibrationPoints, _logger);
+            _logger.Info($"Added {_config.CalibrationPoints.GetLength(0)} calibration points");
+
+            if (!ConfigChecker.CheckPointList(_config.ValidationPoints, _logger))
+            {
+                _logger.Error($"Invalid validation point list");
+                return false;
+            }
+            _config.ValidationPoints = ConfigChecker.SanitizePointList(_config.ValidationPoints, _logger);
+            _logger.Info($"Added {_config.ValidationPoints.GetLength(0)} validation points");
 
             if (!ConfigChecker.CheckColor(_config.BackgroundColor, _logger))
             {
@@ -84,6 +98,7 @@ namespace GazeUtilityLibrary
                 _logger.Warning($"Using background color '#202124' instead");
                 _config.FrameColor = "#202124";
             }
+
 
             return true;
         }
@@ -114,7 +129,7 @@ namespace GazeUtilityLibrary
         /// <returns>The full path string.</returns>
         private string getFileSwFullPath(StreamWriter sw)
         {
-            return ((FileStream)(sw.BaseStream)).Name;
+             return ((FileStream)(sw.BaseStream)).Name;
         }
 
         /// <summary>
@@ -577,6 +592,16 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double[][] CalibrationPoints { get; set; }
+        /// <summary>
+        /// Define the calibration accuracy threshold in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double CalibrationAccuracyThreshold { get; set; }
+        /// <summary>
+        /// The number of automatic retries if the calibration fails due to a missed CalibrationAccuracyThreshold.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int CalibrationRetries { get; set;  }
 
         /// <summary>
         /// In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
@@ -638,6 +663,21 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public int ValidationTimer { get; set; }
+        /// <summary>
+        /// Define the validation accuracy threshold in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double ValidationAccuracyThreshold { get; set; }
+        /// <summary>
+        /// Define the validation precision threshold in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double ValidationPrecisionThreshold { get; set; }
+        /// <summary>
+        /// The number of automatic retries if the validation fails due to a missed ValidationAccuracyThreshold.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int ValidationRetries { get; set; }
 
         /// <summary>
         /// Allows to define the order and the delimiters between the different gaze data values.
@@ -874,19 +914,25 @@ namespace GazeUtilityLibrary
                 $"{{{(int)CalibrationOutputValue.LeftGazePoint2dX}}}," +
                 $"{{{(int)CalibrationOutputValue.LeftGazePoint2dY}}}," +
                 $"{{{(int)CalibrationOutputValue.LeftGazePoint2dIsValid}}}," +
+                $"{{{(int)CalibrationOutputValue.LeftAccuarcy}}}," +
                 $"{{{(int)CalibrationOutputValue.RightGazePoint2dX}}}," +
                 $"{{{(int)CalibrationOutputValue.RightGazePoint2dY}}}," +
-                $"{{{(int)CalibrationOutputValue.RightGazePoint2dIsValid}}}";
+                $"{{{(int)CalibrationOutputValue.RightGazePoint2dIsValid}}}," +
+                $"{{{(int)CalibrationOutputValue.RightAccuarcy}}}";
             CalibrationLogColumnTitle = new string[] {
                 "calibrationPoint_x",
                 "calibrationPoint_y",
                 "left_gazePoint_x",
                 "left_gazePoint_y",
                 "left_gazePoint_isValid",
+                "left_accuracy",
                 "right_gazePoint_x",
                 "right_gazePoint_y",
-                "right_gazePoint_isValid"
+                "right_gazePoint_isValid",
+                "right_accuracy"
             };
+            CalibrationAccuracyThreshold = double.PositiveInfinity;
+            CalibrationRetries = 0;
             ValidationLogColumnOrder =
                 $"{{{(int)ValidationOutputValue.Point2dX}}}," +
                 $"{{{(int)ValidationOutputValue.Point2dY}}}," +
@@ -906,6 +952,9 @@ namespace GazeUtilityLibrary
                 "right_precision",
                 "right_precision_rms"
             };
+            ValidationAccuracyThreshold = double.PositiveInfinity;
+            ValidationPrecisionThreshold = double.PositiveInfinity;
+            ValidationRetries = 0;
             DataLogCount = 200;
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;
@@ -981,13 +1030,21 @@ namespace GazeUtilityLibrary
                     });
 
                     if (item?.DataLogColumnOrder == "")
+                    {
                         item.DataLogColumnOrder = item_default.DataLogColumnOrder;
+                    }
                     if (item?.CalibrationLogColumnOrder == "")
+                    {
                         item.CalibrationLogColumnOrder = item_default.CalibrationLogColumnOrder;
+                    }
                     if (item?.ValidationLogColumnOrder == "")
+                    {
                         item.ValidationLogColumnOrder = item_default.ValidationLogColumnOrder;
+                    }
                     if (item?.DataLogPath == "")
+                    {
                         item.DataLogPath = item_default.DataLogPath;
+                    }
 
                     logger.Info("Successfully parsed the configuration file");
                     sr.Close();

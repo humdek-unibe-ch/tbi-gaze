@@ -6,11 +6,8 @@
 ﻿using CustomCalibrationLibrary.Commands;
 using CustomCalibrationLibrary.Models;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows;
-using WpfScreenHelper.Enum;
 using WpfScreenHelper;
 
 namespace CustomCalibrationLibrary.ViewModels

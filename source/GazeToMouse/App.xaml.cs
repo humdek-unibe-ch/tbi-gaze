@@ -328,10 +328,12 @@ namespace GazeToMouse
                 Current.Shutdown();
             }
             
-            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor);
+            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor,
+                _config.Config.CalibrationAccuracyThreshold, double.PositiveInfinity, _config.Config.CalibrationRetries);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;
             _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
-            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor);
+            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor,
+                _config.Config.ValidationAccuracyThreshold, _config.Config.ValidationPrecisionThreshold, _config.Config.ValidationRetries);
             _validationModel.CalibrationEvent += OnValidationEvent;
             _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
 
@@ -690,7 +692,7 @@ namespace GazeToMouse
                 throw new Exception("Failed to prepare calibration output file");
             }
 
-            _calibrationModel.InitCalibration();
+            _calibrationModel.PrepareCalibration();
             _calibrationModel.Status = CalibrationStatus.DataCollection;
 
             await _tracker.InitCalibrationAsync();
@@ -731,7 +733,7 @@ namespace GazeToMouse
                 throw new Exception("Failed to prepare validation output file");
             }
 
-            _validationModel.InitCalibration();
+            _validationModel.PrepareCalibration();
             _validationModel.Status = CalibrationStatus.DataCollection;
 
             _tracker.InitValidation();
