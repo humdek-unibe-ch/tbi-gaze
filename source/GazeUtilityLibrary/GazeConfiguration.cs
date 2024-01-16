@@ -597,6 +597,11 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public double CalibrationAccuracyThreshold { get; set; }
+        /// <summary>
+        /// The number of automatic retries if the calibration fails due to a missed CalibrationAccuracyThreshold.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int CalibrationRetries { get; set;  }
 
         /// <summary>
         /// In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
@@ -912,6 +917,7 @@ namespace GazeUtilityLibrary
                 "right_accuracy"
             };
             CalibrationAccuracyThreshold = double.PositiveInfinity;
+            CalibrationRetries = 0;
             ValidationLogColumnOrder =
                 $"{{{(int)ValidationOutputValue.Point2dX}}}," +
                 $"{{{(int)ValidationOutputValue.Point2dY}}}," +

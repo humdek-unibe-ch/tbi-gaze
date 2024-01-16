@@ -59,6 +59,9 @@
   // accuracy than the here provided value the participant is asket to restart the calibration.
   "CalibrationAccuracyThreshold": 1.5,
 
+  // Automatic calibration retries due to a missed CalibrationAccuracyThreshold.
+  "CalibrationRetries": 0,
+
   // In order to detect a fixation with the I-DT algorithm a dispersion threshold is required.
   // Provide an angle in degrees. The fixation detection is only used for drift compensation (for
   // calibration and validation the functions provided by the manufacturer are used).

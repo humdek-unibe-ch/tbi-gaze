@@ -48,6 +48,22 @@ namespace CustomCalibrationLibrary.Models
     /// </summary>
     public class CalibrationModel : INotifyPropertyChanged
     {
+        private int _retries;
+        /// <summary>
+        /// The number of automatic calibration retries to perform.
+        /// </summary>
+        public int Retries { get { return _retries; } }
+
+        private int _retryCount;
+        /// <summary>
+        /// The automatic aclibration retry counter.
+        /// </summary>
+        public int RetryCount
+        {
+            get { return _retryCount; }
+            set { _retryCount = value; }
+        }
+
         private double _accuracyThreshold;
         /// <summary>
         /// The accuracy threshold.
@@ -225,12 +241,14 @@ namespace CustomCalibrationLibrary.Models
         /// <param name="backgroundColor">The background color of the canvas</param>
         /// <param name="frameColor">The background color if the user interaction frame</param>
         /// <param name="accuracyThreshold">The accuracy threshold</param>
-        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor, double accuracyThreshold)
+        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor, double accuracyThreshold, int retries)
         {
             _logger = logger;
             _backgroundColor = backgroundColor;
             _frameColor = frameColor;
             _accuracyThreshold = accuracyThreshold;
+            _retries = retries;
+            _retryCount = 0;
 
             _points = new Point[points.Length];
             for (int i = 0; i < points.Length; i++ )
@@ -262,9 +280,9 @@ namespace CustomCalibrationLibrary.Models
         }
 
         /// <summary>
-        /// Initialise the calibration.
+        /// Prepare the calibration window.
         /// </summary>
-        public void InitCalibration()
+        public void PrepareCalibration()
         {
             _index = -1;
             _calibrationPoints.Clear();
