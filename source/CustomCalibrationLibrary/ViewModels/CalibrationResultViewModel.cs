@@ -111,7 +111,7 @@ namespace CustomCalibrationLibrary.ViewModels
             _accuracyLeft = _model.CalibrationAccuracyLeft;
             _accuracyRight = _model.CalibrationAccuracyRight;
 
-            bool isSuccess = _accuracyLeft < _model.AccuracyThreshold || _accuracyRight < _model.AccuracyThreshold;
+            bool isSuccess = _accuracyLeft < _model.AccuracyThreshold && _accuracyRight < _model.AccuracyThreshold;
             bool redo = _model.RetryCount < _model.Retries;
             if (!redo)
             {

@@ -56,7 +56,7 @@
   ],
 
   // Define the calibration accuracy threshold in degrees. If the calibration result has a lower estimated
-  // accuracy than the here provided value the participant is asket to restart the calibration.
+  // accuracy than the here provided value the participant is asked to restart the calibration.
   "CalibrationAccuracyThreshold": 1.5,
 
   // Automatic calibration retries due to a missed CalibrationAccuracyThreshold.
@@ -142,6 +142,17 @@
 
   // Specifies the amount of time (in milliseconds) to wait for a fixation point during validation.
   "ValidationTimer": 3000,
+
+  // Define the validation accuracy threshold in degrees. If the validation result has a lower estimated
+  // accuracy than the here provided value the participant is asked to restart the validation.
+  "ValidationAccuracyThreshold": 1.5,
+
+  // Define the validation precision threshold in degrees. If the validation result has a lower estimated
+  // precision than the here provided value the participant is asked to restart the validation.
+  "ValidationPrecisionThreshold": 1.5,
+
+  // Automatic validation retries due to a missed ValidationAccuracyThreshold or ValidationPrecisionThreshold.
+  "ValidationRetries": 0,
 
   // Allows to define the order and the delimiters between the different gaze data values.
   // The definition is of the form

@@ -10,6 +10,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
       mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
       Focusable="True"
       Loaded="OnLoaded"
       >
@@ -155,7 +156,7 @@
                 </Grid>
             </Grid>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="3" Visibility="{Binding SuccessVisibility}">
-                <DockPanel Margin="10" HorizontalAlignment="Right" Grid.Column="1">
+                <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                             ui:ThemeManager.RequestedTheme="Dark"
                             Command="{Binding CalibrationRestartCommand}"
@@ -173,21 +174,15 @@
                 </DockPanel>
             </Grid>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10 0" Visibility="{Binding RedoTimerVisibility}" Grid.Column="0">
-                        <Border Padding="20 10" BorderBrush="#ffeeba" Background="#fff3cd" CornerRadius="1" BorderThickness="0">
-                            <DockPanel>
-                                <TextBlock FontWeight="Bold" Foreground="#856404">Poor calibration accuracy:</TextBlock>
-                                <TextBlock Margin="4 0 0 0" Foreground="#856404">The calibration will automatically restart in a few seconds.</TextBlock>
-                                <TextBlock Margin="4 0 0 0" Foreground="#856404" Text="{Binding RemainingSec, StringFormat=({0})}"/>
-                            </DockPanel>
-                        </Border>
-                    </DockPanel>
-                </Grid>
+                <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10" Visibility="{Binding RedoTimerVisibility}">
+                    <Border Padding="20 10" BorderBrush="#ffeeba" Background="#fff3cd" CornerRadius="1" BorderThickness="0">
+                        <DockPanel>
+                            <TextBlock FontWeight="Bold" Foreground="#856404">Poor calibration accuracy:</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#856404">The calibration will automatically restart in a few seconds.</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#856404" Text="{Binding RemainingSec, StringFormat=({0})}"/>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
             </Grid>
         </Grid>
         <Grid>

@@ -70,6 +70,12 @@ namespace CustomCalibrationLibrary.Models
         /// </summary>
         public double AccuracyThreshold { get { return _accuracyThreshold; } }
 
+        private double _precisionThreshold;
+        /// <summary>
+        /// The precision threshold.
+        /// </summary>
+        public double PrecisionThreshold { get { return _precisionThreshold; } }
+
         private Color _backgroundColor;
         /// <summary>
         /// The background color of the canvas.
@@ -241,12 +247,16 @@ namespace CustomCalibrationLibrary.Models
         /// <param name="backgroundColor">The background color of the canvas</param>
         /// <param name="frameColor">The background color if the user interaction frame</param>
         /// <param name="accuracyThreshold">The accuracy threshold</param>
-        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor, double accuracyThreshold, int retries)
+        /// <param name="precisionThreshold">The precision threshold</param>
+        /// <param name="retries">The number of automatic retries</param>
+        public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor,
+            double accuracyThreshold, double precisionThreshold, int retries)
         {
             _logger = logger;
             _backgroundColor = backgroundColor;
             _frameColor = frameColor;
             _accuracyThreshold = accuracyThreshold;
+            _precisionThreshold = precisionThreshold;
             _retries = retries;
             _retryCount = 0;
 

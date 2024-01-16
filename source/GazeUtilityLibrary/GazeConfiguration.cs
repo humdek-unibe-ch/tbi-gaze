@@ -663,6 +663,21 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public int ValidationTimer { get; set; }
+        /// <summary>
+        /// Define the validation accuracy threshold in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double ValidationAccuracyThreshold { get; set; }
+        /// <summary>
+        /// Define the validation precision threshold in degrees.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public double ValidationPrecisionThreshold { get; set; }
+        /// <summary>
+        /// The number of automatic retries if the validation fails due to a missed ValidationAccuracyThreshold.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int ValidationRetries { get; set; }
 
         /// <summary>
         /// Allows to define the order and the delimiters between the different gaze data values.
@@ -937,6 +952,9 @@ namespace GazeUtilityLibrary
                 "right_precision",
                 "right_precision_rms"
             };
+            ValidationAccuracyThreshold = double.PositiveInfinity;
+            ValidationPrecisionThreshold = double.PositiveInfinity;
+            ValidationRetries = 0;
             DataLogCount = 200;
             DataLogPath = Directory.GetCurrentDirectory();
             DataLogWriteOutput = true;

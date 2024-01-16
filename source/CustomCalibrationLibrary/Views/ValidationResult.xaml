@@ -34,6 +34,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Background="{StaticResource FrameBackground}">
                 <StackPanel Margin="10" HorizontalAlignment="Center">
@@ -92,7 +94,39 @@
                     </DockPanel>
                 </StackPanel>
             </DockPanel>
-            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="2" Visibility="{Binding AlertVisibility}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10 0" Grid.Column="0">
+                        <Border Padding="20 10" BorderBrush="#f5c6cb" Background="#f8d7da" CornerRadius="1" BorderThickness="0">
+                            <DockPanel>
+                                <TextBlock FontWeight="Bold" Foreground="#721c24">Poor validation quality:</TextBlock>
+                                <TextBlock Margin="4 0 0 0" Foreground="#721c24">Please restart the validation and try to fixate the appearing dots!</TextBlock>
+                            </DockPanel>
+                        </Border>
+                    </DockPanel>
+                    <DockPanel Margin="10" HorizontalAlignment="Right" Grid.Column="1">
+                        <Button
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Command="{Binding ValidationRestartCommand}"
+                        >
+                            Restart Validation (R)
+                        </Button>
+                        <Button
+                            ui:ThemeManager.RequestedTheme="Dark"
+                            Margin="10,0,0,0"
+                            Command="{Binding ValidationCloseCommand}"
+                        >
+                            Close (SPACE)
+                        </Button>
+                    </DockPanel>
+                </Grid>
+            </Grid>
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="3" Visibility="{Binding SuccessVisibility}">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
                         ui:ThemeManager.RequestedTheme="Dark"
@@ -108,6 +142,17 @@
                     >
                         Close (SPACE)
                     </Button>
+                </DockPanel>
+            </Grid>
+            <Grid Background="{StaticResource FrameBackground}" Grid.Row="4">
+                <DockPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"  Margin="10" Visibility="{Binding RedoTimerVisibility}">
+                    <Border Padding="20 10" BorderBrush="#ffeeba" Background="#fff3cd" CornerRadius="1" BorderThickness="0">
+                        <DockPanel>
+                            <TextBlock FontWeight="Bold" Foreground="#856404">Poor validation quality:</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#856404">The validation will automatically restart in a few seconds.</TextBlock>
+                            <TextBlock Margin="4 0 0 0" Foreground="#856404" Text="{Binding RemainingSec, StringFormat=({0})}"/>
+                        </DockPanel>
+                    </Border>
                 </DockPanel>
             </Grid>
         </Grid>
