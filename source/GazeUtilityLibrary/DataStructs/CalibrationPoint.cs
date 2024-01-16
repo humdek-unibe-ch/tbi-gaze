@@ -35,6 +35,16 @@ namespace GazeUtilityLibrary.DataStructs
             set { _hasData = value; OnPropertyChanged(); }
         }
 
+        private bool _hasFailed;
+        /// <summary>
+        /// Flag to indicate whether data has been collected for this calibration point.
+        /// </summary>
+        public bool HasFailed
+        {
+            get { return _hasFailed; }
+            set { _hasFailed = value; OnPropertyChanged(); }
+        }
+
         private Point _position;
         /// <summary>
         /// The position of the calibration point.
@@ -92,6 +102,7 @@ namespace GazeUtilityLibrary.DataStructs
         public CalibrationPoint(Point position, int index)
         {
             HasData = false;
+            HasFailed = false;
             Position = position;
             _index = index;
         }

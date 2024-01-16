@@ -29,6 +29,8 @@ namespace CustomCalibrationLibrary.ViewModels
             GazePositionAverage = point.GazePositionAverage;
             GazePositionLeft = point.GazePositionLeft;
             GazePositionRight = point.GazePositionRight;
+            HasData = point.HasData;
+            HasFailed = point.HasFailed;
         }
 
     }
