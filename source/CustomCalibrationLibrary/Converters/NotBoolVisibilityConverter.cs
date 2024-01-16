@@ -12,7 +12,7 @@ namespace CustomCalibrationLibrary.Converters
     /// <summary>
     /// Converts True to Hidden and False to Visible
     /// </summary>
-    public class HasDataToVisibilityConverter: IValueConverter
+    public class NotBoolVisibilityConverter: IValueConverter
     {
         /// <summary>
         /// Value converter.
@@ -29,7 +29,7 @@ namespace CustomCalibrationLibrary.Converters
             if (targetType != typeof(Visibility))
                 throw new InvalidOperationException("The target must be of type visibility");
 
-            return (bool)value ? Visibility.Hidden : Visibility.Visible;
+            return (bool)value ? Visibility.Collapsed : Visibility.Visible;
         }
 
         /// <summary>

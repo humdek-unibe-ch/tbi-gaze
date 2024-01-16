@@ -12,6 +12,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converter:PositionConverter x:Key="PositionConverter" />
+            <converter:NotBoolVisibilityConverter x:Key="HasFailedToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Templates/CalibrationPoint.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Styles/GazePoints.xaml" />
@@ -27,7 +28,7 @@
                 />
             </ContentControl.RenderTransform>
         </ContentControl>
-        <Grid>
+        <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
             <Ellipse
                 Style="{StaticResource AverageGazePoint}"
             />
@@ -38,7 +39,7 @@
                 />
             </Grid.RenderTransform>
         </Grid>
-        <Grid>
+        <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
             <Ellipse
                 Style="{StaticResource LeftGazePoint}"
             />
@@ -49,7 +50,7 @@
                 />
             </Grid.RenderTransform>
         </Grid>
-        <Grid>
+        <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
             <Ellipse
                 Style="{StaticResource RightGazePoint}"
             />

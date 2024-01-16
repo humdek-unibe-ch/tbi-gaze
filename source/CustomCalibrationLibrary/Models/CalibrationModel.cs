@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -325,6 +326,14 @@ namespace CustomCalibrationLibrary.Models
         }
 
         /// <summary>
+        /// Annotate calibration point as failed point.
+        /// </summary>
+        public void GazeDataCollectionFailed()
+        {
+            CalibrationPoints[Index].HasFailed = true;
+        }
+
+        /// <summary>
         /// Updates the calibration results on the screen.
         /// </summary>
         /// <param name="points"></param>
@@ -348,9 +357,11 @@ namespace CustomCalibrationLibrary.Models
                 }
                 double xAvg = (points[i].XCoordLeft + points[i].XCoordRight) / 2;
                 double yAvg = (points[i].YCoordLeft + points[i].YCoordRight) / 2;
-                CalibrationPoints[i].GazePositionAverage = new Point(xAvg, yAvg);
-                CalibrationPoints[i].GazePositionLeft = new Point(points[i].XCoordLeft, points[i].YCoordLeft);
-                CalibrationPoints[i].GazePositionRight = new Point(points[i].XCoordRight, points[i].YCoordRight);
+                CalibrationPoint point = CalibrationPoints.Where(p =>
+                        Math.Abs(p.Position.X - points[i].XCoord) < 0.00001 && Math.Abs(p.Position.Y - points[i].YCoord) < 0.00001).First();
+                point.GazePositionAverage = new Point(xAvg, yAvg);
+                point.GazePositionLeft = new Point(points[i].XCoordLeft, points[i].YCoordLeft);
+                point.GazePositionRight = new Point(points[i].XCoordRight, points[i].YCoordRight);
                 _logger.Debug($"Calibration at [{points[i].XCoord}, {points[i].YCoord}]: [{points[i].XCoordLeft}, {points[i].YCoordLeft}], [{xAvg}, {yAvg}], [{points[i].XCoordRight}, {points[i].YCoordRight}]");
             }
 
