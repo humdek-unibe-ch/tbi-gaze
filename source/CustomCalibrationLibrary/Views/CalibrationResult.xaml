@@ -129,14 +129,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Line
-                                    X1="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                    Y1="{Binding Position.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                                    X2="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                    Y2="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                                    Stroke="White"
-                                    StrokeThickness="0.2"
-                                />
+                                <uc:CalibrationResultLine />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

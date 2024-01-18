@@ -1,0 +1,45 @@
+﻿<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+<UserControl x:Class="CustomCalibrationLibrary.Views.CalibrationResultLine"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CustomCalibrationLibrary.Views"
+             xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converter:PositionConverter x:Key="PositionConverter" />
+            <converter:NotBoolVisibilityConverter x:Key="HasFailedToVisibilityConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
+        <Line
+            X1="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+            Y1="{Binding Position.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            X2="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+            Y2="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            Stroke="White"
+            StrokeThickness="0.2"
+        />
+        <Line
+            X1="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+            Y1="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            X2="{Binding GazePositionLeft.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+            Y2="{Binding GazePositionLeft.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            Stroke="Yellow"
+            StrokeThickness="0.2"
+        />
+        <Line
+            X1="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+            Y1="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            X2="{Binding GazePositionRight.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+            Y2="{Binding GazePositionRight.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+            Stroke="RoyalBlue"
+            StrokeThickness="0.2"
+        />
+    </Grid>
+</UserControl>

@@ -26,7 +26,7 @@
         </Path>
     </ControlTemplate>
     <ControlTemplate x:Key="GazePointRight">
-        <Path Fill="Blue">
+        <Path Fill="RoyalBlue">
             <Path.Data>
                 <EllipseGeometry RadiusX="4" RadiusY="4"/>
             </Path.Data>
