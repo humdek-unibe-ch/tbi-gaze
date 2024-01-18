@@ -23,7 +23,7 @@
             X2="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
             Y2="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
             Stroke="White"
-            StrokeThickness="0.2"
+            StrokeThickness="0.3"
         />
         <Line
             X1="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
@@ -31,7 +31,7 @@
             X2="{Binding GazePositionLeft.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
             Y2="{Binding GazePositionLeft.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
             Stroke="Yellow"
-            StrokeThickness="0.2"
+            StrokeThickness="0.3"
         />
         <Line
             X1="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
@@ -39,7 +39,7 @@
             X2="{Binding GazePositionRight.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
             Y2="{Binding GazePositionRight.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
             Stroke="RoyalBlue"
-            StrokeThickness="0.2"
+            StrokeThickness="0.3"
         />
     </Grid>
 </UserControl>

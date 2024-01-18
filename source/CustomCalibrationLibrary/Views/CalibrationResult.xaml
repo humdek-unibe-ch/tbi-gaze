@@ -9,6 +9,7 @@
       xmlns:uc="clr-namespace:CustomCalibrationLibrary.Views"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
+      xmlns:extension="clr-namespace:CustomCalibrationLibrary.Extensions"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="1800"
       Focusable="True"
@@ -56,7 +57,7 @@
                         </TextBlock>
                         <DockPanel>
                             <DockPanel>
-                                <ContentControl Template="{StaticResource CalibrationPoint}">
+                                <ContentControl Template="{StaticResource CalibrationPoint}" extension:BrushExtension.Brush="White">
                                     <ContentControl.RenderTransform>
                                         <TranslateTransform X="8" Y="8" />
                                     </ContentControl.RenderTransform>

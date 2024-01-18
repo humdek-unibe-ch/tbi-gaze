@@ -5,6 +5,7 @@
  */
 ﻿using GazeUtilityLibrary.DataStructs;
 using System.Windows;
+using System.Windows.Media;
 
 namespace CustomCalibrationLibrary.ViewModels
 {
@@ -13,6 +14,11 @@ namespace CustomCalibrationLibrary.ViewModels
     /// </summary>
     class CalibrationPointViewModel : CalibrationPoint
     {
+        /// <summary>
+        /// The color of the calibration point.
+        /// </summary>
+        public Brush PointColor { get { return HasFailed ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.White); } }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CalibrationPointViewModel"/> class.
         /// </summary>

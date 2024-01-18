@@ -7,6 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
+             xmlns:extension="clr-namespace:CustomCalibrationLibrary.Extensions"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -18,7 +19,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ContentControl Template="{StaticResource CalibrationPoint}" />
+        <ContentControl Template="{StaticResource CalibrationPoint}" extension:BrushExtension.Brush="{Binding PointColor}"/>
         <ContentControl Template="{StaticResource GazePointAverage}" Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
             <ContentControl.RenderTransform>
                 <TranslateTransform
