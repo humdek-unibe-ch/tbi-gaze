@@ -262,11 +262,12 @@ namespace GazeUtilityLibrary.Tracker
                 return false;
             }
 
-            // make sure, the handler is no longer modifying the lists
-            List<Point3D> lo = leftOrigins.ToList();
-            List<Point3D> ro = rightOrigins.ToList();
-            if (lo.Count > 0 && ro.Count > 0)
+            if (leftOrigins.Count > 0 && rightOrigins.Count > 0)
             {
+                // make sure, the handler is no longer modifying the lists
+                List<Point3D> lo = leftOrigins.ToList();
+                List<Point3D> ro = rightOrigins.ToList();
+
                 Point3D leftOrigin = new Point3D(lo.Average(v => v.X), lo.Average(v => v.Y), lo.Average(v => v.Z));
                 Point3D rightOrigin = new Point3D(ro.Average(v => v.X), ro.Average(v => v.Y), ro.Average(v => v.Z));
                 _calibrationOriginPoints.Add(new CalibrationOrigin(leftOrigin, rightOrigin, normalizedPoint));
