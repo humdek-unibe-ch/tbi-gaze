@@ -13,10 +13,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="butterfly.ico" />
+    <None Remove="notify.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="butterfly.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.0.124" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 
