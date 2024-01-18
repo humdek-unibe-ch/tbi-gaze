@@ -843,9 +843,9 @@ namespace GazeToMouse
                     goto case CalibrationEventType.Start;
                 case CalibrationEventType.Start:
                     _calibrationModel.Error = "No Error";
-                    await Calibrate();
                     try
                     {
+                        await Calibrate();
                     }
                     catch (Exception ex)
                     {

@@ -7,59 +7,47 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
             <converter:PositionConverter x:Key="PositionConverter" />
             <converter:NotBoolVisibilityConverter x:Key="HasFailedToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Templates/CalibrationPoint.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/CustomCalibrationLibrary;component/Styles/GazePoints.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
-        <ContentControl Template="{StaticResource CalibrationPoint}">
+        <ContentControl Template="{StaticResource CalibrationPoint}" />
+        <ContentControl Template="{StaticResource GazePointAverage}" Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
             <ContentControl.RenderTransform>
                 <TranslateTransform
-                    X="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                    Y="{Binding Position.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                    X="{Binding GazePositionAverageDelta.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                    Y="{Binding GazePositionAverageDelta.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
             </ContentControl.RenderTransform>
         </ContentControl>
-        <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
-            <Ellipse
-                Style="{StaticResource AverageGazePoint}"
-            />
-            <Grid.RenderTransform>
+        <ContentControl Template="{StaticResource GazePointLeft}" Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
+            <ContentControl.RenderTransform>
                 <TranslateTransform
-                    X="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                    Y="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                    X="{Binding GazePositionLeftDelta.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                    Y="{Binding GazePositionLeftDelta.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
-            </Grid.RenderTransform>
-        </Grid>
-        <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
-            <Ellipse
-                Style="{StaticResource LeftGazePoint}"
-            />
-            <Grid.RenderTransform>
+            </ContentControl.RenderTransform>
+        </ContentControl>
+        <ContentControl Template="{StaticResource GazePointRight}" Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
+            <ContentControl.RenderTransform>
                 <TranslateTransform
-                    X="{Binding GazePositionLeft.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                    Y="{Binding GazePositionLeft.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                    X="{Binding GazePositionRightDelta.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                    Y="{Binding GazePositionRightDelta.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                 />
-            </Grid.RenderTransform>
-        </Grid>
-        <Grid Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
-            <Ellipse
-                Style="{StaticResource RightGazePoint}"
+            </ContentControl.RenderTransform>
+        </ContentControl>
+        <Grid.RenderTransform>
+            <TranslateTransform
+                X="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                Y="{Binding Position.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
             />
-            <Grid.RenderTransform>
-                <TranslateTransform
-                    X="{Binding GazePositionRight.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                    Y="{Binding GazePositionRight.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                />
-            </Grid.RenderTransform>
-        </Grid>
+        </Grid.RenderTransform>
     </Grid>
 </UserControl>

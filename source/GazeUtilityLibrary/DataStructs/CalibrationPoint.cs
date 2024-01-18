@@ -65,6 +65,11 @@ namespace GazeUtilityLibrary.DataStructs
             set { _gazePositionAverage = value; OnPropertyChanged(); }
         }
 
+        public Point GazePositionAverageDelta
+        {
+            get { return (Point)(_gazePositionAverage - _position); }
+        }
+
         private Point _gazePositionLeft;
         /// <summary>
         /// The left gaze point.
@@ -75,6 +80,11 @@ namespace GazeUtilityLibrary.DataStructs
             set { _gazePositionLeft = value; OnPropertyChanged(); }
         }
 
+        public Point GazePositionLeftDelta
+        {
+            get { return (Point)(_gazePositionLeft - _position); }
+        }
+
         private Point _gazePositionRight;
         /// <summary>
         /// The right gaze point.
@@ -83,6 +93,11 @@ namespace GazeUtilityLibrary.DataStructs
         {
             get { return _gazePositionRight; }
             set { _gazePositionRight = value; OnPropertyChanged(); }
+        }
+
+        public Point GazePositionRightDelta
+        {
+            get { return (Point)(_gazePositionRight - _position); }
         }
 
         /// <summary>

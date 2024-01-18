@@ -7,8 +7,36 @@
         <Grid
             Height="20"
             Width="20">
-            <Line X1="0" Y1="10" X2="20" Y2="10" Stroke="White" />
-            <Line X1="10" Y1="0" X2="10" Y2="20" Stroke="White" />
+            <Line X1="-10" Y1="0" X2="10" Y2="0" Stroke="White" />
+            <Line X1="0" Y1="-10" X2="0" Y2="10" Stroke="White" />
         </Grid>
+    </ControlTemplate>
+    <ControlTemplate x:Key="GazePointAverage">
+        <Path Stroke="White" StrokeDashArray="1, 1.95">
+            <Path.Data>
+                <EllipseGeometry RadiusX="8" RadiusY="8"/>
+            </Path.Data>
+        </Path>
+    </ControlTemplate>
+    <ControlTemplate x:Key="GazePointLeft">
+        <Path Fill="Yellow">
+            <Path.Data>
+                <EllipseGeometry RadiusX="4" RadiusY="4"/>
+            </Path.Data>
+        </Path>
+    </ControlTemplate>
+    <ControlTemplate x:Key="GazePointRight">
+        <Path Fill="Blue">
+            <Path.Data>
+                <EllipseGeometry RadiusX="4" RadiusY="4"/>
+            </Path.Data>
+        </Path>
+    </ControlTemplate>
+    <ControlTemplate x:Key="GazePointLive">
+        <Path Stroke="Green" StrokeDashArray="1, 2" StrokeThickness="2">
+            <Path.Data>
+                <EllipseGeometry RadiusX="10.5" RadiusY="10.5"/>
+            </Path.Data>
+        </Path>
     </ControlTemplate>
 </ResourceDictionary>

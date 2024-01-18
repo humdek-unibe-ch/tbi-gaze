@@ -32,6 +32,5 @@ namespace CustomCalibrationLibrary.ViewModels
             HasData = point.HasData;
             HasFailed = point.HasFailed;
         }
-
     }
 }

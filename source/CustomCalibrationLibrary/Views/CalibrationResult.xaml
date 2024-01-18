@@ -10,7 +10,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="1800"
       Focusable="True"
       Loaded="OnLoaded"
       >
@@ -24,7 +24,6 @@
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="../Templates/CalibrationPoint.xaml" />
-                <ResourceDictionary Source="../Styles/GazePoints.xaml" />
                 <ui:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -57,31 +56,51 @@
                         </TextBlock>
                         <DockPanel>
                             <DockPanel>
-                                <ContentControl Template="{StaticResource CalibrationPoint}" />
+                                <ContentControl Template="{StaticResource CalibrationPoint}">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform X="8" Y="8" />
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
                                 <TextBlock Foreground="White" Margin="5,0,0,0">
                                 Calibration Point
                                 </TextBlock>
                             </DockPanel>
-                            <DockPanel Margin="15,0,0,0">
-                                <Ellipse Style="{StaticResource AverageGazePoint}" />
+                            <DockPanel Margin="20,0,0,0">
+                                <ContentControl Template="{StaticResource GazePointAverage}">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform Y="8" />
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
                                 <TextBlock Foreground="White" Margin="5,0,0,0">
                                 Average Result
                                 </TextBlock>
                             </DockPanel>
                             <DockPanel Margin="15,0,0,0">
-                                <Ellipse Style="{StaticResource LeftGazePoint}" />
+                                <ContentControl Template="{StaticResource GazePointLeft}">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform Y="8" />
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
                                 <TextBlock Foreground="White" Margin="5,0,0,0">
                                 Left Eye
                                 </TextBlock>
                             </DockPanel>
                             <DockPanel Margin="15,0,0,0">
-                                <Ellipse Style="{StaticResource RightGazePoint}" />
+                                <ContentControl Template="{StaticResource GazePointRight}">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform Y="8" />
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
                                 <TextBlock Foreground="White" Margin="5,0,0,0">
                                 Right Eye
                                 </TextBlock>
                             </DockPanel>
-                            <DockPanel Margin="15,0,0,0" Visibility="{Binding GazePoint.Visibility, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                <Ellipse Style="{StaticResource LiveGazePoint}" />
+                            <DockPanel Margin="25,0,0,0" Visibility="{Binding GazePoint.Visibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ContentControl Template="{StaticResource GazePointLive}">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform Y="8" />
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
                                 <TextBlock Foreground="White" Margin="5,0,0,0">
                                 Gaze
                                 </TextBlock>
@@ -101,27 +120,39 @@
                 </Grid>
             </Grid>
             <Viewbox Stretch="Uniform" Grid.Row="1">
-                <ItemsControl ItemsSource="{Binding CalibrationPoints}" Grid.Row="1">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <uc:CalibrationResultPoint />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="RenderTransform">
-                                <Setter.Value>
-                                    <TranslateTransform X="-10" Y="-10" />
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                </ItemsControl>
+                <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
+                    <ItemsControl ItemsSource="{Binding CalibrationPoints}" Grid.Row="1">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Line
+                                    X1="{Binding Position.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                    Y1="{Binding Position.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                                    X2="{Binding GazePositionAverage.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                    Y2="{Binding GazePositionAverage.Y, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                                    Stroke="White"
+                                    StrokeThickness="0.2"
+                                />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl ItemsSource="{Binding CalibrationPoints}" Grid.Row="1">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <uc:CalibrationResultPoint />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Canvas>
             </Viewbox>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="2" Visibility="{Binding AlertVisibility}">
                 <Grid>
@@ -186,11 +217,9 @@
             </Grid>
         </Grid>
         <Grid>
-            <Ellipse
+            <ContentControl
                 Visibility="{Binding GazePoint.Visibility, Converter={StaticResource BooleanToVisibilityConverter}}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Style="{StaticResource LiveGazePoint}"
+                Template="{StaticResource GazePointLive}"
             />
             <Grid.RenderTransform>
                 <TranslateTransform
