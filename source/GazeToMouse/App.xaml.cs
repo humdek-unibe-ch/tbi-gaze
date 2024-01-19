@@ -25,6 +25,7 @@ using System.Linq;
 using System.Diagnostics;
 using GazeControlLibrary;
 using System.Windows.Media;
+using H.NotifyIcon;
 
 namespace GazeToMouse
 {
@@ -33,6 +34,7 @@ namespace GazeToMouse
     /// </summary>
     public partial class App : Application
     {
+        private TaskbarIcon? _notifyIcon;
         private object _lock = new object();
         private TimeSpan _startTime;
         /// <summary>
@@ -66,7 +68,7 @@ namespace GazeToMouse
         private bool _isCalibrationOn = false;
         private bool _isValidationOn = false;
         private Dispatcher _dispatcher;
-        private Dispatcher CustomDispatcher { get { return _dispatcher; } }
+        public Dispatcher CustomDispatcher { get { return _dispatcher; } }
         private TaskCompletionSource<bool> _processCompletion = new TaskCompletionSource<bool>();
         private DriftCompensationWindow? _fixationWindow = null;
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
@@ -458,6 +460,7 @@ namespace GazeToMouse
             _tracker?.Dispose();
             _config?.CleanupGazeOutputFile(_gazeError.GetGazeDataErrorString());
             _logger?.Info($"\"{AppDomain.CurrentDomain.BaseDirectory}Gaze.exe\" terminated gracefully{Environment.NewLine}");
+            _notifyIcon?.Dispose();
         }
 
         /// <summary>
@@ -795,6 +798,10 @@ namespace GazeToMouse
             {
                 Current.Shutdown();
             }
+
+            _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            _notifyIcon.ForceCreate();
+            _notifyIcon.DataContext = new NotifyIconViewModel(this);
 
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}Gaze.exe\" {String.Join(" ", e.Args)}");
             _logger.Info($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
