@@ -1,5 +1,45 @@
 # Changelog
 
+## v3.5.0
+### New Features
+- Allow to configure the `BackgroundColor` and the `FrameColor` of the windows (#8).
+- Calibration accuracy
+    - Estimate the calibration accuracy by capturing gaze data during the calibration
+	  process and associating the captured data to the calibration result.
+    - Add the calibration accuracy values to the calibration data output (#6).
+    - Show an alert in the calibration result view if the calibration accuracy is poor.
+      The threshold can be configured with `CalibrationAccuracyThreshold` (#6).
+    - Allow to configure automatic calibration restart with the configuration item
+      `CalibrationRetries` (#6).
+- Validation accuracy and precision
+    - Show an alert in the validation result view if the validation accuracy or precision
+      is poor. The thresholds can be configured with `ValidationAccuracyThreshold` and
+      `ValidationPrecisionThreshold`, respecvely (#6).
+    - Allow to configure automatic validation restart with the configuration item
+      `ValidationRetries` (#6).
+- Improve calibration result view:
+	- Don't display gaze points for failed calibration points.
+	- Color failed calibration points red in calibration result view.
+	- Draw fine lines from gaze points to the corresponding calibration points to allow
+	  for an easy association.
+- Add a systray icon. This allows to control the application without having to use the
+  `GazeControl` application.
+
+### Improvements
+- Place log files in folder `log` (#2).
+- Add log entries for pipe server (#3).
+- Skip failed calibration point and continue calibration.
+- Check and sanitize calibration and validation points to avoid setting the same point
+  multiple times.
+
+### Changes
+- Changes to the calibration output. This requires a new value for the configuration
+  items `CalibrationLogColumnTitle` and (optionally) `CalibrationLogColumnOrder`.
+
+### Bug Fixes
+- Fix keyboard focus when a window is opened (#11).
+- Fix validation data output (y values of the validation points).
+
 ## v3.4.2
 ### Improvements
 - Seperate pipe command handler funtionality to `NamedPipeClient` class and move
