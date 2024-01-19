@@ -15,6 +15,7 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
+            <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
@@ -63,7 +64,7 @@
                 </TextBlock>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" Background="{StaticResource FrameBackground}">
+        <Grid Grid.Row="1" Background="{StaticResource CanvasBackground}">
             <ItemsControl ItemsSource="{Binding Monitors}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

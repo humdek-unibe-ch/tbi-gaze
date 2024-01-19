@@ -18,7 +18,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
-            <converter:PositionConverter x:Key="PositionConverterOffset" Offset="100"/>
+            <converter:PositionConverter x:Key="PositionConverter" />
             <converter:ProximityColorConverter x:Key="ProximityColorConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
@@ -48,36 +48,34 @@
         </Grid>
         <Viewbox Stretch="Uniform" Grid.Row="1">
             <Canvas Background="{StaticResource CanvasBackground}" Height="{x:Static SystemParameters.PrimaryScreenHeight}" Width="{x:Static SystemParameters.PrimaryScreenWidth}">
-                <Ellipse
-                    Height="200"
-                    Width="200"
-                    Fill="{Binding UserPosition.ZCoordLeft, Converter={StaticResource ProximityColorConverter}}"
-                >
-                    <Ellipse.RenderTransform>
+                <Path Fill="{Binding UserPosition.ZCoordLeft, Converter={StaticResource ProximityColorConverter}}">
+                    <Path.Data>
+                        <EllipseGeometry RadiusX="100" RadiusY="100"/>
+                    </Path.Data>
+                    <Path.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding UserPosition.ZCoordLeft}" ScaleY="{Binding UserPosition.ZCoordLeft}" />
                             <TranslateTransform
-                                X="{Binding UserPosition.XCoordLeft, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                                Y="{Binding UserPosition.YCoordLeft, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                                X="{Binding UserPosition.XCoordLeft, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding UserPosition.YCoordLeft, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
                             />
                         </TransformGroup>
-                    </Ellipse.RenderTransform>
-                </Ellipse>
-                <Ellipse
-                    Fill="{Binding UserPosition.ZCoordRight, Converter={StaticResource ProximityColorConverter}}"
-                    Height="200"
-                    Width="200"
-                >
-                    <Ellipse.RenderTransform>
+                    </Path.RenderTransform>
+                </Path>
+                <Path Fill="{Binding UserPosition.ZCoordRight, Converter={StaticResource ProximityColorConverter}}">
+                    <Path.Data>
+                        <EllipseGeometry RadiusX="100" RadiusY="100"/>
+                    </Path.Data>
+                    <Path.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform ScaleX="{Binding UserPosition.ZCoordRight}" ScaleY="{Binding UserPosition.ZCoordRight}" />
                             <TranslateTransform
-                            X="{Binding UserPosition.XCoordRight, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
-                            Y="{Binding UserPosition.YCoordRight, Converter={StaticResource PositionConverterOffset}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
-                        />
+                                X="{Binding UserPosition.XCoordRight, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"
+                                Y="{Binding UserPosition.YCoordRight, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenHeight}}"
+                            />
                         </TransformGroup>
-                    </Ellipse.RenderTransform>
-                </Ellipse>
+                    </Path.RenderTransform>
+                </Path>
             </Canvas>
         </Viewbox>
         <Grid Grid.Row="2" Background="{StaticResource FrameBackground}">
