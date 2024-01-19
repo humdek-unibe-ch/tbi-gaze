@@ -58,6 +58,7 @@ namespace GazeUtilityLibrary
             _deviationAngleMax = dispersionThreasholdMax;
             _fixationPoint = fixationPoint;
             _fixationFrameCount = fixationFrameCount;
+            _deviationAngle = 0;
         }
 
         /// <summary>
@@ -67,6 +68,7 @@ namespace GazeUtilityLibrary
         {
             _samples.Clear();
             _q = Quaternion.Identity;
+            _deviationAngle = 0;
         }
 
         /// <summary>
@@ -129,11 +131,13 @@ namespace GazeUtilityLibrary
             Vector3 cDir = Vector3.Normalize(_fixationPoint - oAvg);
 
             float dot = Vector3.Dot(gDir, cDir);
-            _deviationAngle = Math.Acos(dot) / (gDir.Length() * cDir.Length()) * 180 / Math.PI;
-            if (_deviationAngle > _deviationAngleMax)
+            double deviationAngle = Math.Acos(dot) / (gDir.Length() * cDir.Length()) * 180 / Math.PI;
+            if (deviationAngle > _deviationAngleMax)
             {
                 return false;
             }
+
+            _deviationAngle = deviationAngle;
             _q = CreateQuaternionFromVectors(gDir, cDir);
 
             return true;

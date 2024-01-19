@@ -186,6 +186,15 @@ namespace GazeToMouse
         }
 
         /// <summary>
+        /// Get the drift deviation angle of the tracker.
+        /// </summary>
+        /// <returns>The drift deviation angle.</returns>
+        public double GetDriftDeviationAngle()
+        {
+            return _tracker?.DriftDeviationAngle ?? 0;
+        }
+
+        /// <summary>
         /// Start the drift compensation process
         /// </summary>
         /// <returns>True on success, false on failure</returns>

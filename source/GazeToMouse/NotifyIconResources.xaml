@@ -18,8 +18,13 @@
             Command="{Binding StartValidationCommand}"
         />
         <MenuItem
-           Header="Start Drift Compensation"
-           Command="{Binding StartDriftCompensationCommand}"
+            Header="Start Drift Compensation"
+            Command="{Binding StartDriftCompensationCommand}"
+        />
+        <MenuItem
+            Header="{Binding DriftDeviationAngle}"
+            HeaderStringFormat="Reset Drift Compensation ({0:N2}&#186;)"
+            Command="{Binding ResetDriftCompensationCommand}"
         />
         <Separator />
         <MenuItem
@@ -36,5 +41,7 @@
         NoLeftClickDelay="True"
         ContextMenu="{StaticResource SysTrayMenu}"
         MenuActivation="LeftOrRightClick"
+        LeftClickCommand="{Binding UpdateDriftDeviationAngleCommand}"
+        RightClickCommand="{Binding UpdateDriftDeviationAngleCommand}"
     />
 </ResourceDictionary>

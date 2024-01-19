@@ -57,6 +57,10 @@ namespace GazeUtilityLibrary.Tracker
         /// </summary>
         protected DriftCompensation? driftCompensation;
         /// <summary>
+        /// The deviation angle of the drift compensation.
+        /// </summary>
+        public double DriftDeviationAngle { get { return driftCompensation?.DeviationAngle ?? 0; } }
+        /// <summary>
         /// The scrren area structure holding the metrics of the screen in 3d space.
         /// </summary>
         protected ScreenArea? screenArea = null;
