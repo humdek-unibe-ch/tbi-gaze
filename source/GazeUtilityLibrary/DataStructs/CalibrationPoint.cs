@@ -65,6 +65,9 @@ namespace GazeUtilityLibrary.DataStructs
             set { _gazePositionAverage = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// The delta from the calibration point of the average between the left and the right gaze point.
+        /// </summary>
         public Point GazePositionAverageDelta
         {
             get { return (Point)(_gazePositionAverage - _position); }
@@ -80,6 +83,9 @@ namespace GazeUtilityLibrary.DataStructs
             set { _gazePositionLeft = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// The delta from the calibration point of the left gaze point.
+        /// </summary>
         public Point GazePositionLeftDelta
         {
             get { return (Point)(_gazePositionLeft - _position); }
@@ -95,6 +101,9 @@ namespace GazeUtilityLibrary.DataStructs
             set { _gazePositionRight = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// The delta from the calibration point of the right gaze point.
+        /// </summary>
         public Point GazePositionRightDelta
         {
             get { return (Point)(_gazePositionRight - _position); }

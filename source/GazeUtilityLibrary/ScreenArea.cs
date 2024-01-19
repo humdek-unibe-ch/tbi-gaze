@@ -154,7 +154,7 @@ namespace GazeUtilityLibrary
         /// <summary>
         /// Get the 3d point on the sreen plane given a 2d point on the screen.
         /// </summary>
-        /// <param name="point">A normalized 2d point on the screen to convert.</param>
+        /// <param name="point2d">A normalized 2d point on the screen to convert.</param>
         /// <returns>The 3d point on the screen plane</returns>
         public Vector3 GetPoint3d(Vector2 point2d)
         {

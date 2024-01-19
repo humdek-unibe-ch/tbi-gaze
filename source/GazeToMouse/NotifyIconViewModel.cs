@@ -23,6 +23,9 @@ public partial class NotifyIconViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private double _driftDeviationAngle = 0;
+    /// <summary>
+    /// The deviation angle of the currently active drift compensation.
+    /// </summary>
     public double DriftDeviationAngle
     {
         get { return _driftDeviationAngle; }
@@ -69,6 +72,10 @@ public partial class NotifyIconViewModel : INotifyPropertyChanged
     /// </summary>
     public ICommand UpdateDriftDeviationAngleCommand { get { return _updateDriftDeviationAngleCommand; } }
 
+    /// <summary>
+    /// The constructor.
+    /// </summary>
+    /// <param name="app">The main application.</param>
     public NotifyIconViewModel(App app)
     {
         _exitApplicationCommand = new ExitApplicationCommand(app);

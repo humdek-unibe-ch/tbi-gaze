@@ -33,6 +33,9 @@ namespace CustomCalibrationLibrary.ViewModels
             get { return _calibrationPoints; }
         }
 
+        /// <summary>
+        /// The type of the curser to allow hiding the mouse pointer.
+        /// </summary>
         public Cursor CursorType
         {
             get { return _model.CursorType; }

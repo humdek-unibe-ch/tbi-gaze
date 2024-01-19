@@ -28,6 +28,7 @@ namespace GazeToMouse.Commands
         /// Initializes a new instance of the <see cref="UpdateDriftDeviationAngleCommand"/> class.
         /// </summary>
         /// <param name="app">The main application</param>
+        /// <param name="lambda">A delegate to set the drift deviation angle.</param>
         public UpdateDriftDeviationAngleCommand(App app, Func<double, double> lambda)
         {
             _app = app;

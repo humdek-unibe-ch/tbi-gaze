@@ -57,6 +57,9 @@ namespace GazeToMouse
         }
         private BaseTracker? _tracker = null;
         private TrackerLogger _logger;
+        /// <summary>
+        /// The logger handler.
+        /// </summary>
         public TrackerLogger Logger { get { return _logger;  } }
         private MouseHider? _hider = null;
         private GazeDataError _gazeError = new GazeDataError();
@@ -68,6 +71,9 @@ namespace GazeToMouse
         private bool _isCalibrationOn = false;
         private bool _isValidationOn = false;
         private Dispatcher _dispatcher;
+        /// <summary>
+        /// The dispatcher to handle pipe commands.
+        /// </summary>
         public Dispatcher CustomDispatcher { get { return _dispatcher; } }
         private TaskCompletionSource<bool> _processCompletion = new TaskCompletionSource<bool>();
         private DriftCompensationWindow? _fixationWindow = null;
