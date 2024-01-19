@@ -7,7 +7,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:uc="clr-namespace:CustomCalibrationLibrary.Views"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:hc="https://handyorg.github.io/handycontrol"
       xmlns:converter="clr-namespace:CustomCalibrationLibrary.Converters"
       xmlns:extension="clr-namespace:CustomCalibrationLibrary.Extensions"
       mc:Ignorable="d"
@@ -22,9 +22,9 @@
             <converter:PositionConverter x:Key="PositionConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
-                <ui:XamlControlsResources />
                 <ResourceDictionary Source="../Templates/CalibrationPoint.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -49,7 +49,10 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ui:ToggleSwitch ui:ThemeManager.RequestedTheme="Dark" Header="Gaze (G)" OnContent="On" OffContent="Off" IsOn="{Binding GazePoint.Visibility}" Grid.Column="0"/>
+                    <DockPanel Grid.Column="0" VerticalAlignment="Center">
+                        <ToggleButton VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,5,0" IsChecked="{Binding GazePoint.Visibility}" Style="{StaticResource ToggleButtonSwitch}"/>
+                        <TextBlock Foreground="White" Text="Gaze (G)" VerticalAlignment="Center" />
+                    </DockPanel>
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center">
                         <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                         Calibration Result
@@ -163,14 +166,12 @@
                     </DockPanel>
                     <DockPanel Margin="10" HorizontalAlignment="Right" Grid.Column="1">
                         <Button
-                            ui:ThemeManager.RequestedTheme="Dark"
-                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Style="{StaticResource ButtonPrimary}"
                             Command="{Binding CalibrationRestartCommand}"
                         >
                             Restart Calibration (R)
                         </Button>
                         <Button
-                            ui:ThemeManager.RequestedTheme="Dark"
                             Margin="10,0,0,0"
                             Command="{Binding CalibrationAcceptCommand}"
                         >
@@ -182,15 +183,13 @@
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="3" Visibility="{Binding SuccessVisibility}">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
-                            ui:ThemeManager.RequestedTheme="Dark"
                             Command="{Binding CalibrationRestartCommand}"
                         >
                         Restart Calibration (R)
                     </Button>
                     <Button
-                            ui:ThemeManager.RequestedTheme="Dark"
                             Margin="10,0,0,0"
-                            Style="{ui:ThemeResource AccentButtonStyle}"
+                            Style="{StaticResource ButtonPrimary}"
                             Command="{Binding CalibrationAcceptCommand}"
                         >
                         Accept Calibration (SPACE)

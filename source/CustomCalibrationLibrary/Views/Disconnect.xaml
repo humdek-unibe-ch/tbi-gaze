@@ -7,7 +7,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CustomCalibrationLibrary.Views"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
+      xmlns:hc="https://handyorg.github.io/handycontrol"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Focusable="True"
@@ -17,8 +17,8 @@
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
-                <ui:XamlControlsResources />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -57,7 +57,6 @@
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">
                     <Button
-                        ui:ThemeManager.RequestedTheme="Dark"
                         Margin="10,0,0,0"
                         Command="{Binding CalibrationAbortCommand}"
                     >

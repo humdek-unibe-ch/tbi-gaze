@@ -12,7 +12,7 @@
     <None Remove="images\screen.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+    <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
@@ -35,12 +35,5 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-	<ItemGroup>
-		<Resource Include="DesignTimeResources.xaml">
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-			<ContainsDesignTimeResources>true</ContainsDesignTimeResources>
-		</Resource>
-	</ItemGroup>
 
 </Project>
