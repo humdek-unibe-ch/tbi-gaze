@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="notify.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="butterfly.ico" />
   </ItemGroup>
 

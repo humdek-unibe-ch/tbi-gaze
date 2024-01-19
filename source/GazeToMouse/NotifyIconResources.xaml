@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:tb="http://www.hardcodet.net/taskbar"
     xmlns:local="clr-namespace:GazeToMouse"
-    >
+>
 
     <!--  The taskbar context menu - the first row is a dummy to show off simple data binding  -->
     <!--
@@ -42,6 +42,4 @@
         NoLeftClickDelay="True"
         ContextMenu="{StaticResource SysTrayMenu}"
     />
-
-
 </ResourceDictionary>
