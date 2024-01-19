@@ -1,12 +1,15 @@
-﻿using System.Windows.Input;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+using System.Windows.Input;
 using GazeToMouse.Commands;
 
 namespace GazeToMouse;
 
 /// <summary>
-/// Provides bindable properties and commands for the NotifyIcon. In this sample, the
-/// view model is assigned to the NotifyIcon in XAML. Alternatively, the startup routing
-/// in App.xaml.cs could have created this view model, and assigned it to the NotifyIcon.
+/// Provides bindable properties and commands for the NotifyIcon.
 /// </summary>
 public partial class NotifyIconViewModel
 {
@@ -30,7 +33,7 @@ public partial class NotifyIconViewModel
 
     private ICommand _startDriftCompensationCommand;
     /// <summary>
-    /// Command to start the validation
+    /// Command to start the drift compensation
     /// </summary>
     public ICommand StartDriftCompensationCommand { get { return _startDriftCompensationCommand; } }
 

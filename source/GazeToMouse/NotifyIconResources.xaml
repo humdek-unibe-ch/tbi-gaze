@@ -5,41 +5,35 @@
     xmlns:local="clr-namespace:GazeToMouse"
 >
 
-    <!--  The taskbar context menu - the first row is a dummy to show off simple data binding  -->
-    <!--
-        The "shared" directive is needed if we reopen the sample window a few times - WPF will otherwise
-        reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)
-    -->
-    <ContextMenu
-        x:Shared="false"
-        x:Key="SysTrayMenu"
-        >
+    <!--  The taskbar context menu  -->
+    <ContextMenu x:Key="SysTrayMenu">
         <MenuItem
-            Header="StartCalibration"
+            Header="Start Calibration"
             Command="{Binding StartCalibrationCommand}"
-            />
+        />
         <MenuItem
-            Header="StartValidation"
+            Header="Start Validation"
             Command="{Binding StartValidationCommand}"
-            />
+        />
         <MenuItem
-           Header="StartDriftCompensation"
+           Header="Start Drift Compensation"
            Command="{Binding StartDriftCompensationCommand}"
-           />
+        />
         <Separator />
         <MenuItem
             Header="Exit"
             Command="{Binding ExitApplicationCommand}"
-            />
+        />
     </ContextMenu>
 
 
-    <!--  the application's NotifyIcon - started from App.xaml.cs. Declares its own view model.  -->
+    <!--  The application's NotifyIcon - started from App.xaml.cs.  -->
     <tb:TaskbarIcon
         x:Key="NotifyIcon"
         IconSource="/butterfly.ico"
-        ToolTipText="Left-click to show window, right-click for menu"
+        ToolTipText="Right-click for menu"
         NoLeftClickDelay="True"
         ContextMenu="{StaticResource SysTrayMenu}"
+        MenuActivation="LeftOrRightClick"
     />
 </ResourceDictionary>

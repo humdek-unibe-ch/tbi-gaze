@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace GazeToMouse.Commands
 {
     /// <summary>
-    /// Comand class to trigger calibration events.
+    /// Command class to exit the application.
     /// </summary>
     public class ExitApplicationCommand : ICommand
     {
@@ -43,7 +43,7 @@ namespace GazeToMouse.Commands
         }
 
         /// <summary>
-        /// Send calibration event.
+        /// Exit the application.
         /// </summary>
         /// <param name="parameter">The command parameter</param>
         public void Execute(object? parameter)

@@ -9,7 +9,7 @@ using System.Windows.Input;
 namespace GazeToMouse.Commands
 {
     /// <summary>
-    /// Comand class to trigger calibration events.
+    /// Command class to start the drift compensation.
     /// </summary>
     public class StartDriftCompensationCommand : ICommand
     {
@@ -24,7 +24,7 @@ namespace GazeToMouse.Commands
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExitApplicationCommand"/> class.
+        /// Initializes a new instance of the <see cref="StartDriftCompensationCommand"/> class.
         /// </summary>
         /// <param name="app">The main application</param>
         public StartDriftCompensationCommand(App app)
@@ -43,7 +43,7 @@ namespace GazeToMouse.Commands
         }
 
         /// <summary>
-        /// Send calibration event.
+        /// Start the drift compensation.
         /// </summary>
         /// <param name="parameter">The command parameter</param>
         public void Execute(object? parameter)
