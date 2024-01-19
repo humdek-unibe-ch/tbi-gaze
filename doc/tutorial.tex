@@ -150,6 +150,16 @@ The following set of executables are provided:
         Multiple arguments can be passed to the application but each argument can only be passed once.
         Passing an argument to an application can be done in command line or by crating a shortcut to the program.
         Corresponding shortcuts for all available \texttt{<COMMAND>}s are provided in the release package.
+
+        The application returns the following exit codes:
+
+        \begin{description}
+            \item{0:} The command was executed successfully.
+            \item{1:} The connection to the named pipe failed and the command was not executed.
+            \item{2:} The command was successfully sent to \texttt{Gaze.exe} but failed there.
+            \item{3:} The command was successfully sent to \texttt{Gaze.exe} but no reply was received.
+            \item{4:} An unknown error occurred.
+        \end{description}
     \item[ShowMouse.exe] This program allows to restore the standard mouse pointer.
         It might be useful if the program \texttt{Gaze.exe} crashes or is closed forcefully such that the mouse pointer is not restored after terminating.
         The subject might end up with a hidden mouse pointer.
@@ -157,11 +167,11 @@ The following set of executables are provided:
 \end{description}
 
 %------------------------------------------------------------------------------
-\section{Requesting a TPF GitLab Account}
+\section{Source Code}
 \label{sec.gitlab}
-The necessary code for what is described in this document is contained in a \texttt{GitLab} instance running on the \href{http://phhum-g111-nns.unibe.ch:10012/}{TPF server}\footnote{http://phhum-g111-nns.unibe.ch:10012/}.
+The necessary code for what is described in this document is hosted on \href{https://github.com/humdek-unibe-ch/tbi-gaze}{GitHub}\footnote{https://github.com/humdek-unibe-ch/tbi-gaze}.
 
-Please send a mail to \href{tpf@humdek.unibe.ch}{TPF}\footnote{tpf@humdek.unibe.ch} with a request, specifying your name and the name of the TPF project you are interested in (e.g~\texttt{tobii\_eye\_tracker\_gaze}).
+Feel free to open new issues or create pull requests.
 
 %==============================================================================
 \chapter{Quick Start}
@@ -419,6 +429,14 @@ NamedPipeClient.HandleCommands("GAZE_RECORDING_ENABLE", True, 42, "myLabel")
 
 The sample file \texttt{template.osexp} provides helper functions in the script \texttt{gaze\_start} in the prepare section to simplify this work.
 Note the variable \texttt{mode} which allows select whether the helper functions will run \texttt{GazeControl.exe} with the \texttt{subprocess} module (use value \texttt{app}) or whether they will perform C\# method calls with the \texttt{pythonnet} module (use value \texttt{lib}).
+
+\begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Attention}
+    In order for this to work it is necessary for the python application to access the \texttt{GazeControlLibrary.dll} file.
+    If this file has to be accessed remotely (e.g. the file is stored on a server accessible by multiple lab computers), the python application needs to be told to allow this.
+    This can be achieved by copying the configuration file \texttt{python.exe.conf} from the sample folder into the same folder where \texttt{python.exe} is stored.
+    Usually, \texttt{python.exe} lies in the root installation path of opensesame.
+    Note that if multiple opensesame versions are installed, the configuration file needs to be copied to each installed opensesame version.
+\end{mdframed}
 
 
 %==============================================================================
@@ -704,12 +722,20 @@ The following three data field types with individual data fields are provided:
                     \item x and y coordinates of the gaze point of the left and right eye
                 \end{itemize}
         \end{description}
-    \item data validity indicators as either \texttt{ValidAndUsed}, \texttt{ValidAndUnused}, and \texttt{Invalid}
+    \item boolean data validity indicators
         \begin{description}
             \item[Mouse Tracker] not supported
             \item[Tobii Pro SDK] \hfill
                 \begin{itemize}
                     \item separate values that indicate whether gaze points are valid for the left and the right eye, respectively
+                \end{itemize}
+        \end{description}
+    \item calibration accuracy estimation
+        \begin{description}
+            \item[Mouse Tracker] not supported
+            \item[Tobii Pro SDK] \hfill
+                \begin{itemize}
+                    \item separate values provide an estimated accuracy for the left and the right eye, respectively
                 \end{itemize}
         \end{description}
 \end{enumerate}
@@ -929,9 +955,9 @@ The following list describes the individual errors of the second error code that
 
 %------------------------------------------------------------------------------
 \section{Log File}
-All executables write continuously to the same log file.
-This allows to track the eye tracker events that happened throughout a session within one log file.
-The log file is produced at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe: \texttt{<zleaf path>}).
-The name of the log file is of the form \texttt{<hostName>\_gaze.log} where \texttt{<hostName>} is replaced by the name of the machine.
+The app \texttt{Gaze.exe} writes continuously to a log file with a name of the form \texttt{<hostName>\_gaze.log} and \texttt{GazeControl.exe} writes to \texttt{<hostName>\_control.log}, respectively.
+The prefix \texttt{<hostName>} is replaced by the name of the machine.
+This allows to track the eye tracker events that happened throughout a session within two log files.
+The log files are produced in a folder \texttt{log} at the root directory of the application which is making the calls to the executables (e.g. at the location of zleaf.exe: \texttt{<zleaf path>}).
 
 \end{document}
