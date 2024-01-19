@@ -397,7 +397,7 @@
   "TrackerDevice": 1,
 
   // Defines whether the mouse cursor shall be hidden on the calibration window.
-  "MouseCalibrationHide": false,
+  "MouseCalibrationHide": true,
 
   // Defines whether the mouse cursor shall be controlled by the gaze of the subject during the
   // experiment. If set to true the mouse cursor will be controlled by the gaze of the subject when

@@ -77,24 +77,27 @@ define inline_script gaze_recording_enable
 define inline_script gaze_start
 	set description "Executes Python code"
 	___run__
+	import time
+	
 	print("start gaze process")
-	#subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}", "/outputPath", f"{var.get(u'experiment_path')}"])
-	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}"])
+	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}", "/outputPath", f"{var.get(u'experiment_path')}"])
+	#subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}"])
 	time.sleep(3)
 	__end__
 	___prepare__
-	import subprocess, json, time
+	import subprocess, os
 	
-	gazeAppPath = "\\\\130.92.158.19\\runexp\\applications\\TPF_EyeTracking\\current"
-	gazeAppPath = "C:\\Users\\moiri\\Documents\\git-tbi-gaze\\build"
-	print(f"use path {gazeAppPath}")
+	gazeAppPath = os.path.expanduser(r"~\Documents\git-tbi-gaze\build")
+	#gazeAppPath = r"\\192.168.100.10\runexp\applications\TPF_EyeTracking\current"
+	#gazeAppPath = r"\\130.92.158.19\runexp\applications\TPF_EyeTracking\current"
+	print(f"use binary path {gazeAppPath}")
 	
 	# use 'lib' to call c# methods directly from python (default, lower latency)
 	# use 'app' to run the GazeControl.exe as subprocess
 	mode = 'lib'
 	if mode == 'lib':
 	    import clr, sys
-	    sys.path.append(r"C:\Users\moiri\Documents\git-tbi-gaze\build")
+	    sys.path.append(gazeAppPath)
 	    clr.AddReference("GazeControlLibrary")
 	    from GazeControlLibrary import NamedPipeClient
 	elif mode == 'app':
@@ -105,17 +108,17 @@ define inline_script gaze_start
 	
 	def printGazeAnnotation(trialId, label, reset):
 	    if trialId is not None:
-	        print("annotate gaze data with trial ID " + str(trialId))
+	        print(f"annotate gaze data with trial ID {str(trialId)}")
 	    if label is not None:
-	        print("annotate gaze data with label " + label)
+	        print(f"annotate gaze data with label {label}")
 	    if reset is True:
 	        print("reset relative timestamp")
 	        
 	def gazeCommand(command = None, trialId = None, label = None, reset = False):
 	    if mode == 'lib':
-	        NamedPipeClient.HandleCommands(command, reset, trialId, label)
+	        return NamedPipeClient.HandleCommands(command, reset, trialId, label)
 	    elif mode == 'app':
-	        gazeCommandApp(command, trialId, label, reset)
+	        return gazeCommandApp(command, trialId, label, reset)
 	
 	def gazeCommandApp(command = None, trialId = None, label = None, reset = False):
 	    args = [f"{gazeAppPath}\\GazeControl.exe"]
@@ -130,55 +133,67 @@ define inline_script gaze_start
 	        args.append(label)
 	    if reset is True:
 	        args.append("/reset")
-	    subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=si, creationflags=DETACHED_PROCESS)
+	    proc = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=si, creationflags=DETACHED_PROCESS)
+	    return proc.returncode
 	    
 	def gazeCalibration(trialId = None, label = None, reset = False):
-	    gazeCommand("CUSTOM_CALIBRATE", trialId, label, reset)
-	    print("gaze calibration done")
+	    res = gazeCommand("CUSTOM_CALIBRATE", trialId, label, reset)
+	    print(f"gaze calibration done: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def gazeValidation(trialId = None, label = None, reset = False):
-	    gazeCommand("VALIDATE", trialId, label, reset)
-	    print("gaze validation done")
+	    res = gazeCommand("VALIDATE", trialId, label, reset)
+	    print(f"gaze validation done: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def gazeDriftCompensation(trialId = None, label = None, reset = False):
-	    gazeCommand("DRIFT_COMPENSATION", trialId, label, reset)
-	    print("gaze drift compensation done")
+	    res = gazeCommand("DRIFT_COMPENSATION", trialId, label, reset)
+	    print(f"gaze drift compensation done: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def gazeDriftCompensationReset(trialId = None, label = None, reset = False):
-	    gazeCommand("RESET_DRIFT_COMPENSATION", trialId, label, reset)
-	    print("gaze drift compensation reset")
+	    res = gazeCommand("RESET_DRIFT_COMPENSATION", trialId, label, reset)
+	    print(f"gaze drift compensation reset: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def gazeRecordingDisable(trialId = None, label = None, reset = False):
-	    gazeCommand("GAZE_RECORDING_DISABLE", trialId, label, reset)
-	    print("disable gaze recording")
+	    res = gazeCommand("GAZE_RECORDING_DISABLE", trialId, label, reset)
+	    print(f"disable gaze recording: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def gazeRecordingEnable(trialId = None, label = None, reset = False):
-	    gazeCommand("GAZE_RECORDING_ENABLE", trialId, label, reset)
-	    print("enable gaze recording")
+	    res = gazeCommand("GAZE_RECORDING_ENABLE", trialId, label, reset)
+	    print(f"enable gaze recording: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def mouseTrackingDisable(trialId = None, label = None, reset = False):
-	    gazeCommand("MOUSE_TRACKING_DISABLE", trialId, label, reset)
-	    print("disable mouse tracking")
+	    res = gazeCommand("MOUSE_TRACKING_DISABLE", trialId, label, reset)
+	    print(f"disable mouse tracking: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def mouseTrackingEnable(trialId = None, label = None, reset = False):
-	    gazeCommand("MOUSE_TRACKING_ENABLE", trialId, label, reset)
-	    print("enable mouse tracking")
+	    res = gazeCommand("MOUSE_TRACKING_ENABLE", trialId, label, reset)
+	    print(f"enable mouse tracking: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	
 	def gazeTerminate():
-	    gazeCommand("TERMINATE")
-	    print("stop gaze process")
+	    res = gazeCommand("TERMINATE")
+	    print(f"stop gaze process: {res}")
+	    return res
 	    
 	def gazeAnnotate(trialId = None, label = None, reset = False):
-	    gazeCommand(trialId = trialId, label = label, reset = reset)
+	    res = gazeCommand(trialId = trialId, label = label, reset = reset)
+	    print(f"annotate gaze: {res}")
 	    printGazeAnnotation(trialId, label, reset)
+	    return res
 	__end__
 
 define inline_script gaze_stop
