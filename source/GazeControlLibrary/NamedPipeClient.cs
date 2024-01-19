@@ -155,6 +155,7 @@ namespace GazeControlLibrary
                 {
                     if (logger != null) logger(LogLevel.Info, $"Sending {signal} signal to pipe {pipeName}");
                     sw.WriteLine(JsonConvert.SerializeObject(new PipeCommand(signal, reset, trialId, label)));
+                    return ErrorCode.ErrorCode_Success;
                 }
             }
 
