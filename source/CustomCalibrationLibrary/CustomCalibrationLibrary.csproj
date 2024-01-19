@@ -35,4 +35,12 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
+	<ItemGroup>
+		<Resource Include="DesignTimeResources.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+			<ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+		</Resource>
+	</ItemGroup>
+
 </Project>
