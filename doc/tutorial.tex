@@ -136,15 +136,16 @@ The following set of executables are provided:
                     The following commands \texttt{<COMMAND>} are supported:
                 \begin{description}
                     \item{\texttt{CUSTOM\_CALIBRATE}\\} uses the \href{http://developer.tobii.com/tobii-pro-sdk/}{Tobii Pro SDK} and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
-                    \item{\texttt{VALIDATE}\\} uses the \href{https://github.com/tobiipro/prosdk-addons-dotnet/}{Tobii Pro SDK Addon} and launches a validation process.
                     \item{\texttt{DRIFT\_COMPENSATION}\\} launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
                     \item{\texttt{GAZE\_RECORDING\_DISABLE}\\} requests Gaze.exe to stop recording gaze data.
                         Gaze.exe will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
                     \item{\texttt{GAZE\_RECORDING\_ENABLE}\\} requests Gaze.exe to start recording gaze data.
+                    \item{\texttt{LOAD}\\} shows a window with a spinner for a configurable amount of time.
                     \item{\texttt{MOUSE\_TRACKING\_DISABLE}\\} requests Gaze.exe to stop updating the mouse pointer by the gaze position.
                     \item{\texttt{MOUSE\_TRACKING\_ENABLE}\\} requests Gaze.exe to start updating the mouse pointer by the gaze position.
                     \item{\texttt{RESET\_DRIFT\_COMPENSATION}\\} resets the drift compensation computed with the command \texttt{DRIFT\_COMPENSATION}.
                     \item{\texttt{TERMINATE}\\} requests Gaze.exe to close gracefully and logs these events to the log file.
+                    \item{\texttt{VALIDATE}\\} uses the \href{https://github.com/tobiipro/prosdk-addons-dotnet/}{Tobii Pro SDK Addon} and launches a validation process.
                 \end{description}
         \end{description}
         Multiple arguments can be passed to the application but each argument can only be passed once.
@@ -413,6 +414,15 @@ subprocess.run([f"{gazeToolsetPath}\\GazeControl.exe], "/command", "TERMINATE")
 \end{lstlisting}
 
 \subsection{Execute C\# Library from Python}
+
+\begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Attention}
+    In order for this to work it is necessary for the python application to access the \texttt{GazeControlLibrary.dll} file.
+    If this file has to be accessed remotely (e.g. the file is stored on a server accessible by multiple lab computers), the python application needs to be told to allow this.
+    This can be achieved by copying the configuration file \texttt{python.exe.conf} from the sample folder into the same folder where \texttt{python.exe} is stored.
+    Usually, \texttt{python.exe} lies in the root installation path of opensesame.
+    Note that if multiple opensesame versions are installed, the configuration file needs to be copied to each installed opensesame version.
+\end{mdframed}
+
 Starting a subprocess to send commands to \texttt{Gaze.exe} can introduce severe latency to the experiment flow (up to 800ms of latency was observed).
 To avoid this it is possible to call C\# methods directly from within python with the package \texttt{pythonnet} (\texttt{pip install pythonnet}).
 
@@ -429,14 +439,6 @@ NamedPipeClient.HandleCommands("GAZE_RECORDING_ENABLE", True, 42, "myLabel")
 
 The sample file \texttt{template.osexp} provides helper functions in the script \texttt{gaze\_start} in the prepare section to simplify this work.
 Note the variable \texttt{mode} which allows select whether the helper functions will run \texttt{GazeControl.exe} with the \texttt{subprocess} module (use value \texttt{app}) or whether they will perform C\# method calls with the \texttt{pythonnet} module (use value \texttt{lib}).
-
-\begin{mdframed}[backgroundcolor=boxbkg]\textbf{\color{red}Attention}
-    In order for this to work it is necessary for the python application to access the \texttt{GazeControlLibrary.dll} file.
-    If this file has to be accessed remotely (e.g. the file is stored on a server accessible by multiple lab computers), the python application needs to be told to allow this.
-    This can be achieved by copying the configuration file \texttt{python.exe.conf} from the sample folder into the same folder where \texttt{python.exe} is stored.
-    Usually, \texttt{python.exe} lies in the root installation path of opensesame.
-    Note that if multiple opensesame versions are installed, the configuration file needs to be copied to each installed opensesame version.
-\end{mdframed}
 
 
 %==============================================================================
