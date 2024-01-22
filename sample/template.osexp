@@ -77,12 +77,10 @@ define inline_script gaze_recording_enable
 define inline_script gaze_start
 	set description "Executes Python code"
 	___run__
-	import time
-	
 	print("start gaze process")
 	subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}", "/outputPath", f"{var.get(u'experiment_path')}"])
 	#subprocess.Popen([f"{gazeAppPath}\\Gaze.exe", "/subject", f"{var.get(u'subject_nr')}"])
-	time.sleep(3)
+	gazeLoad()
 	__end__
 	___prepare__
 	import subprocess, os
@@ -157,6 +155,12 @@ define inline_script gaze_start
 	def gazeDriftCompensationReset(trialId = None, label = None, reset = False):
 	    res = gazeCommand("RESET_DRIFT_COMPENSATION", trialId, label, reset)
 	    print(f"gaze drift compensation reset: {res}")
+	    printGazeAnnotation(trialId, label, reset)
+	    return res
+	
+	def gazeLoad(trialId = None, label = None, reset = False):
+	    res = gazeCommand("LOAD", trialId, label, reset)
+	    print(f"gaze loading done: {res}")
 	    printGazeAnnotation(trialId, label, reset)
 	    return res
 	
