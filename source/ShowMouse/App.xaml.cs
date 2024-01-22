@@ -20,7 +20,7 @@ namespace ShowMouse
         {
             InitializeComponent();
 
-            _logger = new TrackerLogger(null);
+            _logger = new TrackerLogger(null, EOutputType.control);
             _config = new GazeConfiguration(_logger);
         }
 
