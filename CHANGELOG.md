@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.5.1
+### New Features
+- Add the commadn `LOAD` to show a window with a spinner. Configure the
+  duration of the how long the window is shown with the configuration option
+  `LoadingTimer`.
+
+### Bug Fixes
+- Fix typo in config sample.
+
 ## v3.5.0
 ### New Features
 - Allow to configure the `BackgroundColor` and the `FrameColor` of the windows
