@@ -414,7 +414,7 @@
   "MouseStandardIconPath": "C:\\Windows\\Cursors\\aero_arrow.cur",
 
   // Defines the Tobii installation path. It must be the path to a folder (not a file).
-  "TobiiApplicationPath": "C:\\<LoaclApplicationData>\\Programs\\TobiiProEyeTrackerManager",
+  "TobiiApplicationPath": "C:\\<LocalApplicationData>\\Programs\\TobiiProEyeTrackerManager",
 
   // The Tobii application to run a calibration.
   "TobiiCalibrate": "TobiiProEyeTrackerManager.exe",
