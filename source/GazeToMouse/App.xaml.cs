@@ -79,6 +79,7 @@ namespace GazeToMouse
         private DriftCompensationWindow? _fixationWindow = null;
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
         private CalibrationWindow _validationWindow = new CalibrationWindow();
+        private CalibrationWindow _startupWindow = new CalibrationWindow();
         private CalibrationModel _calibrationModel;
         private CalibrationModel _validationModel;
         private string? _subjectCode = null;
@@ -243,6 +244,28 @@ namespace GazeToMouse
         }
 
         /// <summary>
+        /// Loading spinner.
+        /// </summary>
+        /// <returns>True on success, false on failure</returns>
+        public async Task<bool> Loading()
+        {
+            Current.Dispatcher.Invoke(() =>
+            {
+                _startupWindow.Topmost = true;
+                _startupWindow.Show();
+                _startupWindow.Activate();
+            });
+
+            await Task.Delay(_config.Config.LoadingTimer);
+
+            Current.Dispatcher.Invoke(() => {
+                _startupWindow.Hide();
+            });
+
+            return true;
+        }
+
+        /// <summary>
         /// Start the gaze calibration process
         /// </summary>
         /// <returns>True on success, false on failure</returns>
@@ -401,6 +424,14 @@ namespace GazeToMouse
             _validationWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _validationWindow.Title = "ValidationWindow";
             _validationWindow.ShowInTaskbar = false;
+
+            _startupWindow.WindowStyle = WindowStyle.None;
+            _startupWindow.WindowState = WindowState.Maximized;
+            _startupWindow.ResizeMode = ResizeMode.NoResize;
+            _startupWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+            _startupWindow.Title = "StartupWindow";
+            _startupWindow.ShowInTaskbar = false;
+            _startupWindow.Content = new Spinner(backgroundColor);
 
             // hide the mouse cursor
             _hider = new MouseHider(_logger);
@@ -587,6 +618,10 @@ namespace GazeToMouse
                                     break;
                                 case "DRIFT_COMPENSATION":
                                     res = await app.CustomDispatcher.Invoke(() => app.CompensateDrift());
+                                    reply = true;
+                                    break;
+                                case "LOAD":
+                                    res = await app.CustomDispatcher.Invoke(() => app.Loading());
                                     reply = true;
                                     break;
                                 case "CUSTOM_CALIBRATE":

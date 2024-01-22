@@ -760,6 +760,11 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Always)]
         public int TrackerDevice { get; set; }
+        /// <summary>
+        /// Specifies the amount of time (in milliseconds) to wait during the loading screen.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public int LoadingTimer { get; set; }
 
         /// <summary>
         /// Defines the background color of the calibration and validation canvas.
@@ -985,6 +990,7 @@ namespace GazeUtilityLibrary
             MouseCalibrationHide = false;
             MouseStandardIconPath = "C:\\Windows\\Cursors\\aero_arrow.cur";
             ReadyTimer = 5000;
+            LoadingTimer = 1000;
             TrackerDevice = 1;
             ScreenArea = new ConfigScreenArea();
         }

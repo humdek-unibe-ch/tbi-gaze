@@ -391,6 +391,9 @@
   // Use 0 for immediate reaction.
   "ReadyTimer": 5000,
 
+  // Specifies the amount of time (in milliseconds) to show the custom loading window.
+  "LoadingTimer": 1000,
+
   // Choose the tracker device (1: Tobii Pro SDK, 2: Mouse Tracker).
   // Note that for some eye trackers the Tobii SDK Pro requires a license file to work
   // (see parameter "LicesePath").

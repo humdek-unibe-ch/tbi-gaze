@@ -83,6 +83,7 @@ namespace GazeControlLibrary
                         if (logger != null) logger(LogLevel.Error, error.Message);
                     }
                     break;
+                case "LOAD":
                 case "DRIFT_COMPENSATION":
                 case "CUSTOM_CALIBRATE":
                 case "VALIDATE":

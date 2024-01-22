@@ -32,15 +32,16 @@ The package contains the following executables:
     - `/label <LABEL>`: Sets a custom label `<LABEL>` which will be added to each data sample in the output file. Any string is accepted here.
     - `/command <COMMAND>`: A command allow to activate/deactivate features of `Gaze.exe`. The following commands are supported:
         - `CUSTOM_CALIBRATE` uses the [Tobii Pro SDK](http://developer.tobii.com/tobii-pro-sdk/) and launches a custom calibration process which allows to calibrate the eye tracker without having to rely on the calibration software provided by Tobii.
-        - `VALIDATE` uses the [Tobii Pro SDK Addon](https://github.com/tobiipro/prosdk-addons-dotnet) and launches a validation process.
         - `DRIFT_COMPENSATION` launches a custom drift compensation process to compensate gaze drifts that may occur during experimentation.
         - `GAZE_RECORDING_DISABLE` requests **`Gaze.exe`** to stop recording gaze data.
             `Gaze.exe` will continue to run (and update the mouse pointer if configured accordingly) but no longer store gaze data to the disk.
         - `GAZE_RECORDING_ENABLE` requests **`Gaze.exe`** to start recording gaze data.
+        - `LOAD` shows a window with a spinner for a configurable amount of time.
         - `MOUSE_TRACKING_DISABLE` requests **`Gaze.exe`** to stop updating the mouse pointer by the gaze position.
         - `MOUSE_TRACKING_ENABLE` requests **`Gaze.exe`** to start updating the mouse pointer by the gaze position.
         - `RESET_DRIFT_COMPENSATION` resets the drift compensation computed with the command `DRIFT_COMPENSATION`.
         - `TERMINATE` requests **`Gaze.exe`** to close gracefully and logs these events to the log file.
+        - `VALIDATE` uses the [Tobii Pro SDK Addon](https://github.com/tobiipro/prosdk-addons-dotnet) and launches a validation process.
         
     Multiple arguments can be passed to the application but each argument can only be passed once.
     Passing an argument to an application can be done in command line or by crating a shortcut to the program.
