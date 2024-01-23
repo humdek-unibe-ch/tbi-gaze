@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.5.2
+### New Features
+- Allow to enable/disabel the systray icon with the configuration option
+  `EnableSystrayIcon`. By default the icon is enabled.
+
+### Bug Fixes
+- Fix a problem where cSolor values were never read from the config file.
+
 ## v3.5.1
 ### New Features
 - Add the commadn `LOAD` to show a window with a spinner. Configure the
