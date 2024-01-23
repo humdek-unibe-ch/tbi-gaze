@@ -429,5 +429,5 @@
 
   // If set to true a system tray icon will be shown. Depending on the experimenter software, this
   // may cause to show the taskbar in the foreground. To avoid this disable the systray icon.
-  "EnableSystrayIcon": false
+  "EnableSystrayIcon": true
 }

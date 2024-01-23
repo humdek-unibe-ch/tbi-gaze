@@ -998,7 +998,7 @@ namespace GazeUtilityLibrary
             LoadingTimer = 1000;
             TrackerDevice = 1;
             ScreenArea = new ConfigScreenArea();
-            EnableSystrayIcon = false;
+            EnableSystrayIcon = true;
         }
     }
 
