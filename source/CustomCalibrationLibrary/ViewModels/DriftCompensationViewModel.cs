@@ -12,7 +12,7 @@ namespace CustomCalibrationLibrary.ViewModels
     /// <summary>
     /// The view model class of the drift compensation view.
     /// </summary>
-    class DriftCompensationViewModel: ColoredViewModel
+    public class DriftCompensationViewModel: ColoredViewModel
     {
         /// <summary>
         /// The point on the screen which the participant is supposed to fixate.

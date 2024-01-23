@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using CustomCalibrationLibrary.Views;
 using System.Windows.Input;
 using CustomCalibrationLibrary.Models;
+using CustomCalibrationLibrary.ViewModels;
 using System.Collections.Generic;
 using GazeUtilityLibrary.Tracker;
 using GazeUtilityLibrary.DataStructs;
@@ -76,7 +77,7 @@ namespace GazeToMouse
         /// </summary>
         public Dispatcher CustomDispatcher { get { return _dispatcher; } }
         private TaskCompletionSource<bool> _processCompletion = new TaskCompletionSource<bool>();
-        private DriftCompensationWindow? _fixationWindow = null;
+        private DriftCompensationWindow _fixationWindow = new DriftCompensationWindow();
         private CalibrationWindow _calibrationWindow = new CalibrationWindow();
         private CalibrationWindow _validationWindow = new CalibrationWindow();
         private CalibrationWindow _startupWindow = new CalibrationWindow();
@@ -359,15 +360,15 @@ namespace GazeToMouse
             _config = new GazeConfiguration(_logger);
             _startTime = TimeSpan.FromMilliseconds(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
-            Color backgroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.BackgroundColor);
-            Color frameColor = (Color)ColorConverter.ConvertFromString(_config.Config.FrameColor);
-
-            if (!Init(backgroundColor))
+            if (!Init())
             {
                 _logger.Error("Failed to initialise the gaze process, aborting");
                 Current.Shutdown();
             }
-            
+
+            Color backgroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.BackgroundColor);
+            Color frameColor = (Color)ColorConverter.ConvertFromString(_config.Config.FrameColor);
+
             _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor,
                 _config.Config.CalibrationAccuracyThreshold, double.PositiveInfinity, _config.Config.CalibrationRetries);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;
@@ -376,16 +377,15 @@ namespace GazeToMouse
                 _config.Config.ValidationAccuracyThreshold, _config.Config.ValidationPrecisionThreshold, _config.Config.ValidationRetries);
             _validationModel.CalibrationEvent += OnValidationEvent;
             _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
+            _fixationWindow.DataContext = new DriftCompensationViewModel(backgroundColor);
+            _startupWindow.Content = new Spinner(backgroundColor);
 
             // hide the mouse cursor on calibration window
             if (_config.Config.MouseCalibrationHide)
             {
                 _calibrationModel.CursorType = Cursors.None;
                 _validationModel.CursorType = Cursors.None;
-                if (_fixationWindow != null)
-                {
-                    _fixationWindow.Cursor = Cursors.None;
-                }
+                _fixationWindow.Cursor = Cursors.None;
             }
         }
 
@@ -393,7 +393,7 @@ namespace GazeToMouse
         /// Initialise the application: configure windows, apply gaze configurations, connect to tracking device 
         /// </summary>
         /// <returns>True on success, false on failure</returns>
-        private bool Init(Color backgroundColor)
+        private bool Init()
         {
             if (!_config.InitConfig())
             {
@@ -402,7 +402,6 @@ namespace GazeToMouse
 
             if (_config.Config.DriftCompensationWindowShow)
             {
-                _fixationWindow = new DriftCompensationWindow(backgroundColor);
                 _fixationWindow.WindowStyle = WindowStyle.None;
                 _fixationWindow.WindowState = WindowState.Maximized;
                 _fixationWindow.ResizeMode = ResizeMode.NoResize;
@@ -431,7 +430,6 @@ namespace GazeToMouse
             _startupWindow.WindowStartupLocation = WindowStartupLocation.Manual;
             _startupWindow.Title = "StartupWindow";
             _startupWindow.ShowInTaskbar = false;
-            _startupWindow.Content = new Spinner(backgroundColor);
 
             // hide the mouse cursor
             _hider = new MouseHider(_logger);
