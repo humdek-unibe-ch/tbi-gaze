@@ -425,5 +425,9 @@
   // The arguments to pass to the calibration application. Use %S as a placeholder for the device
   // serial number and %A as a placeholder for the device address. The placeholders will be replaced
   // by the actual values of the first device found in the connection list.
-  "TobiiCalibrateArguments": "--device-sn=%S --mode=usercalibration"
+  "TobiiCalibrateArguments": "--device-sn=%S --mode=usercalibration",
+
+  // If set to true a system tray icon will be shown. Depending on the experimenter software, this
+  // may cause to show the taskbar in the foreground. To avoid this disable the systray icon.
+  "EnableSystrayIcon": false
 }

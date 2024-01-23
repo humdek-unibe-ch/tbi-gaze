@@ -35,7 +35,7 @@ namespace GazeToMouse
     /// </summary>
     public partial class App : Application
     {
-        private TaskbarIcon? _notifyIcon;
+        private TaskbarIcon? _notifyIcon = null;
         private object _lock = new object();
         private TimeSpan _startTime;
         /// <summary>
@@ -847,9 +847,12 @@ namespace GazeToMouse
                 Current.Shutdown();
             }
 
-            _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
-            _notifyIcon.ForceCreate();
-            _notifyIcon.DataContext = new NotifyIconViewModel(this);
+            if (_config.Config.EnableSystrayIcon)
+            {
+                _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+                _notifyIcon.ForceCreate();
+                _notifyIcon.DataContext = new NotifyIconViewModel(this);
+            }
 
             _logger.Info($"Starting \"{AppDomain.CurrentDomain.BaseDirectory}Gaze.exe\" {String.Join(" ", e.Args)}");
             _logger.Info($"Version {Assembly.GetExecutingAssembly().GetName().Version}");

@@ -797,6 +797,11 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string MouseStandardIconPath { get; set; }
+        /// <summary>
+        /// Flag to enable the system tray icon.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public bool EnableSystrayIcon { get; set; }
 
         /// <summary>
         /// Defines the Tobii installation path. It must be the path to a folder (not a file).
@@ -993,6 +998,7 @@ namespace GazeUtilityLibrary
             LoadingTimer = 1000;
             TrackerDevice = 1;
             ScreenArea = new ConfigScreenArea();
+            EnableSystrayIcon = false;
         }
     }
 
