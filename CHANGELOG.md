@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.5.3
+### New Features
+- Allow to configure the `ForegroundColor` of the windows. The foreground
+  color changes the text color and the calibration point color.
+
 ## v3.5.2
 ### New Features
 - Allow to enable/disabel the systray icon with the configuration option
