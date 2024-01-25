@@ -25,6 +25,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// </summary>
         /// <param name="point">The position of the calibration point.</param>
         /// <param name="index">The index of the calibration point.</param>
+        /// <param name="pointColor">The base color or the calibration point.</param>
         public CalibrationPointViewModel(Point point, int index, Color pointColor) : base(point, index)
         {
             _pointColor = new SolidColorBrush(pointColor);
@@ -34,6 +35,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Initializes a new instance of the <see cref="CalibrationPointViewModel"/> class.
         /// </summary>
         /// <param name="point">The calibration point object.</param>
+        /// <param name="pointColor">The base color or the calibration point.</param>
         public CalibrationPointViewModel(CalibrationPoint point, Color pointColor) : base(point.Position, point.Index)
         {
             _pointColor = new SolidColorBrush(pointColor);
