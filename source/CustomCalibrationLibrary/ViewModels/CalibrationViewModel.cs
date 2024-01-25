@@ -45,12 +45,12 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The calibration model</param>
-        public CalibrationViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
+        public CalibrationViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor, model.ForegroundColor)
         {
             _model = model;
             foreach (CalibrationPoint item in _model.CalibrationPoints)
             {
-                _calibrationPoints.Add(new CalibrationPointViewModel(item));
+                _calibrationPoints.Add(new CalibrationPointViewModel(item, _model.ForegroundColor));
                 item.PropertyChanged += OnCollectionItemChanged;
             }
             _model.CalibrationPoints.CollectionChanged += OnCollectionChanged;
@@ -66,7 +66,7 @@ namespace CustomCalibrationLibrary.ViewModels
                         foreach (CalibrationPoint item in e.NewItems)
                         {
                             Application.Current.Dispatcher.Invoke(() => {
-                                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index, _model.ForegroundColor));
                             });
                             item.PropertyChanged += OnCollectionItemChanged;
                         }
@@ -85,7 +85,7 @@ namespace CustomCalibrationLibrary.ViewModels
                         foreach (CalibrationPoint item in e.NewItems)
                         {
                             Application.Current.Dispatcher.Invoke(() => {
-                                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index));
+                                _calibrationPoints.Add(new CalibrationPointViewModel(item.Position, item.Index, _model.ForegroundColor));
                             });
                             item.PropertyChanged += OnCollectionItemChanged;
                         }

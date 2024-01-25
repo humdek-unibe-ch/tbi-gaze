@@ -16,6 +16,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
+            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
@@ -34,7 +35,7 @@
             </Grid.RowDefinitions>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="0">
                 <Grid Margin="10">
-                    <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                    <TextBlock Foreground="{StaticResource Foreground}" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                         Device Disconnected
                     </TextBlock>
                 </Grid>
@@ -43,12 +44,12 @@
                 <StackPanel>
                     <TextBlock
                         HorizontalAlignment="Center"
-                        Foreground="White"
+                        Foreground="{StaticResource Foreground}"
                         Text="The device has been disconnected." FontSize="18"
                     />
                     <TextBlock
                         HorizontalAlignment="Center"
-                        Foreground="White"
+                        Foreground="{StaticResource Foreground}"
                         Text="Make sure the device is plugged in properly into the computer."
                         FontSize="18"
                     />

@@ -89,6 +89,12 @@ namespace CustomCalibrationLibrary.Models
         /// </summary>
         public Color FrameColor { get { return _frameColor; } }
 
+        private Color _foregroundColor;
+        /// <summary>
+        /// The text and calibration points color.
+        /// </summary>
+        public Color ForegroundColor { get { return _foregroundColor; } }
+
         private double _calibrationAccuracyLeft;
         /// <summary>
         /// The approximated accuracy of the current calibration for the left eye.
@@ -247,15 +253,17 @@ namespace CustomCalibrationLibrary.Models
         /// <param name="points">Calibration points</param>
         /// <param name="backgroundColor">The background color of the canvas</param>
         /// <param name="frameColor">The background color if the user interaction frame</param>
+        /// <param name="foregroundColor">The foreground color</param>
         /// <param name="accuracyThreshold">The accuracy threshold</param>
         /// <param name="precisionThreshold">The precision threshold</param>
         /// <param name="retries">The number of automatic retries</param>
         public CalibrationModel(TrackerLogger logger, double[][] points, Color backgroundColor, Color frameColor,
-            double accuracyThreshold, double precisionThreshold, int retries)
+            Color foregroundColor, double accuracyThreshold, double precisionThreshold, int retries)
         {
             _logger = logger;
             _backgroundColor = backgroundColor;
             _frameColor = frameColor;
+            _foregroundColor = foregroundColor;
             _accuracyThreshold = accuracyThreshold;
             _precisionThreshold = precisionThreshold;
             _retries = retries;

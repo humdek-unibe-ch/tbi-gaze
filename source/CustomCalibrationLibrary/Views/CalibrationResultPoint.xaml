@@ -20,7 +20,7 @@
     </UserControl.Resources>
     <Grid>
         <ContentControl Template="{StaticResource CalibrationPoint}" extension:BrushExtension.Brush="{Binding PointColor}"/>
-        <ContentControl Template="{StaticResource GazePointAverage}" Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
+        <ContentControl Template="{StaticResource GazePointAverage}" extension:BrushExtension.Brush="{Binding PointColor}" Visibility="{Binding HasFailed, Converter={StaticResource HasFailedToVisibilityConverter}}">
             <ContentControl.RenderTransform>
                 <TranslateTransform
                     X="{Binding GazePositionAverageDelta.X, Converter={StaticResource PositionConverter}, ConverterParameter={x:Static SystemParameters.PrimaryScreenWidth}}"

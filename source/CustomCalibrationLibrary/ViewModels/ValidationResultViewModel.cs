@@ -85,7 +85,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The claibration model</param>
-        public ValidationResultViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
+        public ValidationResultViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor, model.ForegroundColor)
         {
             _model = model;
             _validationRestartCommand = new CalibrationCommand(_model, CalibrationEventType.Restart);

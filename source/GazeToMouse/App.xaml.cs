@@ -368,16 +368,17 @@ namespace GazeToMouse
 
             Color backgroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.BackgroundColor);
             Color frameColor = (Color)ColorConverter.ConvertFromString(_config.Config.FrameColor);
+            Color foregroundColor = (Color)ColorConverter.ConvertFromString(_config.Config.ForegroundColor);
 
-            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor,
+            _calibrationModel = new CalibrationModel(_logger, _config.Config.CalibrationPoints, backgroundColor, frameColor, foregroundColor,
                 _config.Config.CalibrationAccuracyThreshold, double.PositiveInfinity, _config.Config.CalibrationRetries);
             _calibrationModel.CalibrationEvent += OnCalibrationEvent;
             _calibrationWindow.Content = new CalibrationFrame(_calibrationModel, _calibrationWindow);
-            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor,
+            _validationModel = new CalibrationModel(_logger, _config.Config.ValidationPoints, backgroundColor, frameColor, foregroundColor,
                 _config.Config.ValidationAccuracyThreshold, _config.Config.ValidationPrecisionThreshold, _config.Config.ValidationRetries);
             _validationModel.CalibrationEvent += OnValidationEvent;
             _validationWindow.Content = new CalibrationFrame(_validationModel, _validationWindow);
-            _fixationWindow.DataContext = new DriftCompensationViewModel(backgroundColor);
+            _fixationWindow.DataContext = new DriftCompensationViewModel(backgroundColor, foregroundColor);
             _startupWindow.Content = new Spinner(backgroundColor);
 
             // hide the mouse cursor on calibration window

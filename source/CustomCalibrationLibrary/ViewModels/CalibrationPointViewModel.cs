@@ -14,24 +14,29 @@ namespace CustomCalibrationLibrary.ViewModels
     /// </summary>
     class CalibrationPointViewModel : CalibrationPoint
     {
+        private Brush _pointColor;
         /// <summary>
         /// The color of the calibration point.
         /// </summary>
-        public Brush PointColor { get { return HasFailed ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.White); } }
+        public Brush PointColor { get { return HasFailed ? new SolidColorBrush(Colors.Red) : _pointColor; } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalibrationPointViewModel"/> class.
         /// </summary>
         /// <param name="point">The position of the calibration point.</param>
         /// <param name="index">The index of the calibration point.</param>
-        public CalibrationPointViewModel(Point point, int index) : base(point, index) { }
+        public CalibrationPointViewModel(Point point, int index, Color pointColor) : base(point, index)
+        {
+            _pointColor = new SolidColorBrush(pointColor);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CalibrationPointViewModel"/> class.
         /// </summary>
         /// <param name="point">The calibration point object.</param>
-        public CalibrationPointViewModel(CalibrationPoint point) : base(point.Position, point.Index)
+        public CalibrationPointViewModel(CalibrationPoint point, Color pointColor) : base(point.Position, point.Index)
         {
+            _pointColor = new SolidColorBrush(pointColor);
             GazePositionAverage = point.GazePositionAverage;
             GazePositionLeft = point.GazePositionLeft;
             GazePositionRight = point.GazePositionRight;

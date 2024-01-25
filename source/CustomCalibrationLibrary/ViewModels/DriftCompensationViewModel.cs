@@ -22,9 +22,9 @@ namespace CustomCalibrationLibrary.ViewModels
         /// <summary>
         /// Constructor
         /// </summary>
-        public DriftCompensationViewModel(Color backgroundColor) : base(backgroundColor, backgroundColor)
+        public DriftCompensationViewModel(Color backgroundColor, Color foregroundColor) : base(backgroundColor, backgroundColor, foregroundColor)
         {
-            FixationPoint = new CalibrationPoint(new Point(0.5, 0.5), 0);
+            FixationPoint = new CalibrationPointViewModel(new CalibrationPoint(new Point(0.5, 0.5), 0), foregroundColor);
         }
     }
 }

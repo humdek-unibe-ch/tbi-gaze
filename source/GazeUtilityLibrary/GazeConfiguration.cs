@@ -99,6 +99,12 @@ namespace GazeUtilityLibrary
                 _config.FrameColor = "#202124";
             }
 
+            if (!ConfigChecker.CheckColor(_config.ForegroundColor, _logger))
+            {
+                _logger.Warning($"Using foreground color 'White' instead");
+                _config.ForegroundColor = "White";
+            }
+
 
             return true;
         }
@@ -776,6 +782,11 @@ namespace GazeUtilityLibrary
         /// </summary>
         [JsonProperty(Required = Required.Default)]
         public string FrameColor { get; set; }
+        /// <summary>
+        /// Defines the text and calibration point color of the calibration and validation.
+        /// </summary>
+        [JsonProperty(Required = Required.Default)]
+        public string ForegroundColor { get; set; }
 
         /// <summary>
         /// Defines whether the mouse cursor shall be controlled by the gaze of the subject during the experiment.
@@ -990,6 +1001,7 @@ namespace GazeUtilityLibrary
             ValidationPoints[7] = new double[2] { 0.5, 0.9 };
             BackgroundColor = "Black";
             FrameColor = "#202124";
+            ForegroundColor = "White";
             MouseControl = false;
             MouseControlHide = false;
             MouseCalibrationHide = false;

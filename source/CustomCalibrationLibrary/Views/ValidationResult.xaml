@@ -17,6 +17,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
+            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
@@ -38,22 +39,22 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Background="{StaticResource FrameBackground}">
                 <StackPanel Margin="10" HorizontalAlignment="Center">
-                    <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                    <TextBlock Foreground="{StaticResource Foreground}" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                        Validation Result
                     </TextBlock>
-                    <TextBlock Foreground="White">
+                    <TextBlock Foreground="{StaticResource Foreground}">
                         <TextBlock.Inlines>
                             <Run FontWeight="Bold" Text="Accuracy"/>
                             <Run Text="is the systematic error of the measured gaze point and the target gaze point in degrees."/>
                         </TextBlock.Inlines>
                     </TextBlock>
-                    <TextBlock Foreground="White">
+                    <TextBlock Foreground="{StaticResource Foreground}">
                         <TextBlock.Inlines>
                             <Run FontWeight="Bold" Text="Precision"/>
                             <Run Text="is the averaged standard deviation over all collected points in degrees."/>
                         </TextBlock.Inlines>
                     </TextBlock>
-                    <TextBlock Foreground="White">
+                    <TextBlock Foreground="{StaticResource Foreground}">
                         <TextBlock.Inlines>
                             <Run FontWeight="Bold" Text="Precision RMS"/>
                             <Run Text="is the averaged root mean square of sample-to-sample error over all collected points in degrees."/>
@@ -63,32 +64,32 @@
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel>
-                    <TextBlock HorizontalAlignment="Center" Foreground="White">Left Eye</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" Foreground="{StaticResource Foreground}">Left Eye</TextBlock>
                     <DockPanel Margin="5">
                         <StackPanel Margin="5">
-                            <TextBlock Foreground="White">Accuracy:</TextBlock>
-                            <TextBlock Foreground="White">Precision:</TextBlock>
-                            <TextBlock Foreground="White">Precision RMS:</TextBlock>
+                            <TextBlock Foreground="{StaticResource Foreground}">Accuracy:</TextBlock>
+                            <TextBlock Foreground="{StaticResource Foreground}">Precision:</TextBlock>
+                            <TextBlock Foreground="{StaticResource Foreground}">Precision RMS:</TextBlock>
                         </StackPanel>
                         <StackPanel Margin="5">
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}&#186;}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding ValidationData.AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding ValidationData.PrecisionLeft, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsLeft, StringFormat={}{0:N2}&#186;}" />
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock HorizontalAlignment="Center" Foreground="White">Right Eye</TextBlock>
+                    <TextBlock HorizontalAlignment="Center" Foreground="{StaticResource Foreground}">Right Eye</TextBlock>
                     <DockPanel Margin="5">
                         <StackPanel Margin="5">
-                            <TextBlock Foreground="White">Accuracy</TextBlock>
-                            <TextBlock Foreground="White">Precision</TextBlock>
-                            <TextBlock Foreground="White">Precision RMS</TextBlock>
+                            <TextBlock Foreground="{StaticResource Foreground}">Accuracy</TextBlock>
+                            <TextBlock Foreground="{StaticResource Foreground}">Precision</TextBlock>
+                            <TextBlock Foreground="{StaticResource Foreground}">Precision RMS</TextBlock>
                         </StackPanel>
                         <StackPanel Margin="5">
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}&#186;}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}&#186;}" />
-                            <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding ValidationData.AccuracyRight, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRight, StringFormat={}{0:N2}&#186;}" />
+                            <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding ValidationData.PrecisionRmsRight, StringFormat={}{0:N2}&#186;}" />
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>

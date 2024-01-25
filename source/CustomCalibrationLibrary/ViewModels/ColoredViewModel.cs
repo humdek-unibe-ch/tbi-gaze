@@ -30,15 +30,26 @@ namespace CustomCalibrationLibrary.ViewModels
             get { return _frameColor; }
         }
 
+        private Color _foregroundColor;
+        /// <summary>
+        /// The text and calibration point color.
+        /// </summary>
+        public Color ForegroundColor
+        {
+            get { return _foregroundColor; }
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="backgroundColor">The background color of the view.</param>
         /// <param name="frameColor">The frame color of the view.</param>
-        public ColoredViewModel(Color backgroundColor, Color frameColor)
+        /// <param name="foregroundColor">The foreground color of the view.</param>
+        public ColoredViewModel(Color backgroundColor, Color frameColor, Color foregroundColor)
         {
             _backgroundColor = backgroundColor;
             _frameColor = frameColor;
+            _foregroundColor = foregroundColor;
         }
     }
 }

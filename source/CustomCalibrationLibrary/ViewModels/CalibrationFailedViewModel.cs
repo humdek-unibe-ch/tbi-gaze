@@ -55,7 +55,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The calibration model</param>
-        public CalibrationFailedViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
+        public CalibrationFailedViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor, model.ForegroundColor)
         {
             _error = model.Error;
             _calibrationRestartCommand = new CalibrationCommand(model, CalibrationEventType.Restart);

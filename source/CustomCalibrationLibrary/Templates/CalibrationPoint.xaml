@@ -15,7 +15,8 @@
         </Grid>
     </ControlTemplate>
     <ControlTemplate x:Key="GazePointAverage">
-        <Path Stroke="White" StrokeDashArray="1, 1.95">
+        <Path Stroke="{Binding RelativeSource={RelativeSource TemplatedParent},
+                        Path=(extension:BrushExtension.Brush)}" StrokeDashArray="1, 1.95">
             <Path.Data>
                 <EllipseGeometry RadiusX="8" RadiusY="8"/>
             </Path.Data>

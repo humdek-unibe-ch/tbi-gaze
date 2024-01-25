@@ -24,7 +24,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// Constructor
         /// </summary>
         /// <param name="model">The calibration model</param>
-        public DisconnectViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor)
+        public DisconnectViewModel(CalibrationModel model) : base(model.BackgroundColor, model.FrameColor, model.ForegroundColor)
         {
             _calibrationAbortCommand = new CalibrationCommand(model, CalibrationEventType.Abort);
         }

@@ -77,7 +77,7 @@ namespace CustomCalibrationLibrary.ViewModels
         /// </summary>
         /// <param name="model">The calibration model</param>
         /// <param name="window">The target window of the screen selection</param>
-        public ScreenSelectionViewModel(CalibrationModel model, Window window) : base(model.BackgroundColor, model.FrameColor)
+        public ScreenSelectionViewModel(CalibrationModel model, Window window) : base(model.BackgroundColor, model.FrameColor, model.ForegroundColor)
         {
             foreach (var screen in Screen.AllScreens)
             {

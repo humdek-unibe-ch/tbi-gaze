@@ -14,7 +14,7 @@
         <converter:PositionConverter x:Key="PositionConverter" Offset="10"/>
     </UserControl.Resources>
     <Grid>
-        <Ellipse Fill="White" Width="20" Height="20" />
+        <Ellipse Fill="{Binding PointColor}" Width="20" Height="20" />
         <Ellipse Fill="Red" Width="2" Height="2" />
         <Grid.RenderTransform>
             <TranslateTransform

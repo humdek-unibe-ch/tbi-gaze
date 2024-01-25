@@ -14,6 +14,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
+            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
@@ -33,13 +34,13 @@
             </Grid.RowDefinitions>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="0">
                 <Grid Margin="10">
-                    <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                    <TextBlock Foreground="{StaticResource Foreground}" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                         Calibration Failed
                     </TextBlock>
                 </Grid>
             </Grid>
             <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Foreground="White" Text="{Binding Error}" FontSize="18"/>
+                <TextBlock Foreground="{StaticResource Foreground}" Text="{Binding Error}" FontSize="18"/>
             </Grid>
             <Grid Background="{StaticResource FrameBackground}" Grid.Row="2">
                 <DockPanel Margin="10" HorizontalAlignment="Right">

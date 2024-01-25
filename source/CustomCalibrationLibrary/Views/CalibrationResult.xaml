@@ -19,6 +19,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
+            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundColor}" />
             <converter:PositionConverter x:Key="PositionConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ResourceDictionary.MergedDictionaries>
@@ -51,30 +52,30 @@
                     </Grid.ColumnDefinitions>
                     <DockPanel Grid.Column="0" VerticalAlignment="Center">
                         <ToggleButton VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,5,0" IsChecked="{Binding GazePoint.Visibility}" Style="{StaticResource ToggleButtonSwitch}"/>
-                        <TextBlock Foreground="White" Text="Gaze (G)" VerticalAlignment="Center" />
+                        <TextBlock Foreground="{StaticResource Foreground}" Text="Gaze (G)" VerticalAlignment="Center" />
                     </DockPanel>
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                        <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                        <TextBlock Foreground="{StaticResource Foreground}" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                         Calibration Result
                         </TextBlock>
                         <DockPanel>
                             <DockPanel>
-                                <ContentControl Template="{StaticResource CalibrationPoint}" extension:BrushExtension.Brush="White">
+                                <ContentControl Template="{StaticResource CalibrationPoint}" extension:BrushExtension.Brush="{StaticResource Foreground}">
                                     <ContentControl.RenderTransform>
                                         <TranslateTransform X="8" Y="8" />
                                     </ContentControl.RenderTransform>
                                 </ContentControl>
-                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="5,0,0,0">
                                 Calibration Point
                                 </TextBlock>
                             </DockPanel>
                             <DockPanel Margin="20,0,0,0">
-                                <ContentControl Template="{StaticResource GazePointAverage}">
+                                <ContentControl Template="{StaticResource GazePointAverage}" extension:BrushExtension.Brush="{StaticResource Foreground}">
                                     <ContentControl.RenderTransform>
                                         <TranslateTransform Y="8" />
                                     </ContentControl.RenderTransform>
                                 </ContentControl>
-                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="5,0,0,0">
                                 Average Result
                                 </TextBlock>
                             </DockPanel>
@@ -84,7 +85,7 @@
                                         <TranslateTransform Y="8" />
                                     </ContentControl.RenderTransform>
                                 </ContentControl>
-                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="5,0,0,0">
                                 Left Eye
                                 </TextBlock>
                             </DockPanel>
@@ -94,7 +95,7 @@
                                         <TranslateTransform Y="8" />
                                     </ContentControl.RenderTransform>
                                 </ContentControl>
-                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="5,0,0,0">
                                 Right Eye
                                 </TextBlock>
                             </DockPanel>
@@ -104,19 +105,19 @@
                                         <TranslateTransform Y="8" />
                                     </ContentControl.RenderTransform>
                                 </ContentControl>
-                                <TextBlock Foreground="White" Margin="5,0,0,0">
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="5,0,0,0">
                                 Gaze
                                 </TextBlock>
                             </DockPanel>
                         </DockPanel>
                         <DockPanel HorizontalAlignment="Center" Margin="0,5,0,0">
                             <DockPanel Margin="0,0,50,0">
-                                <TextBlock Foreground="White" Margin="0,0,5,0">Accuracy Left Eye:</TextBlock>
-                                <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="0,0,5,0">Accuracy Left Eye:</TextBlock>
+                                <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding AccuracyLeft, StringFormat={}{0:N2}&#186;}" />
                             </DockPanel>
                             <DockPanel>
-                                <TextBlock Foreground="White" Margin="0,0,5,0">Accuracy Right Eye:</TextBlock>
-                                <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding AccuracyRight, StringFormat={}{0:N2}&#186;}" />
+                                <TextBlock Foreground="{StaticResource Foreground}" Margin="0,0,5,0">Accuracy Right Eye:</TextBlock>
+                                <TextBlock Foreground="{StaticResource Foreground}" FontWeight="Bold" Text="{Binding AccuracyRight, StringFormat={}{0:N2}&#186;}" />
                             </DockPanel>
                         </DockPanel>
                     </StackPanel>

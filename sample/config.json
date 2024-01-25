@@ -367,6 +367,12 @@
   //  https: //learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-8.0#properties
   "FrameColor": "#202124",
 
+  // Defines the text and calibration point color of the calibration and validation.
+  // To configure the color use either a hex string (with or without alpha value) prefixed with `#` or
+  // any of the predefined constants from:
+  //  https: //learn.microsoft.com/en-us/dotnet/api/system.drawing.color?view=net-8.0#properties
+  "ForegroundColor": "White",
+
   // Use this parameter to associate the configuration with an experiment. When "Gaze.exe" is
   // executed, a copy of this configuration file is stored at the "DataLogPath" where the parameter
   // "ConfigName" is postfixed to the filename of the copied config file. E.g., by default the following

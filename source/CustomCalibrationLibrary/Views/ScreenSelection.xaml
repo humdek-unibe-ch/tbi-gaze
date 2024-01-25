@@ -17,6 +17,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
+            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundColor}" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDark.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml"/>
@@ -56,10 +57,10 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{StaticResource FrameBackground}">
             <StackPanel Margin="10" HorizontalAlignment="Center">
-                <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                <TextBlock Foreground="{StaticResource Foreground}" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                     Screen Selection
                 </TextBlock>
-                <TextBlock Foreground="White">
+                <TextBlock Foreground="{StaticResource Foreground}">
                     Select the screen on which to perform the calibration
                 </TextBlock>
             </StackPanel>

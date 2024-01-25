@@ -18,6 +18,7 @@
         <ResourceDictionary>
             <SolidColorBrush x:Key="CanvasBackground" Color="{Binding BackgroundColor}" />
             <SolidColorBrush x:Key="FrameBackground" Color="{Binding FrameColor}" />
+            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundColor}" />
             <converter:PositionConverter x:Key="PositionConverter" />
             <converter:ProximityColorConverter x:Key="ProximityColorConverter" />
             <ResourceDictionary.MergedDictionaries>
@@ -38,10 +39,10 @@
         </Grid.RowDefinitions>
         <Grid Background="{StaticResource FrameBackground}">
             <StackPanel Margin="10" HorizontalAlignment="Center">
-                <TextBlock Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
+                <TextBlock Foreground="{StaticResource Foreground}" FontSize="30" HorizontalAlignment="Center" Margin="0,0,0,5">
                     User Position Guide
                 </TextBlock>
-                <TextBlock Foreground="White">
+                <TextBlock Foreground="{StaticResource Foreground}">
                     Position your head such that the two dots appear in the center of the screen and light up green.
                 </TextBlock>
             </StackPanel>
